@@ -39,9 +39,9 @@ public  boolean closeStore(){
 
 public  boolean reopenStore(){
         if(this.shutDown){
-            throw new IllegalArgumentException("the Store : " + this.getName()+" is hutDown" );}
+            throw new IllegalArgumentException("the Store :" + this.getName()+" is hutDown" );}
         else if (!this.close){
-            throw new IllegalArgumentException("the Store : " + this.getName()+" is already open" );}
+            throw new IllegalArgumentException("the Store :" + this.getName()+" is already open" );}
         else{
             this.close=false;
             return  true;
