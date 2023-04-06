@@ -47,7 +47,7 @@ public class Store {
 
     }
 
-    public Boolean ShutDown() {
+    public Boolean ShutDown()  {
          this.shutDown = true;
         return  true;
     }
