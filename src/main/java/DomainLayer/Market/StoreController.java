@@ -9,24 +9,33 @@ import java.util.UUID;
 public class StoreController {
     private HashMap<UUID, Store> storeMap = new HashMap<>();
 
-    private Boolean checkExistStore(UUID storeId){
-        return this.storeMap.containsKey(storeId);
-    }
+    private void checkExistStore(UUID storeId){
+        if(!this.storeMap.containsKey(storeId))
+            throw new IllegalArgumentException("no Store with id :" + storeId );}
+
 
 
     public Boolean closeStore(UUID clientCredentials ,UUID storeId ) {
-        if(!checkExistStore(storeId)){
-            throw new IllegalArgumentException("no Store with id :" + storeId );}
+        checkExistStore(storeId);
             return storeMap.get(storeId).closeStore();
 
         }
 
     public Boolean reopenStore(UUID clientCredentials ,UUID storeId ) {
-        if(!checkExistStore(storeId)){
-            throw new IllegalArgumentException("no Store with id :" + storeId );}
+        checkExistStore(storeId);
         return storeMap.get(storeId).reopenStore();
 
     }
+
+    public Boolean shutdownStore(UUID clientCredentials , UUID storeId ) {
+    checkExistStore(storeId);
+    return storeMap.get(storeId).ShutDown();
+
+    }
+
+
+
+
 
     }
 
