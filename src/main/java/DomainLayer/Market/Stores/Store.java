@@ -28,26 +28,39 @@ public class Store {
         this.rating= (oldRating+rating)/this.ratingCounter;
         return  true;
 
-}
-public  boolean closeStore(){
-    if(this.close){
-        throw new IllegalArgumentException("the Store :" + this.getName()+" is already close" );}
-    else{
-    this.close=true;
-    return true;}
-}
+    }
+    public boolean closeStore(){
+        checkNotShutDown();
+        checkNotClose();
+        this.close=true;
+        return true;}
 
-public  boolean reopenStore(){
-        if(this.shutDown){
-            throw new IllegalArgumentException("the Store : " + this.getName()+" is hutDown" );}
-        else if (!this.close){
-            throw new IllegalArgumentException("the Store : " + this.getName()+" is already open" );}
+
+    public  boolean reopenStore(){
+        checkNotShutDown();
+        if (!this.close){
+            throw new IllegalArgumentException("the Store :" + this.getName()+" is already open " );}
         else{
             this.close=false;
             return  true;
         }
 
     }
+
+    public Boolean ShutDown()  {
+        this.shutDown = true;
+        return  true;
+    }
+
+    private void checkNotShutDown(){
+        if(isShutDown()){
+            throw new IllegalArgumentException("the Store :" + this.getName()+" is already shutDown" );}
+    }
+    private void checkNotClose(){
+        if(isClose()){
+            throw new IllegalArgumentException("the Store :" + this.getName()+" is already close" );}
+    }
+
 
 
 
@@ -77,4 +90,6 @@ public  boolean reopenStore(){
     public int getRatingCounter() {
         return ratingCounter;
     }
+
 }
+
