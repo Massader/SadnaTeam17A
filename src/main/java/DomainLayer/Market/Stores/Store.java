@@ -28,7 +28,7 @@ public class Store {
         this.rating= (oldRating+rating)/this.ratingCounter;
         return  true;
 
-}
+    }
     public boolean closeStore(){
         checkNotShutDown();
         checkNotClose();
@@ -48,7 +48,7 @@ public class Store {
     }
 
     public Boolean ShutDown()  {
-         this.shutDown = true;
+        this.shutDown = true;
         return  true;
     }
 
@@ -92,3 +92,4 @@ public class Store {
     }
 
 }
+
