@@ -6,13 +6,13 @@ public class Response<T> {
     private boolean error = false;
     private String message;
 
-    public Response<T> getSuccessResponse(T value) {
+    public static <T> Response<T> getSuccessResponse(T value) {
         Response<T> response = new Response<>();
         response.setValue(value);
         return response;
     }
 
-    public Response<T> getFailResponse(String message) {
+    public static <T> Response<T> getFailResponse(String message) {
         Response<T> response = new Response<>();
         response.setMessage(message);
         response.setError(true);
