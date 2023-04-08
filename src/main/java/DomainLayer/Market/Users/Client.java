@@ -13,8 +13,20 @@ public class Client {
         cart = new ShoppingCart();
     }
 
+    public void setCart(ShoppingCart cart){
+        this.cart = cart;
+    }
+
+    public void setId(UUID id) {
+        this.clientCredentials = id;
+    }
+
     public UUID getId() {
         return clientCredentials;
+    }
+
+    public ShoppingCart getCart() {
+        return cart;
     }
 
 //    public boolean AddItemToCart(int itemId, int qantity){
