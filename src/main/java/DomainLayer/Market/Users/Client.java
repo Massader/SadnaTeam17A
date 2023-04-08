@@ -28,9 +28,12 @@ public class Client {
     public ShoppingCart getCart() {
         return cart;
     }
+    public double getCartTotal(){
+        return  getCart().calculateTotalPrice();
 
-    public boolean AddItemToCart(int itemId, int qantity){
-        return false;
     }
+
+
+
 
 }

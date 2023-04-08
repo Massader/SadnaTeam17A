@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import DomainLayer.Market.Users.Client;
 import DomainLayer.Market.Users.PurchaseHistory;
+import DomainLayer.Market.Users.ShoppingCart;
 import DomainLayer.Market.Users.User;
 import DomainLayer.Security.SecurityController;
 import ServiceLayer.Response;
@@ -55,9 +56,12 @@ public class UserController {
         return Response.getFailResponse("Wrong password.");
     }
 
-//    public Response<UUID> getClienCredentials(String userNAme) {
-//        return null;
-//    }
+    public Response<UUID> getClienCredentials(String userName) {
+        UUID id;
+        if(userNames.get(userName)==null){return Response.getFailResponse("user doesn't exist");}
+        return Response.getSuccessResponse(userNames.get(userName));
+
+    }
 
 
     // add a new user to the system
@@ -90,18 +94,30 @@ public class UserController {
         return Response.getSuccessResponse(true);
     }
 
-    public Response<Boolean> addItemToCart(UUID id, UUID itemId, int quantity) {
-        return null;
+    public Response<Boolean> addItemToCart(UUID userId, UUID itemId, int quantity, UUID storeID ){
+        if (getClientOrUser(userId)==null)
+            return Response.getFailResponse("this user ID does not exist");
+        ShoppingCart shoppingCart =getClientOrUser(userId).getCart();
+        return Response.getSuccessResponse( shoppingCart.addItemToCart(itemId, storeID, quantity));
     }
 
-    public Response<Boolean> removeItemFromCart(UUID id, UUID itemId, int quantity) {
-        return null;
+
+    public Response<Boolean> removeItemFromCart(UUID userId, UUID itemId, int quantity, UUID storeId) {
+        if (getClientOrUser(userId)==null)
+            return Response.getFailResponse("this user ID does not exist");
+        ShoppingCart shoppingCart =getClientOrUser(userId).getCart();
+        return Response.getSuccessResponse( shoppingCart.removeItemToCart(itemId, storeId, quantity));
     }
 
-    public Response<PurchaseHistory> getPurchaseHistory(UUID clientId, UUID userId) {
-        return null;
-    }
+    public Response<String> getPurchaseHistory(UUID clientCredentials, UUID userId) {
+        if (!userCredentials.containsKey(userId))
+            return Response.getFailResponse("this user ID does not exist");
+        if(!isRegisteredUser(userId)){
+            return Response.getFailResponse("this user ID not register");
+        }
+        return Response.getSuccessResponse(getUser(userId).getValue().getPurchases().toArray().toString());// TODO: now return as a string  when we will know how Purchase will be -> change accordingly
 
+    }
     public Response<Boolean> appointStoreOwner(UUID clientId, UUID apointee, UUID storeId) {
         return null;
     }
@@ -156,7 +172,11 @@ public class UserController {
         return Response.getSuccessResponse(userCredentials.get(userId));
     }
 
-    public Response<Boolean> getCartTotal() {
+    public Response<Boolean> getCartTotal(UUID userId) {
+        if (getClientOrUser(userId)==null)
+            return Response.getFailResponse("this user ID does not exist");
+
+
         return null;
     }
 
@@ -201,6 +221,8 @@ public class UserController {
             return clients.get(id);
         return null;
     }
+
+
 
 }
 

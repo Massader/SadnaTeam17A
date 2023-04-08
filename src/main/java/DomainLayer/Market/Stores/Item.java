@@ -14,6 +14,7 @@ public class Item {
     private double rating;
     private int ratesCount;
     private int quantity;
+    private  String description;
     private ConcurrentLinkedQueue<PurchaseType> purchaseTypes;
     private ConcurrentLinkedQueue<Category> categories;
     private PolicyRules policyRules;
@@ -22,7 +23,10 @@ public class Item {
 
 //constructor:
 
-    public Item(UUID id, String name, double price, UUID storeId, double rating, int quantity) {
+
+
+
+    public Item(UUID id, String name, double price, UUID storeId, double rating, int quantity, String description) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -83,6 +87,9 @@ public class Item {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     //methods:
