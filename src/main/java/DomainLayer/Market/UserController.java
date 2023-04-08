@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import DomainLayer.Market.Users.Client;
+import DomainLayer.Market.Users.PurchaseHistory;
 import DomainLayer.Market.Users.User;
 import DomainLayer.Security.SecurityController;
 import ServiceLayer.Response;
@@ -48,7 +49,6 @@ public class UserController {
             return Response.getSuccessResponse(user);
         }
         return Response.getFailResponse("Wrong password.");
-
     }
 
 //    public Response<UUID> getClienCredentials(String userNAme) {
@@ -84,48 +84,69 @@ public class UserController {
         return Response.getSuccessResponse(true);
     }
 
-    public Response<Boolean> addItemToCart() {
+    public Response<Boolean> addItemToCart(UUID id, UUID itemId, int quantity) {
         return null;
     }
 
-    public Response<Boolean> removeItemFromCart() {
+    public Response<Boolean> removeItemFromCart(UUID id, UUID itemId, int quantity) {
         return null;
     }
 
-    public Response<Boolean> getPurchaseHistory() {
+    public Response<PurchaseHistory> getPurchaseHistory(UUID clientId, UUID userId) {
         return null;
     }
 
-    public Response<Boolean> appointStoreOwner() {
+    public Response<Boolean> appointStoreOwner(UUID clientId, UUID apointee, UUID storeId) {
         return null;
     }
 
-    public Response<Boolean> appointStoreManager() {
+    public Response<Boolean> appointStoreManager(UUID clientId, UUID apointee, UUID storeId) {
         return null;
     }
 
-    public Response<Boolean> removeStoreOwner() {
+    public Response<Boolean> removeStoreOwner(UUID clientId, UUID ownerToRemove, UUID storeId) {
         return null;
     }
 
-    public Response<Boolean> removeStoreManager() {
+    public Response<Boolean> removeStoreManager(UUID clientId, UUID ownerToRemove, UUID storeId) {
         return null;
     }
 
-    public Response<Boolean> setManagerPermissions() {
+    public Response<Boolean> setManagerPermissions(UUID clientId, UUID manager,
+                                                   UUID storeId, List<Integer> permissions) {
         return null;
     }
 
-    public Response<Boolean> deleteUser() {
-        return null;
+    public Response<Boolean> deleteUser(UUID userId, UUID storeId) {
+        if (!userCredentials.containsKey(userId))
+            return Response.getFailResponse("this user ID does not exist");
+
+        if (logedInUsers.contains(userId))
+            logout(userId);
+
+        //remove from both HashMaps
+        User user = userCredentials.remove(userId);
+        userNames.remove(user.getUserName());
+
+        return Response.getSuccessResponse(true);
+    }
+
+    public Response<Boolean> logout(UUID userId) {
+        if (!userCredentials.containsKey(userId))
+            return Response.getFailResponse("this user ID does not exist");
+        if (!logedInUsers.contains(userId))
+            return Response.getFailResponse("this user is already logged out");
+        logedInUsers.remove(userId);
+        //User user = userCredentials.get(userId);
+        return Response.getSuccessResponse(true);
     }
 
     public Response<Boolean> setAsFounder() {
         return null;
     }
 
-    public Response<Boolean> getUser(UUID userId) {
-        return null;
+    public Response<User> getUser(UUID userId) {
+        return Response.getSuccessResponse(userCredentials.get(userId));
     }
 
     public Response<Boolean> getCartTotal() {
