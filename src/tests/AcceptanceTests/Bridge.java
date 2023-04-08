@@ -1,0 +1,39 @@
+package AcceptanceTests;
+
+public interface Bridge {
+    Boolean systemBoot();
+    Boolean integrityTest();
+    Boolean addService();
+    Boolean updateService();
+    Boolean payForShoppingCart();
+    Boolean checkForSupply();
+    Boolean systemRealTimeAlert();
+    Boolean userRealTimeAlert();
+    Boolean systemDelayedAlert();
+    Boolean userDelayedAlert();
+    Boolean enterSystem();
+    Boolean exitSystem();
+    Boolean register();
+    Boolean login();
+    Boolean receiveStoreInfo();
+    Boolean searchStore();
+    Boolean searchItem();
+    Boolean saveItemInShoppingCart();
+    Boolean viewShoppingCartItems();
+    Boolean purchaseShoppingCartPayment();
+    Boolean purchaseShoppingCartSupply();
+    Boolean logoutRegisterUser();
+    Boolean openStore();
+    Boolean stockManagementAddNewItem();
+    Boolean stockManagementRemoveItem();
+    Boolean stockManagementChangeItemInfo();
+    Boolean setStorePolicy();
+    Boolean appointStoreOwner();
+    Boolean appointStoreManager();
+    Boolean setStoreManagerPermissions();
+    Boolean closeStore();
+    Boolean getStoreStaffList();
+    Boolean getStoreSaleHistory();
+    Boolean storeManagerActions();
+    Boolean getStoreSaleHistorySystemAdmin();
+}
