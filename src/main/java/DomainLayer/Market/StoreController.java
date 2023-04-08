@@ -1,13 +1,12 @@
 package DomainLayer.Market;
 
 import DomainLayer.Market.Stores.Item;
+import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.SaleHistory;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
-import DomainLayer.Security.SecurityController;
 import ServiceLayer.Response;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,25 +28,30 @@ public class StoreController {
             singleton = new StoreController();
         return singleton;
     }
-    private void checkExistStore(UUID storeId){
-        if(!this.storeMap.containsKey(storeId))
-            throw new IllegalArgumentException("no Store with id :" + storeId );}
+    private Response<Boolean> checkExistStore(UUID storeId){
+        if(!this.storeMap.containsKey(storeId)){ return Response.getFailResponse("item not exist");}
+        return Response.getSuccessResponse(true);
+
+    }
 
 
-    public Boolean closeStore(UUID clientCredentials ,UUID storeId ) {
+    public Response<Boolean> closeStore(UUID clientCredentials ,UUID storeId ) {
         checkExistStore(storeId);
-        return storeMap.get(storeId).closeStore();
+        if (storeMap.get(storeId).closeStore()) { return Response.getSuccessResponse(true);}
+        return Response.getFailResponse("store already close");
 
         }
 
-    public Boolean reopenStore(UUID clientCredentials ,UUID storeId ) {
+    public Response<Boolean> reopenStore(UUID clientCredentials ,UUID storeId ) {
         checkExistStore(storeId);
-        return storeMap.get(storeId).reopenStore();
+        if (storeMap.get(storeId).reopenStore()){return Response.getSuccessResponse(true);}
+        return Response.getFailResponse("can not reopen store");
     }
 
-    public Boolean shutdownStore(UUID clientCredentials , UUID storeId ) {
+    public Response<Boolean> shutdownStore(UUID clientCredentials , UUID storeId ) {
     checkExistStore(storeId);
-    return storeMap.get(storeId).ShutDown();
+        if( storeMap.get(storeId).ShutDown()){return Response.getSuccessResponse(true);}
+        return Response.getFailResponse("can not shutdown store");
 
     }
 
@@ -68,16 +72,17 @@ public class StoreController {
     }
 
     // create item and add it to a store
-    public Response<Item> addItem(String name, double price, UUID storeId, int quantity){
+    public Response<Item> addItem(String name, double price, UUID storeId, int quantity, String description){
 
         if (!hasStore(storeId))
             return Response.getFailResponse("store doesn't exist");
 
         UUID id = UUID.randomUUID();
-        Item item = new Item(id, name, price, storeId, 0, quantity);
+        Item item = new Item(id, name, price, storeId, 0, quantity,description);
+
 
         //add the item to the store
-        Store store = getStore(storeId);
+        Store store = getStore(storeId).getValue();
         store.addItem(item);
 
         return Response.getSuccessResponse(item);
@@ -86,7 +91,7 @@ public class StoreController {
 
     public Response<Integer> getItemQuantity(UUID itemId){
         if (!itemExist(itemId))
-            return Response.getFailResponse("item doesnt exist");
+            return Response.getFailResponse("item doesn't exist");
         Item item = getItem(itemId).getValue();
         int quantity = item.getQuantity();
         return Response.getSuccessResponse(quantity);
@@ -105,42 +110,63 @@ public class StoreController {
         return false;
     }
 
+
+
     public Response<ShoppingCart> getShoppingCart(UUID clientId){
-//        Client client = userController.getClientOrUser(clientId);
-//        if(client == null)
-//            return Response.getFailResponse("item not exist");
-//
+        Client client = userController.getClientOrUser(clientId);
+        if(client == null)
+            return Response.getFailResponse("client not exist");
+        return  Response.getSuccessResponse(client.getCart());
+
 
     }
+//TODO : guy why we need this?
+    public Response<Store> getStore(UUID clientId, String storeName, String storeDescription){return  null;}
+    public Response<Store> getStore(UUID storeId){
+        checkExistStore(storeId);
+        Store store = storeMap.get(storeId);
+        return Response.getSuccessResponse(store);
+        }
 
-    public Response<Store> getStore(UUID clientId, String storeName, String storeDescription){
-
-    }
 
     public Response<UUID> postReview(UUID clientId, UUID itemId, String reviewBody){
-
+        if (!itemExist(itemId))
+            return Response.getFailResponse("item doesn't exist");
+        Item item = getItem(itemId).getValue();
+        item.addReviews(clientId,reviewBody);
+        return Response.getSuccessResponse(clientId);
     }
 
     //calculate new rating given a new one
     public Response<Boolean> addStoreRating(UUID storeId ,int rating){
-        Store store = getStore(storeId);
+        Store store = getStore(storeId).getValue();
         store.addRating(rating);
         return Response.getSuccessResponse(true);
     }
 
     //calculate new rating given a new one
     public Response<Boolean> addItemRating(UUID itemId, int rating){
+
         Item item = getItem(itemId).getValue();
         item.addRating(rating);
         return Response.getSuccessResponse(true);
     }
 
     public Response<Boolean> setItemDescription(UUID clientId, UUID itemId, String description){
+        if(!itemExist(itemId))
+            return Response.getFailResponse("item not exist");
+        Item item = getItem(itemId).getValue();
+        item.setDescription(description);
+        return Response.getSuccessResponse(true);
 
     }
 
-    public Boolean setItemQuantity(UUID clientId, UUID itemId, int newQuantity){
-
+    public Response<Boolean> setItemQuantity(UUID clientId, UUID itemId, int newQuantity){
+        if(!itemExist(itemId))
+            return Response.getFailResponse("item not exist");
+        Item item = getItem(itemId).getValue();
+        item.setQuantity(newQuantity);
+        return Response.getSuccessResponse(true);
     }
 
     //change the name of an item
@@ -161,28 +187,40 @@ public class StoreController {
     }
 
     public Response<List<User>> getStoreStaff(UUID clientId, UUID itemId){
-
+return null;
     }
 
     public Response<List<Message>> getStoreMessages(UUID clientId, UUID itemId){
+return  null;
+    }
+
+    public Response<String>getStoreSaleHistory(UUID clientCredentials , UUID storeId ) {// TODO: after we will have sale class -> the return  String
+        Store store = getStore(storeId).getValue();
+        ConcurrentLinkedQueue<Sale> saleHistory = store.getSales();
+        return Response.getSuccessResponse(saleHistory.toArray().toString());
+    }
+
+    public  Response<Store> createStore(UUID clientCredentials , String storeName , String storeDescription ) {
+        Store store = new Store(storeName);
+        storeMap.put(store.getStoreID(), store);
+        return Response.getSuccessResponse(store);
 
     }
 
-    public Response<SaleHistory> getStoreSaleHistory(UUID clientId, UUID itemId){
 
-    }
-    public Response<Boolean> shutDownStore(UUID clientId, UUID itemId){
 
-    }
 
-    protected Store getStore(UUID storeId){
-        return storeMap.get(storeId);
-    }
+
+
+//    protected Store getStore(UUID storeId){
+//        return storeMap.get(storeId);
+//    }
     protected boolean hasStore(UUID storeId){
         return storeMap.contains(storeId);
     }
 
     //add a new store
+    //TODO: guy why we need this?
     protected UUID addStore(Store store){
         UUID id = UUID.randomUUID();
         storeMap.put(id, store);
