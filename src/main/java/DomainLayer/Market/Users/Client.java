@@ -10,7 +10,7 @@ public class Client {
 
     public Client(UUID id){
         this.clientCredentials = id;
-        cart = new ShoppingCart();
+        cart = new ShoppingCart(UUID.randomUUID());
     }
 
     public void setCart(ShoppingCart cart){
@@ -29,8 +29,8 @@ public class Client {
         return cart;
     }
 
-//    public boolean AddItemToCart(int itemId, int qantity){
-//        return false;
-//    }
+    public boolean AddItemToCart(int itemId, int qantity){
+        return false;
+    }
 
 }

@@ -1,7 +1,12 @@
 package DomainLayer.Market.Stores;
 
+import DomainLayer.Market.Stores.Discounts.Discount;
+import ServiceLayer.Response;
+
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Store {
     private String name;
@@ -10,6 +15,10 @@ public class Store {
     private boolean close;
     private boolean shutDown;
     private int ratingCounter;
+    private ConcurrentHashMap<UUID, Item> items;
+    private ConcurrentLinkedQueue<Discount> discounts;
+    private Policy policy;
+    private ConcurrentLinkedQueue<Sale> sales;
 
     public Store(String name) {
         this.name = name;
@@ -18,15 +27,18 @@ public class Store {
         this.close=false;
         this.shutDown=false;
         this.ratingCounter=0;
-
+        items = new ConcurrentHashMap<>();
+        discounts = new ConcurrentLinkedQueue<>();
+        policy = new Policy();
+        sales = new ConcurrentLinkedQueue<>();
     }
 
 
-    public boolean addRating(int rating){
-        double oldRating = this.rating*this.ratingCounter;
-        this.ratingCounter+=1;
-        this.rating= (oldRating+rating)/this.ratingCounter;
-        return  true;
+    public void addRating(int newRating){
+        double x = rating * ratingCounter;
+        x += newRating;
+        ratingCounter++;
+        rating = x/ratingCounter;
 
     }
     public boolean closeStore(){
@@ -91,5 +103,18 @@ public class Store {
         return ratingCounter;
     }
 
+    public void addItem(Item item){
+        UUID id = item.getId();
+        items.put(id, item);
+    }
+    public Item getItem(UUID itemId) {
+        if (!hasItem(itemId))
+            return null;
+        return items.get(itemId);
+    }
+
+    public boolean hasItem(UUID itemId){
+        return items.containsKey(itemId);
+    }
 }
 

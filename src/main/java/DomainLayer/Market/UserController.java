@@ -13,11 +13,12 @@ import ServiceLayer.Response;
 public class UserController {
 
     private static UserController singleton = null;
-    private ConcurrentHashMap<UUID, User> userCredentials;
-    private ConcurrentHashMap<String, UUID> userNames;
-    private ConcurrentLinkedQueue<String> logedInUsers;
+    private ConcurrentHashMap<UUID, User> userCredentials;// for registered clients only!
+    private ConcurrentHashMap<String, UUID> userNames;    // for registered clients only!
+    private ConcurrentLinkedQueue<String> logedInUsers; // for loged in users only!
     private SecurityController securityController;
-    private ConcurrentHashMap<UUID, Client> clients;
+    private ConcurrentHashMap<UUID, Client> clients;  // for non-registered clients only!
+    private StoreController storeController;
 
 
     private UserController() {
@@ -26,6 +27,7 @@ public class UserController {
         logedInUsers = new ConcurrentLinkedQueue<>();
         securityController = SecurityController.getInstance();
         clients = new ConcurrentHashMap<>();
+        storeController = StoreController.getInstance();
     }
 
     public static synchronized UserController getInstance() {
@@ -43,7 +45,9 @@ public class UserController {
         UUID id = getId(userName);
         User user = getUserById(id);
 
+        //validate the password
         if (securityController.ValidatePass(id, password)) {
+            //transfer the client to the loged in users, and delete it from the non registered clients list
             logedInUsers.add(userName);
             closeClien(client.getId());
             return Response.getSuccessResponse(user);
@@ -56,14 +60,16 @@ public class UserController {
 //    }
 
 
+    // add a new user to the system
     public Response<User> Register(String userName, String password) {
         //verify UserName is valid and unused.
         if (userName == null) return Response.getFailResponse("No UserName input.");
         if (userNames.contains(userName))
             return Response.getFailResponse("This UserName is already in use.");
 
-        //add user
+
         UUID id = UUID.randomUUID();
+        //add user
         User u = loadUser(userName, password, id);
 
 
@@ -131,6 +137,7 @@ public class UserController {
         return Response.getSuccessResponse(true);
     }
 
+    // delete the user from the loged in list.
     public Response<Boolean> logout(UUID userId) {
         if (!userCredentials.containsKey(userId))
             return Response.getFailResponse("this user ID does not exist");
@@ -166,6 +173,8 @@ public class UserController {
     public UUID getId(String userName) {
         return userNames.get(userName);
     }
+
+    // add a new user to all the data structured
     private User loadUser(String userName, String password, UUID id){
         User user = new User(userName, id);
         userCredentials.put(id, user);
@@ -175,6 +184,24 @@ public class UserController {
 
         return user;
     }
+
+    // i made these methods to avoid confusion between clients and users.
+    public boolean isRegisteredUser(UUID id){
+        return userCredentials.contains(id);
+    }
+    public boolean isNonRegisteredClient(UUID id){
+        return clients.contains(id);
+    }
+
+    // get client in all kind!
+    public Client getClientOrUser(UUID id){
+        if (isRegisteredUser(id))
+            return userCredentials.get(id);
+        if (isNonRegisteredClient(id))
+            return clients.get(id);
+        return null;
+    }
+
 }
 
 
