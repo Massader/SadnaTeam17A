@@ -94,9 +94,14 @@ public class UserController {
         }
     }
 
-    public synchronized Response<Boolean> closeClien(UUID clientCredentials) {
-        clients.remove(clientCredentials);
-        return Response.getSuccessResponse(true);
+    public synchronized Response<Boolean> closeClient(UUID clientCredentials) {
+        try {
+            clients.remove(clientCredentials);
+            return Response.getSuccessResponse(true);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Boolean> addItemToCart(UUID userId, UUID itemId, int quantity, UUID storeID ){

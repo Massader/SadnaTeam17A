@@ -83,6 +83,11 @@ public class Service {
     public UUID logout(UUID clientCredentials){
         return userController.logout(clientCredentials).getValue();
     }
+
+    public boolean closeClient(UUID clientCredentials){
+        Response<Boolean> response = userController.closeClient(clientCredentials);
+        return response.getValue() ? response.getValue() : false;
+    }
 }
 
 
