@@ -121,6 +121,28 @@ public class Service {
         return response2.getValue()!=null ? response2.getValue() : false;
     }
 
+    public boolean validateOrder(UUID clientCredentials/*, args*/){
+        Response<Boolean> response = supplyController.validateOrder(/*args*/);
+        return response.getValue()!=null ? response.getValue() : false;
+    }
+
+    public boolean validatePayment(UUID clientCredentials/*, args*/){
+        Response<Boolean> response = paymentController.validatePaymentDetails(/*args*/);
+        return response.getValue()!=null ? response.getValue() : false;
+    }
+
+    public int confirmOrder(UUID clientCredentials){
+        Response<Integer> response1 = supplyController.sendOrder();
+        Response<Integer> response2;
+        if(!response1.isError()) {
+            response2 = paymentController.requestPayment();
+            int confirmationId = 1;
+            if (!response2.isError())
+                return confirmationId;
+        }
+        return 0;
+    }
+
     public ServiceStore getStoreInformation(UUID storeId){
         Response<Store> response = storeController.getStoreInformation(storeId);
         if(response.isError())
