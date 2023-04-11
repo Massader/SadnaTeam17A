@@ -64,7 +64,7 @@ public class Service {
             UUID clientCredentials = loginResponse.getValue();
             Response<Boolean> setAdminResponse = userController.setAsAdmin(clientCredentials, clientCredentials);
             if (loginResponse.isError()) throw new RuntimeException("System startup - setting default admin role failed.");
-            Response<Boolean> logoutResponse = userController.logout(clientCredentials);
+            Response<UUID> logoutResponse = userController.logout(clientCredentials);
             if (loginResponse.isError()) throw new RuntimeException("System startup - logging out default admin failed.");
         } catch (Exception e) {
             LOG.log(Level.SEVERE, e.getMessage() + "\n" + e.getStackTrace());
@@ -78,6 +78,10 @@ public class Service {
     }
     public UUID createClient(){
         return userController.createClient().getValue();
+    }
+
+    public UUID logout(UUID clientCredentials){
+        return userController.logout(clientCredentials).getValue();
     }
 }
 

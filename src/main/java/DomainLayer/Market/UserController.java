@@ -159,14 +159,19 @@ public class UserController {
     }
 
     // delete the user from the loged in list.
-    public Response<Boolean> logout(UUID userId) {
-        if (!userCredentials.containsKey(userId))
-            return Response.getFailResponse("this user ID does not exist");
-        if (!logedInUsers.contains(userId))
-            return Response.getFailResponse("this user is already logged out");
-        logedInUsers.remove(userId);
-        //User user = userCredentials.get(userId);
-        return Response.getSuccessResponse(true);
+    public Response<UUID> logout(UUID userId) {
+        try {
+            if (!userCredentials.containsKey(userId))
+                return Response.getFailResponse("this user ID does not exist");
+            if (!logedInUsers.contains(userId))
+                return Response.getFailResponse("this user is already logged out");
+            logedInUsers.remove(userId);
+            //User user = userCredentials.get(userId);
+            return Response.getSuccessResponse(userId);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Boolean> setAsFounder() {
