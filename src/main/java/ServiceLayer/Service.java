@@ -88,6 +88,11 @@ public class Service {
         Response<Boolean> response = securityController.changePassword(clientCredentials, oldPassword, newPassword);
         return response.getValue() ? response.getValue() : false;
     }
+
+    public boolean closeClient(UUID clientCredentials){
+        Response<Boolean> response = userController.closeClient(clientCredentials);
+        return response.getValue() ? response.getValue() : false;
+    }
 }
 
 
