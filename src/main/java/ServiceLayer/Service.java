@@ -112,7 +112,13 @@ public class Service {
     }
 
     public boolean deleteUser(UUID clientCredentials, UUID userToDelete){
-        return false; //to implement
+        Response<Boolean> response1 = securityController.removeUser(clientCredentials, userToDelete);
+        Response<Boolean> response2;
+        if (response1.getValue())
+            response2 = userController.deleteUser(clientCredentials, userToDelete);
+        else
+            return false;
+        return response2.getValue()!=null ? response2.getValue() : false;
     }
 
     public ServiceStore getStoreInformation(UUID storeId){
