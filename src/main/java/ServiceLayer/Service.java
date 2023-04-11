@@ -88,27 +88,27 @@ public class Service {
 
     public boolean changePassword(UUID clientCredentials, String oldPassword, String newPassword){
         Response<Boolean> response = securityController.changePassword(clientCredentials, oldPassword, newPassword);
-        return response.getValue() ? response.getValue() : false;
+        return response.getValue()!=null ? response.getValue() : false;
     }
 
     public boolean closeClient(UUID clientCredentials){
         Response<Boolean> response = userController.closeClient(clientCredentials);
-        return response.getValue() ? response.getValue() : false;
+        return response.getValue()!=null ? response.getValue() : false;
     }
 
     public boolean closeStore(UUID clientCredentials, UUID storeID){
         Response<Boolean> response = storeController.closeStore(clientCredentials, storeID);
-        return response.getValue() ? response.getValue() : false;
+        return response.getValue()!=null ? response.getValue() : false;
     }
 
     public boolean reopenStore(UUID clientCredentials, UUID storeID){
         Response<Boolean> response = storeController.reopenStore(clientCredentials, storeID);
-        return response.getValue() ? response.getValue() : false;
+        return response.getValue()!=null ? response.getValue() : false;
     }
 
     public boolean shutdownStore(UUID clientCredentials, UUID storeID){
         Response<Boolean> response = storeController.shutdownStore(clientCredentials, storeID);
-        return response.getValue() ? response.getValue() : false;
+        return response.getValue()!=null ? response.getValue() : false;
     }
 
     public boolean deleteUser(UUID clientCredentials, UUID userToDelete){
