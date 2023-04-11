@@ -93,6 +93,16 @@ public class Service {
         Response<Boolean> response = userController.closeClient(clientCredentials);
         return response.getValue() ? response.getValue() : false;
     }
+
+    public boolean closeStore(UUID clientCredentials, UUID storeID){
+        Response<Boolean> response = storeController.closeStore(clientCredentials, storeID);
+        return response.getValue() ? response.getValue() : false;
+    }
+
+    public boolean reopenStore(UUID clientCredentials, UUID storeID){
+        Response<Boolean> response = storeController.reopenStore(clientCredentials, storeID);
+        return response.getValue() ? response.getValue() : false;
+    }
 }
 
 
