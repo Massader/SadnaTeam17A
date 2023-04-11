@@ -62,10 +62,16 @@ public class StoreController {
     }
 
     public Response<Boolean> shutdownStore(UUID clientCredentials , UUID storeId ) {
-    checkExistStore(storeId);
-        if( storeMap.get(storeId).ShutDown()){return Response.getSuccessResponse(true);}
-        return Response.getFailResponse("can not shutdown store");
-
+        try {
+            checkExistStore(storeId);
+            if (storeMap.get(storeId).shutdownStore()) {
+                return Response.getSuccessResponse(true);
+            }
+            return Response.getFailResponse("can not shutdown store");
+        }
+        catch(Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Item> getItem(UUID itemId){
