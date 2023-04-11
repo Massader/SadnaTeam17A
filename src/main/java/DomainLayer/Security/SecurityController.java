@@ -29,8 +29,15 @@ public class SecurityController {
         return singleton;
     }
 
-    public boolean ValidatePass(UUID id, String password) {
-        return this.passwords.get(id).equals(password);
+    public Response<UUID> ValidatePass(UUID id, String password) {
+        try {
+            if(passwords.get(id).equals(password))
+                return Response.getSuccessResponse(id);
+            else return Response.getFailResponse("Incorrect password");
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     private boolean isLegalPassword(String password)
@@ -60,22 +67,36 @@ public class SecurityController {
     }
 
     public Response<Boolean> changePassword(UUID id, String oldPass, String newPass){
-        if(!ValidatePass(id, oldPass))
-            return Response.getFailResponse("the old password is incorrect!");
-
-        return encryptAndSavePassword(id, newPass);
+        try {
+            if (!ValidatePass(id, oldPass).getValue().equals(id))
+                return Response.getFailResponse("the old password is incorrect!");
+            return encryptAndSavePassword(id, newPass);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Boolean> removePassword(UUID id, String oldPass, String newPass){
-        passwords.remove(id);
-        return Response.getSuccessResponse(true);
+        try {
+            passwords.remove(id);
+            return Response.getSuccessResponse(true);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Boolean> encryptAndSavePassword(UUID id, String newPass){
-        if(!isLegalPassword(newPass))
-            return Response.getFailResponse("illegal Password");
-        passwords.put(id, newPass);
-        return Response.getSuccessResponse(true);
+        try {
+            if (!isLegalPassword(newPass))
+                return Response.getFailResponse("Illegal Password");
+            passwords.put(id, newPass);
+            return Response.getSuccessResponse(true);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Boolean> ValidateSecurityQuestion(UUID id, String answer){

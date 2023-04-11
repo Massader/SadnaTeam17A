@@ -47,7 +47,7 @@ public class UserController {
         User user = getUserById(id);
 
         //validate the password
-        if (securityController.ValidatePass(id, password)) {
+        if (securityController.ValidatePass(id, password).getValue().equals(id)) {
             //transfer the client to the loged in users, and delete it from the non registered clients list
             logedInUsers.add(userName);
             closeClien(client.getId());
