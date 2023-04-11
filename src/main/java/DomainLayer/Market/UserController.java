@@ -6,6 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import DomainLayer.Market.Users.Client;
 import DomainLayer.Market.Users.PurchaseHistory;
+import DomainLayer.Market.Users.Roles.Role;
+import DomainLayer.Market.Users.Roles.StoreManager;
+import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.ShoppingCart;
 import DomainLayer.Market.Users.User;
 import DomainLayer.Security.SecurityController;
@@ -118,21 +121,102 @@ public class UserController {
         return Response.getSuccessResponse(getUser(userId).getValue().getPurchases().toArray().toString());// TODO: now return as a string  when we will know how Purchase will be -> change accordingly
 
     }
+
+
+    //if you are StoreOwner you will be also StoreManager  -> therefore we check only this.
+    public Response<Boolean> appointStoreManager(UUID clientId, UUID apointee, UUID storeId) {
+        if (!userCredentials.containsKey(apointee))
+            return Response.getFailResponse("this appointee does not exist");
+        if (!isRegisteredUser(apointee)) {
+            return Response.getFailResponse("this appointee not register");
+        }
+        StoreManager role;
+        role = (StoreManager)getStoreManager(apointee,storeId).getValue();
+       // if(role==null){role=(StoreOwner)getStoreOwner(apointee,storeId).getValue();}
+        if(role==null){return Response.getFailResponse("this user can't appoint Store Manager");}
+        if (!userCredentials.containsKey(clientId)){
+            return Response.getFailResponse("this user does not exist");}
+        if(getStoreManager(clientId,storeId)!=null){ return Response.getFailResponse("this user is already Store Manager");}
+        role.addAppointmentOFStoreManager(clientId);
+        StoreManager storeManager = new StoreManager();
+        getUser(clientId).getValue().addRole(storeId,storeManager);
+        return Response.getSuccessResponse(true);
+        }
+
+
     public Response<Boolean> appointStoreOwner(UUID clientId, UUID apointee, UUID storeId) {
-        return null;
+        if (!userCredentials.containsKey(apointee))
+            return Response.getFailResponse("this appointee does not exist");
+        if (!isRegisteredUser(apointee)) {
+            return Response.getFailResponse("this appointee not register");
+        }
+        StoreOwner role;
+        role = (StoreOwner)getStoreOwner(apointee,storeId).getValue();
+        // if(role==null){role=(StoreOwner)getStoreOwner(apointee,storeId).getValue();}
+        if(role==null){return Response.getFailResponse("this user can't appoint Store Owner");}
+        if (!userCredentials.containsKey(clientId)){
+            return Response.getFailResponse("this user does not exist");}
+        if(getStoreOwner(clientId,storeId)!=null){ return Response.getFailResponse("this user is already Store Manager");}
+        role.addAppointmentOFStoreOwner(clientId);
+        StoreOwner storeOwner = new StoreOwner();
+        getUser(clientId).getValue().addRole(storeId,storeOwner);
+        return Response.getSuccessResponse(true);
     }
 
-    public Response<Boolean> appointStoreManager(UUID clientId, UUID apointee, UUID storeId) {
-        return null;
-    }
+
 
     public Response<Boolean> removeStoreOwner(UUID clientId, UUID ownerToRemove, UUID storeId) {
-        return null;
+        if (!userCredentials.containsKey(clientId))
+            return Response.getFailResponse("this appointee does not exist");
+        if (!isRegisteredUser(clientId)) {
+            return Response.getFailResponse("this appointee not register");
+        }
+        StoreOwner role;
+        role = (StoreOwner)getStoreOwner(clientId,storeId).getValue();
+        // if(role==null){role=(StoreOwner)getStoreOwner(apointee,storeId).getValue();}
+        if(role==null){return Response.getFailResponse("this user not Store Owner");}
+        if (!userCredentials.containsKey(clientId)){
+            return Response.getFailResponse("this user does not exist");}
+        if(!role.removeAppointmentOFStoreOwner(ownerToRemove)){return Response.getFailResponse("You have not appointed the store owner before");}
+        return Response.getSuccessResponse(removeAllStoreOwner(ownerToRemove,storeId));
     }
 
-    public Response<Boolean> removeStoreManager(UUID clientId, UUID ownerToRemove, UUID storeId) {
-        return null;
+    private Boolean removeAllStoreOwner(UUID ownerToRemove, UUID storeId) {
+        User user = getUser(ownerToRemove).getValue();
+        StoreOwner storeOwner = (StoreOwner) user.getStoreOwner(storeId);
+        for (UUID newStoreOwnerToRemove: storeOwner.getAppointmentOFStoreOwner()) {
+            removeAllStoreOwner(newStoreOwnerToRemove,storeId);
+        }
+        return (user.removeStoreOwnerRole(storeId));
     }
+
+    private Boolean removeAllStoreManager(UUID managerToRemove, UUID storeId) {
+        User user = getUser(managerToRemove).getValue();
+        StoreManager storeManager = (StoreManager) user.getStoreManager(storeId);
+        for (UUID newManagerToRemove: storeManager.getAppointmentOFStoreManager()) {
+            removeAllStoreManager(newManagerToRemove,storeId);
+        }
+        return (user.removeStoreManagerRole(storeId));
+    }
+
+
+
+    public Response<Boolean> removeStoreManager(UUID clientId, UUID ownerToRemove, UUID storeId) {
+        if (!userCredentials.containsKey(clientId))
+            return Response.getFailResponse("this appointee does not exist");
+        if (!isRegisteredUser(clientId)) {
+            return Response.getFailResponse("this appointee not register");
+        }
+        StoreManager role;
+        role = (StoreManager)getStoreManager(clientId,storeId).getValue();
+        // if(role==null){role=(StoreOwner)getStoreOwner(apointee,storeId).getValue();}
+        if(role==null){return Response.getFailResponse("this user not Store Manager");}
+        if (!userCredentials.containsKey(clientId)){
+            return Response.getFailResponse("this user does not exist");}
+        if(!role.removeAppointmentOFStoreManager(ownerToRemove)){return Response.getFailResponse("You have not appointed the store owner before");}
+        return Response.getSuccessResponse(removeAllStoreManager(ownerToRemove,storeId));
+    }
+
 
     public Response<Boolean> setManagerPermissions(UUID clientId, UUID manager,
                                                    UUID storeId, List<Integer> permissions) {
@@ -221,6 +305,29 @@ public class UserController {
             return clients.get(id);
         return null;
     }
+
+
+    
+    
+    private Response<Role> getStoreManager(UUID clientId, UUID storeId){
+        if (!userCredentials.containsKey(clientId)){
+            return Response.getFailResponse("this user does not exist");}
+        User user= getUser(clientId).getValue();
+        if(user.isStoreManager(storeId)){return Response.getFailResponse("this user is not Store Manager");}
+        return Response.getSuccessResponse(user.getStoreManager(storeId));
+
+    }
+    
+
+
+    private Response<Role> getStoreOwner(UUID clientId, UUID storeId){
+        if (!userCredentials.containsKey(clientId)){
+            return Response.getFailResponse("this user does not exist");}
+        User user= getUser(clientId).getValue();
+        if(user.isStoreOwner(storeId)){return Response.getFailResponse("this user is not Store Owner");}
+        return Response.getSuccessResponse(user.getStoreOwner(storeId));
+}
+
 
 
 

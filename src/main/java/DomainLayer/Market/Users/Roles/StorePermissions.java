@@ -1,4 +1,11 @@
 package DomainLayer.Market.Users.Roles;
 
-public class StorePermissions {
+public enum StorePermissions {
+    STORE_COMMUNICATION,
+    STORE_SALE_HISTORY,
+    STORE_STOCK_MANAGEMENT,
+    STORE_ITEM_MANAGEMENT,
+    STORE_POLICY_MANAGEMENT,
+    STORE_DISCOUNT_MANAGEMENT,
+    STORE_MANAGEMENT_INFORMATION
 }

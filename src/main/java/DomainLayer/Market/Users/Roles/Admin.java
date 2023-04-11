@@ -1,4 +1,9 @@
 package DomainLayer.Market.Users.Roles;
 
-public class Admin {
+import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+public class Admin extends Role{
+    private ConcurrentLinkedQueue<UUID> appointmentOFStoreOwner;
+    private ConcurrentLinkedQueue<UUID> appointmentOFStoreManager;
 }
