@@ -108,6 +108,10 @@ public class Service {
         Response<Boolean> response = storeController.shutdownStore(clientCredentials, storeID);
         return response.getValue() ? response.getValue() : false;
     }
+
+    public boolean deleteUser(UUID clientCredentials, UUID userToDelete){
+        return false; //to implement
+    }
 }
 
 

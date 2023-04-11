@@ -10,6 +10,7 @@ import DomainLayer.Market.Users.ShoppingCart;
 import DomainLayer.Market.Users.User;
 import DomainLayer.Security.SecurityController;
 import ServiceLayer.Response;
+import DomainLayer.Market.Users.Roles.*;
 
 public class UserController {
 
@@ -150,18 +151,28 @@ public class UserController {
     }
 
     public Response<Boolean> deleteUser(UUID userId, UUID storeId) {
-        if (!userCredentials.containsKey(userId))
-            return Response.getFailResponse("this user ID does not exist");
+        try {
+            if (!userCredentials.containsKey(userId))
+                return Response.getFailResponse("this user ID does not exist");
 
-        if (logedInUsers.contains(userId))
-            logout(userId);
+            if (logedInUsers.contains(userId))
+                logout(userId);
 
-        //remove from both HashMaps
-        User user = userCredentials.remove(userId);
-        userNames.remove(user.getUserName());
+            //remove from both HashMaps
+            User user = userCredentials.remove(userId);
+            userNames.remove(user.getUserName());
+            //remove roles
+            for (Role role: user.getRoles())
+                removeRole(role);
 
-        return Response.getSuccessResponse(true);
+            return Response.getSuccessResponse(true);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
+
+    public void removeRole(Role role){}
 
     // delete the user from the loged in list.
     public Response<UUID> logout(UUID userId) {
