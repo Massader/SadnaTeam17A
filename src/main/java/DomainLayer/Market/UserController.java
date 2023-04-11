@@ -83,10 +83,15 @@ public class UserController {
 
 
     public Response<UUID> createClient() {
-        UUID id = UUID.randomUUID();
-        Client client = new Client(id);
-        clients.put(id, client);
-        return Response.getSuccessResponse(id);
+        try {
+            UUID id = UUID.randomUUID();
+            Client client = new Client(id);
+            clients.put(id, client);
+            return Response.getSuccessResponse(id);
+        }
+        catch(Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public synchronized Response<Boolean> closeClien(UUID clientCredentials) {
