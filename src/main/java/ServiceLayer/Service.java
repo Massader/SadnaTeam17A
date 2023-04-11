@@ -83,6 +83,11 @@ public class Service {
     public UUID logout(UUID clientCredentials){
         return userController.logout(clientCredentials).getValue();
     }
+
+    public boolean changePassword(UUID clientCredentials, String oldPassword, String newPassword){
+        Response<Boolean> response = securityController.changePassword(clientCredentials, oldPassword, newPassword);
+        return response.getValue() ? response.getValue() : false;
+    }
 }
 
 
