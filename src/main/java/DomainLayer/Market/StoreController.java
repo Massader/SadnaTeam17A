@@ -46,6 +46,22 @@ public class StoreController {
         }
     }
 
+    public Response<Item> getItemInformation(UUID storeId, UUID itemId){
+        try{
+            Store store = storeMap.get(storeId);
+            if(store!=null){
+                Item item = store.getItem(itemId);
+                if(item!=null)
+                    return Response.getSuccessResponse(item);
+                return Response.getFailResponse("Item does not exist");
+            }
+            return Response.getFailResponse("Store does not exist");
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
 
     public Response<Boolean> closeStore(UUID clientCredentials ,UUID storeId ) {
         try {
