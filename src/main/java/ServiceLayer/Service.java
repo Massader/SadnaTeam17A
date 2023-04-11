@@ -76,6 +76,9 @@ public class Service {
         LOG.log(Level.INFO, "System boot successful.");
         return true;
     }
+    public UUID createClient(){
+        return userController.createClient().getValue();
+    }
 }
 
 
