@@ -13,7 +13,7 @@ public class Store {
     private UUID storeID;
     private double rating;
     private boolean close;
-    private boolean shutDown;
+    private boolean shutdown;
     private int ratingCounter;
     private ConcurrentHashMap<UUID, Item> items;
     private ConcurrentLinkedQueue<Discount> discounts;
@@ -26,7 +26,7 @@ public class Store {
         this.storeID = UUID.randomUUID();
         this.rating = -1;
         this.close = false;
-        this.shutDown = false;
+        this.shutdown = false;
         this.ratingCounter = 0;
         items = new ConcurrentHashMap<>();
         discounts = new ConcurrentLinkedQueue<>();
@@ -44,7 +44,7 @@ public class Store {
     }
 
     public boolean closeStore() {
-        if(checkNotShutDown()&&checkNotClose()){
+        if(checkNotShutdown()&&checkNotClose()){
         this.close = true;
         return true;}
         return  false;
@@ -53,7 +53,7 @@ public class Store {
 
     public boolean reopenStore() {
         ;
-        if (!checkNotShutDown()&&!this.close) {
+        if (!checkNotShutdown()&&!this.close) {
            // throw new IllegalArgumentException("the Store :" + this.getName() + " is already open ");
             return false;
         } else {
@@ -63,13 +63,13 @@ public class Store {
 
     }
 
-    public Boolean ShutDown() {
-        this.shutDown = true;
+    public Boolean shutdownStore() {
+        this.shutdown = true;
         return true;
     }
 
-    private boolean checkNotShutDown() {
-        if (isShutDown()) {
+    private boolean checkNotShutdown() {
+        if (isShutdown()) {
            // throw new IllegalArgumentException("the Store :" + this.getName() + " is already shutDown");
             return false;
         }
@@ -97,8 +97,8 @@ public class Store {
         return storeID;
     }
 
-    public boolean isShutDown() {
-        return shutDown;
+    public boolean isShutdown() {
+        return shutdown;
     }
 
     public double getRating() {

@@ -103,6 +103,11 @@ public class Service {
         Response<Boolean> response = storeController.reopenStore(clientCredentials, storeID);
         return response.getValue() ? response.getValue() : false;
     }
+
+    public boolean shutdownStore(UUID clientCredentials, UUID storeID){
+        Response<Boolean> response = storeController.shutdownStore(clientCredentials, storeID);
+        return response.getValue() ? response.getValue() : false;
+    }
 }
 
 
