@@ -34,6 +34,18 @@ public class StoreController {
 
     }
 
+    public Response<Store> getStoreInformation(UUID storeId){
+        try{
+            Store store = storeMap.get(storeId);
+            if(store!=null)
+                return Response.getSuccessResponse(store);
+            return Response.getFailResponse("Store does not exist");
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
 
     public Response<Boolean> closeStore(UUID clientCredentials ,UUID storeId ) {
         try {
@@ -206,11 +218,11 @@ public class StoreController {
     }
 
     public Response<List<User>> getStoreStaff(UUID clientId, UUID itemId){
-return null;
+        return null;
     }
 
     public Response<List<Message>> getStoreMessages(UUID clientId, UUID itemId){
-return  null;
+        return  null;
     }
 
     public Response<String>getStoreSaleHistory(UUID clientCredentials , UUID storeId ) {// TODO: after we will have sale class -> the return  String
@@ -223,7 +235,6 @@ return  null;
         Store store = new Store(storeName);
         storeMap.put(store.getStoreID(), store);
         return Response.getSuccessResponse(store);
-
     }
 
 

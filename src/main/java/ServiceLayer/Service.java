@@ -1,6 +1,7 @@
 package ServiceLayer;
 
 import DomainLayer.Market.*;
+import DomainLayer.Market.Stores.Store;
 import DomainLayer.Payment.PaymentController;
 import DomainLayer.Security.SecurityController;
 import DomainLayer.Supply.SupplyController;
@@ -111,6 +112,14 @@ public class Service {
 
     public boolean deleteUser(UUID clientCredentials, UUID userToDelete){
         return false; //to implement
+    }
+
+    public ServiceStore getStoreInformation(UUID storeId){
+        Response<Store> response = storeController.getStoreInformation(storeId);
+        if(response.isError())
+            return null;
+        return new ServiceStore(response.getValue());
+        //ServiceStore constructor should get Store as an argument
     }
 }
 
