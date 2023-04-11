@@ -48,15 +48,15 @@ public class UserController {
 
         //validate the password
         if (securityController.ValidatePass(id, password).getValue().equals(id)) {
-            //transfer the client to the loged in users, and delete it from the non registered clients list
+            //transfer the client to the logged in users, and delete it from the non registered clients list
             logedInUsers.add(userName);
-            closeClien(client.getId());
+            closeClient(client.getId());
             return Response.getSuccessResponse(user);
         }
         return Response.getFailResponse("Wrong password.");
     }
 
-    public Response<UUID> getClienCredentials(String userName) {
+    public Response<UUID> getClientCredentials(String userName) {
         UUID id;
         if(userNames.get(userName)==null){return Response.getFailResponse("user doesn't exist");}
         return Response.getSuccessResponse(userNames.get(userName));

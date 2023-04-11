@@ -36,16 +36,29 @@ public class StoreController {
 
 
     public Response<Boolean> closeStore(UUID clientCredentials ,UUID storeId ) {
-        checkExistStore(storeId);
-        if (storeMap.get(storeId).closeStore()) { return Response.getSuccessResponse(true);}
-        return Response.getFailResponse("store already close");
-
+        try {
+            checkExistStore(storeId);
+            if (storeMap.get(storeId).closeStore()) {
+                return Response.getSuccessResponse(true);
+            }
+            return Response.getFailResponse("store already close");
         }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
 
     public Response<Boolean> reopenStore(UUID clientCredentials ,UUID storeId ) {
-        checkExistStore(storeId);
-        if (storeMap.get(storeId).reopenStore()){return Response.getSuccessResponse(true);}
-        return Response.getFailResponse("can not reopen store");
+        try {
+            checkExistStore(storeId);
+            if (storeMap.get(storeId).reopenStore()) {
+                return Response.getSuccessResponse(true);
+            }
+            return Response.getFailResponse("can not reopen store");
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Boolean> shutdownStore(UUID clientCredentials , UUID storeId ) {
