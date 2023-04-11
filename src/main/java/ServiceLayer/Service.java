@@ -1,6 +1,7 @@
 package ServiceLayer;
 
 import DomainLayer.Market.*;
+import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Payment.PaymentController;
 import DomainLayer.Security.SecurityController;
@@ -120,6 +121,14 @@ public class Service {
             return null;
         return new ServiceStore(response.getValue());
         //ServiceStore constructor should get Store as an argument
+    }
+
+    public ServiceItem getItemInformation(UUID storeId, UUID itemId){
+        Response<Item> response = storeController.getItemInformation(storeId, itemId);
+        if(response.isError())
+            return null;
+        return new ServiceItem(response.getValue());
+        //ServiceItem constructor should get Item as an argument
     }
 }
 
