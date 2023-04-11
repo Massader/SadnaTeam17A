@@ -7,6 +7,9 @@ import DomainLayer.Payment.PaymentController;
 import DomainLayer.Security.SecurityController;
 import DomainLayer.Supply.SupplyController;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -141,6 +144,15 @@ public class Service {
                 return confirmationId;
         }
         return 0;
+    }
+
+    public List<ServiceItem> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating){
+        Response<List<Item>> response = searchController.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating);
+        List<ServiceItem> list = new ArrayList<ServiceItem>();
+        for (Item item : response.getValue()) {
+            list.add(new ServiceItem(item));
+        }
+        return list;
     }
 
     public ServiceStore getStoreInformation(UUID storeId){
