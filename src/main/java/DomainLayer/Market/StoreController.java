@@ -183,12 +183,17 @@ public class StoreController {
         }
 
 
-    public Response<UUID> postReview(UUID clientId, UUID itemId, String reviewBody){
-        if (!itemExist(itemId))
-            return Response.getFailResponse("item doesn't exist");
-        Item item = getItem(itemId).getValue();
-        item.addReviews(clientId,reviewBody);
-        return Response.getSuccessResponse(clientId);
+    public Response<UUID> postReview(UUID clientCredentials, UUID itemId, String reviewBody){
+        try{
+            if (!itemExist(itemId))
+                return Response.getFailResponse("Item doesn't exist");
+            Item item = getItem(itemId).getValue();
+            UUID reviewId = item.addReview(clientCredentials,reviewBody);
+            return Response.getSuccessResponse(reviewId);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     //calculate new rating given a new one

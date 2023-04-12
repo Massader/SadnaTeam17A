@@ -193,6 +193,13 @@ public class Service {
             return null;
         return new ServiceShoppingCart(response.getValue());
     }
+
+    public UUID postReview(UUID clientCredentials, UUID itemId, String reviewBody){
+        Response<UUID> response = storeController.postReview(clientCredentials, itemId, reviewBody);
+        if(response.isError())
+            return null;
+        return response.getValue();
+    }
 }
 
 
