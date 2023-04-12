@@ -48,6 +48,16 @@ public class UserController {
         }
     }
 
+    public Response<ShoppingCart> viewCart(UUID clientCredentials){
+        try {
+            Client client = getClientOrUser(clientCredentials);
+            return Response.getSuccessResponse(client.getCart());
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
     public Response<User> Login(String userName, String password, Client client) {
         if (logedInUsers.contains(userName))
             return Response.getFailResponse("A user is already logged in, please log out first.");

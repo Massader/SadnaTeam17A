@@ -3,6 +3,7 @@ package ServiceLayer;
 import DomainLayer.Market.*;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
+import DomainLayer.Market.Users.ShoppingCart;
 import DomainLayer.Payment.PaymentController;
 import DomainLayer.Security.SecurityController;
 import DomainLayer.Supply.SupplyController;
@@ -187,6 +188,13 @@ public class Service {
                 return new ServiceStore(response.getValue());
         }
         return null;
+    }
+
+    public ServiceShoppingCart viewCart(UUID clientCredentials){
+        Response<ShoppingCart> response = userController.viewCart(clientCredentials);
+        if(response.isError())
+            return null;
+        return new ServiceShoppingCart(response.getValue());
     }
 }
 
