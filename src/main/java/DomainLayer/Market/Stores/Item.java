@@ -107,10 +107,10 @@ public class Item {
     //methods:
 
 
-    public void addReviews(UUID clientId, String body){
-        UUID id = UUID.randomUUID();
-        Review review = new Review(id, body, clientId);
-        reviews.put(id, review);
+    public UUID addReview(UUID clientCredentials, String body){
+        Review review = new Review(body, clientCredentials);
+        reviews.put(review.getId(), review);
+        return review.getId();
     }
 
     // make avarage of the old ratings with the new one
