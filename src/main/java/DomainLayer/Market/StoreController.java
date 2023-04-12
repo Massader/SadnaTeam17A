@@ -34,6 +34,7 @@ public class StoreController {
         return storeMap.values();
     }
 
+
     private Response<Boolean> checkExistStore(UUID storeId){
         if(!this.storeMap.containsKey(storeId)){ return Response.getFailResponse("item not exist");}
         return Response.getSuccessResponse(true);
@@ -253,10 +254,16 @@ public class StoreController {
         return Response.getSuccessResponse(saleHistory.toArray().toString());
     }
 
+    //why do we need clientCredentials here? we call the setAsFounder function from Service.
     public  Response<Store> createStore(UUID clientCredentials , String storeName , String storeDescription ) {
-        Store store = new Store(storeName);
-        storeMap.put(store.getStoreID(), store);
-        return Response.getSuccessResponse(store);
+        try {
+            Store store = new Store(storeName, storeDescription);
+            storeMap.put(store.getStoreID(), store);
+            return Response.getSuccessResponse(store);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
 

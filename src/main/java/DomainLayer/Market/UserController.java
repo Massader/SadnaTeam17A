@@ -38,6 +38,16 @@ public class UserController {
         return singleton;
     }
 
+    public Response<Boolean> setAsFounder(UUID clientCredentials, UUID storeId){
+        try {
+            getUser(clientCredentials).getValue().addRole(new StoreFounder(storeId));
+            return Response.getSuccessResponse(true);
+        }
+        catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
     public Response<User> Login(String userName, String password, Client client) {
         if (logedInUsers.contains(userName))
             return Response.getFailResponse("A user is already logged in, please log out first.");

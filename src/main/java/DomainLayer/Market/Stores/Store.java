@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class Store {
     private String name;
     private UUID storeID;
+    private String description;
     private double rating;
     private boolean close;
     private boolean shutdown;
@@ -22,9 +23,10 @@ public class Store {
     private ConcurrentLinkedQueue<Sale> sales;
 
 
-    public Store(String name) {
+    public Store(String name, String description) {
         this.name = name;
         this.storeID = UUID.randomUUID();
+        this.description = description;
         this.rating = -1;
         this.close = false;
         this.shutdown = false;

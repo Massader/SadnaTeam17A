@@ -178,6 +178,16 @@ public class Service {
         return new ServiceItem(response.getValue());
         //ServiceItem constructor should get Item as an argument
     }
+
+    public ServiceStore createStore(UUID clientCredentials , String storeName , String storeDescription){
+        Response<Store> response = storeController.createStore(clientCredentials, storeName, storeDescription);
+        if(!response.isError()){
+            Response<Boolean> response2 = userController.setAsFounder(clientCredentials, response.getValue().getStoreID());
+            if(!response2.isError() && response2.getValue())
+                return new ServiceStore(response.getValue());
+        }
+        return null;
+    }
 }
 
 
