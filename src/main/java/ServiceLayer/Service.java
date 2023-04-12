@@ -82,11 +82,17 @@ public class Service {
         return true;
     }
     public UUID createClient(){
-        return userController.createClient().getValue();
+        Response<UUID> response = userController.createClient();
+        if(response.isError())
+            return null;
+        return response.getValue();
     }
 
     public UUID logout(UUID clientCredentials){
-        return userController.logout(clientCredentials).getValue();
+        Response<UUID> response =  userController.logout(clientCredentials);
+        if(response.isError())
+            return null;
+        return response.getValue();
     }
 
     public boolean changePassword(UUID clientCredentials, String oldPassword, String newPassword){
@@ -115,10 +121,10 @@ public class Service {
     }
 
     public boolean deleteUser(UUID clientCredentials, UUID userToDelete){
-        Response<Boolean> response1 = securityController.removeUser(clientCredentials, userToDelete);
+        Response<Boolean> response1 = userController.deleteUser(clientCredentials, userToDelete);
         Response<Boolean> response2;
-        if (response1.getValue())
-            response2 = userController.deleteUser(clientCredentials, userToDelete);
+        if (!response1.isError())
+            response2 = securityController.removeUser(clientCredentials, userToDelete);
         else
             return false;
         return response2.getValue()!=null ? response2.getValue() : false;
@@ -148,6 +154,8 @@ public class Service {
 
     public List<ServiceItem> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating){
         Response<List<Item>> response = searchController.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating);
+        if(response.isError())
+            return null;
         List<ServiceItem> list = new ArrayList<ServiceItem>();
         for (Item item : response.getValue()) {
             list.add(new ServiceItem(item));
