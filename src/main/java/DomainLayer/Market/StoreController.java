@@ -258,6 +258,9 @@ public class StoreController {
     public  Response<Store> createStore(UUID clientCredentials , String storeName , String storeDescription ) {
         try {
             Store store = new Store(storeName, storeDescription);
+            Response<Boolean> response = userController.setAsFounder(clientCredentials, store.getStoreID());
+            if (response.isError())
+                return Response.getFailResponse(response.getMessage());
             storeMap.put(store.getStoreID(), store);
             return Response.getSuccessResponse(store);
         }
