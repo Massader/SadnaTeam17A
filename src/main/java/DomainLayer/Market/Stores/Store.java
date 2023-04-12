@@ -3,6 +3,7 @@ package DomainLayer.Market.Stores;
 import DomainLayer.Market.Stores.Discounts.Discount;
 import ServiceLayer.Response;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,6 +35,9 @@ public class Store {
         sales = new ConcurrentLinkedQueue<>();
     }
 
+    public Collection<Item> getItems(){
+        return items.values();
+    }
 
     public void addRating(int newRating) {
         double x = rating * ratingCounter;

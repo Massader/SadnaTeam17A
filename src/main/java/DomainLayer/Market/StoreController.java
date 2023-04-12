@@ -7,6 +7,7 @@ import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
 import ServiceLayer.Response;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,6 +29,11 @@ public class StoreController {
             singleton = new StoreController();
         return singleton;
     }
+
+    public Collection<Store> getStores(){
+        return storeMap.values();
+    }
+
     private Response<Boolean> checkExistStore(UUID storeId){
         if(!this.storeMap.containsKey(storeId)){ return Response.getFailResponse("item not exist");}
         return Response.getSuccessResponse(true);

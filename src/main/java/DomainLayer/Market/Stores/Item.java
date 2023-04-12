@@ -2,6 +2,7 @@ package DomainLayer.Market.Stores;
 
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -40,6 +41,17 @@ public class Item {
     }
 
     //getters & setters :
+
+    public Collection<Category> getCategories(){
+        return categories.stream().toList();
+    }
+    public boolean containsCategory(String category){
+        for (Category category1 : this.getCategories()){
+            if (category1.getCategoryName().equals(category))
+                    return true;
+        }
+        return false;
+    }
 
     public UUID getId() {
         return id;
