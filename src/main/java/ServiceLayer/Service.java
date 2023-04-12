@@ -182,12 +182,9 @@ public class Service {
 
     public ServiceStore createStore(UUID clientCredentials , String storeName , String storeDescription){
         Response<Store> response = storeController.createStore(clientCredentials, storeName, storeDescription);
-        if(!response.isError()){
-            Response<Boolean> response2 = userController.setAsFounder(clientCredentials, response.getValue().getStoreID());
-            if(!response2.isError() && response2.getValue())
-                return new ServiceStore(response.getValue());
-        }
-        return null;
+        if(response.isError())
+            return null;
+        return new ServiceStore(response.getValue());
     }
 
     public ServiceShoppingCart viewCart(UUID clientCredentials){

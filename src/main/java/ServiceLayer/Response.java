@@ -35,7 +35,7 @@ public class Response<T> {
         this.error = error;
     }
 
-    private String getMessage() {
+    public String getMessage() {
         return message;
     }
 
