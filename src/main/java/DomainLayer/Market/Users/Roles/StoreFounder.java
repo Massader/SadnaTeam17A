@@ -1,4 +1,11 @@
 package DomainLayer.Market.Users.Roles;
 
-public class StoreFounder {
+import java.util.UUID;
+
+public class StoreFounder extends Role {
+    private UUID storeId;
+
+    public StoreFounder(UUID storeId){
+        this.storeId = storeId;
+    }
 }
