@@ -13,4 +13,5 @@ public abstract class Role {
 
     public abstract List<StorePermissions> getPermissions();
 
+    public abstract void addPermission(StorePermissions permission);
 }

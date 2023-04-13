@@ -200,6 +200,14 @@ public class Service {
             return null;
         return response.getValue();
     }
+
+    public boolean SetManagerPermissions(UUID clientCredentials, UUID manager,
+                                         UUID storeId, List<Integer> permissions){
+        Response<Boolean> response = userController.setManagerPermissions(clientCredentials, manager, storeId, permissions);
+        if(response.isError())
+            return false;
+        return response.getValue();
+    }
 }
 
 

@@ -42,6 +42,10 @@ public class Store {
         rolesMap = new ConcurrentHashMap<>();
     }
 
+    public ConcurrentHashMap<UUID, Role> getRolesMap() {
+        return rolesMap;
+    }
+
     public boolean checkPermission(UUID clientCredentials, StorePermissions permission){
         if(!rolesMap.contains(clientCredentials))
             return false;
