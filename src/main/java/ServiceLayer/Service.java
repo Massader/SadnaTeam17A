@@ -4,6 +4,7 @@ import DomainLayer.Market.*;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingCart;
+import DomainLayer.Market.Users.User;
 import DomainLayer.Payment.PaymentController;
 import DomainLayer.Security.SecurityController;
 import DomainLayer.Supply.SupplyController;
@@ -207,6 +208,16 @@ public class Service {
         if(response.isError())
             return false;
         return response.getValue();
+    }
+
+    public List<ServiceUser> getStoreStaff(UUID clientCredentials, UUID storeId){
+        Response<List<User>> response = storeController.getStoreStaff(clientCredentials, storeId);
+        if(response.isError())
+            return null;
+        List<ServiceUser> serviceUsers = new ArrayList<ServiceUser>();
+        for(User user : response.getValue())
+            serviceUsers.add(new ServiceUser(user));
+        return serviceUsers;
     }
 }
 
