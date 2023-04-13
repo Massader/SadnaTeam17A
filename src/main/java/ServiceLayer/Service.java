@@ -247,6 +247,34 @@ public class Service {
             return false;
         return response.getValue();
     }
+
+    public boolean setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId, int newQuantity){
+        Response<Boolean> response = storeController.setItemQuantity(clientCredentials, storeId, itemId, newQuantity);
+        if(response.isError())
+            return false;
+        return response.getValue();
+    }
+
+    public boolean setItemName(UUID clientCredentials, UUID storeId, UUID itemId, String name){
+        Response<Boolean> response = storeController.setItemName(clientCredentials, storeId, itemId, name);
+        if(response.isError())
+            return false;
+        return response.getValue();
+    }
+
+    public boolean setItemDescription(UUID clientCredentials, UUID storeId, UUID itemId, String description){
+        Response<Boolean> response = storeController.setItemDescription(clientCredentials, storeId, itemId, description);
+        if(response.isError())
+            return false;
+        return response.getValue();
+    }
+
+    public boolean setItemPrice(UUID clientCredentials, UUID storeId, UUID itemId, int price){
+        Response<Boolean> response = storeController.setItemPrice(clientCredentials, storeId, itemId, price);
+        if(response.isError())
+            return false;
+        return response.getValue();
+    }
 }
 
 
