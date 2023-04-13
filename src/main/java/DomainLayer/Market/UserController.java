@@ -5,11 +5,15 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import DomainLayer.Market.Stores.Store;
-import DomainLayer.Market.Users.Client;
-import DomainLayer.Market.Users.PurchaseHistory;
-import DomainLayer.Market.Users.ShoppingCart;
-import DomainLayer.Market.Users.User;
+
+//import DomainLayer.Market.Users.*;
+
+//import DomainLayer.Market.Stores.Store;
+//import DomainLayer.Market.Users.Client;
+//import DomainLayer.Market.Users.PurchaseHistory;
+//import DomainLayer.Market.Users.ShoppingCart;
+//import DomainLayer.Market.Users.User;
+
 import DomainLayer.Security.SecurityController;
 import ServiceLayer.Response;
 import DomainLayer.Market.Users.Roles.*;
@@ -142,15 +146,19 @@ public class UserController {
         return Response.getSuccessResponse( shoppingCart.removeItemToCart(itemId, storeId, quantity));
     }
 
-    public Response<String> getPurchaseHistory(UUID clientCredentials, UUID userId) {
-        if (!userCredentials.containsKey(userId))
-            return Response.getFailResponse("this user ID does not exist");
-        if(!isRegisteredUser(userId)){
-            return Response.getFailResponse("this user ID not register");
-        }
-        return Response.getSuccessResponse(getUser(userId).getValue().getPurchases().toArray().toString());// TODO: now return as a string  when we will know how Purchase will be -> change accordingly
+    public Response<List<Purchase>> getPurchaseHistory(UUID clientCredentials, UUID userId) {
+        try {
+            if (!userCredentials.containsKey(userId))
+                return Response.getFailResponse("this user ID does not exist");
+            if (clientCredentials==userId&&!isRegisteredUser(userId)) {
+                return Response.getFailResponse("this user ID not register");//check the user is register
+            }
 
-    }
+            return Response.getSuccessResponse(getUser(userId).getValue().getPurchases().stream().toList());
+        }
+        catch(Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+    }}
     public Response<Boolean> appointStoreOwner(UUID clientId, UUID apointee, UUID storeId) {
         return null;
     }
