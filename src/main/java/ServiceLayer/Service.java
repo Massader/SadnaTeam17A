@@ -184,6 +184,9 @@ public class Service {
     }
 
     public ServiceStore createStore(UUID clientCredentials , String storeName , String storeDescription){
+        Response<User> response1 = userController.getUser(clientCredentials);
+        if(response1.isError())
+            return null;
         Response<Store> response = storeController.createStore(clientCredentials, storeName, storeDescription);
         if(response.isError())
             return null;
@@ -198,6 +201,9 @@ public class Service {
     }
 
     public UUID postReview(UUID clientCredentials, UUID itemId, String reviewBody){
+        Response<User> response1 = userController.getUser(clientCredentials);
+        if(response1.isError())
+            return null;
         Response<UUID> response = storeController.postReview(clientCredentials, itemId, reviewBody);
         if(response.isError())
             return null;
@@ -303,18 +309,18 @@ public class Service {
 
 
     public Boolean addItemToCart(UUID clientCredentials, UUID itemId ,int  quantity, UUID storeID ) {
-        Response<Boolean> response1 = userController.addItemToCart(clientCredentials,itemId,quantity, storeID);
+        Response<Boolean> response = userController.addItemToCart(clientCredentials,itemId,quantity, storeID);
         if(response1.isError())
             return false;
-        Response<Boolean> response2 = storeController.removeItemQuantity(clientCredentials,itemId,quantity);
-        return response2.getValue();
+       // Response<Boolean> response2 = storeController.removeItemQuantity(clientCredentials,itemId,quantity);//todo: only if we choose to take the items from sore if its on cart
+        return response.getValue();
     }
 
     public Boolean removeItemFromCart(UUID clientCredentials, UUID itemId ,int  quantity, UUID storeID ) {
         Response<Boolean> response = userController.removeItemFromCart(clientCredentials,itemId,quantity, storeID);
         if(response.isError())
             return false;
-        Response<Boolean> response2 = storeController.AddItemQuantity(clientCredentials,itemId,quantity);
+      //  Response<Boolean> response2 = storeController.AddItemQuantity(clientCredentials,itemId,quantity);todo: only if we choose to take the items from sore if its on cart
         return response.getValue();
     }
 
