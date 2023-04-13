@@ -26,7 +26,7 @@ public class SearchController {
             List<Store> filteredStores = stores.stream().filter(store -> store.getRating() >= storeRating).toList();
             List<Item> items = new ArrayList<Item>();
             for (Store store : filteredStores) {
-                items.addAll(store.getItems().stream().filter(item ->
+                items.addAll(store.getItems().values().stream().filter(item ->
                         item.containsCategory(category) &
                                 priceRange(item, minPrice, maxPrice) &
                                 item.getRating() >= itemRating &

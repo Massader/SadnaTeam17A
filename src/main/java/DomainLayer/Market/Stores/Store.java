@@ -6,10 +6,7 @@ import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
 
-import java.util.Collection;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -55,13 +52,13 @@ public class Store {
     }
 
     public boolean checkPermission(UUID clientCredentials, StorePermissions permission){
-        if(!rolesMap.contains(clientCredentials))
+        if(!rolesMap.containsKey(clientCredentials))
             return false;
         return (rolesMap.get(clientCredentials).getPermissions().contains(permission));
     }
 
-    public Collection<Item> getItems(){
-        return items.values();
+    public Map<UUID, Item> getItems(){
+        return items;
     }
 
     public void addRating(int newRating) {
