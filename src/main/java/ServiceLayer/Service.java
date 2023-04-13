@@ -219,6 +219,34 @@ public class Service {
             serviceUsers.add(new ServiceUser(user));
         return serviceUsers;
     }
+
+    public boolean appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId){
+        Response<Boolean> response = userController.appointStoreManager(clientCredentials, appointee, storeId);
+        if(response.isError())
+            return false;
+        return response.getValue();
+    }
+
+    public boolean appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId){
+        Response<Boolean> response = userController.appointStoreOwner(clientCredentials, appointee, storeId);
+        if(response.isError())
+            return false;
+        return response.getValue();
+    }
+
+    public boolean removeStoreOwner(UUID clientCredentials, UUID ownerToRemove, UUID storeId){
+        Response<Boolean> response = userController.removeStoreOwner(clientCredentials, ownerToRemove, storeId);
+        if(response.isError())
+            return false;
+        return response.getValue();
+    }
+
+    public boolean removeStoreManager(UUID clientCredentials, UUID managerToRemove, UUID storeId){
+        Response<Boolean> response = userController.removeStoreManager(clientCredentials, managerToRemove, storeId);
+        if(response.isError())
+            return false;
+        return response.getValue();
+    }
 }
 
 

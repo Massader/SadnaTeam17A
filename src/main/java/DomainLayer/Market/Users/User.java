@@ -20,6 +20,7 @@ public class User extends Client{
     public String getUserName() {
         return userName;
     }
+
     public ConcurrentLinkedQueue<Role> getRoles() {
         return roles;
     }
@@ -30,14 +31,22 @@ public class User extends Client{
     public void setUserName(String userName){
         this.userName=userName;
     }
+
     public void setRoles(ConcurrentLinkedQueue<Role> roles){
         this.roles=roles;
     }
 
-    public void addRole(Role role){
+    public void addStoreRole(Role role){
         this.roles.add(role);
     }
 
+    public void removeStoreRole(UUID storeId){
+        for (Role role : roles)
+            if (role.getStoreId().equals(storeId)) {
+                roles.remove(role);
+                return;
+            }
+    }
 
     public void setPurchases(ConcurrentLinkedQueue<Purchase> purchases){
         this.purchases=purchases;

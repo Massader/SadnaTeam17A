@@ -2,6 +2,7 @@ package DomainLayer.Market.Stores;
 
 import DomainLayer.Market.Stores.Discounts.Discount;
 import DomainLayer.Market.Users.Roles.Role;
+import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
 
@@ -44,6 +45,13 @@ public class Store {
 
     public ConcurrentHashMap<UUID, Role> getRolesMap() {
         return rolesMap;
+    }
+
+    public StoreOwner getOwner(UUID owner){
+        if(rolesMap.containsKey(owner))
+            if(rolesMap.get(owner).getPermissions().contains(StorePermissions.STORE_OWNER))
+                return (StoreOwner) rolesMap.get(owner);
+        return null;
     }
 
     public boolean checkPermission(UUID clientCredentials, StorePermissions permission){
@@ -105,6 +113,13 @@ public class Store {
         return  true;
     }
 
+    public void addRole(UUID clientCredentials, Role role){
+        rolesMap.put(clientCredentials, role);
+    }
+
+    public void removeRole(UUID idToRemove){
+        rolesMap.remove(idToRemove);
+    }
 
 
 

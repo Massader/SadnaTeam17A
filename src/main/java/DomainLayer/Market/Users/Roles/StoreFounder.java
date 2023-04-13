@@ -14,6 +14,7 @@ public class StoreFounder extends StoreOwner {
     public List<StorePermissions> getPermissions() {
         List<StorePermissions> permissionList = new ArrayList<StorePermissions>();
         permissionList.add(StorePermissions.STORE_FOUNDER);
+        permissionList.add(StorePermissions.STORE_OWNER);
         return permissionList;
     }
 }

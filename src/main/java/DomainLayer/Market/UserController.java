@@ -42,7 +42,7 @@ public class UserController {
 
     public Response<Boolean> setAsFounder(UUID clientCredentials, UUID storeId){
         try {
-            getUser(clientCredentials).getValue().addRole(new StoreFounder(storeId));
+            getUser(clientCredentials).getValue().addStoreRole(new StoreFounder(storeId));
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception) {
@@ -151,20 +151,100 @@ public class UserController {
         return Response.getSuccessResponse(getUser(userId).getValue().getPurchases().toArray().toString());// TODO: now return as a string  when we will know how Purchase will be -> change accordingly
 
     }
-    public Response<Boolean> appointStoreOwner(UUID clientId, UUID apointee, UUID storeId) {
-        return null;
+
+    public Response<Boolean> appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId) {
+        try {
+            Response<Store> response = storeController.getStore(storeId);
+            if(response.isError())
+                return Response.getFailResponse("Store does not exist.");
+            if(!response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
+                return Response.getFailResponse("User doesn't have permission.");
+            Response<User> response2 = this.getUser(appointee);
+            if(response2.isError())
+                return Response.getFailResponse("User does not exist.");
+            if(response.getValue().getRolesMap().containsKey(appointee) &&
+                response.getValue().checkPermission(appointee, StorePermissions.STORE_OWNER))
+                return Response.getFailResponse("User already owner of the shop.");
+            StoreOwner storeOwner = new StoreOwner(storeId);
+            response2.getValue().addStoreRole(storeOwner);
+            response.getValue().addRole(appointee, storeOwner);
+            response.getValue().getOwner(clientCredentials).addAppoint(appointee);
+            return Response.getSuccessResponse(true);
+        }
+        catch(Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
-    public Response<Boolean> appointStoreManager(UUID clientId, UUID apointee, UUID storeId) {
-        return null;
+    public Response<Boolean> appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId) {
+        try {
+            Response<Store> response = storeController.getStore(storeId);
+            if(response.isError())
+                return Response.getFailResponse("Store does not exist.");
+            if(!response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
+                return Response.getFailResponse("User doesn't have permission.");
+            Response<User> response2 = this.getUser(appointee);
+            if(response2.isError())
+                return Response.getFailResponse("User does not exist.");
+            if(response.getValue().getRolesMap().containsKey(appointee))
+                return Response.getFailResponse("User already manager in the shop.");
+            StoreManager storeManager = new StoreManager(storeId);
+            response2.getValue().addStoreRole(storeManager);
+            response.getValue().addRole(appointee, storeManager);
+            response.getValue().getOwner(clientCredentials).addAppoint(appointee);
+            return Response.getSuccessResponse(true);
+        }
+        catch(Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
-    public Response<Boolean> removeStoreOwner(UUID clientId, UUID ownerToRemove, UUID storeId) {
-        return null;
+    public Response<Boolean> removeStoreOwner(UUID clientCredentials, UUID ownerToRemove, UUID storeId) {
+        try {
+            Response<Store> response = storeController.getStore(storeId);
+            if(response.isError())
+                return Response.getFailResponse("Store does not exist.");
+            if(!response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
+                return Response.getFailResponse("User doesn't have permission.");
+            Response<User> response2 = this.getUser(ownerToRemove);
+            if(response2.isError())
+                return Response.getFailResponse("User does not exist.");
+            if(response.getValue().getOwner(ownerToRemove)==null)
+                return Response.getFailResponse("User is not owner of the shop.");
+            if(!response.getValue().getOwner(clientCredentials).getAppoints().contains(ownerToRemove))
+                return Response.getFailResponse("Owner did not appointed by this user.");
+            response2.getValue().removeStoreRole(storeId);
+            response.getValue().removeRole(ownerToRemove);
+            response.getValue().getOwner(clientCredentials).removeAppoint(ownerToRemove);
+            return Response.getSuccessResponse(true);
+        }
+        catch(Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
-    public Response<Boolean> removeStoreManager(UUID clientId, UUID ownerToRemove, UUID storeId) {
-        return null;
+    public Response<Boolean> removeStoreManager(UUID clientCredentials, UUID ManagerToRemove, UUID storeId) {
+        try {
+            Response<Store> response = storeController.getStore(storeId);
+            if(response.isError())
+                return Response.getFailResponse("Store does not exist.");
+            if(!response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
+                return Response.getFailResponse("User doesn't have permission.");
+            Response<User> response2 = this.getUser(ManagerToRemove);
+            if(response2.isError())
+                return Response.getFailResponse("User does not exist.");
+            if(!response.getValue().getRolesMap().containsKey(ManagerToRemove))
+                return Response.getFailResponse("User is not Manager of the shop.");
+            if(!response.getValue().getOwner(clientCredentials).getAppoints().contains(ManagerToRemove))
+                return Response.getFailResponse("Manager did not appointed by this user.");
+            response2.getValue().removeStoreRole(storeId);
+            response.getValue().removeRole(ManagerToRemove);
+            response.getValue().getOwner(clientCredentials).removeAppoint(ManagerToRemove);
+            return Response.getSuccessResponse(true);
+        }
+        catch(Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Boolean> setManagerPermissions(UUID clientCredentials, UUID manager,
@@ -178,7 +258,7 @@ public class UserController {
             Response<User> response2 = this.getUser(manager);
             if(response2.isError())
                 return Response.getFailResponse("User does not exist.");
-            if(!response.getValue().getRolesMap().contains(manager))
+            if(!response.getValue().getRolesMap().containsKey(manager))
                 return Response.getFailResponse("User is not store manager.");
             for(int i : permissions)
                 response.getValue().getRolesMap().get(manager).addPermission(StorePermissions.values()[i]);
