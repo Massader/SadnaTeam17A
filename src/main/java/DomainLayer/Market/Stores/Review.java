@@ -7,8 +7,8 @@ public class Review {
     private String text;
     private UUID reviewer;
 
-    public Review(UUID id, String text, UUID reviewer) {
-        this.id = id;
+    public Review(String text, UUID reviewer) {
+        this.id = UUID.randomUUID();
         this.text = text;
         this.reviewer = reviewer;
     }

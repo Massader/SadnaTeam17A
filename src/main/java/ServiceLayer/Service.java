@@ -201,13 +201,19 @@ public class Service {
             return null;
         return response.getValue();
     }
-
     public List<ServicePurchase> getPurchaseHistory(UUID clientCredentials, UUID user ){
         //if(clientCredentials!=user){if(!isAdmin(clientCredentials) return null); //TODO: check where we check admin
         Response<List<Purchase>> response = userController.getPurchaseHistory(clientCredentials,user);
         if(response.isError())
             return null;
         return new ServicePurchase(response.getValue());
+
+    public boolean SetManagerPermissions(UUID clientCredentials, UUID manager,
+                                         UUID storeId, List<Integer> permissions){
+        Response<Boolean> response = userController.setManagerPermissions(clientCredentials, manager, storeId, permissions);
+        if(response.isError())
+            return false;
+        return response.getValue();
     }
 }
 

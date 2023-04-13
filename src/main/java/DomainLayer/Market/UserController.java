@@ -5,7 +5,15 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import DomainLayer.Market.Users.*;
+
+//import DomainLayer.Market.Users.*;
+
+//import DomainLayer.Market.Stores.Store;
+//import DomainLayer.Market.Users.Client;
+//import DomainLayer.Market.Users.PurchaseHistory;
+//import DomainLayer.Market.Users.ShoppingCart;
+//import DomainLayer.Market.Users.User;
+
 import DomainLayer.Security.SecurityController;
 import ServiceLayer.Response;
 import DomainLayer.Market.Users.Roles.*;
@@ -167,9 +175,26 @@ public class UserController {
         return null;
     }
 
-    public Response<Boolean> setManagerPermissions(UUID clientId, UUID manager,
+    public Response<Boolean> setManagerPermissions(UUID clientCredentials, UUID manager,
                                                    UUID storeId, List<Integer> permissions) {
-        return null;
+        try {
+            Response<Store> response = storeController.getStore(storeId);
+            if(response.isError())
+                return Response.getFailResponse("Store does not exist.");
+            if(!response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
+                return Response.getFailResponse("User doesn't have permission.");
+            Response<User> response2 = this.getUser(manager);
+            if(response2.isError())
+                return Response.getFailResponse("User does not exist.");
+            if(!response.getValue().getRolesMap().contains(manager))
+                return Response.getFailResponse("User is not store manager.");
+            for(int i : permissions)
+                response.getValue().getRolesMap().get(manager).addPermission(StorePermissions.values()[i]);
+            return Response.getSuccessResponse(true);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Boolean> deleteUser(UUID userId, UUID storeId) {

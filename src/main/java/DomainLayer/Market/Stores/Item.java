@@ -2,6 +2,7 @@ package DomainLayer.Market.Stores;
 
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -40,6 +41,17 @@ public class Item {
     }
 
     //getters & setters :
+
+    public Collection<Category> getCategories(){
+        return categories.stream().toList();
+    }
+    public boolean containsCategory(String category){
+        for (Category category1 : this.getCategories()){
+            if (category1.getCategoryName().equals(category))
+                    return true;
+        }
+        return false;
+    }
 
     public UUID getId() {
         return id;
@@ -95,10 +107,10 @@ public class Item {
     //methods:
 
 
-    public void addReviews(UUID clientId, String body){
-        UUID id = UUID.randomUUID();
-        Review review = new Review(id, body, clientId);
-        reviews.put(id, review);
+    public UUID addReview(UUID clientCredentials, String body){
+        Review review = new Review(body, clientCredentials);
+        reviews.put(review.getId(), review);
+        return review.getId();
     }
 
     // make avarage of the old ratings with the new one

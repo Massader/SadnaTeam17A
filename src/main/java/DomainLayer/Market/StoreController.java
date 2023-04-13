@@ -7,6 +7,7 @@ import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
 import ServiceLayer.Response;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,31 +29,84 @@ public class StoreController {
             singleton = new StoreController();
         return singleton;
     }
+
+    public Collection<Store> getStores(){
+        return storeMap.values();
+    }
+
+
     private Response<Boolean> checkExistStore(UUID storeId){
         if(!this.storeMap.containsKey(storeId)){ return Response.getFailResponse("item not exist");}
         return Response.getSuccessResponse(true);
 
     }
 
+    public Response<Store> getStoreInformation(UUID storeId){
+        try{
+            Store store = storeMap.get(storeId);
+            if(store!=null)
+                return Response.getSuccessResponse(store);
+            return Response.getFailResponse("Store does not exist");
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
+    public Response<Item> getItemInformation(UUID storeId, UUID itemId){
+        try{
+            Store store = storeMap.get(storeId);
+            if(store!=null){
+                Item item = store.getItem(itemId);
+                if(item!=null)
+                    return Response.getSuccessResponse(item);
+                return Response.getFailResponse("Item does not exist");
+            }
+            return Response.getFailResponse("Store does not exist");
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
 
     public Response<Boolean> closeStore(UUID clientCredentials ,UUID storeId ) {
-        checkExistStore(storeId);
-        if (storeMap.get(storeId).closeStore()) { return Response.getSuccessResponse(true);}
-        return Response.getFailResponse("store already close");
-
+        try {
+            checkExistStore(storeId);
+            if (storeMap.get(storeId).closeStore()) {
+                return Response.getSuccessResponse(true);
+            }
+            return Response.getFailResponse("store already close");
         }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
 
     public Response<Boolean> reopenStore(UUID clientCredentials ,UUID storeId ) {
-        checkExistStore(storeId);
-        if (storeMap.get(storeId).reopenStore()){return Response.getSuccessResponse(true);}
-        return Response.getFailResponse("can not reopen store");
+        try {
+            checkExistStore(storeId);
+            if (storeMap.get(storeId).reopenStore()) {
+                return Response.getSuccessResponse(true);
+            }
+            return Response.getFailResponse("can not reopen store");
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Boolean> shutdownStore(UUID clientCredentials , UUID storeId ) {
-    checkExistStore(storeId);
-        if( storeMap.get(storeId).ShutDown()){return Response.getSuccessResponse(true);}
-        return Response.getFailResponse("can not shutdown store");
-
+        try {
+            checkExistStore(storeId);
+            if (storeMap.get(storeId).shutdownStore()) {
+                return Response.getSuccessResponse(true);
+            }
+            return Response.getFailResponse("can not shutdown store");
+        }
+        catch(Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Item> getItem(UUID itemId){
@@ -129,12 +183,17 @@ public class StoreController {
         }
 
 
-    public Response<UUID> postReview(UUID clientId, UUID itemId, String reviewBody){
-        if (!itemExist(itemId))
-            return Response.getFailResponse("item doesn't exist");
-        Item item = getItem(itemId).getValue();
-        item.addReviews(clientId,reviewBody);
-        return Response.getSuccessResponse(clientId);
+    public Response<UUID> postReview(UUID clientCredentials, UUID itemId, String reviewBody){
+        try{
+            if (!itemExist(itemId))
+                return Response.getFailResponse("Item doesn't exist");
+            Item item = getItem(itemId).getValue();
+            UUID reviewId = item.addReview(clientCredentials,reviewBody);
+            return Response.getSuccessResponse(reviewId);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     //calculate new rating given a new one
@@ -187,11 +246,11 @@ public class StoreController {
     }
 
     public Response<List<User>> getStoreStaff(UUID clientId, UUID itemId){
-return null;
+        return null;
     }
 
     public Response<List<Message>> getStoreMessages(UUID clientId, UUID itemId){
-return  null;
+        return  null;
     }
 
     public Response<String>getStoreSaleHistory(UUID clientCredentials , UUID storeId ) {// TODO: after we will have sale class -> the return  String
@@ -200,11 +259,19 @@ return  null;
         return Response.getSuccessResponse(saleHistory.toArray().toString());
     }
 
+    //why do we need clientCredentials here? we call the setAsFounder function from Service.
     public  Response<Store> createStore(UUID clientCredentials , String storeName , String storeDescription ) {
-        Store store = new Store(storeName);
-        storeMap.put(store.getStoreID(), store);
-        return Response.getSuccessResponse(store);
-
+        try {
+            Store store = new Store(storeName, storeDescription);
+            Response<Boolean> response = userController.setAsFounder(clientCredentials, store.getStoreID());
+            if (response.isError())
+                return Response.getFailResponse(response.getMessage());
+            storeMap.put(store.getStoreID(), store);
+            return Response.getSuccessResponse(store);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
 
