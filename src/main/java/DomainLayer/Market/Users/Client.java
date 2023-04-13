@@ -28,10 +28,7 @@ public class Client {
     public ShoppingCart getCart() {
         return cart;
     }
-    public double getCartTotal(){
-        return  getCart().calculateTotalPrice();
 
-    }
 
 
 

@@ -392,6 +392,21 @@ public class StoreController {
         return Response.getFailResponse("cant remove item quantity");}
 
 
+    //  private ConcurrentHashMap<UUID,ShoppingBasket> shoppingBaskets;// store id,
+    public Response<Double> calculatePriceOfCart(ShoppingCart shoppingCart){
+        try{
+            double price =0;
+            for (UUID storeId:shoppingCart.getShoppingBaskets().keySet()) {// iterator on the storeId
+            Response<Store> response = this.getStore(storeId);
+            if (!response.isError())
+                return Response.getFailResponse("Store does not exist");
+            price+= response.getValue().calculatePriceOfBasket(shoppingCart.getShoppingBasket(storeId).getItemsID());}// calculate basket by his store
+            return  Response.getSuccessResponse(price);}
+            catch(Exception exception){
+                return Response.getFailResponse(exception.getMessage());
+            }
+          }
+
 
 
 

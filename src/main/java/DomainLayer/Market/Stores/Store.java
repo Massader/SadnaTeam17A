@@ -4,6 +4,7 @@ import DomainLayer.Market.Stores.Discounts.Discount;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
+import DomainLayer.Market.Users.ShoppingCart;
 import ServiceLayer.Response;
 
 import java.util.*;
@@ -24,6 +25,10 @@ public class Store {
     private ConcurrentLinkedQueue<Sale> sales;
     private ConcurrentHashMap<UUID, Role> rolesMap;
 
+
+    public ConcurrentLinkedQueue<Discount> getDiscounts() {
+        return discounts;
+    }
 
     public Store(String name, String description) {
         this.name = name;
@@ -170,5 +175,29 @@ public class Store {
             return sales;}
         throw new Exception("the user is not have permissions to get sale history of store "+this.name);
     }
+
+    public double calculatePriceOfBasket( ConcurrentHashMap<UUID,Integer> itemsID) {// itemid, quantity
+        double price =0;
+        for(UUID key : itemsID.keySet()){
+            int quantity =itemsID.get(key);
+            double minPriceByDisscounts = getItem(key).getPrice()*quantity;//ite, price * quantity
+            if(!getDiscounts().isEmpty()){
+                for (Discount discount :getDiscounts()) {
+                    double newPrice =discount.calculatePrice(key,quantity);// for this level we not Realize the assumptions
+                    if(newPrice<minPriceByDisscounts){
+                        minPriceByDisscounts = newPrice;
+                    }
+                }
+            }
+            price+=minPriceByDisscounts;}
+            return price;
+
+        };
+
+
+
+
+
+
 }
-}
+
