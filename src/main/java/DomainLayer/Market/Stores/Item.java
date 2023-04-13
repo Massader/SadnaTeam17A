@@ -120,6 +120,18 @@ public class Item {
         ratesCount++;
         rating = x/ratesCount;
     }
+    public Boolean addQuantity(int quantityToAdd){
+        this.quantity+=quantityToAdd;
+        return  true;
+    }
+
+    public Boolean removeFromQuantity(int quantityToRemove) throws Exception {
+        if(this.quantity<quantityToRemove){
+            throw new Exception(" can't remove "+ quantityToRemove+ " items, the store have less");
+        }
+        else {this.quantity-=quantityToRemove;}
+        return  true;
+    }
 
 
 
