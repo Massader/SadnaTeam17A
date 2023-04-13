@@ -1,9 +1,12 @@
 package DomainLayer.Market.Stores;
 
 import DomainLayer.Market.Stores.Discounts.Discount;
+import DomainLayer.Market.Users.Roles.Role;
+import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
 
 import java.util.Collection;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,6 +24,7 @@ public class Store {
     private ConcurrentLinkedQueue<Discount> discounts;
     private Policy policy;
     private ConcurrentLinkedQueue<Sale> sales;
+    private ConcurrentHashMap<UUID, Role> rolesMap;
 
 
     public Store(String name, String description) {
@@ -35,6 +39,13 @@ public class Store {
         discounts = new ConcurrentLinkedQueue<>();
         policy = new Policy();
         sales = new ConcurrentLinkedQueue<>();
+        rolesMap = new ConcurrentHashMap<>();
+    }
+
+    public boolean checkPermission(UUID clientCredentials, StorePermissions permission){
+        if(!rolesMap.contains(clientCredentials))
+            return false;
+        return (rolesMap.get(clientCredentials).getPermissions().contains(permission));
     }
 
     public Collection<Item> getItems(){
