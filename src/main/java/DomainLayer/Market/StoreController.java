@@ -268,11 +268,17 @@ public class StoreController {
         return  null;
     }
 
-    public Response<String>getStoreSaleHistory(UUID clientCredentials , UUID storeId ) {// TODO: after we will have sale class -> the return  String
-        Store store = getStore(storeId).getValue();
-        ConcurrentLinkedQueue<Sale> saleHistory = store.getSales();
-        return Response.getSuccessResponse(saleHistory.toArray().toString());
+    public Response<List<Sale>> getStoreSaleHistory(UUID clientCredentials , UUID storeId ) {// TODO: after we will have sale class -> the return  String
+        try{
+            return Response.getSuccessResponse(getStore(storeId).getValue().getSales(clientCredentials).stream().toList());
+        }catch(Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
+//        Store store = getStore(storeId).getValue();
+//        ConcurrentLinkedQueue<Sale> saleHistory = store.getSales();
+//        return Response.getSuccessResponse(saleHistory.toArray().toString());
+//    }
 
     //why do we need clientCredentials here? we call the setAsFounder function from Service.
     public  Response<Store> createStore(UUID clientCredentials , String storeName , String storeDescription ) {
