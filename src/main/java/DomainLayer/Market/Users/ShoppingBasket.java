@@ -11,6 +11,14 @@ public class ShoppingBasket {
     private UUID storeId;
     private ConcurrentHashMap<UUID,Integer> itemsID;//UUID itemId, int quantity
 
+    public ConcurrentHashMap<UUID, Integer> getItemsID() {
+        return itemsID;
+    }
+
+    public void setItemsID(ConcurrentHashMap<UUID, Integer> itemsID) {
+        this.itemsID = itemsID;
+    }
+
     public ShoppingBasket(UUID storeId) {
         this.id = UUID.randomUUID();
         this.storeId = storeId;
@@ -49,6 +57,6 @@ public class ShoppingBasket {
         return true;
 
     }
-    public Double calculateTotalPrice() {
-        return 0.0;}
+//    public Double calculateTotalPrice() {
+//        return 0.0;}
 }

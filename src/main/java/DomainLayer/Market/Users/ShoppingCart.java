@@ -54,14 +54,13 @@ public class ShoppingCart {
 
  }
 
- public Double calculateTotalPrice() {
-        double total =0;
-     for (ShoppingBasket basket:shoppingBaskets.values()) {
-         total+=basket.calculateTotalPrice();
-     }
-     return total;
+// public Double calculateTotalPrice() {
+//        double total =0;
+//     for (ShoppingBasket basket:shoppingBaskets.values()) {
+//         total+=basket.calculateTotalPrice();
+//     }
+//     return total;
 
  }
 
 
-}

@@ -318,6 +318,16 @@ public class Service {
         return response.getValue();
     }
 
+    public Double getCartTotal(UUID clientCredentials){
+        Response<ShoppingCart> response1 =userController.viewCart(clientCredentials);
+        if(response1.isError())
+            return null;
+        Response<Double> response2 = storeController.calculatePriceOfCart(response1.getValue());
+        if(response2.isError())
+            return null;
+        return response2.getValue();
+    }
+
 }
 
 
