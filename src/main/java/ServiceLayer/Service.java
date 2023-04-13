@@ -278,7 +278,6 @@ public class Service {
             return false;
         return response.getValue();
     }
-}
 
     public List<ServicePurchase> getPurchaseHistory(UUID clientCredentials, UUID user ){
         //if(clientCredentials!=user){if(!isAdmin(clientCredentials) return null); //TODO: check where we check admin
@@ -292,8 +291,9 @@ public class Service {
         Response<List<Sale>> response =storeController.getStoreSaleHistory(clientCredentials,storeId);
         if(response.isError())
             return null;
-        return new ServiceSale(response.getValue());}
+        return new ServiceSale(response.getValue());
     }
+}
 
 
 
