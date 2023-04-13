@@ -1,22 +1,19 @@
 package DomainLayer.Market.Users.Roles;
 
-//<<<<<<< update_User
-//public class StoreFounder extends StoreOwner{
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
-//public class StoreFounder extends StoreOwner {
+public class StoreFounder extends StoreOwner {
 
-  //  public StoreFounder(UUID storeId){
-    //    super(storeId);
-    //}
+    public StoreFounder(UUID storeId){
+        super(storeId);
+    }
 
-    //@Override
-    //public List<StorePermissions> getPermissions() {
-      //  List<StorePermissions> permissionList = new ArrayList<StorePermissions>();
-        //permissionList.add(StorePermissions.STORE_FOUNDER);
-        //return permissionList;
-    //}
-//>>>>>>> master
-//}
+    @Override
+    public List<StorePermissions> getPermissions() {
+        List<StorePermissions> permissionList = new ArrayList<StorePermissions>();
+        permissionList.add(StorePermissions.STORE_FOUNDER);
+        return permissionList;
+    }
+}

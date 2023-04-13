@@ -3,7 +3,6 @@ package ServiceLayer;
 import DomainLayer.Market.*;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
-import DomainLayer.Market.Users.Purchase;
 import DomainLayer.Market.Users.ShoppingCart;
 import DomainLayer.Payment.PaymentController;
 import DomainLayer.Security.SecurityController;
@@ -201,12 +200,6 @@ public class Service {
             return null;
         return response.getValue();
     }
-    public List<ServicePurchase> getPurchaseHistory(UUID clientCredentials, UUID user ){
-        //if(clientCredentials!=user){if(!isAdmin(clientCredentials) return null); //TODO: check where we check admin
-        Response<List<Purchase>> response = userController.getPurchaseHistory(clientCredentials,user);
-        if(response.isError())
-            return null;
-        return new ServicePurchase(response.getValue());
 
     public boolean SetManagerPermissions(UUID clientCredentials, UUID manager,
                                          UUID storeId, List<Integer> permissions){

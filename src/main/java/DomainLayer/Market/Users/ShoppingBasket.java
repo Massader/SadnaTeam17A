@@ -49,6 +49,6 @@ public class ShoppingBasket {
         return true;
 
     }
-    public Double calculateTotalPrice() {//TODO calculateTotalPrice(
+    public Double calculateTotalPrice() {
         return 0.0;}
 }
