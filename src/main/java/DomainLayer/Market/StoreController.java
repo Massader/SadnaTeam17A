@@ -2,9 +2,9 @@ package DomainLayer.Market;
 
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Sale;
-import DomainLayer.Market.Stores.SaleHistory;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
+import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
 
@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class StoreController {
     private static StoreController singleton = null;
@@ -23,7 +22,6 @@ public class StoreController {
     private StoreController() {
         storeMap = new ConcurrentHashMap<>();
         userController = UserController.getInstance();
-
     }
 
     public static synchronized StoreController getInstance() {
@@ -36,19 +34,17 @@ public class StoreController {
         return storeMap.values();
     }
 
-
-    private Response<Boolean> checkExistStore(UUID storeId){
-        if(!this.storeMap.containsKey(storeId)){ return Response.getFailResponse("store not exist");}
-        return Response.getSuccessResponse(true);
-
+    private boolean storeExist(UUID storeId){
+        return this.storeMap.containsKey(storeId);
     }
 
     public Response<Store> getStoreInformation(UUID storeId){
         try{
-            Store store = storeMap.get(storeId);
-            if(store!=null)
-                return Response.getSuccessResponse(store);
-            return Response.getFailResponse("Store does not exist");
+            if(!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            if(getStore(storeId).isClose())
+                return Response.getFailResponse("Store is closed.");
+            return Response.getSuccessResponse(getStore(storeId));
         }
         catch (Exception exception){
             return Response.getFailResponse(exception.getMessage());
@@ -57,28 +53,27 @@ public class StoreController {
 
     public Response<Item> getItemInformation(UUID storeId, UUID itemId){
         try{
-            Store store = storeMap.get(storeId);
-            if(store!=null){
-                Item item = store.getItem(itemId);
+            if(!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Item item = getStore(storeId).getItem(itemId);
                 if(item!=null)
                     return Response.getSuccessResponse(item);
-                return Response.getFailResponse("Item does not exist");
-            }
-            return Response.getFailResponse("Store does not exist");
+                return Response.getFailResponse("Item does not exist.");
         }
         catch (Exception exception){
             return Response.getFailResponse(exception.getMessage());
         }
     }
 
-
     public Response<Boolean> closeStore(UUID clientCredentials ,UUID storeId ) {
         try {
-            checkExistStore(storeId);
-            if (storeMap.get(storeId).closeStore()) {
+            if(!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist");
+            if(!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_FOUNDER))
+                return Response.getFailResponse("User doesn't have permission.");
+            if(getStore(storeId).closeStore())
                 return Response.getSuccessResponse(true);
-            }
-            return Response.getFailResponse("store already close");
+            return Response.getFailResponse("Store already closed.");
         }
         catch (Exception exception){
             return Response.getFailResponse(exception.getMessage());
@@ -87,7 +82,10 @@ public class StoreController {
 
     public Response<Boolean> reopenStore(UUID clientCredentials ,UUID storeId ) {
         try {
-            checkExistStore(storeId);
+            if(!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist");
+            if(!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_FOUNDER))
+                return Response.getFailResponse("User doesn't have permission.");
             if (storeMap.get(storeId).reopenStore()) {
                 return Response.getSuccessResponse(true);
             }
@@ -100,11 +98,14 @@ public class StoreController {
 
     public Response<Boolean> shutdownStore(UUID clientCredentials , UUID storeId ) {
         try {
-            checkExistStore(storeId);
+            if(!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist");
+//            if(!isAdmin(clientCredentials))
+//                return Response.getFailResponse("User doesn't have permission.");
             if (storeMap.get(storeId).shutdownStore()) {
                 return Response.getSuccessResponse(true);
             }
-            return Response.getFailResponse("can not shutdown store");
+            return Response.getFailResponse("Cannot shutdown store.");
         }
         catch(Exception exception){
             return Response.getFailResponse(exception.getMessage());
@@ -112,19 +113,14 @@ public class StoreController {
     }
 
     public Response<Item> getItem(UUID itemId){
-
-                //check search for the store of these item, and return the item
         Item item = null;
-        for (Store cuurentStore : storeMap.values()){
-            if (cuurentStore.hasItem(itemId)){
-                item = cuurentStore.getItem(itemId);
+        for (Store currentStore : storeMap.values()){
+            if (currentStore.hasItem(itemId)){
+                item = currentStore.getItem(itemId);
                 return Response.getSuccessResponse(item);
             }
         }
-
-                // if got here, no store contains these item ID
         return Response.getFailResponse("item doesn't exist");
-
     }
 
     // create item and add it to a store
@@ -144,7 +140,6 @@ public class StoreController {
         return Response.getSuccessResponse(item);
     }
 
-
     public Response<Integer> getItemQuantity(UUID itemId){
         if (!itemExist(itemId))
             return Response.getFailResponse("item doesn't exist");
@@ -155,35 +150,22 @@ public class StoreController {
 
     // check id the item id exist
     protected boolean itemExist(UUID itemId) {
-        Item item = null;
-        for (Store cuurentStore : storeMap.values()){
-            if (cuurentStore.hasItem(itemId)){
+        for (Store currentStore : storeMap.values())
+            if (currentStore.hasItem(itemId))
                 return true;
-            }
-        }
-
-        // if got here, no store contains these item ID
         return false;
     }
-
-
 
     public Response<ShoppingCart> getShoppingCart(UUID clientId){
         Client client = userController.getClientOrUser(clientId);
         if(client == null)
             return Response.getFailResponse("client not exist");
         return  Response.getSuccessResponse(client.getCart());
-
-
     }
-//TODO : guy why we need this?
-    public Response<Store> getStore(UUID clientId, String storeName, String storeDescription){return  null;}
-    public Response<Store> getStore(UUID storeId){
-        checkExistStore(storeId);
-        Store store = storeMap.get(storeId);
-        return Response.getSuccessResponse(store);
-        }
 
+    public Store getStore(UUID storeId){
+        return storeMap.get(storeId);
+    }
 
     public Response<UUID> postReview(UUID clientCredentials, UUID itemId, String reviewBody){
         try{
@@ -207,55 +189,19 @@ public class StoreController {
 
     //calculate new rating given a new one
     public Response<Boolean> addItemRating(UUID itemId, int rating){
-
         Item item = getItem(itemId).getValue();
         item.addRating(rating);
         return Response.getSuccessResponse(true);
     }
 
-    public Response<Boolean> setItemDescription(UUID clientId, UUID itemId, String description){
-        if(!itemExist(itemId))
-            return Response.getFailResponse("item not exist");
-        Item item = getItem(itemId).getValue();
-        item.setDescription(description);
-        return Response.getSuccessResponse(true);
-
-    }
-
-    public Response<Boolean> setItemQuantity(UUID clientId, UUID itemId, int newQuantity){
-        if(!itemExist(itemId))
-            return Response.getFailResponse("item not exist");
-        Item item = getItem(itemId).getValue();
-        item.setQuantity(newQuantity);
-        return Response.getSuccessResponse(true);
-    }
-
-    //change the name of an item
-    public Response<Boolean> setItemName(UUID clientId, UUID itemId, String newName){
-        if(!itemExist(itemId))
-            return Response.getFailResponse("item not exist");
-        Item item = getItem(itemId).getValue();
-        item.setName(newName);
-        return Response.getSuccessResponse(true);
-    }
-    //change the Price of an item
-    public Response<Boolean> setItemPrice(UUID clientId, UUID itemId, double newPrice){
-        if(!itemExist(itemId))
-            return Response.getFailResponse("item not exist");
-        Item item = getItem(itemId).getValue();
-        item.setPrice(newPrice);
-        return Response.getSuccessResponse(true);
-    }
-
     public Response<List<User>> getStoreStaff(UUID clientCredentials, UUID storeId){
         try {
-            Response<Store> response = this.getStore(storeId);
-            if (!response.isError())
+            if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist");
-            if (!response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
+            if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("User doesn't have permission.");
             List<User> staffList = new ArrayList<User>();
-            for (UUID id : response.getValue().getRolesMap().keySet())
+            for (UUID id : getStore(storeId).getRolesMap().keySet())
                 staffList.add(userController.getUser(id).getValue());
             return Response.getSuccessResponse(staffList);
         }
@@ -270,8 +216,9 @@ public class StoreController {
 
     public Response<List<Sale>> getStoreSaleHistory(UUID clientCredentials , UUID storeId ) {// TODO: after we will have sale class -> the return  String
         try{
-            return Response.getSuccessResponse(getStore(storeId).getValue().getSales(clientCredentials).stream().toList());
-        }catch(Exception exception) {
+            return Response.getSuccessResponse(getStore(storeId).getSales(clientCredentials).stream().toList());
+        }
+        catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
     }
@@ -281,9 +228,10 @@ public class StoreController {
 //    }
 
     //why do we need clientCredentials here? we call the setAsFounder function from Service.
-    public  Response<Store> createStore(UUID clientCredentials , String storeName , String storeDescription ) {
+    public Response<Store> createStore(UUID clientCredentials , String storeName , String storeDescription ) {
         try {
             Store store = new Store(storeName, storeDescription);
+            store.addRole(clientCredentials, new StoreOwner(clientCredentials));
             Response<Boolean> response = userController.setAsFounder(clientCredentials, store.getStoreID());
             if (response.isError())
                 return Response.getFailResponse(response.getMessage());
@@ -297,15 +245,14 @@ public class StoreController {
 
     public Response<Boolean> setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId, int newQuantity){
         try{
-            Response<Store> response = this.getStore(storeId);
-            if (!response.isError())
+            if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist");
-            if(!response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
-                && !response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
+            if(!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
+                && !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
                     return Response.getFailResponse("User doesn't have permission.");
-            if(!response.getValue().getItems().containsKey(itemId))
+            if(!getStore(storeId).getItems().containsKey(itemId))
                 return Response.getFailResponse("Item does not exist");
-            response.getValue().getItems().get(itemId).setQuantity(newQuantity);
+            getStore(storeId).getItems().get(itemId).setQuantity(newQuantity);
             return Response.getSuccessResponse(true);
         }
         catch(Exception exception){
@@ -315,15 +262,14 @@ public class StoreController {
 
     public Response<Boolean> setItemName(UUID clientCredentials, UUID storeId, UUID itemId, String name){
         try{
-            Response<Store> response = this.getStore(storeId);
-            if (!response.isError())
+            if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist");
-            if(!response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
-                    && !response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
+            if(!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
+                    && !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
                 return Response.getFailResponse("User doesn't have permission.");
-            if(!response.getValue().getItems().containsKey(itemId))
+            if(!getStore(storeId).getItems().containsKey(itemId))
                 return Response.getFailResponse("Item does not exist");
-            response.getValue().getItems().get(itemId).setName(name);
+            getStore(storeId).getItems().get(itemId).setName(name);
             return Response.getSuccessResponse(true);
         }
         catch(Exception exception){
@@ -333,15 +279,14 @@ public class StoreController {
 
     public Response<Boolean> setItemDescription(UUID clientCredentials, UUID storeId, UUID itemId, String description){
         try{
-            Response<Store> response = this.getStore(storeId);
-            if (!response.isError())
+            if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist");
-            if(!response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
-                    && !response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
+            if(!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
+                    && !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
                 return Response.getFailResponse("User doesn't have permission.");
-            if(!response.getValue().getItems().containsKey(itemId))
+            if(!getStore(storeId).getItems().containsKey(itemId))
                 return Response.getFailResponse("Item does not exist");
-            response.getValue().getItems().get(itemId).setDescription(description);
+            getStore(storeId).getItems().get(itemId).setDescription(description);
             return Response.getSuccessResponse(true);
         }
         catch(Exception exception){
@@ -351,15 +296,14 @@ public class StoreController {
 
     public Response<Boolean> setItemPrice(UUID clientCredentials, UUID storeId, UUID itemId, double price){
         try{
-            Response<Store> response = this.getStore(storeId);
-            if (!response.isError())
+            if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist");
-            if(!response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
-                    && !response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
+            if(!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
+                    && !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
                 return Response.getFailResponse("User doesn't have permission.");
-            if(!response.getValue().getItems().containsKey(itemId))
+            if(!getStore(storeId).getItems().containsKey(itemId))
                 return Response.getFailResponse("Item does not exist");
-            response.getValue().getItems().get(itemId).setPrice(price);
+            getStore(storeId).getItems().get(itemId).setPrice(price);
             return Response.getSuccessResponse(true);
         }
         catch(Exception exception){
@@ -397,23 +341,21 @@ public class StoreController {
         try{
             double price =0;
             for (UUID storeId:shoppingCart.getShoppingBaskets().keySet()) {// iterator on the storeId
-            Response<Store> response = this.getStore(storeId);
-            if (!response.isError())
-                return Response.getFailResponse("Store does not exist");
-            price+= response.getValue().calculatePriceOfBasket(shoppingCart.getShoppingBasket(storeId).getItemsID());}// calculate basket by his store
-            return  Response.getSuccessResponse(price);}
-            catch(Exception exception){
-                return Response.getFailResponse(exception.getMessage());
-            }
-          }
-
-
-
-
+                if (!storeExist(storeId))
+                    return Response.getFailResponse("Store does not exist");
+                price+= getStore(storeId).calculatePriceOfBasket(shoppingCart.getShoppingBasket(storeId).getItemsID());
+            }// calculate basket by his store
+            return  Response.getSuccessResponse(price);
+        }
+        catch(Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
 
     //    protected Store getStore(UUID storeId){
 //        return storeMap.get(storeId);
 //    }
+
     protected boolean hasStore(UUID storeId){
         return storeMap.containsKey(storeId);
     }

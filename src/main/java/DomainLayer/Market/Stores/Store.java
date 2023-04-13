@@ -163,11 +163,9 @@ public class Store {
         return items.get(itemId);
     }
 
-
     public boolean hasItem(UUID itemId) {
         return items.containsKey(itemId);
     }
-
 
     public ConcurrentLinkedQueue<Sale> getSales(UUID clientCredentials) throws Exception {
         if (rolesMap.containsKey(clientCredentials))
