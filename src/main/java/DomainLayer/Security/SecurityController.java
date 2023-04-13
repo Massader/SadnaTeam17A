@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SecurityController {
     private static SecurityController singleton = null;
     private ConcurrentHashMap<UUID, String> passwords;
-    private ConcurrentHashMap<UUID, SecurityQuestion> securityQuestions;
+    protected ConcurrentHashMap<UUID, SecurityQuestion> securityQuestions;
     private final int PASS_MIN_LEN = 4;
     private final int PASS_MAX_LEN = 20;
     private UserController userController;
@@ -100,14 +100,39 @@ public class SecurityController {
     }
 
     public Response<Boolean> ValidateSecurityQuestion(UUID id, String answer){
+        try{
+            if(securityQuestions.get(id) != null){
         boolean valid = securityQuestions.get(id).validateAnswer(answer);
-        return Response.getSuccessResponse(valid);
+        return Response.getSuccessResponse(valid);}
+        else return Response.getSuccessResponse(null);}
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
-    public Response<Boolean> addSecurityQuestion(UUID id, String question, String answer){
-        SecurityQuestion securityQuestion = new SecurityQuestion(id, question, answer);
-        securityQuestions.put(id, securityQuestion);
-        return Response.getSuccessResponse(true);
+    public Response<Boolean> addSecurityQuestion(UUID id, String question, String answer) {
+        try {
+            SecurityQuestion securityQuestion = new SecurityQuestion(id, question, answer);
+            if (securityQuestions.get(id) != null && securityQuestions.get(id).getQuestion().equals(question)) {
+                return Response.getFailResponse("The same question already exists for the user");
+            }
+            securityQuestions.put(id, securityQuestion);
+            return Response.getSuccessResponse(true);
+        } catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+        public Response<String> getSecurityQuestion (UUID id){
+        try {  if (securityQuestions.get(id) == null)
+        {return Response.getFailResponse("There is no security question for this user");}
+            else return Response.getSuccessResponse(securityQuestions.get(id).getQuestion());
+        }  catch (Exception exception) {
+        return Response.getFailResponse(exception.getMessage());
     }
 
-}
+
+        }
+
+
+    }
+
