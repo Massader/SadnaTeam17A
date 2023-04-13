@@ -19,4 +19,10 @@ public class StoreManager extends Role{
     public List<StorePermissions> getPermissions() {
         return permissionsList;
     }
+
+    @Override
+    public void addPermission(StorePermissions permission) {
+        if(!permissionsList.contains(permission))
+            permissionsList.add(permission);
+    }
 }

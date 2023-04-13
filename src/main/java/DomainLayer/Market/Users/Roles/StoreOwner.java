@@ -15,4 +15,9 @@ public class StoreOwner extends Role {
         permissionList.add(StorePermissions.STORE_OWNER);
         return permissionList;
     }
+
+    @Override
+    public void addPermission(StorePermissions permission) {
+
+    }
 }
