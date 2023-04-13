@@ -5,8 +5,10 @@ import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.SaleHistory;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
+import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -245,8 +247,21 @@ public class StoreController {
         return Response.getSuccessResponse(true);
     }
 
-    public Response<List<User>> getStoreStaff(UUID clientId, UUID itemId){
-        return null;
+    public Response<List<User>> getStoreStaff(UUID clientCredentials, UUID storeId){
+        try {
+            Response<Store> response = this.getStore(storeId);
+            if (!response.isError())
+                return Response.getFailResponse("Store does not exist");
+            if (!response.getValue().checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
+                return Response.getFailResponse("User doesn't have permission.");
+            List<User> staffList = new ArrayList<User>();
+            for (UUID id : response.getValue().getRolesMap().keySet())
+                staffList.add(userController.getUser(id).getValue());
+            return Response.getSuccessResponse(staffList);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<List<Message>> getStoreMessages(UUID clientId, UUID itemId){
