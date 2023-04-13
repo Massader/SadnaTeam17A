@@ -293,6 +293,13 @@ public class Service {
             return null;
         return new ServiceSale(response.getValue());
     }
+
+    public ServiceUser getUserInfo(UUID clientCredentials){
+        Response<User> response = userController.getUser(clientCredentials);
+        if(response.isError())
+            return null;
+        return new ServiceUser(response.getValue());
+    }
 }
 
 

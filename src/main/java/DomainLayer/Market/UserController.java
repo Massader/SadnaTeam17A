@@ -10,6 +10,7 @@ import DomainLayer.Market.Users.*;
 import DomainLayer.Security.SecurityController;
 import ServiceLayer.Response;
 import DomainLayer.Market.Users.Roles.*;
+import ServiceLayer.ServiceUser;
 
 public class UserController {
 
@@ -315,7 +316,15 @@ public class UserController {
     }
 
     public Response<User> getUser(UUID userId) {
-        return Response.getSuccessResponse(userCredentials.get(userId));
+        try {
+            User user = userCredentials.get(userId);
+            if(user==null)
+                return Response.getFailResponse("User does not exist.");
+            return Response.getSuccessResponse(user);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Boolean> getCartTotal(UUID userId) {
