@@ -329,6 +329,7 @@ public class UserController {
             if (!logedInUsers.contains(userId))
                 return Response.getFailResponse("this user is already logged out");
             logedInUsers.remove(userId);
+            createClient();
             //User user = userCredentials.get(userId);
             return Response.getSuccessResponse(userId);
         }
@@ -362,10 +363,10 @@ public class UserController {
 //    }
 
 
-    public User getUser(String userName) {
-        UUID id = userNames.get(userName);
-        return userCredentials.get(id);
-    }
+//    public User getUser(String userName) {todo: delete if we dont need it
+//        UUID id = userNames.get(userName);
+//        return userCredentials.get(id);
+//    }
 
     public User getUserById(UUID id) {
         return userCredentials.get(id);

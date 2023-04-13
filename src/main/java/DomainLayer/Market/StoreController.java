@@ -216,6 +216,7 @@ public class StoreController {
 
     public Response<List<Sale>> getStoreSaleHistory(UUID clientCredentials , UUID storeId ) {// TODO: after we will have sale class -> the return  String
         try{
+            if(!userController.isRegisteredUser(clientCredentials)){return Response.getFailResponse("this client not user יe doesn't have the permissions ");}
             return Response.getSuccessResponse(getStore(storeId).getSales(clientCredentials).stream().toList());
         }
         catch(Exception exception) {
