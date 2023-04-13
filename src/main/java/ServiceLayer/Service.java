@@ -300,6 +300,24 @@ public class Service {
             return null;
         return new ServiceUser(response.getValue());
     }
+
+
+    public Boolean addItemToCart(UUID clientCredentials, UUID itemId ,int  quantity, UUID storeID ) {
+        Response<Boolean> response1 = userController.addItemToCart(clientCredentials,itemId,quantity, storeID);
+        if(response1.isError())
+            return false;
+        Response<Boolean> response2 = storeController.removeItemQuantity(clientCredentials,itemId,quantity);
+        return response2.getValue();
+    }
+
+    public Boolean removeItemFromCart(UUID clientCredentials, UUID itemId ,int  quantity, UUID storeID ) {
+        Response<Boolean> response = userController.removeItemFromCart(clientCredentials,itemId,quantity, storeID);
+        if(response.isError())
+            return false;
+        Response<Boolean> response2 = storeController.AddItemQuantity(clientCredentials,itemId,quantity);
+        return response.getValue();
+    }
+
 }
 
 

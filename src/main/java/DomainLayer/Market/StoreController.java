@@ -38,7 +38,7 @@ public class StoreController {
 
 
     private Response<Boolean> checkExistStore(UUID storeId){
-        if(!this.storeMap.containsKey(storeId)){ return Response.getFailResponse("item not exist");}
+        if(!this.storeMap.containsKey(storeId)){ return Response.getFailResponse("store not exist");}
         return Response.getSuccessResponse(true);
 
     }
@@ -367,11 +367,36 @@ public class StoreController {
         }
     }
 
+    public Response<Boolean> removeItemQuantity(UUID clientId, UUID itemId, int quantity){
+        try {
+            if(!itemExist(itemId))
+                return Response.getFailResponse("item not exist");
+            if(getItem(itemId).getValue().removeFromQuantity(quantity)){
+                return Response.getSuccessResponse(true);}}
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+
+        }
+        return Response.getFailResponse("cant remove item quantity");}
+
+    public Response<Boolean> AddItemQuantity(UUID clientId, UUID itemId, int quantity){
+        try {
+            if(!itemExist(itemId))
+                return Response.getFailResponse("item not exist");
+            if(getItem(itemId).getValue().addQuantity(quantity)){
+                return Response.getSuccessResponse(true);}}
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+
+        }
+        return Response.getFailResponse("cant remove item quantity");}
 
 
 
 
-//    protected Store getStore(UUID storeId){
+
+
+    //    protected Store getStore(UUID storeId){
 //        return storeMap.get(storeId);
 //    }
     protected boolean hasStore(UUID storeId){

@@ -125,20 +125,38 @@ public class UserController {
         }
     }
 
-    public Response<Boolean> addItemToCart(UUID userId, UUID itemId, int quantity, UUID storeID ){
-        if (getClientOrUser(userId)==null)
-            return Response.getFailResponse("this user ID does not exist");
-        ShoppingCart shoppingCart =getClientOrUser(userId).getCart();
-        return Response.getSuccessResponse( shoppingCart.addItemToCart(itemId, storeID, quantity));
+    public Response<Boolean> addItemToCart(UUID userId, UUID itemId, int quantity, UUID storeID ) {
+        try {
+            if (getClientOrUser(userId) == null)
+                return Response.getFailResponse("this user ID does not exist");
+            ShoppingCart shoppingCart = getClientOrUser(userId).getCart();
+            if (shoppingCart.addItemToCart(itemId, storeID, quantity)) {
+                return Response.getSuccessResponse(true);
+            } else {
+                return Response.getFailResponse("can't add item to cart");
+            }
+        } catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
+
 
 
     public Response<Boolean> removeItemFromCart(UUID userId, UUID itemId, int quantity, UUID storeId) {
-        if (getClientOrUser(userId)==null)
-            return Response.getFailResponse("this user ID does not exist");
-        ShoppingCart shoppingCart =getClientOrUser(userId).getCart();
-        return Response.getSuccessResponse( shoppingCart.removeItemToCart(itemId, storeId, quantity));
+        try{
+            if (getClientOrUser(userId)==null)
+                return Response.getFailResponse("this client ID does not exist");
+            ShoppingCart shoppingCart =getClientOrUser(userId).getCart();
+            if(shoppingCart.removeItemToCart(itemId, storeId, quantity)){
+                return Response.getSuccessResponse(true);}
+            else {  return Response.getFailResponse("can't remove "+ quantity +" item from cart");}}
+        catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+
     }
+
+
 
     public Response<List<Purchase>> getPurchaseHistory(UUID clientCredentials, UUID userId) {
         try {
