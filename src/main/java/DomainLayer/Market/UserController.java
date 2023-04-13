@@ -62,11 +62,9 @@ public class UserController {
         if (logedInUsers.contains(userName))
             return Response.getFailResponse("A user is already logged in, please log out first.");
         if (!userCredentials.contains(userName))
-            return Response.getFailResponse("Email does not exist in the system.");
-
+            return Response.getFailResponse("user does not register in the system.");
         UUID id = getId(userName);
         User user = getUserById(id);
-
         //validate the password
         if (securityController.ValidatePass(id, password).getValue().equals(id)) {
             //transfer the client to the logged in users, and delete it from the non registered clients list
@@ -77,28 +75,29 @@ public class UserController {
         return Response.getFailResponse("Wrong password.");
     }
 
-    public Response<UUID> getClientCredentials(String userName) {
-        UUID id;
-        if(userNames.get(userName)==null){return Response.getFailResponse("user doesn't exist");}
-        return Response.getSuccessResponse(userNames.get(userName));
-
-    }
+    //TODO: DELETE NEVER USE
+//    public Response<UUID> getClientCredentials(String userName) {
+//        UUID id;
+//        if(userNames.get(userName)==null){return Response.getFailResponse("user doesn't exist");}
+//        return Response.getSuccessResponse(userNames.get(userName));
+//
+//    }
 
 
     // add a new user to the system
     public Response<User> Register(String userName, String password) {
+        try{
         //verify UserName is valid and unused.
         if (userName == null) return Response.getFailResponse("No UserName input.");
         if (userNames.contains(userName))
             return Response.getFailResponse("This UserName is already in use.");
-
-
         UUID id = UUID.randomUUID();
         //add user
-        User u = loadUser(userName, password, id);
-
-
-        return Response.getSuccessResponse(u);
+        User user = loadUser(userName, password, id);
+        return Response.getSuccessResponse(user);}
+        catch(Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
 
@@ -117,6 +116,9 @@ public class UserController {
 
     public synchronized Response<Boolean> closeClient(UUID clientCredentials) {
         try {
+            if(!clients.containsKey(clientCredentials)){Response.getFailResponse("This client does not exist in the system");}
+//            ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
+//            boolean delete = this.deleteCart(shoppingCart);
             clients.remove(clientCredentials);
             return Response.getSuccessResponse(true);
         }
@@ -125,10 +127,16 @@ public class UserController {
         }
     }
 
+//    public synchronized Boolean deleteCart(ShoppingCart shoppingCart){
+//        for (UUID shopId:shoppingCart.getShoppingBaskets().keySet()) {
+//                    }
+//
+//    }
+
     public Response<Boolean> addItemToCart(UUID userId, UUID itemId, int quantity, UUID storeID ) {
         try {
             if (getClientOrUser(userId) == null)
-                return Response.getFailResponse("this user ID does not exist");
+                return Response.getFailResponse("this user does not exist");
             ShoppingCart shoppingCart = getClientOrUser(userId).getCart();
             if (shoppingCart.addItemToCart(itemId, storeID, quantity)) {
                 return Response.getSuccessResponse(true);
@@ -345,13 +353,13 @@ public class UserController {
         }
     }
 
-    public Response<Boolean> getCartTotal(UUID userId) {
-        if (getClientOrUser(userId)==null)
-            return Response.getFailResponse("this user ID does not exist");
-
-
-        return null;
-    }
+//    public Response<Boolean> getCartTotal(UUID userId) {
+//        if (getClientOrUser(userId)==null)
+//            return Response.getFailResponse("this user ID does not exist");
+//
+//
+//        return null;
+//    }
 
 
     public User getUser(String userName) {
