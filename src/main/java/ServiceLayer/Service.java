@@ -328,7 +328,33 @@ public class Service {
         return response2.getValue();
     }
 
-}
+    public Boolean validateSecurityQuestion(UUID clientCredentials , String answer ){
+        Response<Boolean> response = securityController.ValidateSecurityQuestion(clientCredentials,answer);
+        if(response.isError()|| response.getValue()==null)
+            return null;
+        return response.getValue();
+    }
+
+    public Boolean addSecurityQuestion(UUID clientCredentials,String question ,String answer ) {
+        Response<Boolean> response = securityController.addSecurityQuestion(clientCredentials,question,answer);
+        if(response.isError())
+            return null;
+        return response.getValue();
+    }
+
+    public  String getSecurityQuestion(UUID clientCredentials ) {
+        Response<String> response = securityController.getSecurityQuestion(clientCredentials);
+        if(response.isError())
+            return null;
+        return response.getValue();}
+    }
+
+
+
+
+
+
+
 
 
 
