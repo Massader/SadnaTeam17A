@@ -4,15 +4,11 @@ package DomainLayer.Market;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import DomainLayer.Market.Users.Client;
-import DomainLayer.Market.Users.PurchaseHistory;
-import DomainLayer.Market.Users.Roles.Role;
-import DomainLayer.Market.Users.Roles.StoreManager;
-import DomainLayer.Market.Users.Roles.StoreOwner;
-import DomainLayer.Market.Users.ShoppingCart;
-import DomainLayer.Market.Users.User;
+
+import DomainLayer.Market.Users.*;
 import DomainLayer.Security.SecurityController;
 import ServiceLayer.Response;
+import DomainLayer.Market.Users.Roles.*;
 
 public class UserController {
 
@@ -40,6 +36,26 @@ public class UserController {
         return singleton;
     }
 
+    public Response<Boolean> setAsFounder(UUID clientCredentials, UUID storeId){
+        try {
+            getUser(clientCredentials).getValue().addRole(new StoreFounder(storeId));
+            return Response.getSuccessResponse(true);
+        }
+        catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
+    public Response<ShoppingCart> viewCart(UUID clientCredentials){
+        try {
+            Client client = getClientOrUser(clientCredentials);
+            return Response.getSuccessResponse(client.getCart());
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
     public Response<User> Login(String userName, String password, Client client) {
         if (logedInUsers.contains(userName))
             return Response.getFailResponse("A user is already logged in, please log out first.");
@@ -50,16 +66,16 @@ public class UserController {
         User user = getUserById(id);
 
         //validate the password
-        if (securityController.ValidatePass(id, password)) {
-            //transfer the client to the loged in users, and delete it from the non registered clients list
+        if (securityController.ValidatePass(id, password).getValue().equals(id)) {
+            //transfer the client to the logged in users, and delete it from the non registered clients list
             logedInUsers.add(userName);
-            closeClien(client.getId());
+            closeClient(client.getId());
             return Response.getSuccessResponse(user);
         }
         return Response.getFailResponse("Wrong password.");
     }
 
-    public Response<UUID> getClienCredentials(String userName) {
+    public Response<UUID> getClientCredentials(String userName) {
         UUID id;
         if(userNames.get(userName)==null){return Response.getFailResponse("user doesn't exist");}
         return Response.getSuccessResponse(userNames.get(userName));
@@ -86,15 +102,25 @@ public class UserController {
 
 
     public Response<UUID> createClient() {
-        UUID id = UUID.randomUUID();
-        Client client = new Client(id);
-        clients.put(id, client);
-        return Response.getSuccessResponse(id);
+        try {
+            UUID id = UUID.randomUUID();
+            Client client = new Client(id);
+            clients.put(id, client);
+            return Response.getSuccessResponse(id);
+        }
+        catch(Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
-    public synchronized Response<Boolean> closeClien(UUID clientCredentials) {
-        clients.remove(clientCredentials);
-        return Response.getSuccessResponse(true);
+    public synchronized Response<Boolean> closeClient(UUID clientCredentials) {
+        try {
+            clients.remove(clientCredentials);
+            return Response.getSuccessResponse(true);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Boolean> addItemToCart(UUID userId, UUID itemId, int quantity, UUID storeID ){
@@ -112,111 +138,34 @@ public class UserController {
         return Response.getSuccessResponse( shoppingCart.removeItemToCart(itemId, storeId, quantity));
     }
 
-    public Response<String> getPurchaseHistory(UUID clientCredentials, UUID userId) {
-        if (!userCredentials.containsKey(userId))
-            return Response.getFailResponse("this user ID does not exist");
-        if(!isRegisteredUser(userId)){
-            return Response.getFailResponse("this user ID not register");
+    public Response<List<Purchase>> getPurchaseHistory(UUID clientCredentials, UUID userId) {
+        try {
+            if (!userCredentials.containsKey(userId))
+                return Response.getFailResponse("this user ID does not exist");
+            if (clientCredentials==userId&&!isRegisteredUser(userId)) {
+                return Response.getFailResponse("this user ID not register");//check the user is register
+            }
+
+            return Response.getSuccessResponse(getUser(userId).getValue().getPurchases().stream().toList());
         }
-        return Response.getSuccessResponse(getUser(userId).getValue().getPurchases().toArray().toString());// TODO: now return as a string  when we will know how Purchase will be -> change accordingly
-
-    }
-
-
-    //if you are StoreOwner you will be also StoreManager  -> therefore we check only this.
-    public Response<Boolean> appointStoreManager(UUID clientId, UUID apointee, UUID storeId) {
-        if (!userCredentials.containsKey(apointee))
-            return Response.getFailResponse("this appointee does not exist");
-        if (!isRegisteredUser(apointee)) {
-            return Response.getFailResponse("this appointee not register");
-        }
-        StoreManager role;
-        role = (StoreManager)getStoreManager(apointee,storeId).getValue();
-       // if(role==null){role=(StoreOwner)getStoreOwner(apointee,storeId).getValue();}
-        if(role==null){return Response.getFailResponse("this user can't appoint Store Manager");}
-        if (!userCredentials.containsKey(clientId)){
-            return Response.getFailResponse("this user does not exist");}
-        if(getStoreManager(clientId,storeId)!=null){ return Response.getFailResponse("this user is already Store Manager");}
-        role.addAppointmentOFStoreManager(clientId);
-        StoreManager storeManager = new StoreManager();
-        getUser(clientId).getValue().addRole(storeId,storeManager);
-        return Response.getSuccessResponse(true);
-        }
-
-
+        catch(Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+    }}
     public Response<Boolean> appointStoreOwner(UUID clientId, UUID apointee, UUID storeId) {
-        if (!userCredentials.containsKey(apointee))
-            return Response.getFailResponse("this appointee does not exist");
-        if (!isRegisteredUser(apointee)) {
-            return Response.getFailResponse("this appointee not register");
-        }
-        StoreOwner role;
-        role = (StoreOwner)getStoreOwner(apointee,storeId).getValue();
-        // if(role==null){role=(StoreOwner)getStoreOwner(apointee,storeId).getValue();}
-        if(role==null){return Response.getFailResponse("this user can't appoint Store Owner");}
-        if (!userCredentials.containsKey(clientId)){
-            return Response.getFailResponse("this user does not exist");}
-        if(getStoreOwner(clientId,storeId)!=null){ return Response.getFailResponse("this user is already Store Manager");}
-        role.addAppointmentOFStoreOwner(clientId);
-        StoreOwner storeOwner = new StoreOwner();
-        getUser(clientId).getValue().addRole(storeId,storeOwner);
-        return Response.getSuccessResponse(true);
+        return null;
     }
 
-
+    public Response<Boolean> appointStoreManager(UUID clientId, UUID apointee, UUID storeId) {
+        return null;
+    }
 
     public Response<Boolean> removeStoreOwner(UUID clientId, UUID ownerToRemove, UUID storeId) {
-        if (!userCredentials.containsKey(clientId))
-            return Response.getFailResponse("this appointee does not exist");
-        if (!isRegisteredUser(clientId)) {
-            return Response.getFailResponse("this appointee not register");
-        }
-        StoreOwner role;
-        role = (StoreOwner)getStoreOwner(clientId,storeId).getValue();
-        // if(role==null){role=(StoreOwner)getStoreOwner(apointee,storeId).getValue();}
-        if(role==null){return Response.getFailResponse("this user not Store Owner");}
-        if (!userCredentials.containsKey(clientId)){
-            return Response.getFailResponse("this user does not exist");}
-        if(!role.removeAppointmentOFStoreOwner(ownerToRemove)){return Response.getFailResponse("You have not appointed the store owner before");}
-        return Response.getSuccessResponse(removeAllStoreOwner(ownerToRemove,storeId));
+        return null;
     }
-
-    private Boolean removeAllStoreOwner(UUID ownerToRemove, UUID storeId) {
-        User user = getUser(ownerToRemove).getValue();
-        StoreOwner storeOwner = (StoreOwner) user.getStoreOwner(storeId);
-        for (UUID newStoreOwnerToRemove: storeOwner.getAppointmentOFStoreOwner()) {
-            removeAllStoreOwner(newStoreOwnerToRemove,storeId);
-        }
-        return (user.removeStoreOwnerRole(storeId));
-    }
-
-    private Boolean removeAllStoreManager(UUID managerToRemove, UUID storeId) {
-        User user = getUser(managerToRemove).getValue();
-        StoreManager storeManager = (StoreManager) user.getStoreManager(storeId);
-        for (UUID newManagerToRemove: storeManager.getAppointmentOFStoreManager()) {
-            removeAllStoreManager(newManagerToRemove,storeId);
-        }
-        return (user.removeStoreManagerRole(storeId));
-    }
-
-
 
     public Response<Boolean> removeStoreManager(UUID clientId, UUID ownerToRemove, UUID storeId) {
-        if (!userCredentials.containsKey(clientId))
-            return Response.getFailResponse("this appointee does not exist");
-        if (!isRegisteredUser(clientId)) {
-            return Response.getFailResponse("this appointee not register");
-        }
-        StoreManager role;
-        role = (StoreManager)getStoreManager(clientId,storeId).getValue();
-        // if(role==null){role=(StoreOwner)getStoreOwner(apointee,storeId).getValue();}
-        if(role==null){return Response.getFailResponse("this user not Store Manager");}
-        if (!userCredentials.containsKey(clientId)){
-            return Response.getFailResponse("this user does not exist");}
-        if(!role.removeAppointmentOFStoreManager(ownerToRemove)){return Response.getFailResponse("You have not appointed the store owner before");}
-        return Response.getSuccessResponse(removeAllStoreManager(ownerToRemove,storeId));
+        return null;
     }
-
 
     public Response<Boolean> setManagerPermissions(UUID clientId, UUID manager,
                                                    UUID storeId, List<Integer> permissions) {
@@ -224,28 +173,43 @@ public class UserController {
     }
 
     public Response<Boolean> deleteUser(UUID userId, UUID storeId) {
-        if (!userCredentials.containsKey(userId))
-            return Response.getFailResponse("this user ID does not exist");
+        try {
+            if (!userCredentials.containsKey(userId))
+                return Response.getFailResponse("this user ID does not exist");
 
-        if (logedInUsers.contains(userId))
-            logout(userId);
+            if (logedInUsers.contains(userId))
+                logout(userId);
 
-        //remove from both HashMaps
-        User user = userCredentials.remove(userId);
-        userNames.remove(user.getUserName());
+            //remove from both HashMaps
+            User user = userCredentials.remove(userId);
+            userNames.remove(user.getUserName());
+            //remove roles
+            for (Role role: user.getRoles())
+                removeRole(role);
 
-        return Response.getSuccessResponse(true);
+            return Response.getSuccessResponse(true);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
+    public void removeRole(Role role){}
+
     // delete the user from the loged in list.
-    public Response<Boolean> logout(UUID userId) {
-        if (!userCredentials.containsKey(userId))
-            return Response.getFailResponse("this user ID does not exist");
-        if (!logedInUsers.contains(userId))
-            return Response.getFailResponse("this user is already logged out");
-        logedInUsers.remove(userId);
-        //User user = userCredentials.get(userId);
-        return Response.getSuccessResponse(true);
+    public Response<UUID> logout(UUID userId) {
+        try {
+            if (!userCredentials.containsKey(userId))
+                return Response.getFailResponse("this user ID does not exist");
+            if (!logedInUsers.contains(userId))
+                return Response.getFailResponse("this user is already logged out");
+            logedInUsers.remove(userId);
+            //User user = userCredentials.get(userId);
+            return Response.getSuccessResponse(userId);
+        }
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Boolean> setAsFounder() {
@@ -305,29 +269,6 @@ public class UserController {
             return clients.get(id);
         return null;
     }
-
-
-    
-    
-    private Response<Role> getStoreManager(UUID clientId, UUID storeId){
-        if (!userCredentials.containsKey(clientId)){
-            return Response.getFailResponse("this user does not exist");}
-        User user= getUser(clientId).getValue();
-        if(user.isStoreManager(storeId)){return Response.getFailResponse("this user is not Store Manager");}
-        return Response.getSuccessResponse(user.getStoreManager(storeId));
-
-    }
-    
-
-
-    private Response<Role> getStoreOwner(UUID clientId, UUID storeId){
-        if (!userCredentials.containsKey(clientId)){
-            return Response.getFailResponse("this user does not exist");}
-        User user= getUser(clientId).getValue();
-        if(user.isStoreOwner(storeId)){return Response.getFailResponse("this user is not Store Owner");}
-        return Response.getSuccessResponse(user.getStoreOwner(storeId));
-}
-
 
 
 
