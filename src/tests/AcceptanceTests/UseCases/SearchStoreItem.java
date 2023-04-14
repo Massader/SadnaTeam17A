@@ -8,10 +8,10 @@ public class SearchStoreItem extends ProjectTest {
     }
 
     public boolean searchStore() {
-        return proxy.searchStore();
+        return bridge.searchStore();
     }
 
     public boolean searchItem() {
-        return proxy.searchItem();
+        return bridge.searchItem();
     }
 }

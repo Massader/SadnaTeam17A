@@ -8,6 +8,6 @@ public class Payment extends ProjectTest {
     }
 
     public boolean payForShoppingCart() {
-        return proxy.payForShoppingCart();
+        return bridge.payForShoppingCart();
     }
 }

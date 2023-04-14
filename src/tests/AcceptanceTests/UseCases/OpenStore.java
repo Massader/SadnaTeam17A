@@ -8,6 +8,6 @@ public class OpenStore extends ProjectTest {
     }
 
     public boolean openStore() {
-        return proxy.openStore();
+        return bridge.openStore();
     }
 }

@@ -56,7 +56,7 @@ public class UserController {
         }
     }
 
-    public Response<User> login(String username, String password, Client client) {
+    public Response<UUID> login(UUID clientCredentials, String username, String password) {
         try {
             if (loggedInUser.contains(username))
                 return Response.getFailResponse("User is already logged in, please log out first.");
@@ -66,8 +66,8 @@ public class UserController {
             if (securityController.validatePassword(getId(username), password).getValue().equals(getId(username))) {
                 //transfer the client to the logged in users, and delete it from the non registered clients list
                 loggedInUser.add(username);
-                closeClient(client.getId());
-                return Response.getSuccessResponse(getUserById(getId(username)));
+                closeClient(clientCredentials);
+                return Response.getSuccessResponse(usernames.get(username));
             }
             return Response.getFailResponse("Wrong password.");
         }

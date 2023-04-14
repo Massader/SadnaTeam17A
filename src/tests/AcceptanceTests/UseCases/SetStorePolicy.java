@@ -8,6 +8,6 @@ public class SetStorePolicy extends ProjectTest {
     }
 
     public boolean setStorePolicy() {
-        return proxy.setStorePolicy();
+        return bridge.setStorePolicy();
     }
 }

@@ -8,6 +8,6 @@ public class SaveItem extends ProjectTest {
     }
 
     public boolean saveItemInShoppingCart() {
-        return proxy.saveItemInShoppingCart();
+        return bridge.saveItemInShoppingCart();
     }
 }

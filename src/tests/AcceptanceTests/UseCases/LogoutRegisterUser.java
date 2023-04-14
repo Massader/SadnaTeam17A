@@ -8,6 +8,6 @@ public class LogoutRegisterUser extends ProjectTest {
     }
 
     public boolean logoutRegisterUser() {
-        return proxy.logoutRegisterUser();
+        return bridge.logoutRegisterUser();
     }
 }

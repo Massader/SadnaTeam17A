@@ -1,6 +1,9 @@
 package AcceptanceTests;
 
+import java.util.UUID;
+
 public interface Bridge {
+    public void setReal();
     Boolean systemBoot();
     Boolean integrityTest();
     Boolean addService();
@@ -11,10 +14,10 @@ public interface Bridge {
     Boolean userRealTimeAlert();
     Boolean systemDelayedAlert();
     Boolean userDelayedAlert();
-    Boolean enterSystem();
-    Boolean exitSystem();
-    Boolean register();
-    Boolean login();
+    UUID enterSystem();
+    Boolean exitSystem(UUID clientCredentials);
+    Boolean register(String username, String password);
+    UUID login(UUID clientCredentials, String username, String password);
     Boolean receiveStoreInfo();
     Boolean searchStore();
     Boolean searchItem();

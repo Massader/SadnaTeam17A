@@ -8,10 +8,10 @@ public class RealTimeAlerts extends ProjectTest {
     }
 
     public boolean systemRealTimeAlert() {
-        return proxy.systemRealTimeAlert();
+        return bridge.systemRealTimeAlert();
     }
 
     public boolean userRealTimeAlert() {
-        return proxy.userRealTimeAlert();
+        return bridge.userRealTimeAlert();
     }
 }

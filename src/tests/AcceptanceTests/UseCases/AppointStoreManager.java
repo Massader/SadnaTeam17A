@@ -8,6 +8,6 @@ public class AppointStoreManager extends ProjectTest {
     }
 
     public boolean appointStoreManager() {
-        return proxy.appointStoreManager();
+        return bridge.appointStoreManager();
     }
 }

@@ -8,10 +8,10 @@ public class PurchaseShoppingCart extends ProjectTest {
     }
 
     public boolean purchaseShoppingCartPayment() {
-        return proxy.purchaseShoppingCartPayment();
+        return bridge.purchaseShoppingCartPayment();
     }
 
     public boolean purchaseShoppingCartSupply() {
-        return proxy.purchaseShoppingCartSupply();
+        return bridge.purchaseShoppingCartSupply();
     }
 }

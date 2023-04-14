@@ -8,14 +8,14 @@ public class StockManagement extends ProjectTest {
     }
 
     public boolean stockManagementAddNewItem() {
-        return proxy.stockManagementAddNewItem();
+        return bridge.stockManagementAddNewItem();
     }
 
     public boolean stockManagementRemoveItem() {
-        return proxy.stockManagementRemoveItem();
+        return bridge.stockManagementRemoveItem();
     }
 
     public boolean stockManagementChangeItemInfo() {
-        return proxy.stockManagementChangeItemInfo();
+        return bridge.stockManagementChangeItemInfo();
     }
 }

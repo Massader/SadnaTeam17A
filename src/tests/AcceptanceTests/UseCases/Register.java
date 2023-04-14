@@ -4,10 +4,10 @@ import AcceptanceTests.*;
 public class Register extends ProjectTest {
 
     public Register(Bridge real) {
-        super(real);
+        super();
     }
 
     public boolean register() {
-        return proxy.register();
+        //return bridge.register();
     }
 }

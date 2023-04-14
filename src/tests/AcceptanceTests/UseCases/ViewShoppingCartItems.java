@@ -8,6 +8,6 @@ public class ViewShoppingCartItems extends ProjectTest {
     }
 
     public boolean viewShoppingCartItems() {
-        return proxy.viewShoppingCartItems();
+        return bridge.viewShoppingCartItems();
     }
 }

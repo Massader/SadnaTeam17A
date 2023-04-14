@@ -8,6 +8,6 @@ public class ReceiveStoreInfo extends ProjectTest {
     }
 
     public boolean receiveStoreInfo() {
-        return proxy.receiveStoreInfo();
+        return bridge.receiveStoreInfo();
     }
 }

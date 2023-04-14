@@ -8,6 +8,6 @@ public class CloseStore extends ProjectTest {
     }
 
     public boolean closeStore() {
-        return proxy.closeStore();
+        return bridge.closeStore();
     }
 }

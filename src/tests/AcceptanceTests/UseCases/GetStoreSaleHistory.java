@@ -8,6 +8,6 @@ public class GetStoreSaleHistory extends ProjectTest {
     }
 
     public boolean getStoreSaleHistory() {
-        return proxy.getStoreSaleHistory();
+        return bridge.getStoreSaleHistory();
     }
 }

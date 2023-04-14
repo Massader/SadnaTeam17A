@@ -8,10 +8,10 @@ public class SystemBoot extends ProjectTest {
     }
 
     public boolean systemBoot() {
-        return proxy.systemBoot();
+        return bridge.systemBoot();
     }
 
     public boolean integrityTest() {
-        return proxy.integrityTest();
+        return bridge.integrityTest();
     }
 }

@@ -8,6 +8,6 @@ public class AppointStoreOwner extends ProjectTest {
     }
 
     public boolean appointStoreOwner() {
-        return proxy.appointStoreOwner();
+        return bridge.appointStoreOwner();
     }
 }
