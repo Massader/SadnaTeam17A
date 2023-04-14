@@ -1,4 +1,4 @@
 package DomainLayer.Market.Stores.PurchaseTypes;
 
-public class PurchaseType {
+public abstract class PurchaseType {
 }

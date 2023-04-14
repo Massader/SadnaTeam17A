@@ -1,5 +1,6 @@
 package DomainLayer.Market.Stores;
 
+import DomainLayer.Market.Stores.PurchaseTypes.DirectPurchase;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
 
 import java.util.Collection;
@@ -15,17 +16,11 @@ public class Item {
     private double rating;
     private int ratesCount;
     private int quantity;
-    private  String description;
-    private ConcurrentLinkedQueue<PurchaseType> purchaseTypes;
+    private String description;
+    private PurchaseType purchaseType;
     private ConcurrentLinkedQueue<Category> categories;
     private PolicyRules policyRules;
     private ConcurrentHashMap<UUID, Review> reviews;
-
-
-//constructor:
-
-
-
 
     public Item(UUID id, String name, double price, UUID storeId, double rating, int quantity, String description) {
         this.id = id;
@@ -34,13 +29,15 @@ public class Item {
         this.storeId = storeId;
         this.rating = rating;
         this.quantity = quantity;
-        purchaseTypes = new ConcurrentLinkedQueue<>();
+        purchaseType = new DirectPurchase();
         categories = new ConcurrentLinkedQueue<>();
         policyRules = null;
         reviews = new ConcurrentHashMap<>();
     }
 
-    //getters & setters :
+    public void setPurchaseType(PurchaseType purchaseType) {
+        this.purchaseType = purchaseType;
+    }
 
     public Collection<Category> getCategories(){
         return categories.stream().toList();
@@ -89,10 +86,6 @@ public class Item {
         return rating;
     }
 
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
-
     public int getQuantity() {
         return quantity;
     }
@@ -100,12 +93,22 @@ public class Item {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
 
-    //methods:
+    public String getDescription() {
+        return description;
+    }
 
+    public PurchaseType getPurchaseType() {
+        return purchaseType;
+    }
+
+    public ConcurrentHashMap<UUID, Review> getReviews() {
+        return reviews;
+    }
 
     public UUID addReview(UUID clientCredentials, String body){
         Review review = new Review(body, clientCredentials);
@@ -127,7 +130,7 @@ public class Item {
 
     public Boolean removeFromQuantity(int quantityToRemove) throws Exception {
         if(this.quantity<quantityToRemove){
-            throw new Exception(" can't remove "+ quantityToRemove+ " items, the store have less");
+            throw new Exception("Passed quantity to remove is less than is available in stock.");
         }
         else {this.quantity-=quantityToRemove;}
         return  true;

@@ -1,4 +1,4 @@
 package DomainLayer.Market.Stores.PurchaseTypes;
 
-public class DirectPurchase {
+public class DirectPurchase extends PurchaseType{
 }

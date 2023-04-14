@@ -10,7 +10,7 @@ public class Client {
 
     public Client(UUID id){
         this.clientCredentials = id;
-        cart = new ShoppingCart(UUID.randomUUID());
+        cart = new ShoppingCart(id);
     }
 
     public void setCart(ShoppingCart cart){
