@@ -125,10 +125,10 @@ public class UserController {
     private void deleteShoppingBasket(ShoppingBasket shoppingBasket){
         UUID storeId = shoppingBasket.getStoreId();
         Store store = storeController.getStore(storeId);
-        for(UUID itemId : shoppingBasket.getItemsID().keySet()){
-            store.getItem(itemId).addQuantity(shoppingBasket.getItemsID().get(itemId));
+        for(UUID itemId : shoppingBasket.getItems().keySet()){
+            store.getItem(itemId).addQuantity(shoppingBasket.getItems().get(itemId));
         }
-        shoppingBasket.getItemsID().clear();
+        shoppingBasket.getItems().clear();
     }
 
     public Response<Boolean> addItemToCart(UUID userId, UUID itemId, int quantity, UUID storeID ) {

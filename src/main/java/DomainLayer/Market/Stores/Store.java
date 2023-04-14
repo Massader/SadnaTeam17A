@@ -4,8 +4,6 @@ import DomainLayer.Market.Stores.Discounts.Discount;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
-import DomainLayer.Market.Users.ShoppingCart;
-import ServiceLayer.Response;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,10 +11,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Store {
     private String name;
-    private UUID storeID;
+    private UUID storeId;
     private String description;
     private double rating;
-    private boolean close;
+    private boolean closed;
     private boolean shutdown;
     private int ratingCounter;
     private ConcurrentHashMap<UUID, Item> items;
@@ -32,10 +30,10 @@ public class Store {
 
     public Store(String name, String description) {
         this.name = name;
-        this.storeID = UUID.randomUUID();
+        this.storeId = UUID.randomUUID();
         this.description = description;
         this.rating = -1;
-        this.close = false;
+        this.closed = false;
         this.shutdown = false;
         this.ratingCounter = 0;
         items = new ConcurrentHashMap<>();
@@ -75,44 +73,31 @@ public class Store {
     }
 
     public boolean closeStore() {
-        if(checkNotShutdown()&&checkNotClose()){
-        this.close = true;
-        return true;}
-        return  false;
+        if(!shutdown && !closed){
+            this.closed = true;
+            return true;
+        }
+        return false;
     }
 
 
     public boolean reopenStore() {
-        ;
-        if (!checkNotShutdown()&&!this.close) {
-           // throw new IllegalArgumentException("the Store :" + this.getName() + " is already open ");
+        if (shutdown || !closed) {
             return false;
         } else {
-            this.close = false;
+            closed = false;
             return true;
         }
 
     }
 
-    public Boolean shutdownStore() {
-        this.shutdown = true;
+    public boolean shutdownStore() {
+        shutdown = true;
         return true;
     }
 
-    private boolean checkNotShutdown() {
-        if (isShutdown()) {
-           // throw new IllegalArgumentException("the Store :" + this.getName() + " is already shutDown");
-            return false;
-        }
-        return true;
-    }
-
-    private boolean checkNotClose() {
-        if (isClose()) {
-           // throw new IllegalArgumentException("the Store :" + this.getName() + " is already close");
-            return false;
-        }
-        return  true;
+    public String getDescription() {
+        return description;
     }
 
     public void addRole(UUID clientCredentials, Role role){
@@ -123,16 +108,12 @@ public class Store {
         rolesMap.remove(idToRemove);
     }
 
-
-
-
-    //get +set function
-    public boolean isClose() {
-        return close;
+    public boolean isClosed() {
+        return closed;
     }
 
-    public UUID getStoreID() {
-        return storeID;
+    public UUID getStoreId() {
+        return storeId;
     }
 
     public boolean isShutdown() {
@@ -145,11 +126,6 @@ public class Store {
 
     public String getName() {
         return name;
-    }
-
-
-    public int getRatingCounter() {
-        return ratingCounter;
     }
 
     public void addItem(Item item) {

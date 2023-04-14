@@ -7,7 +7,7 @@ public class ProxyBridge implements Bridge {
     Bridge real = null;
 
     public void setReal() {
-        this.real = new RealBridge();
+        real = new RealBridge();
     }
 
     public Boolean systemBoot() {

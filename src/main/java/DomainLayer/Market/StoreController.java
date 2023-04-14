@@ -15,7 +15,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class StoreController {
-    private static StoreController singleton = null;
+    private static StoreController instance = null;
+    private static final Object instanceLock = new Object();
     private ConcurrentHashMap<UUID, Store> storeMap;
     private UserController userController;
 
@@ -24,10 +25,12 @@ public class StoreController {
         userController = UserController.getInstance();
     }
 
-    public static synchronized StoreController getInstance() {
-        if (singleton == null)
-            singleton = new StoreController();
-        return singleton;
+    public static StoreController getInstance() {
+        synchronized(instanceLock) {
+            if (instance == null)
+                instance = new StoreController();
+        }
+        return instance;
     }
 
     public Collection<Store> getStores(){
@@ -42,7 +45,7 @@ public class StoreController {
         try{
             if(!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
-            if(getStore(storeId).isClose())
+            if(getStore(storeId).isClosed())
                 return Response.getFailResponse("Store is closed.");
             return Response.getSuccessResponse(getStore(storeId));
         }
@@ -134,7 +137,7 @@ public class StoreController {
 
 
         //add the item to the store
-        Store store = getStore(storeId).getValue();
+        Store store = getStore(storeId);
         store.addItem(item);
 
         return Response.getSuccessResponse(item);
@@ -183,7 +186,7 @@ public class StoreController {
     //calculate new rating given a new one
     public Response<Boolean> addStoreRating(UUID storeId ,int rating){
         try {
-        Store store = getStore(storeId).getValue();
+        Store store = getStore(storeId);
         store.addRating(rating);
         return Response.getSuccessResponse(true);}
         catch (Exception exception){
@@ -242,10 +245,10 @@ public class StoreController {
         try {
             Store store = new Store(storeName, storeDescription);
             store.addRole(clientCredentials, new StoreOwner(clientCredentials));
-            Response<Boolean> response = userController.setAsFounder(clientCredentials, store.getStoreID());
+            Response<Boolean> response = userController.setAsFounder(clientCredentials, store.getStoreId());
             if (response.isError())
                 return Response.getFailResponse(response.getMessage());
-            storeMap.put(store.getStoreID(), store);
+            storeMap.put(store.getStoreId(), store);
             return Response.getSuccessResponse(store);
         }
         catch (Exception exception){
@@ -353,7 +356,7 @@ public class StoreController {
             for (UUID storeId:shoppingCart.getShoppingBaskets().keySet()) {// iterator on the storeId
                 if (!storeExist(storeId))
                     return Response.getFailResponse("Store does not exist");
-                price+= getStore(storeId).calculatePriceOfBasket(shoppingCart.getShoppingBasket(storeId).getItemsID());
+                price+= getStore(storeId).calculatePriceOfBasket(shoppingCart.getShoppingBasket(storeId).getItems());
             }// calculate basket by his store
             return  Response.getSuccessResponse(price);
         }

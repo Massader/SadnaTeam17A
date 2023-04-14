@@ -1,13 +1,30 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import org.junit.*;
+
+import java.util.UUID;
 
 public class EnterSystem extends ProjectTest {
 
-    public EnterSystem(Bridge real) {
-        super(real);
+    UUID clientCredentials;
+
+    @BeforeClass
+    public void setUp() {
+        bridge.setReal();
     }
 
-    public boolean enterSystem() {
-        return bridge.enterSystem();
+    @Before
+    public void beforeEach()  {
+    }
+
+    @After
+    public void tearDown() {
+        bridge.exitSystem(clientCredentials);
+    }
+
+    @Test
+    public void enterSystemSuccess() {
+        clientCredentials = bridge.enterSystem();
+        Assert.assertNotNull(clientCredentials);
     }
 }
