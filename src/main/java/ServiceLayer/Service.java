@@ -310,7 +310,7 @@ public class Service {
 
     public Boolean addItemToCart(UUID clientCredentials, UUID itemId ,int  quantity, UUID storeID ) {
         Response<Boolean> response = userController.addItemToCart(clientCredentials,itemId,quantity, storeID);
-        if(response1.isError())
+        if(response.isError())
             return false;
        // Response<Boolean> response2 = storeController.removeItemQuantity(clientCredentials,itemId,quantity);//todo: only if we choose to take the items from sore if its on cart
         return response.getValue();
@@ -363,7 +363,7 @@ public class Service {
         if(response.isError())
             return null;
         return response.getValue();}
-    }
+
 
     public Boolean addItemRating(UUID clientCredentials, UUID storeId ,int rating){
         Response<Boolean> response1 = userController.isUser(clientCredentials);
@@ -373,12 +373,21 @@ public class Service {
         if(response.isError())
             return null;
         return response.getValue();}
+
+    public Boolean register(String username,String password){
+        Response<Boolean> response = userController.Register(username,password);
+        if(response.isError())
+            return null;
+        return response.getValue();}
+
+
+
 }
 
 
 
 
-    }
+
 
 
 
