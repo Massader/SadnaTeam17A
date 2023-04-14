@@ -30,6 +30,9 @@ public class Response<T> {
     public boolean isError() {
         return error;
     }
+    public boolean isSuccessful() {
+        return !error;
+    }
 
     private void setError(boolean error) {
         this.error = error;

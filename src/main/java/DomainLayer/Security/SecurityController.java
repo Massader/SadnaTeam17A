@@ -39,28 +39,26 @@ public class SecurityController {
         }
     }
 
-    private boolean isLegalPassword(String password)
+    public boolean isLegalPassword(String password)
     {
         boolean isLegal = true;
 
-//                 *****   all in commas just to make the manual tests easier :)   ******
+        if (password.length() >= PASS_MIN_LEN && password.length() <= PASS_MAX_LEN)
+        {
+            boolean hasUpper = false;
+            boolean hasLower = false;
+            boolean hasNumber = false;
+            for (int i = 0; i<password.length(); i++)
+            {
+                char c = password.charAt(i);
+                if (c >= 'A' && c <= 'Z') hasUpper = true;
+                if (c >= 'a' && c <= 'z') hasLower = true;
+                if (c >= '9' && c <= '0') hasNumber = true;
+            }
+            if (!hasUpper || !hasLower || !hasNumber) isLegal = false;
 
-//        if (password.length() >= PASS_MIN_LEN && password.length() <= PASS_MAX_LEN)
-//        {
-//            boolean hasUpper = false;
-//            boolean hasLower = false;
-//            boolean hasNumber = false;
-//            for (int i = 0; i<password.length(); i++)
-//            {
-//                char c = password.charAt(i);
-//                if (c >= 'A' && c <= 'Z') hasUpper = true;
-//                if (c >= 'a' && c <= 'z') hasLower = true;
-//                if (c >= '9' && c <= '0') hasNumber = true;
-//            }
-//            if (!hasUpper || !hasLower || !hasNumber) isLegal = false;
-//
-//        }
-//        else isLegal = false;
+        }
+        else isLegal = false;
 
         return isLegal;
     }
@@ -125,6 +123,11 @@ public class SecurityController {
     }
 
 
+        }
+
+        //added for tests
+        public void addPassword(UUID id, String pass){
+            passwords.put(id, pass);
         }
 
 
