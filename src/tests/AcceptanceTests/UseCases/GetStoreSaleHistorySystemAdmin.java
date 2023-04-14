@@ -8,6 +8,6 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
     }
 
     public boolean getStoreSaleHistorySystemAdmin() {
-        return proxy.getStoreSaleHistorySystemAdmin();
+        return bridge.getStoreSaleHistorySystemAdmin();
     }
 }

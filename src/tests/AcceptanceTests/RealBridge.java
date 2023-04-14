@@ -1,12 +1,20 @@
 package AcceptanceTests;
 import ServiceLayer.*;
 
+import java.util.UUID;
+
 public class RealBridge implements Bridge {
 
     Service service;
 
-    public RealBridge(Service service) {
-        this.service = service;
+    @Override
+    public void setReal() {
+
+    }
+
+    public RealBridge() {
+        service = Service.getInstance();
+        service.init();
     }
 
     public Boolean systemBoot() {
@@ -49,20 +57,20 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public Boolean enterSystem() {
-        return false;
+    public UUID enterSystem() {
+        return service.createClient();
     }
 
-    public Boolean exitSystem() {
-        return false;
+    public Boolean exitSystem(UUID clientCredentials) {
+        return service.closeClient(clientCredentials);
     }
 
-    public Boolean register() {
-        return false;
+    public Boolean register(String username, String password) {
+        return service.register(username, password);
     }
 
-    public Boolean login() {
-        return false;
+    public UUID login(UUID clientCredentials, String username, String password) {
+        return service.login(clientCredentials, username, password);
     }
 
     public Boolean receiveStoreInfo() {

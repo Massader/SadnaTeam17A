@@ -8,6 +8,6 @@ public class GetStoreStaffList extends ProjectTest {
     }
 
     public boolean getStoreStaffList() {
-        return proxy.getStoreStaffList();
+        return bridge.getStoreStaffList();
     }
 }

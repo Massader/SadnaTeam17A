@@ -8,6 +8,6 @@ public class SetStoreManagerPermissions extends ProjectTest {
     }
 
     public boolean setStoreManagerPermissions() {
-        return proxy.setStoreManagerPermissions();
+        return bridge.setStoreManagerPermissions();
     }
 }

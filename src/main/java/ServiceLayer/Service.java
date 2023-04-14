@@ -67,9 +67,11 @@ public class Service {
 
         //Creating default admin user
         try {
+            Response<UUID> createClientResponse = userController.createClient();
+            if (createClientResponse.isError()) throw new RuntimeException("System startup - Client creation failed.");
             Response<Boolean> registerResponse = userController.register("admin", "admin");
             if (registerResponse.isError()) throw new RuntimeException("System startup - registering admin failed.");
-            Response<UUID> loginResponse = userController.login("admin", "admin", null);
+            Response<UUID> loginResponse = userController.login(createClientResponse.getValue(), "admin", "admin");
             if (loginResponse.isError()) throw new RuntimeException("System startup - logging in as default admin failed.");
             UUID clientCredentials = loginResponse.getValue();
             Response<Boolean> setAdminResponse = userController.setAsAdmin(clientCredentials, clientCredentials);
@@ -89,6 +91,13 @@ public class Service {
     public UUID createClient(){
         Response<UUID> response = userController.createClient();
         if(response.isError())
+            return null;
+        return response.getValue();
+    }
+
+    public UUID login(UUID clientCredentials, String username, String password) {
+        Response<UUID> response = userController.login(clientCredentials, username, password);
+        if (response.isError())
             return null;
         return response.getValue();
     }

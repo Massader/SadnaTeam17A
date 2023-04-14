@@ -8,6 +8,6 @@ public class StoreManagerActions extends ProjectTest {
     }
 
     public boolean storeManagerActions() {
-        return proxy.storeManagerActions();
+        return bridge.storeManagerActions();
     }
 }

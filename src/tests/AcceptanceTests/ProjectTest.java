@@ -2,9 +2,9 @@ package AcceptanceTests;
 
 public abstract class ProjectTest {
 
-    public Bridge proxy;
+    public Bridge bridge;
 
-    public ProjectTest(Bridge real) {
-        proxy = new ProxyBridge(real);
+    public ProjectTest() {
+        bridge = new ProxyBridge();
     }
 }

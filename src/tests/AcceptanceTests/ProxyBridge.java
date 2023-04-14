@@ -1,11 +1,13 @@
 package AcceptanceTests;
 
+import java.util.UUID;
+
 public class ProxyBridge implements Bridge {
 
-    Bridge real;
+    Bridge real = null;
 
-    public ProxyBridge(Bridge real) {
-        this.real = real;
+    public void setReal() {
+        this.real = new RealBridge();
     }
 
     public Boolean systemBoot() {
@@ -48,20 +50,20 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.userDelayedAlert();
     }
 
-    public Boolean enterSystem() {
+    public UUID enterSystem() {
         return real == null? null : real.enterSystem();
     }
 
-    public Boolean exitSystem() {
-        return real == null? null : real.exitSystem();
+    public Boolean exitSystem(UUID clientCredentials) {
+        return real == null? null : real.exitSystem(clientCredentials);
     }
 
-    public Boolean register() {
-        return real == null? null : real.register();
+    public Boolean register(String username, String password) {
+        return real == null? null : real.register(username, password);
     }
 
-    public Boolean login() {
-        return real == null? null : real.login();
+    public UUID login(UUID clientCredentials, String username, String password) {
+        return real == null? null : real.login(clientCredentials, username, password);
     }
 
     public Boolean receiveStoreInfo() {

@@ -8,10 +8,10 @@ public class DelayedAlerts extends ProjectTest {
     }
 
     public boolean systemDelayedAlert() {
-        return proxy.systemDelayedAlert();
+        return bridge.systemDelayedAlert();
     }
 
     public boolean userDelayedAlert() {
-        return proxy.userDelayedAlert();
+        return bridge.userDelayedAlert();
     }
 }

@@ -8,6 +8,6 @@ public class Supply extends ProjectTest {
     }
 
     public boolean checkForSupply() {
-        return proxy.checkForSupply();
+        return bridge.checkForSupply();
     }
 }

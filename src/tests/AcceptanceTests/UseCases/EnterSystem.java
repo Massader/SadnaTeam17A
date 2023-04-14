@@ -8,6 +8,6 @@ public class EnterSystem extends ProjectTest {
     }
 
     public boolean enterSystem() {
-        return proxy.enterSystem();
+        return bridge.enterSystem();
     }
 }

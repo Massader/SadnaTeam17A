@@ -8,10 +8,10 @@ public class UpdateExternalSystems extends ProjectTest {
     }
 
     public boolean addService() {
-        return proxy.addService();
+        return bridge.addService();
     }
 
     public boolean updateService() {
-        return proxy.updateService();
+        return bridge.updateService();
     }
 }
