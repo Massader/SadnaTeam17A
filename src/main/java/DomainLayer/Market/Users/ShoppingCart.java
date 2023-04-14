@@ -1,8 +1,9 @@
 package DomainLayer.Market.Users;
 
+import DomainLayer.Market.Stores.Item;
+
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ShoppingCart {
     private UUID id;
@@ -29,16 +30,16 @@ public class ShoppingCart {
         this.id = id;
     }
 
-    public Boolean addItemToCart(UUID itemId, UUID storeID, int  quantity ) {
+    public Boolean addItemToCart(Item item, UUID storeID, int  quantity ) {
         ShoppingBasket shoppingBasket = getShoppingBasket(storeID);
-        return shoppingBasket.addItem(itemId, quantity);
-
+        return shoppingBasket.addItem(item, quantity);
     }
 
-    public Boolean removeItemToCart(UUID itemId, UUID storeId, int quantity) {
-        if(shoppingBaskets.containsKey(storeId)){return  false;}
+    public Boolean removeItemFromCart(Item item, UUID storeId, int quantity) {
+        if(shoppingBaskets.containsKey(storeId))
+            return false;
         ShoppingBasket shoppingBasket = getShoppingBasket(storeId);
-        return shoppingBasket.removeItem(itemId,quantity);
+        return shoppingBasket.removeItem(item,quantity);
     }
 
  public ShoppingBasket getShoppingBasket(UUID storeID){

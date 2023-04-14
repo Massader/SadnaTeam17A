@@ -10,20 +10,21 @@ import DomainLayer.Market.Users.User;
 import DomainLayer.Payment.PaymentController;
 import DomainLayer.Security.SecurityController;
 import DomainLayer.Supply.SupplyController;
+import ServiceLayer.Loggers.ErrorLogger;
+import ServiceLayer.Loggers.EventLogger;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import static java.util.logging.Logger.getLogger;
 
 public class Service {
     private static Service instance = null;
     private static Object instanceLock = new Object();
-    private static final Logger LOG = getLogger("Service");
+    private final EventLogger eventLogger = EventLogger.getInstance();
+    private final ErrorLogger errorLogger = ErrorLogger.getInstance();
     private StoreController storeController;
     private UserController userController;
     private SecurityController securityController;
@@ -46,7 +47,7 @@ public class Service {
     }
 
     public boolean init() {
-        LOG.log(Level.INFO, "Booting system");
+        errorLogger.log(Level.INFO, "Booting system");
         storeController = StoreController.getInstance();
         storeController.init();
         userController = UserController.getInstance();
@@ -76,13 +77,13 @@ public class Service {
             Response<UUID> logoutResponse = userController.logout(clientCredentials);
             if (loginResponse.isError()) throw new RuntimeException("System startup - logging out default admin failed.");
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, e.getMessage() + "\n" + e.getStackTrace());
+            errorLogger.log(Level.SEVERE, e.getMessage() + "\n" + e.getStackTrace());
             return false;
         }
 
         //Add Supply and Payment JSON config file read here
 
-        LOG.log(Level.INFO, "System boot successful.");
+        eventLogger.log(Level.INFO, "System boot successful.");
         return true;
     }
     public UUID createClient(){
@@ -242,20 +243,12 @@ public class Service {
         return response.getValue();
     }
 
-    public boolean removeStoreOwner(UUID clientCredentials, UUID ownerToRemove, UUID storeId){
-        Response<Boolean> response = userController.removeStoreOwner(clientCredentials, ownerToRemove, storeId);
+    public boolean removeStoreRole(UUID clientCredentials, UUID roleToRemove, UUID storeId){
+        Response<Boolean> response = userController.removeStoreRole(clientCredentials, roleToRemove, storeId);
         if(response.isError())
             return false;
         return response.getValue();
     }
-
-    public boolean removeStoreManager(UUID clientCredentials, UUID managerToRemove, UUID storeId){
-        Response<Boolean> response = userController.removeStoreManager(clientCredentials, managerToRemove, storeId);
-        if(response.isError())
-            return false;
-        return response.getValue();
-    }
-
 
     public boolean setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId, int newQuantity){
         Response<Boolean> response = storeController.setItemQuantity(clientCredentials, storeId, itemId, newQuantity);
@@ -375,7 +368,7 @@ public class Service {
         return response.getValue();}
 
     public Boolean register(String username,String password){
-        Response<Boolean> response = userController.Register(username,password);
+        Response<Boolean> response = userController.register(username,password);
         if(response.isError())
             return null;
         return response.getValue();}

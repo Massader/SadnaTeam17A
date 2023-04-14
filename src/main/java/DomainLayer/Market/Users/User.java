@@ -6,19 +6,25 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class User extends Client{
-    private String userName;
+    private String username;
     private ConcurrentLinkedQueue<Role> roles;
     private ConcurrentLinkedQueue<Purchase> purchases;
+    protected boolean isAdmin;
 
-    public User(String userName, UUID id){
+    public User(String username, UUID id){
         super(id);
-        this.userName = userName;
+        this.username = username;
         roles = new ConcurrentLinkedQueue<>();
         purchases = new ConcurrentLinkedQueue<>();
+        isAdmin=false;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
+    }
+
+    public boolean isAdmin(){
+        return isAdmin;
     }
 
     public ConcurrentLinkedQueue<Role> getRoles() {
@@ -26,10 +32,6 @@ public class User extends Client{
     }
     public ConcurrentLinkedQueue<Purchase> getPurchases() {
         return purchases;
-    }
-
-    public void setUserName(String userName){
-        this.userName=userName;
     }
 
     public void setRoles(ConcurrentLinkedQueue<Role> roles){
