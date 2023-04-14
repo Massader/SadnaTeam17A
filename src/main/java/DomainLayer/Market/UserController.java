@@ -85,7 +85,7 @@ public class UserController {
 
 
     // add a new user to the system
-    public Response<User> Register(String userName, String password) {
+    public Response<Boolean> Register(String userName, String password) {
         try{
         //verify UserName is valid and unused.
         if (userName == null) return Response.getFailResponse("No UserName input.");
@@ -94,7 +94,7 @@ public class UserController {
         UUID id = UUID.randomUUID();
         //add user
         User user = loadUser(userName, password, id);
-        return Response.getSuccessResponse(user);}
+        return Response.getSuccessResponse(true);}
         catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
@@ -338,9 +338,10 @@ public class UserController {
         }
     }
 
-    public Response<Boolean> setAsFounder() {
-        return null;
-    }
+    //TODO: can delete?
+//    public Response<Boolean> setAsFounder() {
+//        return null;
+//    }
 
     public Response<User> getUser(UUID userId) {
         try {
