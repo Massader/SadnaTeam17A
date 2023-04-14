@@ -34,7 +34,7 @@ public class StoreController {
         return storeMap.values();
     }
 
-    private boolean storeExist(UUID storeId){
+    public boolean storeExist(UUID storeId){
         return this.storeMap.containsKey(storeId);
     }
 

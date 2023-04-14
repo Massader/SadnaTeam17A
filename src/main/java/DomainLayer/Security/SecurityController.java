@@ -4,7 +4,6 @@ import DomainLayer.Market.UserController;
 import DomainLayer.Market.Users.SecurityQuestion;
 import ServiceLayer.Response;
 
-import java.util.Hashtable;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,7 +28,7 @@ public class SecurityController {
         return singleton;
     }
 
-    public Response<UUID> ValidatePass(UUID id, String password) {
+    public Response<UUID> validatePassword(UUID id, String password) {
         try {
             if(passwords.get(id).equals(password))
                 return Response.getSuccessResponse(id);
@@ -68,7 +67,7 @@ public class SecurityController {
 
     public Response<Boolean> changePassword(UUID id, String oldPass, String newPass){
         try {
-            if (!ValidatePass(id, oldPass).getValue().equals(id))
+            if (!validatePassword(id, oldPass).getValue().equals(id))
                 return Response.getFailResponse("the old password is incorrect!");
             return encryptAndSavePassword(id, newPass);
         }
@@ -77,14 +76,9 @@ public class SecurityController {
         }
     }
 
-    public Response<Boolean> removePassword(UUID id, String oldPass, String newPass){
-        try {
-            passwords.remove(id);
-            return Response.getSuccessResponse(true);
-        }
-        catch (Exception exception){
-            return Response.getFailResponse(exception.getMessage());
-        }
+    public void removePassword(UUID id){
+        securityQuestions.remove(id);
+        passwords.remove(id);
     }
 
     public Response<Boolean> encryptAndSavePassword(UUID id, String newPass){

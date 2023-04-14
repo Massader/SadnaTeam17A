@@ -41,21 +41,30 @@ public class ShoppingBasket {
         this.storeId = storeId;
     }
 
-    public boolean addItem(UUID itemId, int quantity){
-        if(this.itemsID.get(itemId)!=null){
-            int oldQuantity= this.itemsID.get(itemId);
-            itemsID.put(itemId,oldQuantity+quantity);
+    public boolean addItem(Item item, int quantity){
+        synchronized (item) {
+            if(item.getQuantity()<quantity)
+                return false;
+            if (this.itemsID.get(item.getId()) == null)
+                itemsID.put(item.getId(), 0);
+            int oldQuantity = this.itemsID.get(item.getId());
+            itemsID.put(item.getId(), oldQuantity + quantity);
+            item.setQuantity(item.getQuantity() - quantity);
+            return true;
         }
-        else {this.itemsID.put(itemId,quantity);}
-        return  true;
     }
-    public boolean removeItem(UUID itemId, int quantity){
-        if(itemsID.get(itemId)==null){return  false;}// dont have any item like this in ShoppingBasket
-        int oldQuantity= this.itemsID.get(itemId);
-        if(oldQuantity<quantity){ return false;}// there is less item's then the quantity to remove
-        itemsID.put(itemId,oldQuantity-quantity);
-        return true;
 
+    public boolean removeItem(Item item, int quantity){
+        synchronized (item) {
+            // dont have any item like this in ShoppingBasket
+            int oldQuantity = item.getQuantity();
+            if (oldQuantity < quantity)
+                return false;
+            // there is less item's then the quantity to remove
+            itemsID.put(item.getId(), oldQuantity - quantity);
+            item.setQuantity(item.getQuantity() + quantity);
+            return true;
+        }
     }
 //    public Double calculateTotalPrice() {
 //        return 0.0;}
