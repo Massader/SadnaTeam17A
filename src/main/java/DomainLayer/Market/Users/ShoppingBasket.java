@@ -4,25 +4,21 @@ import DomainLayer.Market.Stores.Item;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ShoppingBasket {
     private UUID id;
     private UUID storeId;
-    private ConcurrentHashMap<UUID,Integer> itemsID;//UUID itemId, int quantity
+    private ConcurrentHashMap<UUID,Integer> items;//UUID itemId, int quantity
 
-    public ConcurrentHashMap<UUID, Integer> getItemsID() {
-        return itemsID;
+    public ConcurrentHashMap<UUID, Integer> getItems() {
+        return items;
     }
 
-    public void setItemsID(ConcurrentHashMap<UUID, Integer> itemsID) {
-        this.itemsID = itemsID;
-    }
 
     public ShoppingBasket(UUID storeId) {
         this.id = UUID.randomUUID();
         this.storeId = storeId;
-        this.itemsID= new ConcurrentHashMap<>();
+        this.items = new ConcurrentHashMap<>();
     }
 
     public UUID getId() {
@@ -45,10 +41,10 @@ public class ShoppingBasket {
         synchronized (item) {
             if(item.getQuantity()<quantity)
                 return false;
-            if (this.itemsID.get(item.getId()) == null)
-                itemsID.put(item.getId(), 0);
-            int oldQuantity = this.itemsID.get(item.getId());
-            itemsID.put(item.getId(), oldQuantity + quantity);
+            if (this.items.get(item.getId()) == null)
+                items.put(item.getId(), 0);
+            int oldQuantity = this.items.get(item.getId());
+            items.put(item.getId(), oldQuantity + quantity);
             item.setQuantity(item.getQuantity() - quantity);
             return true;
         }
@@ -61,7 +57,7 @@ public class ShoppingBasket {
             if (oldQuantity < quantity)
                 return false;
             // there is less item's then the quantity to remove
-            itemsID.put(item.getId(), oldQuantity - quantity);
+            items.put(item.getId(), oldQuantity - quantity);
             item.setQuantity(item.getQuantity() + quantity);
             return true;
         }

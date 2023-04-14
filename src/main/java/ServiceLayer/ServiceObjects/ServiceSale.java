@@ -1,10 +1,10 @@
-package DomainLayer.Market.Users;
+package ServiceLayer.ServiceObjects;
 
-import java.time.Instant;
+import DomainLayer.Market.Stores.Sale;
 import java.util.Date;
 import java.util.UUID;
 
-public class Purchase {
+public class ServiceSale {
     private UUID id;
     private UUID userId;
     private UUID itemId;
@@ -12,12 +12,12 @@ public class Purchase {
     private int quantity;
 
 
-    public Purchase(UUID userId, UUID itemId, int quantity) {
-        this.id = UUID.randomUUID();
-        this.date = Date.from(Instant.now());
-        this.itemId = itemId;
-        this.userId = userId;
-        this.quantity = quantity;
+    public ServiceSale(Sale sale) {
+        this.id = sale.getId();
+        this.userId = sale.getUserId();
+        this.itemId = sale.getItemId();
+        this.date = sale.getDate();
+        this.quantity = sale.getQuantity();
     }
 
     public UUID getId() {

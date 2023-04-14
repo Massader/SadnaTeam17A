@@ -5,6 +5,7 @@ import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.Purchase;
+import DomainLayer.Market.Users.ShoppingBasket;
 import DomainLayer.Market.Users.ShoppingCart;
 import DomainLayer.Market.Users.User;
 import DomainLayer.Payment.PaymentController;
@@ -12,17 +13,16 @@ import DomainLayer.Security.SecurityController;
 import DomainLayer.Supply.SupplyController;
 import ServiceLayer.Loggers.ErrorLogger;
 import ServiceLayer.Loggers.EventLogger;
+import ServiceLayer.ServiceObjects.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import static java.util.logging.Logger.getLogger;
 
 public class Service {
     private static Service instance = null;
-    private static Object instanceLock = new Object();
+    private static final Object instanceLock = new Object();
     private final EventLogger eventLogger = EventLogger.getInstance();
     private final ErrorLogger errorLogger = ErrorLogger.getInstance();
     private StoreController storeController;
@@ -49,21 +49,21 @@ public class Service {
     public boolean init() {
         errorLogger.log(Level.INFO, "Booting system");
         storeController = StoreController.getInstance();
-        storeController.init();
+        //storeController.init();
         userController = UserController.getInstance();
-        userController.init();
+        //userController.init();
         securityController = SecurityController.getInstance();
-        securityController.init();
+        //securityController.init();
         messageController = MessageController.getInstance();
-        messageController.init();
+        //messageController.init();
         supplyController = SupplyController.getInstance();
-        supplyController.init();
+        //supplyController.init();
         paymentController = PaymentController.getInstance();
-        paymentController.init();
+        //paymentController.init();
         notificationController = NotificationController.getInstance();
         notificationController.init();
         searchController = SearchController.getInstance();
-        searchController.init();
+        //searchController.init();
 
         //Creating default admin user
         try {
@@ -135,13 +135,10 @@ public class Service {
     }
 
     public boolean deleteUser(UUID clientCredentials, UUID userToDelete){
-        Response<Boolean> response1 = userController.deleteUser(clientCredentials, userToDelete);
-        Response<Boolean> response2;
-        if (!response1.isError())
-            response2 = securityController.removeUser(clientCredentials, userToDelete);
-        else
+        Response<Boolean> response = userController.deleteUser(clientCredentials, userToDelete);
+        if (response.isError())
             return false;
-        return response2.getValue()!=null ? response2.getValue() : false;
+        return response.getValue()!=null ? response.getValue() : false;
     }
 
     public boolean validateOrder(UUID clientCredentials/*, args*/){
@@ -182,7 +179,6 @@ public class Service {
         if(response.isError())
             return null;
         return new ServiceStore(response.getValue());
-        //ServiceStore constructor should get Store as an argument
     }
 
     public ServiceItem getItemInformation(UUID storeId, UUID itemId){
@@ -203,11 +199,15 @@ public class Service {
         return new ServiceStore(response.getValue());
     }
 
-    public ServiceShoppingCart viewCart(UUID clientCredentials){
+    public List<ServiceShoppingBasket> viewCart(UUID clientCredentials){
         Response<ShoppingCart> response = userController.viewCart(clientCredentials);
         if(response.isError())
             return null;
-        return new ServiceShoppingCart(response.getValue());
+        List<ServiceShoppingBasket> cart = new ArrayList<>();
+        for (ShoppingBasket basket : response.getValue().getShoppingBaskets().values()) {
+            cart.add(new ServiceShoppingBasket(basket));
+        }
+        return cart;
     }
 
     public UUID postReview(UUID clientCredentials, UUID itemId, String reviewBody){
@@ -288,18 +288,26 @@ public class Service {
     }
 
     public List<ServicePurchase> getPurchaseHistory(UUID clientCredentials, UUID user ){
-        //if(clientCredentials!=user){if(!isAdmin(clientCredentials) return null); //TODO: check where we check admin
         Response<List<Purchase>> response = userController.getPurchaseHistory(clientCredentials,user);
         if(response.isError())
             return null;
-        return new ServicePurchase(response.getValue());}
+        List<ServicePurchase> output = new ArrayList<ServicePurchase>();
+        for (Purchase purchase : response.getValue()) {
+            output.add(new ServicePurchase(purchase));
+        }
+        return output;
+    }
 
 
-    public List<ServiceSale> getStoreSaleHistory(UUID clientCredentials,UUID storeId){
-        Response<List<Sale>> response =storeController.getStoreSaleHistory(clientCredentials,storeId);
-        if(response.isError())
+    public List<ServiceSale> getStoreSaleHistory(UUID clientCredentials,UUID storeId) {
+        Response<List<Sale>> response = storeController.getStoreSaleHistory(clientCredentials, storeId);
+        if (response.isError())
             return null;
-        return new ServiceSale(response.getValue());
+        List<ServiceSale> output = new ArrayList<>();
+        for (Sale sale : response.getValue()) {
+            output.add(new ServiceSale(sale));
+        }
+        return output;
     }
 
     public ServiceUser getUserInfo(UUID clientCredentials){
@@ -336,7 +344,7 @@ public class Service {
         return response2.getValue();
     }
 
-    public Boolean validateSecurityQuestion(UUID clientCredentials , String answer ){
+    public Boolean validateSecurityQuestion(UUID clientCredentials, String answer ){
         Response<Boolean> response = securityController.ValidateSecurityQuestion(clientCredentials,answer);
         if(response.isError()|| response.getValue()==null)
             return null;
@@ -354,7 +362,8 @@ public class Service {
         Response<String> response = securityController.getSecurityQuestion(clientCredentials);
         if(response.isError())
             return null;
-        return response.getValue();}
+        return response.getValue();
+    }
 
 
     public Boolean addStoreRating(UUID clientCredentials, UUID storeId ,int rating){
@@ -364,7 +373,8 @@ public class Service {
         Response<Boolean> response = storeController.addStoreRating(storeId,rating);
         if(response.isError())
             return null;
-        return response.getValue();}
+        return response.getValue();
+    }
 
 
     public Boolean addItemRating(UUID clientCredentials, UUID storeId ,int rating){
@@ -374,13 +384,15 @@ public class Service {
         Response<Boolean> response = storeController.addItemRating(storeId,rating);
         if(response.isError())
             return null;
-        return response.getValue();}
+        return response.getValue();
+    }
 
     public Boolean register(String username,String password){
         Response<Boolean> response = userController.register(username,password);
         if(response.isError())
             return null;
-        return response.getValue();}
+        return response.getValue();
+    }
 
 
 

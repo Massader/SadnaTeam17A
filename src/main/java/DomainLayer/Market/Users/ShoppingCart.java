@@ -6,28 +6,23 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ShoppingCart {
-    private UUID id;
+    private UUID userId;
     private ConcurrentHashMap<UUID,ShoppingBasket> shoppingBaskets;// store id,
 
-    public ShoppingCart(UUID id){
-        this.id = id;
+    public ShoppingCart(UUID userId){
+        this.userId = userId;
         this.shoppingBaskets = new ConcurrentHashMap<>();
     }
     public ConcurrentHashMap<UUID,ShoppingBasket> getShoppingBaskets() {
         return shoppingBaskets;
     }
 
-    //TODO: why we need this?
-    public void setShoppingBaskets(ConcurrentHashMap<UUID,ShoppingBasket> shoppingBaskets) {
-        this.shoppingBaskets = shoppingBaskets;
-    }
-
     public UUID getId() {
-        return id;
+        return userId;
     }
 
     public void setId(UUID id) {
-        this.id = id;
+        this.userId = id;
     }
 
     public Boolean addItemToCart(Item item, UUID storeID, int  quantity ) {

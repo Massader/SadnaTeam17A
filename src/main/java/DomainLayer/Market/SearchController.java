@@ -3,6 +3,7 @@ package DomainLayer.Market;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Security.SecurityController;
+import DomainLayer.Supply.SupplyController;
 import ServiceLayer.Response;
 
 import java.util.ArrayList;
@@ -15,6 +16,17 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class SearchController {
 
     private StoreController storeController;
+
+    private static SearchController instance = null;
+    private static final Object instanceLock = new Object();
+
+    public static SearchController getInstance() {
+        synchronized(instanceLock) {
+            if (instance == null)
+                instance = new SearchController();
+        }
+        return instance;
+    }
 
     private SearchController() {
         storeController = StoreController.getInstance();

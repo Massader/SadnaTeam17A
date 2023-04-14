@@ -1,4 +1,4 @@
 package DomainLayer.Market.Stores.PurchaseTypes;
 
-public class BidPurchase {
+public class BidPurchase extends PurchaseType{
 }
