@@ -43,7 +43,7 @@ public class Item {
     //getters & setters :
 
     public Collection<Category> getCategories(){
-        return categories.stream().toList();
+        return categories;
     }
     public boolean containsCategory(String category){
         for (Category category1 : this.getCategories()){
