@@ -391,6 +391,13 @@ public class UserController {
     public boolean isRegisteredUser(UUID id){
         return userCredentials.contains(id);
     }
+
+    public Response<Boolean> isUser(UUID id){
+        if(!userCredentials.contains(id)){
+            return Response.getFailResponse("The client does not have user permission  ");
+        }
+        return Response.getSuccessResponse(true);
+    }
     public boolean isNonRegisteredClient(UUID id){
         return clients.contains(id);
     }

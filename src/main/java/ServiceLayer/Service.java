@@ -355,6 +355,28 @@ public class Service {
         return response.getValue();}
 
 
+    public Boolean addStoreRating(UUID clientCredentials, UUID storeId ,int rating){
+        Response<Boolean> response1 = userController.isUser(clientCredentials);
+        if(response1.isError())
+            return null;
+        Response<Boolean> response = storeController.addStoreRating(storeId,rating);
+        if(response.isError())
+            return null;
+        return response.getValue();}
+    }
+
+    public Boolean addItemRating(UUID clientCredentials, UUID storeId ,int rating){
+        Response<Boolean> response1 = userController.isUser(clientCredentials);
+        if(response1.isError())
+            return null;
+        Response<Boolean> response = storeController.addItemRating(storeId,rating);
+        if(response.isError())
+            return null;
+        return response.getValue();}
+}
+
+
+
 
     }
 

@@ -182,16 +182,25 @@ public class StoreController {
 
     //calculate new rating given a new one
     public Response<Boolean> addStoreRating(UUID storeId ,int rating){
+        try {
         Store store = getStore(storeId).getValue();
         store.addRating(rating);
-        return Response.getSuccessResponse(true);
+        return Response.getSuccessResponse(true);}
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
+
     }
 
     //calculate new rating given a new one
     public Response<Boolean> addItemRating(UUID itemId, int rating){
+        try{
         Item item = getItem(itemId).getValue();
         item.addRating(rating);
-        return Response.getSuccessResponse(true);
+        return Response.getSuccessResponse(true);}
+        catch (Exception exception){
+        return Response.getFailResponse(exception.getMessage());
+    }
     }
 
     public Response<List<User>> getStoreStaff(UUID clientCredentials, UUID storeId){
