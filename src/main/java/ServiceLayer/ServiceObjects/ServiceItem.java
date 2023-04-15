@@ -2,7 +2,6 @@ package ServiceLayer.ServiceObjects;
 
 import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Item;
-import DomainLayer.Market.Stores.Review;
 
 import java.util.ArrayList;
 import java.util.List;

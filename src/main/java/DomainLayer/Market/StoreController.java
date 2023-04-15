@@ -129,7 +129,7 @@ public class StoreController {
     // create item and add it to a store
     public Response<Item> addItem(String name, double price, UUID storeId, int quantity, String description){
 
-        if (!hasStore(storeId))
+        if (!storeMap.containsKey(storeId))
             return Response.getFailResponse("store doesn't exist");
 
         UUID id = UUID.randomUUID();
@@ -324,19 +324,23 @@ public class StoreController {
         }
     }
 
-    public Response<Boolean> removeItemQuantity(UUID clientId, UUID itemId, int quantity){
+    public Response<Boolean> removeItemQuantity(UUID storeId, UUID itemId, int quantity) {
         try {
-            if(!itemExist(itemId))
-                return Response.getFailResponse("item not exist");
-            if(getItem(itemId).getValue().removeFromQuantity(quantity)){
-                return Response.getSuccessResponse(true);}}
-        catch (Exception exception){
+            if (!storeMap.containsKey(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Store store = storeMap.get(storeId);
+            Item item = store.getItem(itemId);
+            if (item == null) return Response.getFailResponse("Item does not exist.");
+            if (item.removeFromQuantity(quantity))
+                return Response.getSuccessResponse(true);
+            else return Response.getFailResponse("Failed to remove quantity from item.");
+        } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
 
         }
-        return Response.getFailResponse("cant remove item quantity");}
+    }
 
-    public Response<Boolean> AddItemQuantity(UUID clientId, UUID itemId, int quantity){
+    public Response<Boolean> addItemQuantity(UUID clientId, UUID itemId, int quantity){
         try {
             if(!itemExist(itemId))
                 return Response.getFailResponse("item not exist");
@@ -349,28 +353,21 @@ public class StoreController {
         return Response.getFailResponse("cant remove item quantity");}
 
 
-    //  private ConcurrentHashMap<UUID,ShoppingBasket> shoppingBaskets;// store id,
-    public Response<Double> calculatePriceOfCart(ShoppingCart shoppingCart){
-        try{
-            double price =0;
-            for (UUID storeId:shoppingCart.getShoppingBaskets().keySet()) {// iterator on the storeId
-                if (!storeExist(storeId))
-                    return Response.getFailResponse("Store does not exist");
-                price+= getStore(storeId).calculatePriceOfBasket(shoppingCart.getShoppingBasket(storeId).getItems());
-            }// calculate basket by his store
-            return  Response.getSuccessResponse(price);
+    public Response<Double> getCartTotal(UUID clientCredentials){
+        try {
+            double price = 0;
+            Client client = userController.getClientOrUser(clientCredentials);
+            if (client == null)
+                return Response.getFailResponse("User does not exist.");
+            ShoppingCart cart = client.getCart();
+            for (UUID storeId : cart.getShoppingBaskets().keySet()) {// iterator on the storeId
+                price += storeMap.get(storeId).calculatePriceOfBasket(cart.getShoppingBaskets().get(storeId).getItems());
+            }
+            return Response.getSuccessResponse(price);
         }
         catch(Exception exception){
             return Response.getFailResponse(exception.getMessage());
         }
-    }
-
-    //    protected Store getStore(UUID storeId){
-//        return storeMap.get(storeId);
-//    }
-
-    protected boolean hasStore(UUID storeId){
-        return storeMap.containsKey(storeId);
     }
 
     //add a new store
@@ -383,10 +380,4 @@ public class StoreController {
     protected void addStore(Store store, UUID id){
         storeMap.put(id, store);
     }
-
-
-
-
-
 }
-
