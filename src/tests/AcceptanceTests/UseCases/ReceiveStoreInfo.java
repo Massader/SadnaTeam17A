@@ -11,6 +11,7 @@ public class ReceiveStoreInfo extends ProjectTest {
     UUID founder;
     UUID client;
     ServiceStore store;
+    UUID storeId;
 
     @BeforeClass
     public void setUp() {
@@ -19,6 +20,7 @@ public class ReceiveStoreInfo extends ProjectTest {
         client = bridge.enterSystem();
         founder = bridge.login(client, "founder", "pass");
         store = bridge.openStore(founder, "test", "test");
+        storeId = store.getStoreId();
     }
 
     @Before
@@ -33,12 +35,13 @@ public class ReceiveStoreInfo extends ProjectTest {
 
     @AfterClass
     public void afterClass() {
-        bridge.closeStore(founder, store.getStoreId());
+        bridge.closeStore(founder, storeId);
+        bridge.logout(founder);
     }
 
     @Test
     public void receiveStoreInfoSuccess() {
-        ServiceStore store2 = bridge.receiveStoreInfo(store.getStoreId());
+        ServiceStore store2 = bridge.receiveStoreInfo(storeId);
         Assert.assertNotNull(store2);
         Assert.assertEquals(store.getStoreId(), store2.getStoreId());
         Assert.assertEquals(store.getName(), store2.getName());
