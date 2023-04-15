@@ -1,5 +1,6 @@
 package AcceptanceTests;
 import ServiceLayer.*;
+import ServiceLayer.ServiceObjects.ServiceStore;
 
 import java.util.UUID;
 
@@ -73,8 +74,8 @@ public class RealBridge implements Bridge {
         return service.login(clientCredentials, username, password);
     }
 
-    public Boolean receiveStoreInfo() {
-        return false;
+    public ServiceStore receiveStoreInfo(UUID storeId) {
+        return service.getStoreInformation(storeId);
     }
 
     public Boolean searchStore() {
@@ -105,8 +106,8 @@ public class RealBridge implements Bridge {
         return service.logout(clientCredentials);
     }
 
-    public Boolean openStore() {
-        return false;
+    public ServiceStore openStore(UUID clientCredentials , String storeName , String storeDescription) {
+        return service.createStore(clientCredentials , storeName , storeDescription);
     }
 
     public Boolean stockManagementAddNewItem() {
@@ -137,8 +138,8 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public Boolean closeStore() {
-        return false;
+    public Boolean closeStore(UUID clientCredentials, UUID storeId) {
+        return service.closeStore(clientCredentials, storeId);
     }
 
     public Boolean getStoreStaffList() {
