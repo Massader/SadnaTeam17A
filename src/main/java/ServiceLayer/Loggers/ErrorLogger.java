@@ -15,6 +15,7 @@ public class ErrorLogger {
     private ErrorLogger(){
         try {
             fileHandler = new FileHandler("ErrorLog");
+            LOG.addHandler(fileHandler);
         } catch (Exception ignored) {}
     }
 

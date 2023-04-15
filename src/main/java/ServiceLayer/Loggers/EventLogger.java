@@ -17,6 +17,7 @@ public class EventLogger {
     private EventLogger(){
         try {
             fileHandler = new FileHandler(System.getProperty("user.dir") + "/EventLog.log");
+            LOG.addHandler(fileHandler);
         } catch (Exception ignored) {}
     }
     public static EventLogger getInstance() {
