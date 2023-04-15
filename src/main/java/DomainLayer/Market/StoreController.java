@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class StoreController {
     private static StoreController instance = null;
@@ -235,7 +236,7 @@ public class StoreController {
     public Response<List<Sale>> getStoreSaleHistory(UUID clientCredentials , UUID storeId ) {// TODO: after we will have sale class -> the return  String
         try{
             if(!userController.isRegisteredUser(clientCredentials)){return Response.getFailResponse("this client not user יe doesn't have the permissions ");}
-            return Response.getSuccessResponse(getStore(storeId).getSales(clientCredentials).stream().toList());
+            return Response.getSuccessResponse(new ArrayList<>(getStore(storeId).getSales(clientCredentials)));
         }
         catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
