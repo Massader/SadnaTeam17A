@@ -202,7 +202,7 @@ public class UserControllerTest {
 
 //    @Test
 //    public void testDeleteUserSuccess() {
-//        UUID adminCredentials = userController.login("admin", "admin").getValue();
+//        UUID adminCredentials = userController.login(userId, "u", "p").getValue();
 //        Response<Boolean> response = userController.deleteUser(adminCredentials, userId);
 //        assertTrue(response.getMessage(), response.getValue());
 //        Response<User> deletedUserResponse = userController.getUserById(userId);
@@ -210,5 +210,17 @@ public class UserControllerTest {
 //        assertEquals("User does not exist.", deletedUserResponse.getMessage());
 //    }
 
+    @Test
+    public void testLogout() {
+        // Arrange;
+        userController.login(userId, username, "p");
+
+        // Act
+        Response<UUID> response = userController.logout(userId);
+
+        // Assert
+        assertFalse(userController.isLoggedInUser(userId));
+        assertTrue(response.isSuccessful());
+    }
 
 }

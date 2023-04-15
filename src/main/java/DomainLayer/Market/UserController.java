@@ -360,6 +360,9 @@ public class UserController {
     public boolean isRegisteredUser(UUID id){
         return users.containsKey(id);
     }
+    public boolean isLoggedInUser(UUID id){
+        return loggedInUser.contains(id);
+    }
 
     public Response<Boolean> isUser(UUID id){
         if(!users.containsKey(id)){
