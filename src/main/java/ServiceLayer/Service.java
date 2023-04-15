@@ -50,7 +50,7 @@ public class Service {
     public boolean init() {
         errorLogger.log(Level.INFO, "Booting system");
         storeController = StoreController.getInstance();
-        //storeController.init();
+        storeController.init();
         userController = UserController.getInstance();
         userController.init();  // Creates default admin
         securityController = SecurityController.getInstance();
@@ -74,77 +74,125 @@ public class Service {
     }
     public UUID createClient(){
         Response<UUID> response = userController.createClient();
-        if(response.isError())
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return null;
+        }
+        eventLogger.log(Level.INFO, "Successfully created client " + response.getValue());
         return response.getValue();
     }
 
     public UUID login(UUID clientCredentials, String username, String password) {
         Response<UUID> response = userController.login(clientCredentials, username, password);
-        if (response.isError())
+        if (response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return null;
+        }
+        eventLogger.log(Level.INFO, "Successfully logged in user " + username);
         return response.getValue();
     }
 
     public UUID logout(UUID clientCredentials){
         Response<UUID> response =  userController.logout(clientCredentials);
-        if(response.isError())
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return null;
+        }
+        eventLogger.log(Level.INFO, "Successfully logged out user " + clientCredentials);
         return response.getValue();
     }
 
     public boolean changePassword(UUID clientCredentials, String oldPassword, String newPassword){
         Response<Boolean> response = securityController.changePassword(clientCredentials, oldPassword, newPassword);
-        return response.getValue()!=null ? response.getValue() : false;
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully changed user " + clientCredentials + " password");
+        return response.getValue();
     }
 
     public boolean closeClient(UUID clientCredentials){
         Response<Boolean> response = userController.closeClient(clientCredentials);
-        return response.getValue()!=null ? response.getValue() : false;
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully closed client " + clientCredentials);
+        return response.getValue();
     }
 
-    public boolean closeStore(UUID clientCredentials, UUID storeID){
-        Response<Boolean> response = storeController.closeStore(clientCredentials, storeID);
-        return response.getValue()!=null ? response.getValue() : false;
+    public boolean closeStore(UUID clientCredentials, UUID storeId){
+        Response<Boolean> response = storeController.closeStore(clientCredentials, storeId);
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully closed store " + storeId);
+        return response.getValue();
     }
 
-    public boolean reopenStore(UUID clientCredentials, UUID storeID){
-        Response<Boolean> response = storeController.reopenStore(clientCredentials, storeID);
-        return response.getValue()!=null ? response.getValue() : false;
+    public boolean reopenStore(UUID clientCredentials, UUID storeId){
+        Response<Boolean> response = storeController.reopenStore(clientCredentials, storeId);
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully reopened store " + storeId);
+        return response.getValue();
     }
 
-    public boolean shutdownStore(UUID clientCredentials, UUID storeID){
-        Response<Boolean> response = storeController.shutdownStore(clientCredentials, storeID);
-        return response.getValue()!=null ? response.getValue() : false;
+    public boolean shutdownStore(UUID clientCredentials, UUID storeId){
+        Response<Boolean> response = storeController.shutdownStore(clientCredentials, storeId);
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully shutdown store " + storeId);
+        return response.getValue();
     }
 
     public boolean deleteUser(UUID clientCredentials, UUID userToDelete){
         Response<Boolean> response = userController.deleteUser(clientCredentials, userToDelete);
-        if (response.isError())
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return false;
-        return response.getValue()!=null ? response.getValue() : false;
+        }
+        eventLogger.log(Level.INFO, "Successfully deleted user " + userToDelete);
+        return response.getValue();
     }
 
     public boolean validateOrder(UUID clientCredentials/*, args*/){
         Response<Boolean> response = supplyController.validateOrder(/*args*/);
-        return response.getValue()!=null ? response.getValue() : false;
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully validated order details for user " + clientCredentials);
+        return response.getValue();
     }
 
     public boolean validatePayment(UUID clientCredentials/*, args*/){
         Response<Boolean> response = paymentController.validatePaymentDetails(/*args*/);
-        return response.getValue()!=null ? response.getValue() : false;
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully validated payment details for user " + clientCredentials);
+        return response.getValue();
     }
 
     public UUID confirmOrder(UUID clientCredentials){
-        Response<Integer> response1 = supplyController.sendOrder();
-        Response<Integer> response2;
-        if(!response1.isError()) {
-            response2 = paymentController.requestPayment();
+        Response<Integer> response = supplyController.sendOrder();
+        if(!response.isError()) {
+            response = paymentController.requestPayment();
             UUID confirmationId = UUID.randomUUID();
-            if (!response2.isError())
+            if (!response.isError())
                 userController.clearCart(clientCredentials);
+                eventLogger.log(Level.INFO, "Successfully sent order for user " + clientCredentials);
                 return confirmationId;
         }
+        errorLogger.log(Level.SEVERE, response.getMessage());
         return null;
     }
 
@@ -171,17 +219,21 @@ public class Service {
         if(response.isError())
             return null;
         return new ServiceItem(response.getValue());
-        //ServiceItem constructor should get Item as an argument
     }
 
     public ServiceStore createStore(UUID clientCredentials , String storeName , String storeDescription){
-        Response<User> response1 = userController.getUser(clientCredentials);
-        if(response1.isError())
+        Response<User> userResponse = userController.getUser(clientCredentials);
+        if(userResponse.isError()) {
+            errorLogger.log(Level.SEVERE, userResponse.getMessage());
             return null;
-        Response<Store> response = storeController.createStore(clientCredentials, storeName, storeDescription);
-        if(response.isError())
+        }
+        Response<Store> storeResponse = storeController.createStore(clientCredentials, storeName, storeDescription);
+        if(storeResponse.isError()) {
+            errorLogger.log(Level.SEVERE, storeResponse.getMessage());
             return null;
-        return new ServiceStore(response.getValue());
+        }
+        eventLogger.log(Level.INFO, "Successfully created new store " + storeResponse.getValue().getName());
+        return new ServiceStore(storeResponse.getValue());
     }
 
     public List<ServiceShoppingBasket> viewCart(UUID clientCredentials){
@@ -196,20 +248,29 @@ public class Service {
     }
 
     public UUID postReview(UUID clientCredentials, UUID itemId, String reviewBody){
-        Response<User> response1 = userController.getUser(clientCredentials);
-        if(response1.isError())
+        Response<User> userResponse = userController.getUser(clientCredentials);
+        if(userResponse.isError()) {
+            errorLogger.log(Level.SEVERE, userResponse.getMessage());
             return null;
-        Response<UUID> response = storeController.postReview(clientCredentials, itemId, reviewBody);
-        if(response.isError())
+        }
+        Response<UUID> reviewResponse = storeController.postReview(clientCredentials, itemId, reviewBody);
+        if(reviewResponse.isError()) {
+            errorLogger.log(Level.SEVERE, reviewResponse.getMessage());
             return null;
-        return response.getValue();
+        }
+        eventLogger.log(Level.INFO, "Successfully posted review by " + userResponse.getValue().getUsername() + " for item "
+                + itemId);
+        return reviewResponse.getValue();
     }
 
     public boolean SetManagerPermissions(UUID clientCredentials, UUID manager,
                                          UUID storeId, List<Integer> permissions){
         Response<Boolean> response = userController.setManagerPermissions(clientCredentials, manager, storeId, permissions);
-        if(response.isError())
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully set manager permissions for user " + manager + " in store " + storeId);
         return response.getValue();
     }
 
@@ -225,50 +286,71 @@ public class Service {
 
     public boolean appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId){
         Response<Boolean> response = userController.appointStoreManager(clientCredentials, appointee, storeId);
-        if(response.isError())
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully appointed user " + appointee + " as manager in store " + storeId);
         return response.getValue();
     }
 
     public boolean appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId){
         Response<Boolean> response = userController.appointStoreOwner(clientCredentials, appointee, storeId);
-        if(response.isError())
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully appointed user " + appointee + " as owner in store " + storeId);
         return response.getValue();
     }
 
     public boolean removeStoreRole(UUID clientCredentials, UUID roleToRemove, UUID storeId){
         Response<Boolean> response = userController.removeStoreRole(clientCredentials, roleToRemove, storeId);
-        if(response.isError())
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully removed appointment of user " + roleToRemove + " as staff in store " + storeId);
         return response.getValue();
     }
 
     public boolean setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId, int newQuantity){
         Response<Boolean> response = storeController.setItemQuantity(clientCredentials, storeId, itemId, newQuantity);
-        if(response.isError())
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully set quantity of item " + itemId + " to " + newQuantity);
         return response.getValue();
     }
 
     public boolean setItemName(UUID clientCredentials, UUID storeId, UUID itemId, String name){
         Response<Boolean> response = storeController.setItemName(clientCredentials, storeId, itemId, name);
-        if(response.isError())
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully set name of item " + itemId + " to " + name);
         return response.getValue();
     }
 
     public boolean setItemDescription(UUID clientCredentials, UUID storeId, UUID itemId, String description){
         Response<Boolean> response = storeController.setItemDescription(clientCredentials, storeId, itemId, description);
-        if(response.isError())
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully set description of item " + itemId);
         return response.getValue();
     }
 
     public boolean setItemPrice(UUID clientCredentials, UUID storeId, UUID itemId, int price){
         Response<Boolean> response = storeController.setItemPrice(clientCredentials, storeId, itemId, price);
-        if(response.isError())
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully set price of item " + itemId + " to " + price);
         return response.getValue();
     }
 
@@ -304,11 +386,21 @@ public class Service {
 
     public Boolean addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
         Response<Boolean> response = userController.addItemToCart(clientCredentials,itemId,quantity, storeId);
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully added item " + itemId + " to " + clientCredentials + " cart");
         return response.getValue();
     }
 
     public Boolean removeItemFromCart(UUID clientCredentials, UUID itemId ,int  quantity, UUID storeID ) {
         Response<Boolean> response = userController.removeItemFromCart(clientCredentials,itemId,quantity, storeID);
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully removed item " + itemId + " from " + clientCredentials + " cart");
         return response.getValue();
     }
 
@@ -328,8 +420,11 @@ public class Service {
 
     public Boolean addSecurityQuestion(UUID clientCredentials,String question ,String answer ) {
         Response<Boolean> response = securityController.addSecurityQuestion(clientCredentials,question,answer);
-        if(response.isError())
-            return null;
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully added security question to " + clientCredentials);
         return response.getValue();
     }
 
@@ -342,30 +437,41 @@ public class Service {
 
 
     public Boolean addStoreRating(UUID clientCredentials, UUID storeId ,int rating){
-        Response<Boolean> response1 = userController.isUser(clientCredentials);
-        if(response1.isError())
-            return null;
-        Response<Boolean> response = storeController.addStoreRating(storeId,rating);
-        if(response.isError())
-            return null;
-        return response.getValue();
+        Response<Boolean> userResponse = userController.isUser(clientCredentials);
+        if(userResponse.isError()) {
+            errorLogger.log(Level.SEVERE, userResponse.getMessage());
+            return false;
+        }
+        Response<Boolean> ratingResponse = storeController.addStoreRating(storeId,rating);
+        if(ratingResponse.isError()){
+            errorLogger.log(Level.SEVERE, ratingResponse.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully added rating to store " + storeId);
+        return ratingResponse.getValue();
     }
 
 
-    public Boolean addItemRating(UUID clientCredentials, UUID storeId ,int rating){
+    public Boolean addItemRating(UUID clientCredentials, UUID itemId, UUID storeId, int rating){
         Response<Boolean> response1 = userController.isUser(clientCredentials);
         if(response1.isError())
-            return null;
-        Response<Boolean> response = storeController.addItemRating(storeId,rating);
-        if(response.isError())
-            return null;
-        return response.getValue();
+            return false;
+        Response<Boolean> ratingResponse = storeController.addItemRating(itemId, storeId, rating);
+        if(ratingResponse.isError()){
+            errorLogger.log(Level.SEVERE, ratingResponse.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully added rating to item " + itemId);
+        return ratingResponse.getValue();
     }
 
     public Boolean register(String username,String password) {
         Response<Boolean> response = userController.register(username,password);
-        if(response.isError())
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return null;
+        }
+        eventLogger.log(Level.INFO, "Successfully registered user " + username);
         return response.getValue();
     }
 }

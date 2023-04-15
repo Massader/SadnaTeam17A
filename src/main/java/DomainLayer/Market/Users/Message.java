@@ -4,20 +4,20 @@ import java.util.UUID;
 
 public class Message {
 
-    private UUID messageId;
+    private UUID id;
     private String body;
     private UUID sender;
     private UUID recipient;
 
     public Message(String body, UUID sender, UUID recipient){
-        this.messageId = UUID.randomUUID();
+        this.id = UUID.randomUUID();
         this.body = body;
         this.sender = sender;
         this.recipient = recipient;
     }
 
-    public UUID getMessageId() {
-        return messageId;
+    public UUID getId() {
+        return id;
     }
 
     public String getBody() {

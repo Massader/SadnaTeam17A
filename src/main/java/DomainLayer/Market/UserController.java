@@ -22,15 +22,16 @@ public class UserController {
     private StoreController storeController;
 
     private UserController() {
+
+    }
+
+    public void init() {
         users = new ConcurrentHashMap<>();
         usernames = new ConcurrentHashMap<>();
         loggedInUser = new ConcurrentLinkedQueue<>();
         securityController = SecurityController.getInstance();
         clients = new ConcurrentHashMap<>();
         storeController = StoreController.getInstance();
-    }
-
-    public void init() {
         registerDefaultAdmin();
     }
 
