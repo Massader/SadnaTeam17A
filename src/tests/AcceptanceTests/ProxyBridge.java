@@ -94,8 +94,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.purchaseShoppingCartSupply();
     }
 
-    public Boolean logoutRegisterUser() {
-        return real == null? null : real.logoutRegisterUser();
+    public UUID logout(UUID clientCredentials) {
+        return real == null? null : real.logout(clientCredentials);
     }
 
     public Boolean openStore() {

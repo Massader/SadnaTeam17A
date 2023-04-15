@@ -4,6 +4,7 @@ package DomainLayer.Market;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
@@ -176,7 +177,7 @@ public class UserController {
                 return Response.getFailResponse("this user ID does not exist");
             if (clientCredentials!=userId)
                 return Response.getFailResponse("Cannot view purchase history of other users.");
-            return Response.getSuccessResponse(getUser(userId).getValue().getPurchases().stream().toList());
+            return Response.getSuccessResponse(new ArrayList<>(getUser(userId).getValue().getPurchases()));
         }
         catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -280,10 +281,11 @@ public class UserController {
                 return Response.getFailResponse("User does not exist.");
             if(!users.get(clientCredentials).isAdmin())
                 return Response.getFailResponse("Only admins can delete users.");
-            if (loggedInUser.contains(userId))
+            User user = users.get(userId);
+            if (loggedInUser.contains(user.getUsername()))
                 logout(userId);
             //remove from both HashMaps
-            User user = users.remove(userId);
+            user = users.remove(userId);
             deleteShoppingCart(user.getCart());
             usernames.remove(user.getUsername());
             //remove roles
@@ -301,9 +303,10 @@ public class UserController {
         try {
             if (!users.containsKey(userId))
                 return Response.getFailResponse("this user ID does not exist");
-            if (!loggedInUser.contains(userId))
+            User user = users.get(userId);
+            if (!loggedInUser.contains(user.getUsername()))
                 return Response.getFailResponse("this user is already logged out");
-            loggedInUser.remove(userId);
+            loggedInUser.remove(user.getUsername());
             return createClient();
         }
         catch (Exception exception){
