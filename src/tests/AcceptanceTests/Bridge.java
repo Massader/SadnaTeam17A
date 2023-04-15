@@ -25,7 +25,7 @@ public interface Bridge {
     Boolean viewShoppingCartItems();
     Boolean purchaseShoppingCartPayment();
     Boolean purchaseShoppingCartSupply();
-    Boolean logoutRegisterUser();
+    UUID logout(UUID clientCredentials);
     Boolean openStore();
     Boolean stockManagementAddNewItem();
     Boolean stockManagementRemoveItem();
