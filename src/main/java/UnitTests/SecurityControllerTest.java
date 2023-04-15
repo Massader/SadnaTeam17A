@@ -20,6 +20,7 @@ class SecurityControllerTest {
     String answer;
     String question2;
     String answer2;
+    Response<Boolean> response;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -27,11 +28,11 @@ class SecurityControllerTest {
         id = UUID.randomUUID();
         legalPassword = "Pa$$w0rd";
         securityController.addPassword(id, legalPassword);
-        String question = "What is your favorite color?";
-        String answer = "blue";
-        String question2 = "sup?";
-        String answer2 = "walla";
-        Response<Boolean> response = securityController.addSecurityQuestion(id, question, answer);
+        question = "What is your favorite color?";
+        answer = "blue";
+        question2 = "sup?";
+        answer2 = "walla";
+        response = securityController.addSecurityQuestion(id, question, answer);
     }
 
     @Test
