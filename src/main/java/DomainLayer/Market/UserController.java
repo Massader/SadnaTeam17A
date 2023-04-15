@@ -70,7 +70,8 @@ public class UserController {
             if (!usernames.containsKey(username) || !users.containsKey(usernames.get(username)))
                 return Response.getFailResponse("User is not registered in the system.");
             //validate the password
-            if (securityController.validatePassword(getId(username), password).getValue().equals(getId(username))) {
+            UUID idPAss = securityController.validatePassword(getId(username), password).getValue();
+            if (idPAss.equals(getId(username))) {
                 //transfer the client to the logged in users, and delete it from the non registered clients list
                 loggedInUser.add(username);
                 closeClient(clientCredentials);

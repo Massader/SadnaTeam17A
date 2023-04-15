@@ -30,7 +30,8 @@ public class SecurityController {
 
     public Response<UUID> validatePassword(UUID id, String password) {
         try {
-            if(passwords.get(id).equals(password))
+            String pass = passwords.get(id);
+            if(pass.equals(password))
                 return Response.getSuccessResponse(id);
             else return Response.getFailResponse("Incorrect password");
         }

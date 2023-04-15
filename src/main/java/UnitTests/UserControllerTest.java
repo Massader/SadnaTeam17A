@@ -1,37 +1,168 @@
 package UnitTests;
+import DomainLayer.Market.StoreController;
+import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.UserController;
+import DomainLayer.Market.Users.Client;
+import DomainLayer.Market.Users.ShoppingCart;
+import DomainLayer.Market.Users.User;
 import ServiceLayer.Response;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserControllerTest {
 
     private UserController userController;
+    private String username;
+    private String password;
+    private UUID clientCredentials;
+    private StoreController storeController;
+    private UUID userId;
+    private UUID userId2;
+    private UUID storeId;
+    private Item item;
+    private UUID itemId;
+    private User user;
+    private User user2;
+
+
 
     @Before
     public void setUp() {
         userController = UserController.getInstance();
         userController.init();
+        username = "testuser";
+        password = "password123";
+        clientCredentials = userController.createClient().getValue();
+        userController = UserController.getInstance();
+        userController.init();
+        storeController = StoreController.getInstance();
+        userController.register("u", "p");
+        userController.register("u2", "p2");
+        userId = userController.getId("u");
+        user = userController.getUserById(userId);
+        userId2 = userController.getId("u2");
+        user2 = userController.getUserById(userId2);
+        storeId = storeController.createStore(userId, "store", "des").getValue().getStoreId();
+        item = storeController.addItem("phone", 10, storeId, 100, "aaaaa").getValue();
+        itemId = item.getId();
     }
     @Test
     public void testRegisterSuccess() {
-        String username = "testuser";
-        String password = "password123";
         Response<Boolean> response = userController.register(username, password);
 
         assertEquals(true, response.getMessage());
     }
 
     @Test
-    public void testRegisterFailure() {
-        String username = "testuser";
-        String password = "password123";
+    public void testRegisterFailureDuplicateUsername() {
+
         Response<Boolean> response1 = userController.register(username, password);
-        assertEquals(true, response1.getMessage());
+        assertEquals(true, response1.getValue());
 
         Response<Boolean> response2 = userController.register(username, "newpassword");
-        assertEquals(false, response2.getMessage());
+        assertEquals(false, response2.getValue());
         assertEquals("This username is already in use.", response2.getMessage());
     }
+
+    @Test
+    public void testRegisterFailureEmptyUsername() {
+        Response<Boolean> response = userController.register(username, password);
+        assertEquals(false, response.getValue());
+        assertEquals("No username input.", response.getMessage());
+    }
+
+    @Test
+    public void testCloseClientSuccess() {
+        // create a new client and add them to the clients map
+
+        Client client = new Client(clientCredentials);
+
+        // call the closeClient function
+        Response<Boolean> response = userController.closeClient(clientCredentials);
+
+        // assert that the response is successful
+        assertTrue(response.isSuccessful());
+        assertTrue(response.getValue());
+        assertFalse(userController.isNonRegisteredClient(clientCredentials));
+    }
+    @Test
+    public void testLoginSuccess() {
+        userController.register("username", "password");
+
+        // call the login function
+        Response<UUID> response = userController.login(clientCredentials, "username", "password");
+
+        // assert that the response is successful and the returned UUID matches the UUID of the logged in user
+        assertTrue(response.isSuccessful());
+
+    }
+
+    @Test
+    public void testAddItemToCartSuccess() {
+        // Set up
+        int quantity = 5;
+
+        // Call function
+        Response<Boolean> response = userController.addItemToCart(userId, itemId, quantity, storeId);
+
+        // Assertions
+        ShoppingCart cart = user.getCart();
+        assertTrue(response.isSuccessful());
+        assertTrue(response.getValue());
+        assertEquals(quantity, cart.quantityOf(storeId, itemId));
+    }
+
+    @Test
+    public void testAddItemToCartFailureInvalidClient() {
+        // Set up
+        UUID clientCredentials = UUID.randomUUID();
+        int quantity = 5;
+
+        // Call function
+        Response<Boolean> response = userController.addItemToCart(clientCredentials, itemId, quantity, storeId);
+
+        // Assertions
+        assertFalse(response.isSuccessful());
+        assertEquals("User does not exist", response.getMessage());
+    }
+
+    @Test
+    public void testRemoveItemFromCartSuccess() {
+        Response<Boolean> addResponse = userController.addItemToCart(userId, itemId, 5, storeId);
+        assertTrue(addResponse.isSuccessful() && addResponse.getValue());
+        Response<Boolean> removeResponse = userController.removeItemFromCart(userId, itemId, 1, storeId);
+        assertTrue(removeResponse.isSuccessful() && removeResponse.getValue());
+    }
+
+//    @Test
+//    public void testRemoveItemFromCartFailure() {
+//        Response<Boolean> addResponse = userController.addItemToCart(userId, itemId, 2, storeId);
+//        assertTrue(addResponse.isSuccessful() && addResponse.getValue());
+//        Response<Boolean> removeResponse = userController.removeItemFromCart(userId, itemId, 3, storeId);
+//        assertFalse(removeResponse.getValue());
+//        //assertEquals("Cannot remove item quantity from cart.", removeResponse.getMessage());
+//    }
+
+
+    @Test
+    public void testAppointStoreOwnerSuccess() {
+        userController.login(userId, "u", "p");
+        Response<Boolean> response = userController.appointStoreOwner(userId, userId2, storeId);
+        assertTrue(response.getValue());
+    }
+
+    @Test
+    public void testLoginFailure() {
+        // call the login function with a non-existing username
+        Response<UUID> response = UserController.getInstance().login(UUID.randomUUID(), "fakeuser", "password");
+
+        // assert that the response is not successful and the error message is as expected
+        assertFalse(response.isSuccessful());
+        assertEquals("User is not registered in the system.", response.getMessage());
+    }
+
 }
