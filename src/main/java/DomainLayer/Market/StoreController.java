@@ -20,10 +20,7 @@ public class StoreController {
     private ConcurrentHashMap<UUID, Store> storeMap;
     private UserController userController;
 
-    private StoreController() {
-        storeMap = new ConcurrentHashMap<>();
-        userController = UserController.getInstance();
-    }
+    private StoreController() { }
 
     public static StoreController getInstance() {
         synchronized(instanceLock) {
@@ -31,6 +28,11 @@ public class StoreController {
                 instance = new StoreController();
         }
         return instance;
+    }
+
+    public void init() {
+        storeMap = new ConcurrentHashMap<>();
+        userController = UserController.getInstance();
     }
 
     public Collection<Store> getStores(){
@@ -186,9 +188,10 @@ public class StoreController {
     //calculate new rating given a new one
     public Response<Boolean> addStoreRating(UUID storeId ,int rating){
         try {
-        Store store = getStore(storeId);
-        store.addRating(rating);
-        return Response.getSuccessResponse(true);}
+            Store store = getStore(storeId);
+            store.addRating(rating);
+            return Response.getSuccessResponse(true);
+        }
         catch (Exception exception){
             return Response.getFailResponse(exception.getMessage());
         }
@@ -196,14 +199,17 @@ public class StoreController {
     }
 
     //calculate new rating given a new one
-    public Response<Boolean> addItemRating(UUID itemId, int rating){
+    public Response<Boolean> addItemRating(UUID itemId, UUID storeId, int rating){
         try{
-        Item item = getItem(itemId).getValue();
-        item.addRating(rating);
-        return Response.getSuccessResponse(true);}
+            if (!storeMap.containsKey(storeId)) return Response.getFailResponse("Store not found.");
+            Item item = storeMap.get(storeId).getItem(itemId);
+            if (item == null) return Response.getFailResponse("Item not found");
+            item.addRating(rating);
+            return Response.getSuccessResponse(true);
+        }
         catch (Exception exception){
-        return Response.getFailResponse(exception.getMessage());
-    }
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<List<User>> getStoreStaff(UUID clientCredentials, UUID storeId){
