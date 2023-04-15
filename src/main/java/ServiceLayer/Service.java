@@ -151,16 +151,17 @@ public class Service {
         return response.getValue()!=null ? response.getValue() : false;
     }
 
-    public int confirmOrder(UUID clientCredentials){
+    public UUID confirmOrder(UUID clientCredentials){
         Response<Integer> response1 = supplyController.sendOrder();
         Response<Integer> response2;
         if(!response1.isError()) {
             response2 = paymentController.requestPayment();
-            int confirmationId = 1;
+            UUID confirmationId = UUID.randomUUID();
             if (!response2.isError())
+                userController.clearCart(clientCredentials);
                 return confirmationId;
         }
-        return 0;
+        return null;
     }
 
     public List<ServiceItem> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating){
@@ -317,31 +318,21 @@ public class Service {
         return new ServiceUser(response.getValue());
     }
 
-
-    public Boolean addItemToCart(UUID clientCredentials, UUID itemId ,int  quantity, UUID storeID ) {
-        Response<Boolean> response = userController.addItemToCart(clientCredentials,itemId,quantity, storeID);
-        if(response.isError())
-            return false;
-       // Response<Boolean> response2 = storeController.removeItemQuantity(clientCredentials,itemId,quantity);//todo: only if we choose to take the items from sore if its on cart
+    public Boolean addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
+        Response<Boolean> response = userController.addItemToCart(clientCredentials,itemId,quantity, storeId);
         return response.getValue();
     }
 
     public Boolean removeItemFromCart(UUID clientCredentials, UUID itemId ,int  quantity, UUID storeID ) {
         Response<Boolean> response = userController.removeItemFromCart(clientCredentials,itemId,quantity, storeID);
-        if(response.isError())
-            return false;
-      //  Response<Boolean> response2 = storeController.AddItemQuantity(clientCredentials,itemId,quantity);todo: only if we choose to take the items from sore if its on cart
         return response.getValue();
     }
 
     public Double getCartTotal(UUID clientCredentials){
-        Response<ShoppingCart> response1 =userController.viewCart(clientCredentials);
-        if(response1.isError())
+        Response<Double> response = storeController.getCartTotal(clientCredentials);
+        if(response.isError())
             return null;
-        Response<Double> response2 = storeController.calculatePriceOfCart(response1.getValue());
-        if(response2.isError())
-            return null;
-        return response2.getValue();
+        return response.getValue();
     }
 
     public Boolean validateSecurityQuestion(UUID clientCredentials, String answer ){
@@ -387,15 +378,12 @@ public class Service {
         return response.getValue();
     }
 
-    public Boolean register(String username,String password){
+    public Boolean register(String username,String password) {
         Response<Boolean> response = userController.register(username,password);
         if(response.isError())
             return null;
         return response.getValue();
     }
-
-
-
 }
 
 

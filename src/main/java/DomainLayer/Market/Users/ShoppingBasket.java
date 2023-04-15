@@ -52,16 +52,17 @@ public class ShoppingBasket {
 
     public boolean removeItem(Item item, int quantity){
         synchronized (item) {
-            // dont have any item like this in ShoppingBasket
             int oldQuantity = item.getQuantity();
             if (oldQuantity < quantity)
                 return false;
-            // there is less item's then the quantity to remove
             items.put(item.getId(), oldQuantity - quantity);
             item.setQuantity(item.getQuantity() + quantity);
             return true;
         }
     }
-//    public Double calculateTotalPrice() {
-//        return 0.0;}
+
+    public synchronized void clearBasket() {
+        items.clear();
+    }
+
 }

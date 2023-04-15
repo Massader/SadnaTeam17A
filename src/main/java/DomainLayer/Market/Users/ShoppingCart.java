@@ -25,38 +25,23 @@ public class ShoppingCart {
         this.userId = id;
     }
 
-    public Boolean addItemToCart(Item item, UUID storeID, int  quantity ) {
-        ShoppingBasket shoppingBasket = getShoppingBasket(storeID);
-        return shoppingBasket.addItem(item, quantity);
+    public Boolean addItemToCart(Item item, UUID storeId, int quantity) {
+        if (!shoppingBaskets.containsKey(storeId)) shoppingBaskets.put(storeId, new ShoppingBasket(storeId));
+        return shoppingBaskets.get(storeId).addItem(item, quantity);
     }
 
     public Boolean removeItemFromCart(Item item, UUID storeId, int quantity) {
-        if(shoppingBaskets.containsKey(storeId))
+        if(!shoppingBaskets.containsKey(storeId))
             return false;
-        ShoppingBasket shoppingBasket = getShoppingBasket(storeId);
+        ShoppingBasket shoppingBasket = shoppingBaskets.get(storeId);
         return shoppingBasket.removeItem(item,quantity);
     }
 
- public ShoppingBasket getShoppingBasket(UUID storeID){
-     ShoppingBasket shoppingBasket;
-     if(shoppingBaskets.containsKey(storeID)){
-         shoppingBasket = shoppingBaskets.get(storeID);
-     }
-     else{
-         shoppingBasket = new ShoppingBasket(storeID);
-         shoppingBaskets.put(storeID,shoppingBasket);
-     }
-     return shoppingBasket;
-
- }
-
-// public Double calculateTotalPrice() {
-//        double total =0;
-//     for (ShoppingBasket basket:shoppingBaskets.values()) {
-//         total+=basket.calculateTotalPrice();
-//     }
-//     return total;
-
- }
+    public synchronized void clearCart() {
+        for (ShoppingBasket shoppingBasket : shoppingBaskets.values()) {
+            shoppingBasket.clearBasket();
+        }
+    }
+}
 
 

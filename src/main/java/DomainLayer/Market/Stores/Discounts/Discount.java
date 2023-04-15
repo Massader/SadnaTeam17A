@@ -1,9 +1,19 @@
 package DomainLayer.Market.Stores.Discounts;
 
-import java.util.UUID;
+public abstract class Discount {
+    private double discount;
 
-public class Discount {
-    public double calculatePrice(UUID itemId, int quantity){
-        return Double.MAX_VALUE;
+    public abstract double calculatePrice(double basePrice);
+
+    public Discount(double discount) {
+        this.discount = discount;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
     }
 }

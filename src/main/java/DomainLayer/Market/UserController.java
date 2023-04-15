@@ -131,14 +131,14 @@ public class UserController {
         shoppingBasket.getItems().clear();
     }
 
-    public Response<Boolean> addItemToCart(UUID userId, UUID itemId, int quantity, UUID storeID ) {
+    public Response<Boolean> addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
         try {
-            if (getClientOrUser(userId) == null)
+            if (getClientOrUser(clientCredentials) == null)
                 return Response.getFailResponse("User does not exist");
-            ShoppingCart shoppingCart = getClientOrUser(userId).getCart();
-            if (storeController.getItem(itemId).isError())
-                return Response.getFailResponse("Item does not exist.");
-            if (shoppingCart.addItemToCart(storeController.getItem(itemId).getValue(), storeID, quantity)) {
+            ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
+            Response<Boolean> response = storeController.removeItemQuantity(storeId, itemId, quantity);
+            if (response.isError()) return response;
+            if (shoppingCart.addItemToCart(storeController.getItem(itemId).getValue(), storeId, quantity)) {
                 return Response.getSuccessResponse(true);
             } else {
                 return Response.getFailResponse("Cannot add item to cart");
@@ -149,17 +149,17 @@ public class UserController {
         }
     }
 
-    public Response<Boolean> removeItemFromCart(UUID userId, UUID itemId, int quantity, UUID storeId) {
+    public Response<Boolean> removeItemFromCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
         try{
-            if (getClientOrUser(userId)==null)
-                return Response.getFailResponse("This client ID does not exist");
-            if (storeController.getItem(itemId).isError())
-                return Response.getFailResponse("Item does not exist.");
-            ShoppingCart shoppingCart =getClientOrUser(userId).getCart();
+            if (getClientOrUser(clientCredentials)==null)
+                return Response.getFailResponse("User does not exist");
+            Response<Boolean> response = storeController.addItemQuantity(storeId, itemId, quantity);
+            if (response.isError()) return response;
+            ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
             if(shoppingCart.removeItemFromCart(storeController.getItem(itemId).getValue(), storeId, quantity))
                 return Response.getSuccessResponse(true);
             else
-                return Response.getFailResponse("Cannot remove "+ quantity +" item from cart");
+                return Response.getFailResponse("Cannot remove item quantity from cart.");
         }
         catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -368,6 +368,13 @@ public class UserController {
         if (isNonRegisteredClient(id))
             return clients.get(id);
         return null;
+    }
+
+    public Response<Boolean> clearCart(UUID clientCredentials) {
+        if (getClientOrUser(clientCredentials) == null) return Response.getFailResponse("User does not exist.");
+        Client client = getClientOrUser(clientCredentials);
+        client.getCart().clearCart();
+        return Response.getSuccessResponse(true);
     }
 }
 

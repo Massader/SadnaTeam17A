@@ -18,13 +18,13 @@ public class Store {
     private boolean shutdown;
     private int ratingCounter;
     private ConcurrentHashMap<UUID, Item> items;
-    private ConcurrentLinkedQueue<Discount> discounts;
+    private ConcurrentHashMap<UUID,Discount> discounts; // Map of Item ID -> Discount
     private Policy policy;
     private ConcurrentLinkedQueue<Sale> sales;
     private ConcurrentHashMap<UUID, Role> rolesMap;
 
 
-    public ConcurrentLinkedQueue<Discount> getDiscounts() {
+    public ConcurrentHashMap<UUID,Discount> getDiscounts() {
         return discounts;
     }
 
@@ -37,7 +37,7 @@ public class Store {
         this.shutdown = false;
         this.ratingCounter = 0;
         items = new ConcurrentHashMap<>();
-        discounts = new ConcurrentLinkedQueue<>();
+        discounts = new ConcurrentHashMap<>();
         policy = new Policy();
         sales = new ConcurrentLinkedQueue<>();
         rolesMap = new ConcurrentHashMap<>();
@@ -69,7 +69,6 @@ public class Store {
         x += newRating;
         ratingCounter++;
         rating = x / ratingCounter;
-
     }
 
     public boolean closeStore() {
@@ -80,7 +79,6 @@ public class Store {
         return false;
     }
 
-
     public boolean reopenStore() {
         if (shutdown || !closed) {
             return false;
@@ -88,7 +86,6 @@ public class Store {
             closed = false;
             return true;
         }
-
     }
 
     public boolean shutdownStore() {
@@ -150,23 +147,20 @@ public class Store {
         throw new Exception("the user is not have permissions to get sale history of store "+this.name);
     }
 
-    public double calculatePriceOfBasket( ConcurrentHashMap<UUID,Integer> itemsID) {// itemid, quantity
-        double price =0;
-        for(UUID key : itemsID.keySet()){
-            int quantity =itemsID.get(key);
-            double minPriceByDisscounts = getItem(key).getPrice()*quantity;//ite, price * quantity
-            if(!getDiscounts().isEmpty()){
-                for (Discount discount :getDiscounts()) {
-                    double newPrice =discount.calculatePrice(key,quantity);// for this level we not Realize the assumptions
-                    if(newPrice<minPriceByDisscounts){
-                        minPriceByDisscounts = newPrice;
-                    }
+    public double calculatePriceOfBasket(ConcurrentHashMap<UUID,Integer> items) { // Map of Item ID -> Quantity
+        double price = 0;
+        for(UUID key : items.keySet()){
+            int quantity = items.get(key);
+            double basePrice = getItem(key).getPrice()*quantity;
+            for (UUID itemId : items.keySet()) {
+                if (discounts.containsKey(itemId)) {
+                    price += discounts.get(itemId).calculatePrice(basePrice);
                 }
             }
-            price+=minPriceByDisscounts;}
-            return price;
+        }
+        return price;
 
-        };
+    };
 
 
 
