@@ -1,5 +1,7 @@
 package AcceptanceTests;
 
+import ServiceLayer.ServiceObjects.ServiceStore;
+
 import java.util.UUID;
 
 public class ProxyBridge implements Bridge {
@@ -66,8 +68,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.login(clientCredentials, username, password);
     }
 
-    public Boolean receiveStoreInfo() {
-        return real == null? null : real.receiveStoreInfo();
+    public ServiceStore receiveStoreInfo(UUID storeId) {
+        return real == null? null : real.receiveStoreInfo(storeId);
     }
 
     public Boolean searchStore() {
@@ -98,8 +100,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.logout(clientCredentials);
     }
 
-    public Boolean openStore() {
-        return real == null? null : real.openStore();
+    public ServiceStore openStore(UUID clientCredentials , String storeName , String storeDescription) {
+        return real == null? null : real.openStore(clientCredentials , storeName , storeDescription);
     }
 
     public Boolean stockManagementAddNewItem() {
@@ -130,8 +132,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.setStoreManagerPermissions();
     }
 
-    public Boolean closeStore() {
-        return real == null? null : real.closeStore();
+    public Boolean closeStore(UUID clientCredentials, UUID storeId) {
+        return real == null? null : real.closeStore(clientCredentials, storeId);
     }
 
     public Boolean getStoreStaffList() {

@@ -1,5 +1,8 @@
 package AcceptanceTests;
 
+import ServiceLayer.Service;
+import ServiceLayer.ServiceObjects.ServiceStore;
+
 import java.util.UUID;
 
 public interface Bridge {
@@ -18,7 +21,7 @@ public interface Bridge {
     Boolean exitSystem(UUID clientCredentials);
     Boolean register(String username, String password);
     UUID login(UUID clientCredentials, String username, String password);
-    Boolean receiveStoreInfo();
+    ServiceStore receiveStoreInfo(UUID storeId);
     Boolean searchStore();
     Boolean searchItem();
     Boolean saveItemInShoppingCart();
@@ -26,7 +29,7 @@ public interface Bridge {
     Boolean purchaseShoppingCartPayment();
     Boolean purchaseShoppingCartSupply();
     UUID logout(UUID clientCredentials);
-    Boolean openStore();
+    ServiceStore openStore(UUID clientCredentials , String storeName , String storeDescription);
     Boolean stockManagementAddNewItem();
     Boolean stockManagementRemoveItem();
     Boolean stockManagementChangeItemInfo();
@@ -34,7 +37,7 @@ public interface Bridge {
     Boolean appointStoreOwner();
     Boolean appointStoreManager();
     Boolean setStoreManagerPermissions();
-    Boolean closeStore();
+    Boolean closeStore(UUID clientCredentials, UUID storeId);
     Boolean getStoreStaffList();
     Boolean getStoreSaleHistory();
     Boolean storeManagerActions();

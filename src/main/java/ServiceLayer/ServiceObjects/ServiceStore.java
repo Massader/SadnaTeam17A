@@ -16,4 +16,20 @@ public class ServiceStore {
         this.description = store.getDescription();
         this.rating = store.getRating();
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public UUID getStoreId() {
+        return storeId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public double getRating() {
+        return rating;
+    }
 }

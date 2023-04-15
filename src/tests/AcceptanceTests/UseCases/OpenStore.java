@@ -3,11 +3,4 @@ import AcceptanceTests.*;
 
 public class OpenStore extends ProjectTest {
 
-    public OpenStore(Bridge real) {
-        super(real);
-    }
-
-    public boolean openStore() {
-        return bridge.openStore();
-    }
 }
