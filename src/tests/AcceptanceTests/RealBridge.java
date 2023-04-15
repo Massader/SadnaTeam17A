@@ -101,8 +101,8 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public Boolean logoutRegisterUser() {
-        return false;
+    public UUID logout(UUID clientCredentials) {
+        return service.logout(clientCredentials);
     }
 
     public Boolean openStore() {
