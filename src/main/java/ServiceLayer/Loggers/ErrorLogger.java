@@ -1,8 +1,6 @@
 package ServiceLayer.Loggers;
 
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 import static java.util.logging.Logger.getLogger;
 
@@ -14,7 +12,21 @@ public class ErrorLogger {
 
     private ErrorLogger(){
         try {
-            fileHandler = new FileHandler("ErrorLog");
+            fileHandler = new FileHandler(System.getProperty("user.dir") + "/logs/ErrorLog.log");
+            fileHandler.setFormatter(new SimpleFormatter() {
+                private static final String format = "%1$tF %1$tT %4$s %3$s: %5$s%6$s%n";
+
+                @Override
+                public synchronized String format(LogRecord record) {
+                    return String.format(format,
+                            record.getMillis(),
+                            record.getMillis(),
+                            record.getSourceClassName(),
+                            record.getLevel().getName(),
+                            record.getMessage(),
+                            (record.getThrown() != null) ? record.getThrown() : "");
+                }
+            });
             LOG.addHandler(fileHandler);
         } catch (Exception ignored) {}
     }
