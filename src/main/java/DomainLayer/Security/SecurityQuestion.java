@@ -3,10 +3,9 @@ package DomainLayer.Security;
 import java.util.UUID;
 
 public class SecurityQuestion {
-    UUID clientCredentials;
-    String question;
-    String answer;
-
+    private UUID clientCredentials;
+    private String question;
+    private String answer;
 
     public SecurityQuestion(UUID clientCredentials, String question, String answer) {
         this.clientCredentials = clientCredentials;
@@ -17,10 +16,9 @@ public class SecurityQuestion {
     public String getQuestion() {
         return question;
     }
-    public Boolean validateAnswer1(String answer ) {
+    public Boolean validateAnswer(String answer ) {
         if (this.answer.equals(answer)){return  true;}
         return false;
     }
-
 
 }

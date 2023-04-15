@@ -222,5 +222,15 @@ public class UserControllerTest {
         assertFalse(userController.isLoggedInUser(userId));
         assertTrue(response.isSuccessful());
     }
+        @Test
+    public void testLoginFailure() {
+        // call the login function with a non-existing username
+        Response<UUID> response = UserController.getInstance().login(UUID.randomUUID(), "fakeuser", "password");
+
+        // assert that the response is not successful and the error message is as expected
+        assertFalse(response.isSuccessful());
+        assertEquals("User is not registered in the system.", response.getMessage());
+
+    }
 
 }

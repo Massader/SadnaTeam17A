@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.UUID;
 
-import DomainLayer.Market.Users.SecurityQuestion;
 import DomainLayer.Security.SecurityController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
