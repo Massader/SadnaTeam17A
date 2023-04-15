@@ -30,6 +30,10 @@ public class UserController {
         storeController = StoreController.getInstance();
     }
 
+    public void init() {
+        registerDefaultAdmin();
+    }
+
     public static synchronized UserController getInstance() {
         if (singleton == null)
             singleton = new UserController();
@@ -375,6 +379,15 @@ public class UserController {
         Client client = getClientOrUser(clientCredentials);
         client.getCart().clearCart();
         return Response.getSuccessResponse(true);
+    }
+
+    private void registerDefaultAdmin() {
+        if (!usernames.containsKey("admin")) {
+            UUID adminCredentials = UUID.randomUUID();
+            usernames.put("admin", adminCredentials);
+            users.put(adminCredentials, new Admin("admin", adminCredentials));
+            securityController.addPassword(adminCredentials, "admin");
+        }
     }
 }
 

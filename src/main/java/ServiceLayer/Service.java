@@ -52,7 +52,7 @@ public class Service {
         storeController = StoreController.getInstance();
         //storeController.init();
         userController = UserController.getInstance();
-        //userController.init();
+        userController.init();  // Creates default admin
         securityController = SecurityController.getInstance();
         //securityController.init();
         messageController = MessageController.getInstance();
@@ -66,25 +66,8 @@ public class Service {
         searchController = SearchController.getInstance();
         //searchController.init();
 
-        //Creating default admin user
-        try {
-            Response<UUID> createClientResponse = userController.createClient();
-            if (createClientResponse.isError()) throw new RuntimeException("System startup - Client creation failed.");
-            Response<Boolean> registerResponse = userController.register("admin", "admin");
-            if (registerResponse.isError()) throw new RuntimeException("System startup - registering admin failed.");
-            Response<UUID> loginResponse = userController.login(createClientResponse.getValue(), "admin", "admin");
-            if (loginResponse.isError()) throw new RuntimeException("System startup - logging in as default admin failed.");
-            UUID clientCredentials = loginResponse.getValue();
-            Response<Boolean> setAdminResponse = userController.setAsAdmin(clientCredentials, clientCredentials);
-            if (loginResponse.isError()) throw new RuntimeException("System startup - setting default admin role failed.");
-            Response<UUID> logoutResponse = userController.logout(clientCredentials);
-            if (loginResponse.isError()) throw new RuntimeException("System startup - logging out default admin failed.");
-        } catch (Exception e) {
-            errorLogger.log(Level.SEVERE, e.getMessage() + "\n" + e.getStackTrace());
-            return false;
-        }
-
         //Add Supply and Payment JSON config file read here
+
 
         eventLogger.log(Level.INFO, "System boot successful.");
         return true;
