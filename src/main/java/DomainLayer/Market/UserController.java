@@ -21,22 +21,25 @@ public class UserController {
     private ConcurrentHashMap<UUID, Client> clients;  // for non-registered clients only!
     private StoreController storeController;
 
-    private UserController() {
+
+    private UserController() { }
+
+
+    public void init()
+    {
         users = new ConcurrentHashMap<>();
         usernames = new ConcurrentHashMap<>();
         loggedInUser = new ConcurrentLinkedQueue<>();
         securityController = SecurityController.getInstance();
         clients = new ConcurrentHashMap<>();
         storeController = StoreController.getInstance();
-    }
-
-    public void init() {
         registerDefaultAdmin();
     }
 
     public static synchronized UserController getInstance() {
-        if (singleton == null)
+        if (singleton == null) {
             singleton = new UserController();
+        }
         return singleton;
     }
 

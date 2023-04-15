@@ -162,9 +162,9 @@ public class Store {
 
     };
 
-
-
-
+    public Object getRatingCounter() {
+        return ratingCounter;
+    }
 
 
 }

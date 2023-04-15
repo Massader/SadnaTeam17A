@@ -23,7 +23,7 @@ public class MessageController {
         return singleton;
     }
 
-    public Response<UUID> sendMessage(UUID clientCredentials, UUID sender, UUID recipient, String body){
-        Message message = new Message(body, sender, recipient);
-    }
+//    public Response<UUID> sendMessage(UUID clientCredentials, UUID sender, UUID recipient, String body){
+//        Message message = new Message(body, sender, recipient);
+//    }
 }
