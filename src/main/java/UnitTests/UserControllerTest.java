@@ -177,27 +177,8 @@ public class UserControllerTest {
         // The user is already an owner of the shop
         Response<Boolean> response4 = userController.appointStoreOwner(userId, userId, storeId);
         assertTrue(response4.isError());
-    }
 
-    @Test
-    public void testAppointStoreManager_success() {
-        Response<Boolean> response = userController.appointStoreManager(userId, userId2, storeId);
-        assertTrue(response.getValue());
-        assertTrue(storeController.getStore(storeId).getRolesMap().containsKey(userId));
-    }
 
-    @Test
-    public void testAppointStoreManager_failure() {
-        // Not a store owner
-        Response<Boolean> response = userController.appointStoreManager(userId2, userId2, storeId);
-        assertFalse(response.getValue());
-        assertFalse(storeController.getStore(storeId).getRolesMap().containsKey(userId2));
-
-        // User doesn't exist
-        UUID nonExistingUser = UUID.randomUUID();
-        response = userController.appointStoreManager(userId, nonExistingUser, storeId);
-        assertFalse(response.getValue());
-        assertFalse(storeController.getStore(storeId).getRolesMap().containsKey(nonExistingUser));
     }
 
 //    @Test
@@ -232,5 +213,39 @@ public class UserControllerTest {
         assertEquals("User is not registered in the system.", response.getMessage());
 
     }
+
+    @Test
+    public void testAppointStoreManager_success() {
+        Response<Boolean> response = userController.appointStoreManager(userId, userId2, storeId);
+        assertTrue(response.getValue());
+        assertTrue(storeController.getStore(storeId).getRolesMap().containsKey(userId));
+    }
+
+    @Test
+    public void testAppointStoreManager_failure() {
+        // Not a store owner
+        Response<Boolean> response = userController.appointStoreManager(userId2, userId2, storeId);
+        assertFalse(response.getValue());
+        assertFalse(storeController.getStore(storeId).getRolesMap().containsKey(userId2));
+
+        // User doesn't exist
+        UUID nonExistingUser = UUID.randomUUID();
+        response = userController.appointStoreManager(userId, nonExistingUser, storeId);
+        assertFalse(response.getValue());
+        assertFalse(storeController.getStore(storeId).getRolesMap().containsKey(nonExistingUser));
+    }
+
+//    @Test
+//    public void testDeleteUserSuccess() {
+//        UUID adminCredentials = userController.login("admin", "admin").getValue();
+//        Response<Boolean> response = userController.deleteUser(adminCredentials, userId);
+//        assertTrue(response.getMessage(), response.getValue());
+//        Response<User> deletedUserResponse = userController.getUserById(userId);
+//        assertTrue(deletedUserResponse.isError());
+//        assertEquals("User does not exist.", deletedUserResponse.getMessage());
+//    }
+
+    
+
 
 }
