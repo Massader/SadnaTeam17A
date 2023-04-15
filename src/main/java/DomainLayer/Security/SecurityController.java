@@ -9,16 +9,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SecurityController {
     private static SecurityController singleton = null;
-    private ConcurrentHashMap<UUID, String> passwords;
+    private final ConcurrentHashMap<UUID, String> passwords;
     protected ConcurrentHashMap<UUID, SecurityQuestion> securityQuestions;
     private final int PASS_MIN_LEN = 4;
     private final int PASS_MAX_LEN = 20;
-    private UserController userController;
+    private final PasswordEncryptor encryptor;
 
     private  SecurityController(){
         passwords = new ConcurrentHashMap<>();
         securityQuestions = new ConcurrentHashMap<>();
-        userController = UserController.getInstance();
+        encryptor = new PasswordEncryptor();
     }
 
     public static synchronized SecurityController getInstance()
@@ -30,8 +30,8 @@ public class SecurityController {
 
     public Response<UUID> validatePassword(UUID id, String password) {
         try {
-            String pass = passwords.get(id);
-            if(pass.equals(password))
+
+            if(encryptor.encrypt(passwords.get(id)).equals(password))
                 return Response.getSuccessResponse(id);
             else return Response.getFailResponse("Incorrect password");
         }
@@ -54,7 +54,7 @@ public class SecurityController {
                 char c = password.charAt(i);
                 if (c >= 'A' && c <= 'Z') hasUpper = true;
                 if (c >= 'a' && c <= 'z') hasLower = true;
-                if (c >= '9' && c <= '0') hasNumber = true;
+                if (c >= '0' && c <= '9') hasNumber = true;
             }
             if (!hasUpper || !hasLower || !hasNumber) isLegal = false;
 
@@ -84,7 +84,7 @@ public class SecurityController {
         try {
             if (!isLegalPassword(newPass))
                 return Response.getFailResponse("Illegal Password");
-            passwords.put(id, newPass);
+            passwords.put(id, encryptor.encrypt(newPass));
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception){
@@ -115,21 +115,22 @@ public class SecurityController {
             return Response.getFailResponse(exception.getMessage());
         }
     }
-        public Response<String> getSecurityQuestion (UUID id){
-        try {  if (securityQuestions.get(id) == null)
-        {return Response.getFailResponse("There is no security question for this user");}
+
+    public Response<String> getSecurityQuestion (UUID id){
+        try {
+            if (securityQuestions.get(id) == null)
+                return Response.getFailResponse("There is no security question for this user");
             else return Response.getSuccessResponse(securityQuestions.get(id).getQuestion());
-        }  catch (Exception exception) {
-        return Response.getFailResponse(exception.getMessage());
+        }
+        catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
-
-        }
-
         //added for tests
-        public void addPassword(UUID id, String pass){
-            passwords.put(id, pass);
-        }
+    public void addPassword(UUID id, String pass) throws Exception {
+        passwords.put(id, encryptor.encrypt(pass));
+    }
 
 
     }

@@ -386,12 +386,14 @@ public class UserController {
     }
 
     private void registerDefaultAdmin() {
-        if (!usernames.containsKey("admin")) {
-            UUID adminCredentials = UUID.randomUUID();
-            usernames.put("admin", adminCredentials);
-            users.put(adminCredentials, new Admin("admin", adminCredentials));
-            securityController.addPassword(adminCredentials, "admin");
-        }
+        try {
+            if (!usernames.containsKey("admin")) {
+                UUID adminCredentials = UUID.randomUUID();
+                usernames.put("admin", adminCredentials);
+                users.put(adminCredentials, new Admin("admin", adminCredentials));
+                securityController.addPassword(adminCredentials, "admin");
+            }
+        } catch (Exception ignored) {}
     }
 }
 
