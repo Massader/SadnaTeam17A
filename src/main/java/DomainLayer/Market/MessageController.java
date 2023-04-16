@@ -27,6 +27,7 @@ public class MessageController {
         return instance;
     }
 
+
     public Response<UUID> sendMessage(UUID clientCredentials, UUID sender, UUID recipient, String body){
         Message message = new Message(body, sender, recipient);
         if (!messages.containsKey(recipient)) messages.put(recipient, new ConcurrentLinkedDeque<>());
@@ -39,6 +40,7 @@ public class MessageController {
             return Response.getSuccessResponse(new ArrayList<>(messages.get(clientCredentials)));
         }
         else return Response.getFailResponse("No user with the passed client credentials.");
+
     }
 
     public Response<Message> getMessage(UUID clientCredentials, UUID messageId) {
@@ -52,4 +54,5 @@ public class MessageController {
         }
         return Response.getFailResponse("No user with the passed client credentials.");
     }
+
 }

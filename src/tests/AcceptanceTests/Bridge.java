@@ -2,7 +2,9 @@ package AcceptanceTests;
 
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.ServiceStore;
+import ServiceLayer.ServiceObjects.ServiceSale;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface Bridge {
@@ -34,12 +36,12 @@ public interface Bridge {
     Boolean stockManagementRemoveItem();
     Boolean stockManagementChangeItemInfo();
     Boolean setStorePolicy();
-    Boolean appointStoreOwner();
-    Boolean appointStoreManager();
+    Boolean appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId);
+    Boolean appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId);
     Boolean setStoreManagerPermissions();
     Boolean closeStore(UUID clientCredentials, UUID storeId);
     Boolean getStoreStaffList();
-    Boolean getStoreSaleHistory();
+    List<ServiceSale> getStoreSaleHistory(UUID clientCredentials,UUID storeId);
     Boolean storeManagerActions();
     Boolean getStoreSaleHistorySystemAdmin();
 }

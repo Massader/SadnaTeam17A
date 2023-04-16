@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.UUID;
 
-import DomainLayer.Market.Users.SecurityQuestion;
 import DomainLayer.Security.SecurityController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,7 @@ class SecurityControllerTest {
     String answer;
     String question2;
     String answer2;
+    Response<Boolean> response;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -31,7 +31,8 @@ class SecurityControllerTest {
         answer = "blue";
         question2 = "sup?";
         answer2 = "walla";
-        Response<Boolean> response = securityController.addSecurityQuestion(id, question, answer);
+        response = securityController.addSecurityQuestion(id, question, answer);
+
     }
 
     @Test
