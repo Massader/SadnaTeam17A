@@ -95,24 +95,21 @@ public class RealBridge implements Bridge {
         return service.viewCart(clientCredentials);
     }
 
-    public Boolean purchaseShoppingCartPayment() {
+    public Boolean purchaseShoppingCart() {
         return false;
     }
 
-    public Boolean purchaseShoppingCartSupply() {
-        return false;
-    }
 
     public UUID logout(UUID clientCredentials) {
         return service.logout(clientCredentials);
     }
 
-    public ServiceStore openStore(UUID clientCredentials , String storeName , String storeDescription) {
-        return service.createStore(clientCredentials , storeName , storeDescription);
+    public ServiceStore openStore(UUID clientCredentials, String storeName, String storeDescription) {
+        return service.createStore(clientCredentials, storeName, storeDescription);
     }
 
     public ServiceItem stockManagementAddNewItem(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description) {
-        return service.getItemInformation(clientCredentials,name,price,storeId,quantity,description);
+        return service.addItemToStore(clientCredentials, name, price, storeId, quantity, description);
     }
 
     public Boolean stockManagementRemoveItem() {

@@ -1,9 +1,6 @@
 package AcceptanceTests;
 
-import ServiceLayer.ServiceObjects.ServiceSale;
-import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
-import ServiceLayer.ServiceObjects.ServiceStore;
-import ServiceLayer.ServiceObjects.ServiceUser;
+import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -92,13 +89,10 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.viewShoppingCartItems(clientCredentials);
     }
 
-    public Boolean purchaseShoppingCartPayment() {
-        return real == null? null : real.purchaseShoppingCartPayment();
+    public Boolean purchaseShoppingCart() {
+        return real == null? null : real.purchaseShoppingCart();
     }
 
-    public Boolean purchaseShoppingCartSupply() {
-        return real == null? null : real.purchaseShoppingCartSupply();
-    }
 
     public UUID logout(UUID clientCredentials) {
         return real == null? null : real.logout(clientCredentials);
@@ -108,8 +102,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.openStore(clientCredentials , storeName , storeDescription);
     }
 
-    public addItemToStore stockManagementAddNewItem(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description) {
-        return real == null? null : real.stockManagementAddNewItem(lientCredentials,name,price,storeId,quantity,description);
+    public ServiceItem stockManagementAddNewItem(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
+        return real == null? null : real.stockManagementAddNewItem(clientCredentials,name,price,storeId,quantity,description);
     }
 
     public Boolean stockManagementRemoveItem() {
