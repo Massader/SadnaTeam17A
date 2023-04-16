@@ -245,7 +245,5 @@ public class UserControllerTest {
 //        assertEquals("User does not exist.", deletedUserResponse.getMessage());
 //    }
 
-    
-
 
 }

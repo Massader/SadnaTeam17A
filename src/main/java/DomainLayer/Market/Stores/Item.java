@@ -136,6 +136,10 @@ public class Item {
         return  true;
     }
 
+    public void addCategory(Category category){
+        categories.add(category);
+    }
+
 
 
 }

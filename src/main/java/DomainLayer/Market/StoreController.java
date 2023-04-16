@@ -405,8 +405,8 @@ public class StoreController {
     }
 
     //add a new store
-    //TODO: guy why we need this?
-    protected UUID addStore(Store store){
+    //TODO: guy why we need this? for unit tests
+    public UUID addStore(Store store){
         UUID id = UUID.randomUUID();
         storeMap.put(id, store);
         return id;
