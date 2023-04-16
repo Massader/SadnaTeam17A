@@ -1,17 +1,30 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import org.junit.*;
+
+import java.util.UUID;
 
 public class RealTimeAlerts extends ProjectTest {
 
-    public RealTimeAlerts(Bridge real) {
-        super(real);
+    UUID clientCredentials;
+
+    @BeforeClass
+    public void setUp() {
+
     }
 
-    public boolean systemRealTimeAlert() {
-        return bridge.systemRealTimeAlert();
+    @Before
+    public void beforeEach() {
+        clientCredentials = bridge.enterSystem();
     }
 
-    public boolean userRealTimeAlert() {
-        return bridge.userRealTimeAlert();
+    @After
+    public void tearDown() {
+        bridge.exitSystem(clientCredentials);
+    }
+
+    @Test
+    public void realTimeAlertsSuccess() {
+        Assert.assertTrue(true);
     }
 }

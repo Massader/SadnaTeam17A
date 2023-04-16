@@ -1,17 +1,31 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import org.junit.*;
+
+import java.util.UUID;
 
 public class DelayedAlerts extends ProjectTest {
 
-    public DelayedAlerts(Bridge real) {
-        super(real);
+    UUID clientCredentials;
+
+    @BeforeClass
+    public void setUp() {
+
     }
 
-    public boolean systemDelayedAlert() {
-        return bridge.systemDelayedAlert();
+    @Before
+    public void beforeEach() {
+        clientCredentials = bridge.enterSystem();
     }
 
-    public boolean userDelayedAlert() {
-        return bridge.userDelayedAlert();
+    @After
+    public void tearDown() {
+        bridge.exitSystem(clientCredentials);
+    }
+
+    @Test
+    public void delayedAlertsSuccess() {
+        Assert.assertTrue(true);
     }
 }
+

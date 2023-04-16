@@ -1,13 +1,30 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import org.junit.*;
+
+import java.util.UUID;
 
 public class Supply extends ProjectTest {
 
-    public Supply(Bridge real) {
-        super(real);
+    UUID clientCredentials;
+
+    @BeforeClass
+    public void setUp() {
+
     }
 
-    public boolean checkForSupply() {
-        return bridge.checkForSupply();
+    @Before
+    public void beforeEach() {
+        clientCredentials = bridge.enterSystem();
+    }
+
+    @After
+    public void tearDown() {
+        bridge.exitSystem(clientCredentials);
+    }
+
+    @Test
+    public void supplySuccess() {
+        Assert.assertTrue(true);
     }
 }

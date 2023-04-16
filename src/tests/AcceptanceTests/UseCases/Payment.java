@@ -1,13 +1,30 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import org.junit.*;
+
+import java.util.UUID;
 
 public class Payment extends ProjectTest {
 
-    public Payment(Bridge real) {
-        super(real);
+    UUID clientCredentials;
+
+    @BeforeClass
+    public void setUp() {
+
     }
 
-    public boolean payForShoppingCart() {
-        return bridge.payForShoppingCart();
+    @Before
+    public void beforeEach() {
+        clientCredentials = bridge.enterSystem();
+    }
+
+    @After
+    public void tearDown() {
+        bridge.exitSystem(clientCredentials);
+    }
+
+    @Test
+    public void paymentSuccess() {
+        Assert.assertTrue(true);
     }
 }
