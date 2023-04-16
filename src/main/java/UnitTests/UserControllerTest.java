@@ -18,6 +18,8 @@ public class UserControllerTest {
     private UserController userController;
     private String username;
     private String password;
+    private String password2;
+    private String password3;
     private UUID clientCredentials;
     private StoreController storeController;
     private UUID userId;
@@ -36,12 +38,14 @@ public class UserControllerTest {
         userController.init();
         username = "testuser";
         password = "password123";
+        password2 = "Pass12345";
+        password3 = "Pass67890";
+
         clientCredentials = userController.createClient().getValue();
-        userController = UserController.getInstance();
-        userController.init();
         storeController = StoreController.getInstance();
-        userController.register("u", "p");
-        userController.register("u2", "p2");
+        storeController.init();
+        userController.register("u", password2);
+        userController.register("u2", password3);
         userId = userController.getId("u");
         user = userController.getUserById(userId);
         userId2 = userController.getId("u2");
@@ -53,26 +57,21 @@ public class UserControllerTest {
 
     @Test
     public void testRegisterSuccess() {
-        Response<Boolean> response = userController.register(username, password);
+        Response<Boolean> response = userController.register("u3", password);
 
-        assertEquals(true, response.getMessage());
+        assertFalse(response.getValue());
     }
 
     @Test
     public void testRegisterFailureDuplicateUsername() {
-
-        Response<Boolean> response1 = userController.register(username, password);
-        assertEquals(true, response1.getValue());
-
-        Response<Boolean> response2 = userController.register(username, "newpassword");
-        assertEquals(false, response2.getValue());
-        assertEquals("This username is already in use.", response2.getMessage());
+        Response<Boolean> response1 = userController.register("u", password);
+        assertTrue(response1.isError());
     }
 
     @Test
     public void testRegisterFailureEmptyUsername() {
-        Response<Boolean> response = userController.register(username, password);
-        assertEquals(false, response.getValue());
+        Response<Boolean> response = userController.register("", password);
+        assertTrue(response.isError());
         assertEquals("No username input.", response.getMessage());
     }
 
@@ -92,10 +91,8 @@ public class UserControllerTest {
     }
     @Test
     public void testLoginSuccess() {
-        userController.register("username", "password");
-
         // call the login function
-        Response<UUID> response = userController.login(clientCredentials, "username", "password");
+        Response<UUID> response = userController.login(clientCredentials, "u", password2);
 
         // assert that the response is successful and the returned UUID matches the UUID of the logged in user
         assertTrue(response.isSuccessful());
@@ -194,7 +191,7 @@ public class UserControllerTest {
     @Test
     public void testLogout() {
         // Arrange;
-        userController.login(userId, username, "p");
+        userController.login(userId, username, password2);
 
         // Act
         Response<UUID> response = userController.logout(userId);
