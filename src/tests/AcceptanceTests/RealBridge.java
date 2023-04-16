@@ -3,6 +3,7 @@ import ServiceLayer.*;
 import ServiceLayer.ServiceObjects.ServiceSale;
 import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
 import ServiceLayer.ServiceObjects.ServiceStore;
+import ServiceLayer.ServiceObjects.ServiceUser;
 
 import java.util.List;
 import java.util.UUID;
@@ -145,8 +146,8 @@ public class RealBridge implements Bridge {
         return service.closeStore(clientCredentials, storeId);
     }
 
-    public Boolean getStoreStaffList() {
-        return false;
+    public List<ServiceUser> getStoreStaffList(UUID clientCredentials, UUID storeId) {
+        return  service.getStoreStaff(clientCredentials,storeId);
     }
 
     public List<ServiceSale> getStoreSaleHistory(UUID clientCredentials,UUID storeId) {
