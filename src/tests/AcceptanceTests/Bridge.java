@@ -37,7 +37,7 @@ public interface Bridge {
     Boolean stockManagementChangeItemInfo();
     Boolean setStorePolicy();
     Boolean appointStoreOwner();
-    Boolean appointStoreManager();
+    Boolean appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId);
     Boolean setStoreManagerPermissions();
     Boolean closeStore(UUID clientCredentials, UUID storeId);
     Boolean getStoreStaffList();

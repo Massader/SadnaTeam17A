@@ -132,8 +132,8 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public Boolean appointStoreManager() {
-        return false;
+    public Boolean appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId) {
+        return service.appointStoreManager(clientCredentials,appointee,storeId);
     }
 
     public Boolean setStoreManagerPermissions() {

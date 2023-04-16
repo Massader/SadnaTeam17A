@@ -43,7 +43,7 @@ public class CloseStore extends ProjectTest {
 
     @Test
     public void CloseStoreSuccess() {
-        Boolean close = bridge.closeStore(client,storeId);
+        Boolean close = bridge.closeStore(founder,storeId);
         Assert.assertTrue(close);
     }
 
@@ -52,6 +52,7 @@ public class CloseStore extends ProjectTest {
         client2 = bridge.enterSystem();
         Boolean close = bridge.closeStore(client2,storeId);
         Assert.assertFalse(close);
+        bridge.logout(client2);
 
     }
 

@@ -131,7 +131,7 @@ public class StoreController {
 
     // create item and add it to a store
     public Response<Item> addItem(String name, double price, UUID storeId, int quantity, String description){
-
+        try{
         if (!storeMap.containsKey(storeId))
             return Response.getFailResponse("store doesn't exist");
 
@@ -143,7 +143,11 @@ public class StoreController {
         Store store = getStore(storeId);
         store.addItem(item);
 
-        return Response.getSuccessResponse(item);
+        return Response.getSuccessResponse(item);}
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
+
     }
 
     public Response<Integer> getItemQuantity(UUID itemId){
