@@ -8,7 +8,7 @@ public class StockManagement extends ProjectTest {
     }
 
     public boolean stockManagementAddNewItem() {
-        return bridge.stockManagementAddNewItem();
+       // return bridge.stockManagementAddNewItem();
     }
 
     public boolean stockManagementRemoveItem() {
