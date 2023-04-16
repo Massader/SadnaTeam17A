@@ -84,8 +84,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.searchItem();
     }
 
-    public Boolean saveItemInShoppingCart() {
-        return real == null? null : real.saveItemInShoppingCart();
+    public Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
+        return real == null? null : real.saveItemInShoppingCart(clientCredentials,itemId,quantity,storeId);
     }
 
     public List<ServiceShoppingBasket> viewShoppingCartItems(UUID clientCredentials) {
@@ -108,8 +108,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.openStore(clientCredentials , storeName , storeDescription);
     }
 
-    public Boolean stockManagementAddNewItem() {
-        return real == null? null : real.stockManagementAddNewItem();
+    public addItemToStore stockManagementAddNewItem(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description) {
+        return real == null? null : real.stockManagementAddNewItem(lientCredentials,name,price,storeId,quantity,description);
     }
 
     public Boolean stockManagementRemoveItem() {

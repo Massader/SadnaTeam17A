@@ -32,4 +32,8 @@ public class ServiceItem {
         }
         this.purchaseType = item.getPurchaseType().getClass().getName();
     }
+
+    public UUID getId() {
+        return id;
+    }
 }

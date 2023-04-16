@@ -150,6 +150,29 @@ public class StoreController {
 
     }
 
+    public Response<Item> addItemToStore(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description){
+        try{
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist");
+            if(!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
+                    && !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
+                return Response.getFailResponse("User doesn't have permission.");
+
+            UUID id = UUID.randomUUID();
+            Item item = new Item(id, name, price, storeId, 0, quantity,description);
+
+
+            //add the item to the store
+            Store store = getStore(storeId);
+            store.addItem(item);
+
+            return Response.getSuccessResponse(item);}
+        catch (Exception exception){
+            return Response.getFailResponse(exception.getMessage());
+        }
+
+    }
+
     public Response<Integer> getItemQuantity(UUID itemId){
         if (!itemExist(itemId))
             return Response.getFailResponse("item doesn't exist");
