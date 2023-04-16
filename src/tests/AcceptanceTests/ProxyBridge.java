@@ -1,9 +1,6 @@
 package AcceptanceTests;
 
-import ServiceLayer.ServiceObjects.ServiceSale;
-import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
-import ServiceLayer.ServiceObjects.ServiceStore;
-import ServiceLayer.ServiceObjects.ServiceUser;
+import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -108,8 +105,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.openStore(clientCredentials , storeName , storeDescription);
     }
 
-    public addItemToStore stockManagementAddNewItem(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description) {
-        return real == null? null : real.stockManagementAddNewItem(lientCredentials,name,price,storeId,quantity,description);
+    public ServiceItem stockManagementAddNewItem(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
+        return real == null? null : real.stockManagementAddNewItem(clientCredentials,name,price,storeId,quantity,description);
     }
 
     public Boolean stockManagementRemoveItem() {

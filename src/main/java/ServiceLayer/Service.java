@@ -494,5 +494,9 @@ public class Service {
         eventLogger.log(Level.INFO, "Successfully add "+quantity+" Item: "+name+" to store ");
         return new ServiceItem(response.getValue());
     }
+    public Boolean AddAdmin(UUID clientCredentials){return null;}
+
+
+
 }
 
