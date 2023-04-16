@@ -22,9 +22,9 @@ public class AppointStoreOwner extends ProjectTest {
         founder = bridge.login(client, "founder", "pass");
         store = bridge.openStore(founder, "test", "test");
         storeId = store.getStoreId();
-        bridge.register("lior", "pass");
+        bridge.register("toOwner", "pass");
         client2 = bridge.enterSystem();
-        storeOwner = bridge.login(client2, "toreOwner", "pass");
+        storeOwner = bridge.login(client2, "toOwner", "pass");
 
     }
 
@@ -47,13 +47,13 @@ public class AppointStoreOwner extends ProjectTest {
 
     @Test
     public void AppointStoreManagerSuccess() {
-        Boolean AppointStoreManager = bridge.appointStoreOwner(founder,storeOwner,storeId);
-        Assert.assertTrue(AppointStoreManager);
+        Boolean AppointStoreOwner = bridge.appointStoreOwner(founder,storeOwner,storeId);
+        Assert.assertTrue(AppointStoreOwner);
     }
     @Test
     public void AppointStoreManagerFail() {
-        Boolean AppointStoreManager = bridge.appointStoreOwner(storeOwner,founder,storeId);
-        Assert.assertFalse(AppointStoreManager);
+        Boolean AppointStoreOwner = bridge.appointStoreOwner(storeOwner,founder,storeId);
+        Assert.assertFalse(AppointStoreOwner);
     }
 }
 

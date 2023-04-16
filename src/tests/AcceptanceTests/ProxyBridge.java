@@ -130,8 +130,9 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.appointStoreManager(clientCredentials,appointee,storeId);
     }
 
-    public Boolean setStoreManagerPermissions() {
-        return real == null? null : real.setStoreManagerPermissions();
+    public Boolean setStoreManagerPermissions(UUID clientCredentials, UUID manager,
+                                              UUID storeId, List<Integer> permissions) {
+        return real == null? null : real.setStoreManagerPermissions(clientCredentials,manager,storeId,permissions);
     }
 
     public Boolean closeStore(UUID clientCredentials, UUID storeId) {

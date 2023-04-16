@@ -22,9 +22,10 @@ public class AppointStoreManager extends ProjectTest {
         founder = bridge.login(client, "founder", "pass");
         store = bridge.openStore(founder, "test", "test");
         storeId = store.getStoreId();
-        bridge.register("lior", "pass");
+        bridge.register("toManager", "pass");
         client2 = bridge.enterSystem();
-        storeManager = bridge.login(client2, "toreManager", "pass");
+        storeManager = bridge.login(client2, "toManager", "pass");
+
 
     }
 

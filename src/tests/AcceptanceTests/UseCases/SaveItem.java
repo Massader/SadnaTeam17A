@@ -13,7 +13,7 @@ public class SaveItem extends ProjectTest {
     UUID client2;
     ServiceStore store;
     UUID storeId;
-    UUID itemId
+    UUID itemId;
 
     @BeforeClass
     public void setUp() {

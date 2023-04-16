@@ -135,8 +135,9 @@ public class RealBridge implements Bridge {
         return service.appointStoreManager(clientCredentials,appointee,storeId);
     }
 
-    public Boolean setStoreManagerPermissions() {
-        return false;
+    public Boolean setStoreManagerPermissions(UUID clientCredentials, UUID manager,
+                                              UUID storeId, List<Integer> permissions) {
+        return service.SetManagerPermissions(clientCredentials,manager,storeId,permissions);
     }
 
     public Boolean closeStore(UUID clientCredentials, UUID storeId) {
