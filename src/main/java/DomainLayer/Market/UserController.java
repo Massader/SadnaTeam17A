@@ -396,9 +396,20 @@ public class UserController {
                 UUID adminCredentials = UUID.randomUUID();
                 usernames.put("admin", adminCredentials);
                 users.put(adminCredentials, new Admin("admin", adminCredentials));
-                securityController.addPassword(adminCredentials, "admin");
+                securityController.encryptAndSavePassword(adminCredentials, "admin");
             }
         } catch (Exception ignored) {}
+    }
+
+    public Response<Boolean> registerAsAdmin(UUID clientCredentials, String username, String password) {
+        if (!users.containsKey(clientCredentials)) return Response.getFailResponse("Passed client credentials do not correspond to an existing user.");
+        if (usernames.containsKey(username)) return Response.getFailResponse("A user by that username already exists.");
+        if (!users.get(clientCredentials).isAdmin()) return Response.getFailResponse("Only admins can register admins.");
+
+        User newAdmin = new Admin(username, UUID.randomUUID());
+        usernames.put(username, newAdmin.getId());
+        users.put(newAdmin.getId(), newAdmin);
+        return securityController.encryptAndSavePassword(newAdmin.getId(), password);
     }
 }
 
