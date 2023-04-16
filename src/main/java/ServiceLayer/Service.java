@@ -495,15 +495,7 @@ public class Service {
         return new ServiceItem(response.getValue());
     }
 
-    public ServiceItem removeItemToStore(UUID clientCredentials, UUID storeId, UUID itemId){
-        Response<Item> response = storeController.removeItemfromStore(clientCredentials,name,price,storeId,quantity,description);
-        if(response.isError()) {
-            errorLogger.log(Level.SEVERE, response.getMessage());
-            return null;
-        }
-        eventLogger.log(Level.INFO, "Successfully add "+quantity+" Item: "+name+" to store ");
-        return new ServiceItem(response.getValue());
-    }
+
 
 
 
