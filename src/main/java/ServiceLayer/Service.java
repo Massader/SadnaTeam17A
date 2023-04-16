@@ -468,13 +468,22 @@ public class Service {
     public Boolean register(String username,String password) {
         Response<Boolean> response = userController.register(username,password);
         if(response.isError()) {
-            errorLogger.log(Level.SEVERE, response.getMessage());
-            return null;
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return false;
         }
         eventLogger.log(Level.INFO, "Successfully registered user " + username);
         return response.getValue();
     }
 
+    public boolean registerAdmin(UUID clientCredentials, String username, String password) {
+        Response<Boolean> response = userController.registerAsAdmin(clientCredentials,username,password);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully registered admin " + username);
+        return response.getValue();
+    }
 
     public ServiceItem addItemToStore(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description){
         Response<Item> response = storeController.addItemToStore(clientCredentials,name,price,storeId,quantity,description);
@@ -485,27 +494,9 @@ public class Service {
         eventLogger.log(Level.INFO, "Successfully add "+quantity+" Item: "+name+" to store ");
         return new ServiceItem(response.getValue());
     }
-
     public Boolean AddAdmin(UUID clientCredentials){return null;}
 
 
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
