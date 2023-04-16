@@ -23,11 +23,11 @@ public class UserController {
     private StoreController storeController;
 
 
-    private UserController() {
+    private UserController() { }
 
-    }
 
-    public void init() {
+    public void init()
+    {
         users = new ConcurrentHashMap<>();
         usernames = new ConcurrentHashMap<>();
         loggedInUser = new ConcurrentLinkedQueue<>();
