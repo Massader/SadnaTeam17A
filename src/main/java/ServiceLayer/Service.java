@@ -476,7 +476,7 @@ public class Service {
     }
 
 
-    public Item addItemToStore(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description){
+    public ServiceItem addItemToStore(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description){
         Response<Item> response = storeController.addItemToStore(clientCredentials,name,price,storeId,quantity,description);
         if(response.isError()) {
             errorLogger.log(Level.SEVERE, response.getMessage());
@@ -486,7 +486,9 @@ public class Service {
         return new ServiceItem(response.getValue());
     }
 
-    }
+    public Boolean AddAdmin(UUID clientCredentials){return null;}
+
+
 }
 
 

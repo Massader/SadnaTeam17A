@@ -1,10 +1,7 @@
 package AcceptanceTests;
 
 import ServiceLayer.Service;
-import ServiceLayer.ServiceObjects.ServiceSale;
-import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
-import ServiceLayer.ServiceObjects.ServiceStore;
-import ServiceLayer.ServiceObjects.ServiceUser;
+import ServiceLayer.ServiceObjects.*;
 
 
 import java.util.List;
@@ -35,7 +32,7 @@ public interface Bridge {
     Boolean purchaseShoppingCartSupply();
     UUID logout(UUID clientCredentials);
     ServiceStore openStore(UUID clientCredentials , String storeName , String storeDescription);
-    Boolean stockManagementAddNewItem();
+    ServiceItem stockManagementAddNewItem(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description);
     Boolean stockManagementRemoveItem();
     Boolean stockManagementChangeItemInfo();
     Boolean setStorePolicy();
