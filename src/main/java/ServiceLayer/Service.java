@@ -496,7 +496,5 @@ public class Service {
     }
     public Boolean AddAdmin(UUID clientCredentials){return null;}
 
-
-
 }
 

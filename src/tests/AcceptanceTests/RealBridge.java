@@ -83,8 +83,8 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public Boolean searchItem() {
-        return false;
+    public List<ServiceItem> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating) {
+        return service.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating);
     }
 
     public Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
