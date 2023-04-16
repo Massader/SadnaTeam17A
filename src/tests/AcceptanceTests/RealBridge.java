@@ -112,12 +112,20 @@ public class RealBridge implements Bridge {
         return service.addItemToStore(clientCredentials,name,price,storeId,quantity,description);
     }
 
-    public Boolean stockManagementRemoveItem() {
-        return false;
+    public Boolean stockManagementRemoveItem(UUID clientCredentials, UUID storeId, UUID itemId) {
+        return  service.setItemQuantity(clientCredentials,storeId,itemId,0);
+
     }
 
-    public Boolean stockManagementChangeItemInfo() {
-        return false;
+    public Boolean stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name,String description) {
+        Boolean check=false;
+        if(description!=null){
+            check = service.setItemDescription(clientCredentials,storeId,itemId,description);
+        }
+        if(name!=null){
+            check= check||service.setItemName(clientCredentials,storeId,itemId,name);
+        }
+        return check;
     }
 
     public Boolean setStorePolicy() {

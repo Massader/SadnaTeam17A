@@ -32,8 +32,8 @@ public interface Bridge {
     UUID logout(UUID clientCredentials);
     ServiceStore openStore(UUID clientCredentials , String storeName , String storeDescription);
     ServiceItem stockManagementAddNewItem(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description);
-    Boolean stockManagementRemoveItem();
-    Boolean stockManagementChangeItemInfo();
+    Boolean stockManagementRemoveItem(UUID clientCredentials, UUID storeId, UUID itemId);
+    Boolean stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name,String description);
     Boolean setStorePolicy();
     Boolean appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId);
     Boolean appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId);

@@ -106,12 +106,12 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.stockManagementAddNewItem(clientCredentials,name,price,storeId,quantity,description);
     }
 
-    public Boolean stockManagementRemoveItem() {
-        return real == null? null : real.stockManagementRemoveItem();
+    public Boolean stockManagementRemoveItem(UUID clientCredentials, UUID storeId, UUID itemId) {
+        return real == null? null : real.stockManagementRemoveItem(clientCredentials,storeId,itemId);
     }
 
-    public Boolean stockManagementChangeItemInfo() {
-        return real == null? null : real.stockManagementChangeItemInfo();
+    public Boolean stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name,String description) {
+        return real == null? null : real.stockManagementChangeItemInfo(clientCredentials,storeId,itemId,name,description);
     }
 
     public Boolean setStorePolicy() {
