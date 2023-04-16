@@ -65,4 +65,6 @@ public class ShoppingBasket {
         items.clear();
     }
 
+    public int QuantityOf(UUID itemId){return items.get(itemId);}
+
 }

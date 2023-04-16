@@ -1,8 +1,8 @@
 package AcceptanceTests;
 
 import ServiceLayer.Service;
-import ServiceLayer.ServiceObjects.ServiceSale;
 import ServiceLayer.ServiceObjects.ServiceStore;
+import ServiceLayer.ServiceObjects.ServiceSale;
 
 import java.util.List;
 import java.util.UUID;

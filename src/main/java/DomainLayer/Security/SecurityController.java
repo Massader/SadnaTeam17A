@@ -1,7 +1,5 @@
 package DomainLayer.Security;
 
-import DomainLayer.Market.UserController;
-import DomainLayer.Market.Users.SecurityQuestion;
 import ServiceLayer.Response;
 
 import java.util.UUID;
