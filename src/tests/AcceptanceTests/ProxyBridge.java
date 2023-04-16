@@ -1,6 +1,7 @@
 package AcceptanceTests;
 
 import ServiceLayer.ServiceObjects.ServiceSale;
+import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
 import ServiceLayer.ServiceObjects.ServiceStore;
 
 import java.util.List;
@@ -86,8 +87,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.saveItemInShoppingCart();
     }
 
-    public Boolean viewShoppingCartItems() {
-        return real == null? null : real.viewShoppingCartItems();
+    public List<ServiceShoppingBasket> viewShoppingCartItems(UUID clientCredentials) {
+        return real == null? null : real.viewShoppingCartItems(clientCredentials);
     }
 
     public Boolean purchaseShoppingCartPayment() {

@@ -1,6 +1,7 @@
 package AcceptanceTests;
 import ServiceLayer.*;
 import ServiceLayer.ServiceObjects.ServiceSale;
+import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
 import ServiceLayer.ServiceObjects.ServiceStore;
 
 import java.util.List;
@@ -92,8 +93,8 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public Boolean viewShoppingCartItems() {
-        return false;
+    public  List<ServiceShoppingBasket> viewShoppingCartItems(UUID clientCredentials) {
+        return service.viewCart(clientCredentials);
     }
 
     public Boolean purchaseShoppingCartPayment() {
@@ -128,8 +129,8 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public Boolean appointStoreOwner() {
-        return false;
+    public Boolean appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId) {
+        return service.appointStoreOwner(clientCredentials,appointee,storeId);
     }
 
     public Boolean appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId) {
