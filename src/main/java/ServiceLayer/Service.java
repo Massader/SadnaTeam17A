@@ -468,10 +468,20 @@ public class Service {
     public Boolean register(String username,String password) {
         Response<Boolean> response = userController.register(username,password);
         if(response.isError()) {
-            errorLogger.log(Level.SEVERE, response.getMessage());
-            return null;
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return false;
         }
         eventLogger.log(Level.INFO, "Successfully registered user " + username);
+        return response.getValue();
+    }
+
+    public boolean registerAdmin(UUID clientCredentials, String username, String password) {
+        Response<Boolean> response = userController.registerAsAdmin(clientCredentials,username,password);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully registered admin " + username);
         return response.getValue();
     }
 }
