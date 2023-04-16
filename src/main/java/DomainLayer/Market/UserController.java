@@ -37,8 +37,9 @@ public class UserController {
     }
 
     public static synchronized UserController getInstance() {
-        if (singleton == null)
+        if (singleton == null) {
             singleton = new UserController();
+        }
         return singleton;
     }
 
@@ -69,7 +70,8 @@ public class UserController {
             if (!usernames.containsKey(username) || !users.containsKey(usernames.get(username)))
                 return Response.getFailResponse("User is not registered in the system.");
             //validate the password
-            if (securityController.validatePassword(getId(username), password).getValue().equals(getId(username))) {
+            UUID idPAss = securityController.validatePassword(getId(username), password).getValue();
+            if (idPAss.equals(getId(username))) {
                 //transfer the client to the logged in users, and delete it from the non registered clients list
                 loggedInUser.add(username);
                 closeClient(clientCredentials);
@@ -356,6 +358,9 @@ public class UserController {
     // i made these methods to avoid confusion between clients and users.
     public boolean isRegisteredUser(UUID id){
         return users.containsKey(id);
+    }
+    public boolean isLoggedInUser(UUID id){
+        return loggedInUser.contains(id);
     }
 
     public Response<Boolean> isUser(UUID id){

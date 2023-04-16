@@ -42,6 +42,10 @@ public class ShoppingCart {
             shoppingBasket.clearBasket();
         }
     }
+
+    public int quantityOf(UUID stroeId, UUID itemId){
+        return shoppingBaskets.get(stroeId).QuantityOf(itemId);
+    }
 }
 
 

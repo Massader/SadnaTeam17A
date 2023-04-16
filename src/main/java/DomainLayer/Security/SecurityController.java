@@ -1,7 +1,5 @@
 package DomainLayer.Security;
 
-import DomainLayer.Market.UserController;
-import DomainLayer.Market.Users.SecurityQuestion;
 import ServiceLayer.Response;
 
 import java.util.UUID;
@@ -30,7 +28,7 @@ public class SecurityController {
 
     public Response<UUID> validatePassword(UUID id, String password) {
         try {
-            if(encryptor.encrypt(passwords.get(id)).equals(password))
+            if(passwords.get(id).equals(encryptor.encrypt(password)))
                 return Response.getSuccessResponse(id);
             else return Response.getFailResponse("Incorrect password");
         }
@@ -65,7 +63,7 @@ public class SecurityController {
 
     public Response<Boolean> changePassword(UUID id, String oldPass, String newPass){
         try {
-            if (!validatePassword(id, oldPass).getValue().equals(id))
+            if (validatePassword(id, oldPass).isError())
                 return Response.getFailResponse("the old password is incorrect!");
             return encryptAndSavePassword(id, newPass);
         }
