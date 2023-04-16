@@ -10,8 +10,10 @@ import java.util.UUID;
 public class GetStoreSaleHistory extends ProjectTest {
     UUID founder;
     UUID client;
+    UUID client2;
     ServiceStore store;
     UUID storeId;
+    UUID userId;
 
     @BeforeClass
     public void setUp() {
@@ -21,6 +23,14 @@ public class GetStoreSaleHistory extends ProjectTest {
         founder = bridge.login(client, "founder", "pass");
         store = bridge.openStore(founder, "test", "test");
         storeId = store.getStoreId();
+
+        String userName= "user1";
+        String password = "pass";
+
+
+        bridge.register(userName,password);
+        client2 = bridge.enterSystem();
+        userId= bridge.login(client2, userName, password);
     }
 
     @Before
@@ -37,6 +47,9 @@ public class GetStoreSaleHistory extends ProjectTest {
     public void afterClass() {
         bridge.closeStore(founder, storeId);
         bridge.logout(founder);
+        bridge.logout(userId);
+        bridge.exitSystem(client);
+        bridge.exitSystem(client2);
     }
     @Test
     public void GetStoreSaleHistorySuccess() {
@@ -44,7 +57,7 @@ public class GetStoreSaleHistory extends ProjectTest {
         Assert.assertTrue(saleHistory.isEmpty());}
     @Test
     public void GetStoreSaleHistoryNotExistingStoreFail() {
-        List<ServiceSale> saleHistory = bridge.getStoreSaleHistory(founder,storeId);
+        List<ServiceSale> saleHistory = bridge.getStoreSaleHistory(client2,storeId);
         Assert.assertNull(saleHistory);
     }
 
@@ -53,11 +66,4 @@ public class GetStoreSaleHistory extends ProjectTest {
 
 
 
-//    public GetStoreSaleHistory(Bridge real) {
-//        super(real);
-//    }
-//
-//    public boolean getStoreSaleHistory() {
-//        return bridge.getStoreSaleHistory();
-//    }
 }

@@ -147,6 +147,10 @@ public class Store {
         throw new Exception("the user is not have permissions to get sale history of store "+this.name);
     }
 
+    public ConcurrentLinkedQueue<Sale> getSales() {
+        return sales;
+    }
+
     public double calculatePriceOfBasket(ConcurrentHashMap<UUID,Integer> items) { // Map of Item ID -> Quantity
         double price = 0;
         for(UUID key : items.keySet()){

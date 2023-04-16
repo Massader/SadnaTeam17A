@@ -153,7 +153,8 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public Boolean getStoreSaleHistorySystemAdmin() {
-        return false;
+    public List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials,UUID storeId, String userName, String password) {
+        service.registerAdmin(clientCredentials,userName,password);
+        return service.getStoreSaleHistory(clientCredentials,storeId);
     }
 }
