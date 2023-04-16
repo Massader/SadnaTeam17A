@@ -1,7 +1,9 @@
 package AcceptanceTests;
 import ServiceLayer.*;
+import ServiceLayer.ServiceObjects.ServiceSale;
 import ServiceLayer.ServiceObjects.ServiceStore;
 
+import java.util.List;
 import java.util.UUID;
 
 public class RealBridge implements Bridge {
@@ -146,8 +148,8 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public Boolean getStoreSaleHistory() {
-        return false;
+    public List<ServiceSale> getStoreSaleHistory(UUID clientCredentials,UUID storeId) {
+        return service.getStoreSaleHistory(clientCredentials,storeId);
     }
 
     public Boolean storeManagerActions() {

@@ -1,7 +1,9 @@
 package AcceptanceTests;
 
+import ServiceLayer.ServiceObjects.ServiceSale;
 import ServiceLayer.ServiceObjects.ServiceStore;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ProxyBridge implements Bridge {
@@ -140,8 +142,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.getStoreStaffList();
     }
 
-    public Boolean getStoreSaleHistory() {
-        return real == null? null : real.getStoreSaleHistory();
+    public List<ServiceSale> getStoreSaleHistory(UUID clientCredentials,UUID storeId) {
+        return real == null? null : real.getStoreSaleHistory(clientCredentials,storeId) ;
     }
 
     public Boolean storeManagerActions() {
