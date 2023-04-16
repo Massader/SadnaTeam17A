@@ -260,15 +260,19 @@ public class StoreController {
         return  null;
     }
 
-    public Response<List<Sale>> getStoreSaleHistory(UUID clientCredentials , UUID storeId ) {// TODO: after we will have sale class -> the return  String
+    public Response<List<Sale>> getStoreSaleHistory(UUID clientCredentials , UUID storeId ) {
         try{
-            if(!userController.isRegisteredUser(clientCredentials)){return Response.getFailResponse("this client not user יe doesn't have the permissions ");}
+            if(!userController.isRegisteredUser(clientCredentials)){return Response.getFailResponse("this client not user doesn't have the permissions ");}
+            if(userController.getUser(clientCredentials).getValue().isAdmin()){return Response.getSuccessResponse(new ArrayList<>(getStore(storeId).getSales()));}
             return Response.getSuccessResponse(new ArrayList<>(getStore(storeId).getSales(clientCredentials)));
         }
         catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
     }
+
+
+
 //        Store store = getStore(storeId).getValue();
 //        ConcurrentLinkedQueue<Sale> saleHistory = store.getSales();
 //        return Response.getSuccessResponse(saleHistory.toArray().toString());

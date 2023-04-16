@@ -148,7 +148,7 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.storeManagerActions();
     }
 
-    public Boolean getStoreSaleHistorySystemAdmin() {
-        return real == null? null : real.getStoreSaleHistorySystemAdmin();
+    public List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials,UUID storeId, String userName, String password) {
+        return real == null? null : real.getStoreSaleHistorySystemAdmin(clientCredentials,storeId,userName,password);
     }
 }
