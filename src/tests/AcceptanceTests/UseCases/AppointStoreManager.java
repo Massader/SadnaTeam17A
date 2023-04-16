@@ -42,6 +42,7 @@ public class AppointStoreManager extends ProjectTest {
     public void afterClass() {
         bridge.closeStore(founder, storeId);
         bridge.logout(founder);
+        bridge.logout(storeManager);
     }
 
     @Test
