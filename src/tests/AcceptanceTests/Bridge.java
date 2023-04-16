@@ -37,7 +37,7 @@ public interface Bridge {
     Boolean setStorePolicy();
     Boolean appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId);
     Boolean appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId);
-    Boolean setStoreManagerPermissions();
+    Boolean setStoreManagerPermissions(UUID clientCredentials, UUID manager, UUID storeId, List<Integer> permissions);
     Boolean closeStore(UUID clientCredentials, UUID storeId);
     List<ServiceUser> getStoreStaffList(UUID clientCredentials, UUID storeId);
     List<ServiceSale> getStoreSaleHistory(UUID clientCredentials,UUID storeId);
