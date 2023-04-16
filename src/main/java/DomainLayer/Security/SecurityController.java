@@ -28,7 +28,6 @@ public class SecurityController {
 
     public Response<UUID> validatePassword(UUID id, String password) {
         try {
-
             if(encryptor.encrypt(passwords.get(id)).equals(password))
                 return Response.getSuccessResponse(id);
             else return Response.getFailResponse("Incorrect password");

@@ -40,6 +40,7 @@ public class MessageController {
             return Response.getSuccessResponse(new ArrayList<>(messages.get(clientCredentials)));
         }
         else return Response.getFailResponse("No user with the passed client credentials.");
+
     }
 
     public Response<Message> getMessage(UUID clientCredentials, UUID messageId) {
