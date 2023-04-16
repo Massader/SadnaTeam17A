@@ -77,8 +77,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.searchStore();
     }
 
-    public Boolean searchItem() {
-        return real == null? null : real.searchItem();
+    public List<ServiceItem> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating) {
+        return real == null? null : real.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating);
     }
 
     public Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {

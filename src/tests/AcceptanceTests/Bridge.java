@@ -25,7 +25,7 @@ public interface Bridge {
     UUID login(UUID clientCredentials, String username, String password);
     ServiceStore receiveStoreInfo(UUID storeId);
     Boolean searchStore();
-    Boolean searchItem();
+    List<ServiceItem> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating);
     Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId);
     List<ServiceShoppingBasket> viewShoppingCartItems( UUID clientCredentials);
     Boolean purchaseShoppingCart();
