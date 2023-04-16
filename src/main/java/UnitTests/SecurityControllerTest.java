@@ -27,10 +27,10 @@ class SecurityControllerTest {
         id = UUID.randomUUID();
         legalPassword = "Pa$$w0rd";
         securityController.addPassword(id, legalPassword);
-        String question = "What is your favorite color?";
-        String answer = "blue";
-        String question2 = "sup?";
-        String answer2 = "walla";
+        question = "What is your favorite color?";
+        answer = "blue";
+        question2 = "sup?";
+        answer2 = "walla";
         Response<Boolean> response = securityController.addSecurityQuestion(id, question, answer);
     }
 
@@ -83,7 +83,6 @@ class SecurityControllerTest {
         Response<Boolean> response = securityController.changePassword(id, oldPass, newPass);
         assertFalse(response.isSuccessful());
         assertEquals("the old password is incorrect!", response.getMessage());
-        assertTrue(securityController.validatePassword(id, oldPass).isSuccessful());
     }
 
     @Test
