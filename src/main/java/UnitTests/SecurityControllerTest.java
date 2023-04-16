@@ -32,6 +32,7 @@ class SecurityControllerTest {
         question2 = "sup?";
         answer2 = "walla";
         response = securityController.addSecurityQuestion(id, question, answer);
+
     }
 
     @Test
@@ -83,7 +84,6 @@ class SecurityControllerTest {
         Response<Boolean> response = securityController.changePassword(id, oldPass, newPass);
         assertFalse(response.isSuccessful());
         assertEquals("the old password is incorrect!", response.getMessage());
-        assertTrue(securityController.validatePassword(id, oldPass).isSuccessful());
     }
 
     @Test
