@@ -1,7 +1,6 @@
 package AcceptanceTests;
 import ServiceLayer.*;
-import ServiceLayer.ServiceObjects.ServiceSale;
-import ServiceLayer.ServiceObjects.ServiceStore;
+import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -88,12 +87,12 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public Boolean saveItemInShoppingCart() {
-        return false;
+    public Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
+        return service.addItemToCart(clientCredentials,itemId,quantity,storeId);
     }
 
-    public Boolean viewShoppingCartItems() {
-        return false;
+    public  List<ServiceShoppingBasket> viewShoppingCartItems(UUID clientCredentials) {
+        return service.viewCart(clientCredentials);
     }
 
     public Boolean purchaseShoppingCartPayment() {
@@ -112,8 +111,8 @@ public class RealBridge implements Bridge {
         return service.createStore(clientCredentials , storeName , storeDescription);
     }
 
-    public Boolean stockManagementAddNewItem() {
-        return false;
+    public ServiceItem stockManagementAddNewItem(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description) {
+        return service.getItemInformation(clientCredentials,name,price,storeId,quantity,description);
     }
 
     public Boolean stockManagementRemoveItem() {
@@ -128,8 +127,8 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public Boolean appointStoreOwner() {
-        return false;
+    public Boolean appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId) {
+        return service.appointStoreOwner(clientCredentials,appointee,storeId);
     }
 
     public Boolean appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId) {
@@ -144,8 +143,8 @@ public class RealBridge implements Bridge {
         return service.closeStore(clientCredentials, storeId);
     }
 
-    public Boolean getStoreStaffList() {
-        return false;
+    public List<ServiceUser> getStoreStaffList(UUID clientCredentials, UUID storeId) {
+        return  service.getStoreStaff(clientCredentials,storeId);
     }
 
     public List<ServiceSale> getStoreSaleHistory(UUID clientCredentials,UUID storeId) {

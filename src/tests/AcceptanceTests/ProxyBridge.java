@@ -1,7 +1,9 @@
 package AcceptanceTests;
 
 import ServiceLayer.ServiceObjects.ServiceSale;
+import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
 import ServiceLayer.ServiceObjects.ServiceStore;
+import ServiceLayer.ServiceObjects.ServiceUser;
 
 import java.util.List;
 import java.util.UUID;
@@ -82,12 +84,12 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.searchItem();
     }
 
-    public Boolean saveItemInShoppingCart() {
-        return real == null? null : real.saveItemInShoppingCart();
+    public Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
+        return real == null? null : real.saveItemInShoppingCart(clientCredentials,itemId,quantity,storeId);
     }
 
-    public Boolean viewShoppingCartItems() {
-        return real == null? null : real.viewShoppingCartItems();
+    public List<ServiceShoppingBasket> viewShoppingCartItems(UUID clientCredentials) {
+        return real == null? null : real.viewShoppingCartItems(clientCredentials);
     }
 
     public Boolean purchaseShoppingCartPayment() {
@@ -106,8 +108,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.openStore(clientCredentials , storeName , storeDescription);
     }
 
-    public Boolean stockManagementAddNewItem() {
-        return real == null? null : real.stockManagementAddNewItem();
+    public addItemToStore stockManagementAddNewItem(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description) {
+        return real == null? null : real.stockManagementAddNewItem(lientCredentials,name,price,storeId,quantity,description);
     }
 
     public Boolean stockManagementRemoveItem() {
@@ -139,8 +141,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.closeStore(clientCredentials, storeId);
     }
 
-    public Boolean getStoreStaffList() {
-        return real == null? null : real.getStoreStaffList();
+    public List<ServiceUser> getStoreStaffList(UUID clientCredentials, UUID storeId) {
+        return real == null? null : real.getStoreStaffList(clientCredentials,storeId);
     }
 
     public List<ServiceSale> getStoreSaleHistory(UUID clientCredentials,UUID storeId) {

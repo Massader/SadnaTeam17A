@@ -484,6 +484,16 @@ public class Service {
         eventLogger.log(Level.INFO, "Successfully registered admin " + username);
         return response.getValue();
     }
+
+    public Item addItemToStore(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description){
+        Response<Item> response = storeController.addItemToStore(clientCredentials,name,price,storeId,quantity,description);
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return null;
+        }
+        eventLogger.log(Level.INFO, "Successfully add "+quantity+" Item: "+name+" to store ");
+        return new ServiceItem(response.getValue());
+    }
 }
 
 
