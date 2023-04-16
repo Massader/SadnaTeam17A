@@ -29,7 +29,7 @@ public interface Bridge {
     ServiceStore receiveStoreInfo(UUID storeId);
     Boolean searchStore();
     Boolean searchItem();
-    Boolean saveItemInShoppingCart();
+    Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId);
     List<ServiceShoppingBasket> viewShoppingCartItems( UUID clientCredentials);
     Boolean purchaseShoppingCartPayment();
     Boolean purchaseShoppingCartSupply();
