@@ -52,7 +52,7 @@ public class AppointStoreOwner extends ProjectTest {
     }
     @Test
     public void AppointStoreManagerFail() {
-        Boolean AppointStoreManager = bridge.appointStoreManager(storeOwner,founder,storeId);
+        Boolean AppointStoreManager = bridge.appointStoreOwner(storeOwner,founder,storeId);
         Assert.assertFalse(AppointStoreManager);
     }
 }
