@@ -33,6 +33,18 @@ public class ServiceItem {
         this.purchaseType = item.getPurchaseType().getClass().getName();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     public UUID getId() {
         return id;
     }
