@@ -89,13 +89,10 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.viewShoppingCartItems(clientCredentials);
     }
 
-    public Boolean purchaseShoppingCartPayment() {
-        return real == null? null : real.purchaseShoppingCartPayment();
+    public Boolean purchaseShoppingCart() {
+        return real == null? null : real.purchaseShoppingCart();
     }
 
-    public Boolean purchaseShoppingCartSupply() {
-        return real == null? null : real.purchaseShoppingCartSupply();
-    }
 
     public UUID logout(UUID clientCredentials) {
         return real == null? null : real.logout(clientCredentials);

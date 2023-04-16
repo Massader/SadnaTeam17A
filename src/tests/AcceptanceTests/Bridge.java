@@ -28,8 +28,7 @@ public interface Bridge {
     Boolean searchItem();
     Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId);
     List<ServiceShoppingBasket> viewShoppingCartItems( UUID clientCredentials);
-    Boolean purchaseShoppingCartPayment();
-    Boolean purchaseShoppingCartSupply();
+    Boolean purchaseShoppingCart();
     UUID logout(UUID clientCredentials);
     ServiceStore openStore(UUID clientCredentials , String storeName , String storeDescription);
     ServiceItem stockManagementAddNewItem(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description);
