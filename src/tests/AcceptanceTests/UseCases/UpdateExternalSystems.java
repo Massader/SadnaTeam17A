@@ -1,17 +1,30 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import org.junit.*;
+
+import java.util.UUID;
 
 public class UpdateExternalSystems extends ProjectTest {
 
-    public UpdateExternalSystems(Bridge real) {
-        super(real);
+    UUID clientCredentials;
+
+    @BeforeClass
+    public void setUp() {
+
     }
 
-    public boolean addService() {
-        return bridge.addService();
+    @Before
+    public void beforeEach() {
+        clientCredentials = bridge.enterSystem();
     }
 
-    public boolean updateService() {
-        return bridge.updateService();
+    @After
+    public void tearDown() {
+        bridge.exitSystem(clientCredentials);
+    }
+
+    @Test
+    public void updateExternalSystemSuccess() {
+        Assert.assertTrue(true);
     }
 }

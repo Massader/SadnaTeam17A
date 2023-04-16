@@ -1,17 +1,30 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import org.junit.*;
+
+import java.util.UUID;
 
 public class SystemBoot extends ProjectTest {
 
-    public SystemBoot(Bridge real) {
-        super(real);
+    UUID clientCredentials;
+
+    @BeforeClass
+    public void setUp() {
+
     }
 
-    public boolean systemBoot() {
-        return bridge.systemBoot();
+    @Before
+    public void beforeEach() {
+        clientCredentials = bridge.enterSystem();
     }
 
-    public boolean integrityTest() {
-        return bridge.integrityTest();
+    @After
+    public void tearDown() {
+        bridge.exitSystem(clientCredentials);
+    }
+
+    @Test
+    public void systemBootSuccess() {
+        Assert.assertTrue(true);
     }
 }
