@@ -4,7 +4,6 @@ package DomainLayer.Market;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
@@ -70,8 +69,9 @@ public class UserController {
             if (!usernames.containsKey(username) || !users.containsKey(usernames.get(username)))
                 return Response.getFailResponse("User is not registered in the system.");
             //validate the password
-            UUID idPAss = securityController.validatePassword(getId(username), password).getValue();
-            if (idPAss.equals(getId(username))) {
+            Response<Boolean> securityResponse = securityController.validatePassword(getId(username), password);
+            if (securityResponse.isError()) return Response.getFailResponse(securityResponse.getMessage());
+            if (securityResponse.getValue()) {
                 //transfer the client to the logged in users, and delete it from the non registered clients list
                 loggedInUser.add(username);
                 closeClient(clientCredentials);

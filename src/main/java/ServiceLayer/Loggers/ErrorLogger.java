@@ -1,17 +1,21 @@
 package ServiceLayer.Loggers;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.logging.*;
 
 import static java.util.logging.Logger.getLogger;
 
 public class ErrorLogger {
-    private static final Logger LOG = getLogger(System.getProperty("user.dir") + "/ErrorLog.log");
+    private static Logger LOG;
     private static ErrorLogger instance = null;
     private static Object instanceLock = new Object();
     private static FileHandler fileHandler;
 
     private ErrorLogger(){
         try {
+            boolean file = new File(System.getProperty("user.dir") + "/logs").mkdirs();
+            LOG = getLogger("ErrorLog.log");
             fileHandler = new FileHandler(System.getProperty("user.dir") + "/logs/ErrorLog.log");
             fileHandler.setFormatter(new SimpleFormatter() {
                 private static final String format = "%1$tF %1$tT %4$s %3$s: %5$s%6$s%n";
@@ -28,7 +32,9 @@ public class ErrorLogger {
                 }
             });
             LOG.addHandler(fileHandler);
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static ErrorLogger getInstance() {

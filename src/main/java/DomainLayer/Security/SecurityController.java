@@ -26,10 +26,10 @@ public class SecurityController {
         return singleton;
     }
 
-    public Response<UUID> validatePassword(UUID id, String password) {
+    public Response<Boolean> validatePassword(UUID id, String password) {
         try {
             if(passwords.get(id).equals(encryptor.encrypt(password)))
-                return Response.getSuccessResponse(id);
+                return Response.getSuccessResponse(true);
             else return Response.getFailResponse("Incorrect password");
         }
         catch (Exception exception){
