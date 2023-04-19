@@ -22,4 +22,8 @@ public class PaymentController {
     public Response<Integer> requestPayment(/*args*/){
         return Response.getSuccessResponse(1);
     }
+
+    public void resetController() {
+        instance = new PaymentController();
+    }
 }

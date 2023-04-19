@@ -1,12 +1,18 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
-import ServiceLayer.ServiceObjects.ServiceItem;
-import ServiceLayer.ServiceObjects.ServiceStore;
-import org.junit.*;
+import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;
 import java.util.UUID;
+import org.junit.*;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.TestInstance;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SearchStoreItem extends ProjectTest {
 
     UUID founder;
@@ -15,7 +21,7 @@ public class SearchStoreItem extends ProjectTest {
     UUID storeId;
     List<ServiceItem> items;
 
-    @BeforeClass
+    @BeforeAll
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "pass");
@@ -27,17 +33,17 @@ public class SearchStoreItem extends ProjectTest {
         items = null;
     }
 
-    @Before
+    @BeforeEach
     public void beforeEach()  {
         client = bridge.enterSystem();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         bridge.exitSystem(client);
     }
 
-    @AfterClass
+    @AfterAll
     public void afterClass() {
         bridge.closeStore(founder, storeId);
         bridge.logout(founder);

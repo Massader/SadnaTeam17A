@@ -165,4 +165,8 @@ public class RealBridge implements Bridge {
         service.registerAdmin(clientCredentials,userName,password);
         return service.getStoreSaleHistory(clientCredentials,storeId);
     }
+
+    public Void resetService() {
+        return service.resetService();
+    }
 }

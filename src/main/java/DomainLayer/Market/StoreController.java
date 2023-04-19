@@ -418,4 +418,8 @@ public class StoreController {
     protected void addStore(Store store, UUID id){
         storeMap.put(id, store);
     }
+
+    public void resetController() {
+        instance = new StoreController();
+    }
 }
