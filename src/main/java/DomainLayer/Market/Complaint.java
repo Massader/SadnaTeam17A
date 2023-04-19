@@ -34,10 +34,12 @@ public class Complaint extends Message {
     }
 
     public void closeComplaint() {
+        if (!open) throw new RuntimeException("Complaint already closed.");
         open = false;
     }
 
     public void reopenComplaint() {
+        if (open) throw new RuntimeException("Complaint already open.");
         open = true;
     }
 }
