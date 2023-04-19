@@ -151,4 +151,8 @@ public class ProxyBridge implements Bridge {
     public List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials,UUID storeId, String userName, String password) {
         return real == null? null : real.getStoreSaleHistorySystemAdmin(clientCredentials,storeId,userName,password);
     }
+
+    public Void resetService() {
+        return real == null? null : real.resetService();
+    }
 }

@@ -1,5 +1,6 @@
 package DomainLayer.Security;
 
+import DomainLayer.Market.StoreController;
 import ServiceLayer.Response;
 
 import java.util.UUID;
@@ -129,6 +130,9 @@ public class SecurityController {
         passwords.put(id, encryptor.encrypt(pass));
     }
 
-
+    public void resetController() {
+        singleton = new SecurityController();
     }
+
+}
 

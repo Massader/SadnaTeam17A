@@ -6,5 +6,6 @@ public abstract class ProjectTest {
 
     public ProjectTest() {
         bridge = new ProxyBridge();
+        bridge.setReal();
     }
 }

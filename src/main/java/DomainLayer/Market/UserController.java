@@ -417,6 +417,10 @@ public class UserController {
         users.put(newAdmin.getId(), newAdmin);
         return securityController.encryptAndSavePassword(newAdmin.getId(), password);
     }
+
+    public void resetController() {
+        singleton = new UserController();
+    }
 }
 
 

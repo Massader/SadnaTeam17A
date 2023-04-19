@@ -43,4 +43,5 @@ public interface Bridge {
     List<ServiceSale> getStoreSaleHistory(UUID clientCredentials,UUID storeId);
     Boolean storeManagerActions();
     List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials,UUID storeId,String userName, String password);
+    Void resetService();
 }

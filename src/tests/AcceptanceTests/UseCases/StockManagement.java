@@ -1,11 +1,18 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
-import ServiceLayer.ServiceObjects.ServiceItem;
-import ServiceLayer.ServiceObjects.ServiceStore;
+import ServiceLayer.ServiceObjects.*;
+
+import java.util.List;
+import java.util.UUID;
 import org.junit.*;
 
-import java.util.UUID;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.TestInstance;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StockManagement extends ProjectTest {
     UUID founder;
     UUID client;
@@ -13,8 +20,7 @@ public class StockManagement extends ProjectTest {
     ServiceStore store;
     UUID storeId;
 
-
-    @BeforeClass
+    @BeforeAll
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "pass");
@@ -23,23 +29,20 @@ public class StockManagement extends ProjectTest {
         store = bridge.openStore(founder, "test", "test");
         storeId = store.getStoreId();
         client2 = bridge.enterSystem();
-
-
-
     }
 
-    @Before
+    @BeforeEach
     public void beforeEach()  {
         client = bridge.enterSystem();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         bridge.exitSystem(client);
         bridge.exitSystem(client2);
     }
 
-    @AfterClass
+    @AfterAll
     public void afterClass() {
         bridge.closeStore(founder, storeId);
         bridge.logout(founder);
@@ -65,8 +68,9 @@ public class StockManagement extends ProjectTest {
         Assert.assertEquals(item.getName(),newName);
         Boolean removeItem = bridge.stockManagementRemoveItem(founder,storeId,itemId);
         Assert.assertTrue(removeItem);
-        Assert.assertTrue(item.getQuantity()==0);
+        Assert.assertEquals(0, item.getQuantity());
     }
+
     @Test
     public void StockManagementFail() {
         String name ="pineapple";
@@ -82,7 +86,6 @@ public class StockManagement extends ProjectTest {
         Boolean changeItemInfo = bridge.stockManagementChangeItemInfo(founder,storeId,item.getId(),newName,newDescription);
         Assert.assertFalse(changeItemInfo);
     }
-
 }
 //AddNewItem
 //RemoveItem

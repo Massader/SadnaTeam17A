@@ -55,4 +55,8 @@ public class MessageController {
         return Response.getFailResponse("No user with the passed client credentials.");
     }
 
+    public void resetController() {
+        instance = new MessageController();
+    }
+
 }
