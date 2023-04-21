@@ -196,7 +196,7 @@ public class UserControllerTest {
     public void testLogout() {
         // Arrange
         Response<UUID> clientResponse = userController.createClient();
-        userController.login(clientResponse.getValue(), user.getUsername(), "Password1");
+        userController.login(clientResponse.getValue(), user.getUsername(), password2);
 
         // Act
         Response<UUID> response = userController.logout(userId);
