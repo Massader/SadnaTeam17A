@@ -25,14 +25,14 @@ public class AppointStoreOwner extends ProjectTest {
     @BeforeAll
     public void setUp() {
         bridge.setReal();
-        bridge.register("founder", "pass");
+        bridge.register("founder", "Pass1");
         client = bridge.enterSystem();
-        founder = bridge.login(client, "founder", "pass");
+        founder = bridge.login(client, "founder", "Pass1");
         store = bridge.openStore(founder, "test", "test");
         storeId = store.getStoreId();
-        bridge.register("toOwner", "pass");
+        bridge.register("toOwner", "Pass2");
         client2 = bridge.enterSystem();
-        storeOwner = bridge.login(client2, "toOwner", "pass");
+        storeOwner = bridge.login(client2, "toOwner", "Pass2");
     }
 
     @BeforeEach
@@ -54,11 +54,27 @@ public class AppointStoreOwner extends ProjectTest {
 
     @Test
     public void AppointStoreManagerSuccess() {
+        bridge.register("founder", "Pass1");
+        client = bridge.enterSystem();
+        founder = bridge.login(client, "founder", "Pass1");
+        store = bridge.openStore(founder, "test", "test");
+        storeId = store.getStoreId();
+        bridge.register("toOwner", "Pass2");
+        client2 = bridge.enterSystem();
+        storeOwner = bridge.login(client2, "toOwner", "Pass2");
         Boolean AppointStoreOwner = bridge.appointStoreOwner(founder,storeOwner,storeId);
         Assert.assertTrue(AppointStoreOwner);
     }
     @Test
     public void AppointStoreManagerFail() {
+        bridge.register("founder", "Pass1");
+        client = bridge.enterSystem();
+        founder = bridge.login(client, "founder", "Pass1");
+        store = bridge.openStore(founder, "test", "test");
+        storeId = store.getStoreId();
+        bridge.register("toOwner", "Pass2");
+        client2 = bridge.enterSystem();
+        storeOwner = bridge.login(client2, "toOwner", "Pass2");
         Boolean AppointStoreOwner = bridge.appointStoreOwner(storeOwner,founder,storeId);
         Assert.assertFalse(AppointStoreOwner);
     }

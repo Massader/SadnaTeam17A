@@ -24,9 +24,9 @@ public class CloseStore extends ProjectTest {
     @BeforeAll
     public void setUp() {
         bridge.setReal();
-        bridge.register("founder", "pass");
+        bridge.register("founder", "Pass1");
         client = bridge.enterSystem();
-        founder = bridge.login(client, "founder", "pass");
+        founder = bridge.login(client, "founder", "Pass1");
         store = null;
         storeId = null;
         store = bridge.openStore(founder, "test", "test");
@@ -51,15 +51,31 @@ public class CloseStore extends ProjectTest {
 
     @Test
     public void CloseStoreSuccess() {
+        bridge.setReal();
+        bridge.register("founder", "Pass1");
+        client = bridge.enterSystem();
+        founder = bridge.login(client, "founder", "Pass1");
+        store = null;
+        storeId = null;
+        store = bridge.openStore(founder, "test", "test");
+        storeId = store.getStoreId();
         Boolean close = bridge.closeStore(founder,storeId);
         Assert.assertTrue(close);
     }
 
     @Test
     public void CloseStoreFail() {
+        bridge.setReal();
+        bridge.register("founder", "Pass1");
+        client = bridge.enterSystem();
+        founder = bridge.login(client, "founder", "Pass1");
+        store = null;
+        storeId = null;
+        store = bridge.openStore(founder, "test", "test");
+        storeId = store.getStoreId();
         client2 = bridge.enterSystem();
         Boolean close = bridge.closeStore(client2,storeId);
         Assert.assertFalse(close);
-        bridge.logout(client2);
+        //bridge.logout(client2);
     }
 }

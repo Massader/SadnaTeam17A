@@ -20,7 +20,7 @@ public class Login extends ProjectTest {
     @BeforeAll
     public void setUp() {
         bridge.setReal();
-        bridge.register("test", "test");
+        bridge.register("test1", "Test1");
     }
 
     @BeforeEach
@@ -35,13 +35,14 @@ public class Login extends ProjectTest {
 
     @Test
     public void loginSuccess() {
-        UUID userId = bridge.login(clientCredentials, "test","test");
+        bridge.register("test1", "Test1");
+        UUID userId = bridge.login(clientCredentials, "test1","Test1");
         Assert.assertNotNull(userId);
     }
 
     @Test
     public void loginFailWrongUsername() {
-        UUID userId = bridge.login(clientCredentials, "nottest", "test");
+        UUID userId = bridge.login(clientCredentials, "nottest", "Notest1");
         Assert.assertNull(userId);
     }
 
