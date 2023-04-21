@@ -31,7 +31,6 @@ public class Item {
         this.quantity = quantity;
         purchaseType = new DirectPurchase();
         categories = new ConcurrentLinkedQueue<>();
-        categories.add(new Category("General"));
         policyRules = null;
         reviews = new ConcurrentHashMap<>();
     }
