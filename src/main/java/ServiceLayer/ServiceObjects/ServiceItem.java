@@ -49,10 +49,6 @@ public class ServiceItem {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public double getPrice() {
         return price;
     }
@@ -63,14 +59,6 @@ public class ServiceItem {
 
     public double getRating() {
         return rating;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public List<String> getCategories() {

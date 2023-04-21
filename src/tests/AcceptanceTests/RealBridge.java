@@ -92,7 +92,7 @@ public class RealBridge implements Bridge {
     }
 
     public  List<ServiceShoppingBasket> viewShoppingCartItems(UUID clientCredentials) {
-        return service.viewCart(clientCredentials);
+        return service.getCart(clientCredentials);
     }
 
     public Boolean purchaseShoppingCart() {
