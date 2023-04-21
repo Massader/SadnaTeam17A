@@ -32,7 +32,7 @@ public class Store {
         this.name = name;
         this.storeId = UUID.randomUUID();
         this.description = description;
-        this.rating = -1;
+        this.rating = 0;
         this.closed = false;
         this.shutdown = false;
         this.ratingCounter = 0;

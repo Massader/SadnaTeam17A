@@ -35,6 +35,7 @@ public class SearchControllerTest {
     public void setUp() {
         searchController = SearchController.getInstance();
         storeController = StoreController.getInstance();
+        storeController.init();
 
         store1 = new Store("s1", "Store 1");
         store2 = new Store("s2", "Store 2");
@@ -46,7 +47,7 @@ public class SearchControllerTest {
         item4 = new Item(UUID.randomUUID(), "Item4", 9000, store1.getStoreId(), 1,1000, "d");
 
         category1 = new Category("c1");
-        category2 = new Category("c3");
+        category2 = new Category("c2");
         category3 = new Category("c3");
 
         item1.addCategory(category1);
@@ -78,6 +79,15 @@ public class SearchControllerTest {
         List<Item> actualItems = searchController.searchItem("Item", category1.getCategoryName(), 0, 50, 0, 0).getValue();
 
         assertEquals(expectedItems.size(), actualItems.size());
+        Comparator<Item> comparator = new Comparator<>() {
+
+            @Override
+            public int compare(Item o1, Item o2) {
+                return o1.hashCode() - o2.hashCode();
+            }
+        };
+        expectedItems.sort(comparator);
+        actualItems.sort(comparator);
         assertEquals(expectedItems, actualItems);
     }
 }

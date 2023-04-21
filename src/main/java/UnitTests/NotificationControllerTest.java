@@ -2,6 +2,7 @@ package UnitTests;
 
 import DomainLayer.Market.Notification;
 import DomainLayer.Market.NotificationController;
+import ServiceLayer.Response;
 import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
@@ -25,35 +26,34 @@ public class NotificationControllerTest {
 
     @AfterEach
     void tearDown() {
-        notificationController = null;
-        recipient = null;
+        notificationController.resetController();
     }
 
 
     @Test
     void testSendNotification() {
-        assertTrue(notificationController.sendNotification(recipient, "new notification"));
+        assertFalse(notificationController.sendNotification(recipient, "new notification").isError());
     }
 
     @Test
     void testGetNotifications() {
-        List<Notification> notifications = notificationController.getNotifications(recipient, recipient);
+        Response<List<Notification>> notifications = notificationController.getNotifications(recipient, recipient);
         assertNotNull(notifications);
-        assertFalse(notifications.isEmpty());
-        assertEquals(1, notifications.size());
-        assertEquals("test notification", notifications.get(0).getMessage());
+        assertFalse(notifications.isError());
+        assertEquals(1, notifications.getValue().size());
+        assertEquals("test notification", notifications.getValue().get(0).getMessage());
     }
 
     @Test
     void testGetNotificationsInvalidCredentials() {
         UUID credentials = UUID.randomUUID();
-        assertThrows(RuntimeException.class, () -> notificationController.getNotifications(credentials, recipient));
+        assertTrue(notificationController.getNotifications(credentials, recipient).isError());
     }
 
     @Test
     void testGetNotificationsInvalidRecipient() {
         UUID invalidRecipient = UUID.randomUUID();
-        assertThrows(RuntimeException.class, () -> notificationController.getNotifications(recipient, invalidRecipient));
+        assertTrue(notificationController.getNotifications(recipient, invalidRecipient).isError());
     }
 
     @Test
@@ -77,8 +77,8 @@ public class NotificationControllerTest {
             thread.join();
         }
 
-        List<Notification> notifications = notificationController.getNotifications(recipient, recipient);
-        assertEquals(numOfThreads * numOfNotificationsPerThread + 1, notifications.size());
+        Response<List<Notification>> notifications = notificationController.getNotifications(recipient, recipient);
+        assertEquals(numOfThreads * numOfNotificationsPerThread + 1, notifications.getValue().size());
     }
 
 }

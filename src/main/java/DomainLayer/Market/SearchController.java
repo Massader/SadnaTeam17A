@@ -36,14 +36,14 @@ public class SearchController {
     public Response<List<Item>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating){
         try{
             Collection<Store> stores = storeController.getStores();
-            List<Store> filteredStores = stores.stream().filter(store -> store.getRating() >= storeRating).collect(Collectors.toList());
+            List<Store> filteredStores = stores.stream().filter(store -> store.getRating() >= storeRating).toList();
             List<Item> items = new ArrayList<Item>();
             for (Store store : filteredStores) {
                 items.addAll(store.getItems().values().stream().filter(item ->
                         item.containsCategory(category) &
                                 priceRange(item, minPrice, maxPrice) &
                                 item.getRating() >= itemRating &
-                                item.getName().contains(keyword)).collect(Collectors.toList()));
+                                item.getName().contains(keyword)).toList());
             }
             return Response.getSuccessResponse(items);
         }
