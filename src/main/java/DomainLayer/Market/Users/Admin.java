@@ -1,4 +1,4 @@
-package DomainLayer.Market.Users.Roles;
+package DomainLayer.Market.Users;
 
 import DomainLayer.Market.Users.User;
 

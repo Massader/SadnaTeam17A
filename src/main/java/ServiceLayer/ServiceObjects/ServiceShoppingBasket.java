@@ -15,4 +15,16 @@ public class ServiceShoppingBasket {
         this.storeId = basket.getStoreId();
         items = new HashMap<>(basket.getItems());
     }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public UUID getStoreId() {
+        return storeId;
+    }
+
+    public HashMap<UUID, Integer> getItems() {
+        return items;
+    }
 }

@@ -4,10 +4,7 @@ import DomainLayer.Market.*;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
-import DomainLayer.Market.Users.Purchase;
-import DomainLayer.Market.Users.ShoppingBasket;
-import DomainLayer.Market.Users.ShoppingCart;
-import DomainLayer.Market.Users.User;
+import DomainLayer.Market.Users.*;
 import DomainLayer.Payment.PaymentController;
 import DomainLayer.Security.SecurityController;
 import DomainLayer.Supply.SupplyController;
@@ -19,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
-import static java.util.logging.Logger.getLogger;
 
 public class Service {
     private static Service instance = null;
@@ -48,7 +44,7 @@ public class Service {
     }
 
     public boolean init() {
-        errorLogger.log(Level.INFO, "Booting system");
+        eventLogger.log(Level.INFO, "Booting system");
         storeController = StoreController.getInstance();
         storeController.init();
         userController = UserController.getInstance();
@@ -236,7 +232,7 @@ public class Service {
         return new ServiceStore(storeResponse.getValue());
     }
 
-    public List<ServiceShoppingBasket> viewCart(UUID clientCredentials){
+    public List<ServiceShoppingBasket> getCart(UUID clientCredentials){
         Response<ShoppingCart> response = userController.viewCart(clientCredentials);
         if(response.isError())
             return null;
@@ -488,12 +484,84 @@ public class Service {
     public ServiceItem addItemToStore(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description){
         Response<Item> response = storeController.addItemToStore(clientCredentials,name,price,storeId,quantity,description);
         if(response.isError()) {
-            errorLogger.log(Level.SEVERE, response.getMessage());
+            errorLogger.log(Level.WARNING, response.getMessage());
             return null;
         }
         eventLogger.log(Level.INFO, "Successfully add "+quantity+" Item: "+name+" to store ");
         return new ServiceItem(response.getValue());
     }
+
+    public UUID sendMessage(UUID clientCredentials, UUID sender, UUID recipient, String body) {
+        Response<UUID> response = messageController.sendMessage(clientCredentials, sender, recipient, body);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return null;
+        }
+        eventLogger.log(Level.INFO, "Message sent from " + sender + " to " + recipient);
+        return response.getValue();
+    }
+
+    public List<ServiceMessage> getMessages(UUID clientCredentials, UUID recipient) {
+        Response<List<Message>> response = messageController.getMessages(clientCredentials, recipient);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return null;
+        }
+        List<ServiceMessage> output = new ArrayList<>();
+        for (Message message : response.getValue())
+                output.add(new ServiceMessage(message));
+        return output;
+    }
+
+    public ServiceMessage getMessage(UUID clientCredentials, UUID recipient, UUID messageId) {
+        Response<Message> response = messageController.getMessage(clientCredentials, recipient, messageId);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return null;
+        }
+        return new ServiceMessage(response.getValue());
+    }
+
+    public UUID sendComplaint(UUID clientCredentials, UUID purchaseId, String body) {
+        Response<UUID> response = messageController.sendComplaint(clientCredentials, purchaseId, body);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return null;
+        }
+        eventLogger.log(Level.INFO, "Complaint made by " + clientCredentials + " for purchase " + purchaseId + " sent successfully.");
+        return response.getValue();
+    }
+
+    public List<ServiceComplaint> getComplaints(UUID clientCredentials) {
+        Response<List<Complaint>> response = messageController.getComplaints(clientCredentials);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return null;
+        }
+        List<ServiceComplaint> output = new ArrayList<>();
+        for (Complaint complaint : response.getValue())
+            output.add(new ServiceComplaint(complaint));
+        return output;
+    }
+
+    public ServiceComplaint getComplaint(UUID clientCredentials, UUID complaintId) {
+        Response<Complaint> response = messageController.getComplaint(clientCredentials, complaintId);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return null;
+        }
+        return new ServiceComplaint(response.getValue());
+    }
+
+    public boolean assignAdminToComplaint(UUID clientCredentials, UUID complaintId) {
+        Response<Boolean> response = messageController.assignAdminToComplaint(clientCredentials, complaintId);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return false;
+        }
+        return response.getValue();
+    }
+
 
     public Void resetService() {
         messageController.resetController();

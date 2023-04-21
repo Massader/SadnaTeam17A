@@ -4,7 +4,6 @@ package DomainLayer.Market;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
@@ -70,8 +69,9 @@ public class UserController {
             if (!usernames.containsKey(username) || !users.containsKey(usernames.get(username)))
                 return Response.getFailResponse("User is not registered in the system.");
             //validate the password
-            UUID idPAss = securityController.validatePassword(getId(username), password).getValue();
-            if (idPAss.equals(getId(username))) {
+            Response<Boolean> securityResponse = securityController.validatePassword(getId(username), password);
+            if (securityResponse.isError()) return Response.getFailResponse(securityResponse.getMessage());
+            if (securityResponse.getValue()) {
                 //transfer the client to the logged in users, and delete it from the non registered clients list
                 loggedInUser.add(username);
                 closeClient(clientCredentials);
@@ -84,14 +84,16 @@ public class UserController {
         }
     }
 
-    public synchronized Response<Boolean> register(String username, String password) {
+    public Response<Boolean> register(String username, String password) {
         try{
             if (username == null || username.length()==0)
                 return Response.getFailResponse("No username input.");
-            if (usernames.containsKey(username))
-                return Response.getFailResponse("This username is already in use.");
-            //add user
-            loadUser(username, password, UUID.randomUUID());
+            synchronized (usernames) {
+                if (usernames.containsKey(username))
+                    return Response.getFailResponse("This username is already in use.");
+                //add user
+                loadUser(username, password, UUID.randomUUID());
+            }
             return Response.getSuccessResponse(true);
         }
         catch(Exception exception) {
@@ -126,13 +128,15 @@ public class UserController {
         }
     }
 
-    public synchronized Response<Boolean> closeClient(UUID clientCredentials) {
+    public Response<Boolean> closeClient(UUID clientCredentials) {
         try {
             if(!clients.containsKey(clientCredentials))
                 Response.getFailResponse("This client does not exist in the system");
-            ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
-            deleteShoppingCart(shoppingCart);
-            clients.remove(clientCredentials);
+            synchronized (clients) {
+                ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
+                deleteShoppingCart(shoppingCart);
+                clients.remove(clientCredentials);
+            }
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception){

@@ -48,4 +48,36 @@ public class ServiceItem {
     public UUID getId() {
         return id;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public UUID getStoreId() {
+        return storeId;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public List<String> getCategories() {
+        return categories;
+    }
+
+    public String getPurchaseType() {
+        return purchaseType;
+    }
 }

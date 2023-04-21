@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ServiceUser {
+    private UUID id;
     private String username;
     private Map<UUID,List<StorePermissions>> roles;
 
@@ -19,5 +20,17 @@ public class ServiceUser {
         this.roles = new HashMap<UUID,List<StorePermissions>>();
         for(Role role : user.getRoles())
             roles.put(role.getStoreId(), role.getPermissions());
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public Map<UUID, List<StorePermissions>> getRoles() {
+        return roles;
     }
 }

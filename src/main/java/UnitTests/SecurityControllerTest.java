@@ -37,13 +37,13 @@ class SecurityControllerTest {
 
     @Test
     void testValidatePasswordSuccess() {
-        Response<UUID> response = securityController.validatePassword(id, legalPassword);
-        assertEquals(id, response.getValue());
+        Response<Boolean> response = securityController.validatePassword(id, legalPassword);
+        assertFalse(response.isError());
     }
 
     @Test
     void testValidatePasswordFailure() {
-        Response<UUID> response = securityController.validatePassword(id, "incorrectPassword");
+        Response<Boolean> response = securityController.validatePassword(id, "incorrectPassword");
         assertTrue(response.isError());
     }
 
