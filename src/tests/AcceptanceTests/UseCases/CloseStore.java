@@ -51,7 +51,6 @@ public class CloseStore extends ProjectTest {
 
     @Test
     public void CloseStoreSuccess() {
-        bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.enterSystem();
         founder = bridge.login(client, "founder", "Pass1");
@@ -65,7 +64,6 @@ public class CloseStore extends ProjectTest {
 
     @Test
     public void CloseStoreFail() {
-        bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.enterSystem();
         founder = bridge.login(client, "founder", "Pass1");

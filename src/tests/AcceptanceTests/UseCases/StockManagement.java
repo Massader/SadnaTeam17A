@@ -23,9 +23,9 @@ public class StockManagement extends ProjectTest {
     @BeforeAll
     public void setUp() {
         bridge.setReal();
-        bridge.register("founder", "pass");
+        bridge.register("founder", "Pass1");
         client = bridge.enterSystem();
-        founder = bridge.login(client, "founder", "pass");
+        founder = bridge.login(client, "founder", "Pass1");
         store = bridge.openStore(founder, "test", "test");
         storeId = store.getStoreId();
         client2 = bridge.enterSystem();
@@ -52,6 +52,12 @@ public class StockManagement extends ProjectTest {
 
     @Test
     public void StockManagementSuccess() {
+        bridge.register("founder", "Pass1");
+        client = bridge.enterSystem();
+        founder = bridge.login(client, "founder", "Pass1");
+        store = bridge.openStore(founder, "test", "test");
+        storeId = store.getStoreId();
+        client2 = bridge.enterSystem();
         String name ="bannana";
         int quantity = 100;
         int price =5;
@@ -73,6 +79,13 @@ public class StockManagement extends ProjectTest {
 
     @Test
     public void StockManagementFail() {
+        bridge.register("founder", "Pass1");
+        client = bridge.enterSystem();
+        founder = bridge.login(client, "founder", "Pass1");
+        store = bridge.openStore(founder, "test", "test");
+        storeId = store.getStoreId();
+        client2 = bridge.enterSystem();
+
         String name ="pineapple";
         int quantity = 10;
         int price =5;

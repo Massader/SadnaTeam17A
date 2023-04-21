@@ -26,14 +26,14 @@ public class StoreManagerActions extends ProjectTest {
     @BeforeAll
     public void setUp() {
         bridge.setReal();
-        bridge.register("founder", "pass");
+        bridge.register("founder", "Pass1");
         client = bridge.enterSystem();
-        founder = bridge.login(client, "founder", "pass");
+        founder = bridge.login(client, "founder", "Pass1");
         store = bridge.openStore(founder, "test", "test");
         storeId = store.getStoreId();
-        bridge.register("Manager1", "pass");
+        bridge.register("Manager1", "Pass1");
         client2 = bridge.enterSystem();
-        storeManager = bridge.login(client2, "Manager1", "pass");
+        storeManager = bridge.login(client2, "Manager1", "Pass1");
         Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
     }
 
@@ -57,11 +57,29 @@ public class StoreManagerActions extends ProjectTest {
 
     @Test
     public void StoreManagerActionsSuccess() {
+        bridge.register("founder", "Pass1");
+        client = bridge.enterSystem();
+        founder = bridge.login(client, "founder", "Pass1");
+        store = bridge.openStore(founder, "test", "test");
+        storeId = store.getStoreId();
+        bridge.register("Manager1", "Pass1");
+        client2 = bridge.enterSystem();
+        storeManager = bridge.login(client2, "Manager1", "Pass1");
+        Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
         List<ServiceSale> saleHistory = bridge.getStoreSaleHistory(storeManager,storeId);
         Assert.assertTrue(saleHistory.isEmpty());}
 
     @Test
     public void StoreManagerActionsFail() {
+        bridge.register("founder", "Pass1");
+        client = bridge.enterSystem();
+        founder = bridge.login(client, "founder", "Pass1");
+        store = bridge.openStore(founder, "test", "test");
+        storeId = store.getStoreId();
+        bridge.register("Manager1", "Pass1");
+        client2 = bridge.enterSystem();
+        storeManager = bridge.login(client2, "Manager1", "Pass1");
+        Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
         ServiceItem serviceItem = bridge.stockManagementAddNewItem(storeManager, "bannana", 5.5, storeId, 20, "yellow fruit");
         Assert.assertNull(serviceItem);
     }

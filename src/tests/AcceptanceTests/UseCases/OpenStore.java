@@ -23,9 +23,9 @@ public class OpenStore extends ProjectTest {
     @BeforeAll
     public void setUp() {
         bridge.setReal();
-        bridge.register("founder", "pass");
+        bridge.register("founder", "Pass1");
         client = bridge.enterSystem();
-        founder = bridge.login(client, "founder", "pass");
+        founder = bridge.login(client, "founder", "Pass1");
         store = null;
         storeId = null;
     }
@@ -48,6 +48,9 @@ public class OpenStore extends ProjectTest {
 
     @Test
     public void openStoreSuccess() {
+        bridge.register("founder", "Pass1");
+        client = bridge.enterSystem();
+        founder = bridge.login(client, "founder", "Pass1");
         store = bridge.openStore(founder, "test", "test");
         storeId = store.getStoreId();
         Assert.assertNotNull(store);
@@ -55,8 +58,9 @@ public class OpenStore extends ProjectTest {
 
     @Test
     public void openStoreNotLoggedInFail() {
-        bridge.logout(founder);
-        ServiceStore storeFail = bridge.openStore(founder, "fail", "fail");
+        bridge.register("founder", "Pass1");
+        client = bridge.enterSystem();
+        ServiceStore storeFail = bridge.openStore(client, "fail", "fail");
         Assert.assertNull(storeFail);
     }
 }
