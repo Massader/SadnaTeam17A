@@ -25,14 +25,14 @@ public class AppointStoreManager extends ProjectTest {
     @BeforeAll
     public void setUp() {
         bridge.setReal();
-        bridge.register("founder", "pass");
+        bridge.register("founder", "Pass1");
         client = bridge.enterSystem();
-        founder = bridge.login(client, "founder", "pass");
+        founder = bridge.login(client, "founder", "Pass1");
         store = bridge.openStore(founder, "test", "test");
         storeId = store.getStoreId();
-        bridge.register("toManager", "pass");
+        bridge.register("toManager", "Pass2");
         client2 = bridge.enterSystem();
-        storeManager = bridge.login(client2, "toManager", "pass");
+        storeManager = bridge.login(client2, "toManager", "Pass2");
     }
 
     @BeforeEach
@@ -54,11 +54,27 @@ public class AppointStoreManager extends ProjectTest {
 
     @Test
     public void AppointStoreManagerSuccess() {
+        bridge.register("founder", "Pass1");
+        client = bridge.enterSystem();
+        founder = bridge.login(client, "founder", "Pass1");
+        store = bridge.openStore(founder, "test", "test");
+        storeId = store.getStoreId();
+        bridge.register("toManager", "Pass2");
+        client2 = bridge.enterSystem();
+        storeManager = bridge.login(client2, "toManager", "Pass2");
     Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
     Assert.assertTrue(AppointStoreManager);
     }
     @Test
     public void AppointStoreManagerFail() {
+        bridge.register("founder", "Pass1");
+        client = bridge.enterSystem();
+        founder = bridge.login(client, "founder", "Pass1");
+        store = bridge.openStore(founder, "test", "test");
+        storeId = store.getStoreId();
+        bridge.register("toManager", "Pass2");
+        client2 = bridge.enterSystem();
+        storeManager = bridge.login(client2, "toManager", "Pass2");
         Boolean AppointStoreManager = bridge.appointStoreManager(storeManager,founder,storeId);
         Assert.assertFalse(AppointStoreManager);
     }
