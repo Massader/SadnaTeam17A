@@ -27,6 +27,8 @@ public class User extends Client{
         return isAdmin;
     }
 
+
+
     public ConcurrentLinkedQueue<Role> getRoles() {
         return roles;
     }

@@ -116,4 +116,8 @@ public class MessageController {
         return Response.getSuccessResponse(true);
     }
 
+    public void resetController() {
+        instance = new MessageController();
+    }
+
 }

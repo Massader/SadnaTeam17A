@@ -260,15 +260,19 @@ public class StoreController {
         return  null;
     }
 
-    public Response<List<Sale>> getStoreSaleHistory(UUID clientCredentials , UUID storeId ) {// TODO: after we will have sale class -> the return  String
+    public Response<List<Sale>> getStoreSaleHistory(UUID clientCredentials , UUID storeId ) {
         try{
-            if(!userController.isRegisteredUser(clientCredentials)){return Response.getFailResponse("this client not user יe doesn't have the permissions ");}
+            if(!userController.isRegisteredUser(clientCredentials)){return Response.getFailResponse("this client not user doesn't have the permissions ");}
+            if(userController.getUser(clientCredentials).getValue().isAdmin()){return Response.getSuccessResponse(new ArrayList<>(getStore(storeId).getSales()));}
             return Response.getSuccessResponse(new ArrayList<>(getStore(storeId).getSales(clientCredentials)));
         }
         catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
     }
+
+
+
 //        Store store = getStore(storeId).getValue();
 //        ConcurrentLinkedQueue<Sale> saleHistory = store.getSales();
 //        return Response.getSuccessResponse(saleHistory.toArray().toString());
@@ -405,13 +409,17 @@ public class StoreController {
     }
 
     //add a new store
-    //TODO: guy why we need this?
-    protected UUID addStore(Store store){
+    //TODO: guy why we need this? for unit tests
+    public UUID addStore(Store store){
         UUID id = UUID.randomUUID();
         storeMap.put(id, store);
         return id;
     }
     protected void addStore(Store store, UUID id){
         storeMap.put(id, store);
+    }
+
+    public void resetController() {
+        instance = new StoreController();
     }
 }

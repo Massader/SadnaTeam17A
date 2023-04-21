@@ -83,8 +83,8 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public Boolean searchItem() {
-        return false;
+    public List<ServiceItem> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating) {
+        return service.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating);
     }
 
     public Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
@@ -95,32 +95,37 @@ public class RealBridge implements Bridge {
         return service.viewCart(clientCredentials);
     }
 
-    public Boolean purchaseShoppingCartPayment() {
+    public Boolean purchaseShoppingCart() {
         return false;
     }
 
-    public Boolean purchaseShoppingCartSupply() {
-        return false;
-    }
 
     public UUID logout(UUID clientCredentials) {
         return service.logout(clientCredentials);
     }
 
-    public ServiceStore openStore(UUID clientCredentials , String storeName , String storeDescription) {
-        return service.createStore(clientCredentials , storeName , storeDescription);
+    public ServiceStore openStore(UUID clientCredentials, String storeName, String storeDescription) {
+        return service.createStore(clientCredentials, storeName, storeDescription);
     }
 
     public ServiceItem stockManagementAddNewItem(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description) {
-        return service.getItemInformation(clientCredentials,name,price,storeId,quantity,description);
+        return service.addItemToStore(clientCredentials,name,price,storeId,quantity,description);
     }
 
-    public Boolean stockManagementRemoveItem() {
-        return false;
+    public Boolean stockManagementRemoveItem(UUID clientCredentials, UUID storeId, UUID itemId) {
+        return  service.setItemQuantity(clientCredentials,storeId,itemId,0);
+
     }
 
-    public Boolean stockManagementChangeItemInfo() {
-        return false;
+    public Boolean stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name,String description) {
+        Boolean check=false;
+        if(description!=null){
+            check = service.setItemDescription(clientCredentials,storeId,itemId,description);
+        }
+        if(name!=null){
+            check= check||service.setItemName(clientCredentials,storeId,itemId,name);
+        }
+        return check;
     }
 
     public Boolean setStorePolicy() {
@@ -135,8 +140,9 @@ public class RealBridge implements Bridge {
         return service.appointStoreManager(clientCredentials,appointee,storeId);
     }
 
-    public Boolean setStoreManagerPermissions() {
-        return false;
+    public Boolean setStoreManagerPermissions(UUID clientCredentials, UUID manager,
+                                              UUID storeId, List<Integer> permissions) {
+        return service.SetManagerPermissions(clientCredentials,manager,storeId,permissions);
     }
 
     public Boolean closeStore(UUID clientCredentials, UUID storeId) {
@@ -155,7 +161,12 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public Boolean getStoreSaleHistorySystemAdmin() {
-        return false;
+    public List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials,UUID storeId, String userName, String password) {
+        service.registerAdmin(clientCredentials,userName,password);
+        return service.getStoreSaleHistory(clientCredentials,storeId);
+    }
+
+    public Void resetService() {
+        return service.resetService();
     }
 }

@@ -45,4 +45,9 @@ public class NotificationController {
         }
         return new ArrayList<>(userNotifications);
     }
+
+    public void resetController() {
+        instance = new NotificationController();
+    }
+
 }

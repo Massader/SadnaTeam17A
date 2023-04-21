@@ -1,17 +1,39 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import ServiceLayer.ServiceObjects.*;
 
+import java.util.List;
+import java.util.UUID;
+import org.junit.*;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.TestInstance;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DelayedAlerts extends ProjectTest {
 
-    public DelayedAlerts(Bridge real) {
-        super(real);
+    UUID clientCredentials;
+
+    @BeforeAll
+    public void setUp() {
     }
 
-    public boolean systemDelayedAlert() {
-        return bridge.systemDelayedAlert();
+    @BeforeEach
+    public void beforeEach() {
+        clientCredentials = bridge.enterSystem();
     }
 
-    public boolean userDelayedAlert() {
-        return bridge.userDelayedAlert();
+    @AfterEach
+    public void tearDown() {
+        bridge.exitSystem(clientCredentials);
+    }
+
+    @Test
+    public void delayedAlertsSuccess() {
+        Assert.assertTrue(true);
     }
 }
+

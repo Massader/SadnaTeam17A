@@ -1,9 +1,6 @@
 package AcceptanceTests;
 
-import ServiceLayer.ServiceObjects.ServiceSale;
-import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
-import ServiceLayer.ServiceObjects.ServiceStore;
-import ServiceLayer.ServiceObjects.ServiceUser;
+import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -80,8 +77,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.searchStore();
     }
 
-    public Boolean searchItem() {
-        return real == null? null : real.searchItem();
+    public List<ServiceItem> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating) {
+        return real == null? null : real.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating);
     }
 
     public Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
@@ -92,13 +89,10 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.viewShoppingCartItems(clientCredentials);
     }
 
-    public Boolean purchaseShoppingCartPayment() {
-        return real == null? null : real.purchaseShoppingCartPayment();
+    public Boolean purchaseShoppingCart() {
+        return real == null? null : real.purchaseShoppingCart();
     }
 
-    public Boolean purchaseShoppingCartSupply() {
-        return real == null? null : real.purchaseShoppingCartSupply();
-    }
 
     public UUID logout(UUID clientCredentials) {
         return real == null? null : real.logout(clientCredentials);
@@ -108,16 +102,16 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.openStore(clientCredentials , storeName , storeDescription);
     }
 
-    public addItemToStore stockManagementAddNewItem(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description) {
-        return real == null? null : real.stockManagementAddNewItem(lientCredentials,name,price,storeId,quantity,description);
+    public ServiceItem stockManagementAddNewItem(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
+        return real == null? null : real.stockManagementAddNewItem(clientCredentials,name,price,storeId,quantity,description);
     }
 
-    public Boolean stockManagementRemoveItem() {
-        return real == null? null : real.stockManagementRemoveItem();
+    public Boolean stockManagementRemoveItem(UUID clientCredentials, UUID storeId, UUID itemId) {
+        return real == null? null : real.stockManagementRemoveItem(clientCredentials,storeId,itemId);
     }
 
-    public Boolean stockManagementChangeItemInfo() {
-        return real == null? null : real.stockManagementChangeItemInfo();
+    public Boolean stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name,String description) {
+        return real == null? null : real.stockManagementChangeItemInfo(clientCredentials,storeId,itemId,name,description);
     }
 
     public Boolean setStorePolicy() {
@@ -133,8 +127,9 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.appointStoreManager(clientCredentials,appointee,storeId);
     }
 
-    public Boolean setStoreManagerPermissions() {
-        return real == null? null : real.setStoreManagerPermissions();
+    public Boolean setStoreManagerPermissions(UUID clientCredentials, UUID manager,
+                                              UUID storeId, List<Integer> permissions) {
+        return real == null? null : real.setStoreManagerPermissions(clientCredentials,manager,storeId,permissions);
     }
 
     public Boolean closeStore(UUID clientCredentials, UUID storeId) {
@@ -153,7 +148,11 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.storeManagerActions();
     }
 
-    public Boolean getStoreSaleHistorySystemAdmin() {
-        return real == null? null : real.getStoreSaleHistorySystemAdmin();
+    public List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials,UUID storeId, String userName, String password) {
+        return real == null? null : real.getStoreSaleHistorySystemAdmin(clientCredentials,storeId,userName,password);
+    }
+
+    public Void resetService() {
+        return real == null? null : real.resetService();
     }
 }

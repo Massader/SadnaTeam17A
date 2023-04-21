@@ -1,31 +1,37 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
-import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
-import org.junit.*;
+import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;
 import java.util.UUID;
+import org.junit.*;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.TestInstance;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ViewShoppingCartItems extends ProjectTest {
+
     UUID client;
 
-    @BeforeClass
+    @BeforeAll
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "pass");
         client = bridge.enterSystem();
     }
 
-    @Before
+    @BeforeEach
     public void beforeEach()  {
         client = bridge.enterSystem();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         bridge.exitSystem(client);
-
-
     }
 
     @Test
@@ -52,6 +58,5 @@ public class ViewShoppingCartItems extends ProjectTest {
         UUID notUserOrClient = UUID.randomUUID();
         List<ServiceShoppingBasket> shoppingCartView=  bridge.viewShoppingCartItems(notUserOrClient);
         Assert.assertNull(shoppingCartView);
-
     }
 }

@@ -101,7 +101,22 @@ public class UserController {
         }
     }
 
-    public Response<UUID> createClient() {
+    // add a new user to all the data structured
+    private Response<User> loadUser(String userName, String password, UUID id) {
+        try {
+            User user = new User(userName, id);
+            users.put(id, user);
+            usernames.put(user.getUsername(), id);
+            securityController.encryptAndSavePassword(id, password);
+            return Response.getSuccessResponse(user);
+        }
+        catch(Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
+
+        public Response<UUID> createClient() {
         try {
             UUID id = UUID.randomUUID();
             Client client = new Client(id);
@@ -350,15 +365,6 @@ public class UserController {
         return usernames.get(userName);
     }
 
-    // add a new user to all the data structured
-    private User loadUser(String userName, String password, UUID id){
-        User user = new User(userName, id);
-        users.put(id, user);
-        usernames.put(user.getUsername(), id);
-        securityController.encryptAndSavePassword(id, password);
-        return user;
-    }
-
     // i made these methods to avoid confusion between clients and users.
     public boolean isRegisteredUser(UUID id){
         return users.containsKey(id);
@@ -414,6 +420,10 @@ public class UserController {
         usernames.put(username, newAdmin.getId());
         users.put(newAdmin.getId(), newAdmin);
         return securityController.encryptAndSavePassword(newAdmin.getId(), password);
+    }
+
+    public void resetController() {
+        singleton = new UserController();
     }
 }
 

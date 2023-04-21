@@ -1,10 +1,7 @@
 package AcceptanceTests;
 
 import ServiceLayer.Service;
-import ServiceLayer.ServiceObjects.ServiceSale;
-import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
-import ServiceLayer.ServiceObjects.ServiceStore;
-import ServiceLayer.ServiceObjects.ServiceUser;
+import ServiceLayer.ServiceObjects.*;
 
 
 import java.util.List;
@@ -28,23 +25,23 @@ public interface Bridge {
     UUID login(UUID clientCredentials, String username, String password);
     ServiceStore receiveStoreInfo(UUID storeId);
     Boolean searchStore();
-    Boolean searchItem();
+    List<ServiceItem> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating);
     Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId);
     List<ServiceShoppingBasket> viewShoppingCartItems( UUID clientCredentials);
-    Boolean purchaseShoppingCartPayment();
-    Boolean purchaseShoppingCartSupply();
+    Boolean purchaseShoppingCart();
     UUID logout(UUID clientCredentials);
     ServiceStore openStore(UUID clientCredentials , String storeName , String storeDescription);
-    Boolean stockManagementAddNewItem();
-    Boolean stockManagementRemoveItem();
-    Boolean stockManagementChangeItemInfo();
+    ServiceItem stockManagementAddNewItem(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description);
+    Boolean stockManagementRemoveItem(UUID clientCredentials, UUID storeId, UUID itemId);
+    Boolean stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name,String description);
     Boolean setStorePolicy();
     Boolean appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId);
     Boolean appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId);
-    Boolean setStoreManagerPermissions();
+    Boolean setStoreManagerPermissions(UUID clientCredentials, UUID manager, UUID storeId, List<Integer> permissions);
     Boolean closeStore(UUID clientCredentials, UUID storeId);
     List<ServiceUser> getStoreStaffList(UUID clientCredentials, UUID storeId);
     List<ServiceSale> getStoreSaleHistory(UUID clientCredentials,UUID storeId);
     Boolean storeManagerActions();
-    Boolean getStoreSaleHistorySystemAdmin();
+    List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials,UUID storeId,String userName, String password);
+    Void resetService();
 }

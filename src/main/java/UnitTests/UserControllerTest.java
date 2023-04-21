@@ -18,6 +18,8 @@ public class UserControllerTest {
     private UserController userController;
     private String username;
     private String password;
+    private String password2;
+    private String password3;
     private UUID clientCredentials;
     private StoreController storeController;
     private UUID userId;
@@ -36,13 +38,14 @@ public class UserControllerTest {
         userController.init();
         username = "testuser";
         password = "Password123";
+        password2 = "Pass12345";
+        password3 = "Pass67890";
+
         clientCredentials = userController.createClient().getValue();
-        userController = UserController.getInstance();
-        userController.init();
         storeController = StoreController.getInstance();
         storeController.init();
-        userController.register("u", "Password1");
-        userController.register("u2", "Password2");
+        userController.register("u", password2);
+        userController.register("u2", password3);
         userId = userController.getId("u");
         user = userController.getUserById(userId);
         userId2 = userController.getId("u2");
@@ -54,14 +57,12 @@ public class UserControllerTest {
 
     @Test
     public void testRegisterSuccess() {
-        Response<Boolean> response = userController.register(username, password);
-
+        Response<Boolean> response = userController.register("u3", password);
         assertEquals(false, response.isError());
     }
 
     @Test
     public void testRegisterFailureDuplicateUsername() {
-
         Response<Boolean> response1 = userController.register(username, password);
         assertEquals(true, response1.getValue());
 
@@ -73,7 +74,7 @@ public class UserControllerTest {
     @Test
     public void testRegisterFailureEmptyUsername() {
         Response<Boolean> response = userController.register("", password);
-        assertEquals(true, response.isError());
+        assertTrue(response.isError());
         assertEquals("No username input.", response.getMessage());
     }
 
@@ -245,8 +246,6 @@ public class UserControllerTest {
 //        assertTrue(deletedUserResponse.isError());
 //        assertEquals("User does not exist.", deletedUserResponse.getMessage());
 //    }
-
-    
 
 
 }

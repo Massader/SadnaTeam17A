@@ -1,12 +1,18 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
-import ServiceLayer.ServiceObjects.ServiceStore;
-import ServiceLayer.ServiceObjects.ServiceUser;
-import org.junit.*;
+import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;
 import java.util.UUID;
+import org.junit.*;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.TestInstance;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class GetStoreStaffList extends ProjectTest {
 
     UUID founder;
@@ -20,7 +26,7 @@ public class GetStoreStaffList extends ProjectTest {
     UUID storeId;
     Boolean check;
 
-    @BeforeClass
+    @BeforeAll
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "pass");
@@ -43,19 +49,19 @@ public class GetStoreStaffList extends ProjectTest {
 
     }
 
-    @Before
+    @BeforeEach
     public void beforeEach()  {
         client = bridge.enterSystem();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         bridge.exitSystem(client);
         bridge.exitSystem(client2);
         bridge.exitSystem(client3);
     }
 
-    @AfterClass
+    @AfterAll
     public void afterClass() {
         bridge.closeStore(founder, storeId);
         bridge.logout(founder);
@@ -67,8 +73,7 @@ public class GetStoreStaffList extends ProjectTest {
     public void GetStoreStaffListSuccess() {
         List<ServiceUser> staffList = bridge.getStoreStaffList(storeOwner2, storeId);
         Assert.assertNotNull(staffList);
-        Assert.assertTrue(staffList.size()==3);
-
+        Assert.assertEquals(3, staffList.size());
     }
 
     @Test
@@ -77,6 +82,4 @@ public class GetStoreStaffList extends ProjectTest {
         List<ServiceUser> staffList = bridge.getStoreStaffList(randomId, storeId);
         Assert.assertNull(staffList);
     }
-
-
 }

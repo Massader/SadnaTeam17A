@@ -563,5 +563,17 @@ public class Service {
     }
 
 
+    public Void resetService() {
+        messageController.resetController();
+        notificationController.resetController();
+        searchController.resetController();
+        storeController.resetController();
+        userController.resetController();
+        paymentController.resetController();
+        securityController.resetController();
+        supplyController.resetController();
+        init();
+        return null;
+    }
 }
 

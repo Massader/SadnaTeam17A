@@ -21,4 +21,8 @@ public class SupplyController {
     public Response<Integer> sendOrder(/*args*/){
         return Response.getSuccessResponse(1);
     }
+
+    public void resetController() {
+        instance = new SupplyController();
+    }
 }
