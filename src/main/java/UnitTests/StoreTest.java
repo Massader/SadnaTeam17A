@@ -32,9 +32,9 @@ public class StoreTest {
         item2 = new Item(UUID.randomUUID(), "This is a test item2", 15.0, store.getStoreId(),  5.0, 3, "bbb");
         store.addItem(item1);
         store.addItem(item2);
-//        items = new ConcurrentHashMap<>();
-//        items.put(item1.getId(), 2);
-//        items.put(item2.getId(), 1);
+        items = new ConcurrentHashMap<>();
+        items.put(item1.getId(), 2);
+        items.put(item2.getId(), 1);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class StoreTest {
     @Test
     public void testCalculatePriceOfBasketSuccess() {
 
-        double expectedPrice = (item1.getPrice() * 2) + (item2.getPrice() * 3);
+        double expectedPrice = (item1.getPrice() * 2) + item2.getPrice();
         double actualPrice = store.calculatePriceOfBasket(items);
         assertEquals(expectedPrice, actualPrice, 0.0);
     }

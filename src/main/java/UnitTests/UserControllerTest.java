@@ -35,13 +35,14 @@ public class UserControllerTest {
         userController = UserController.getInstance();
         userController.init();
         username = "testuser";
-        password = "password123";
+        password = "Password123";
         clientCredentials = userController.createClient().getValue();
         userController = UserController.getInstance();
         userController.init();
         storeController = StoreController.getInstance();
-        userController.register("u", "p");
-        userController.register("u2", "p2");
+        storeController.init();
+        userController.register("u", "Password1");
+        userController.register("u2", "Password2");
         userId = userController.getId("u");
         user = userController.getUserById(userId);
         userId2 = userController.getId("u2");
@@ -55,7 +56,7 @@ public class UserControllerTest {
     public void testRegisterSuccess() {
         Response<Boolean> response = userController.register(username, password);
 
-        assertEquals(true, response.getMessage());
+        assertEquals(false, response.isError());
     }
 
     @Test
@@ -64,42 +65,41 @@ public class UserControllerTest {
         Response<Boolean> response1 = userController.register(username, password);
         assertEquals(true, response1.getValue());
 
-        Response<Boolean> response2 = userController.register(username, "newpassword");
-        assertEquals(false, response2.getValue());
+        Response<Boolean> response2 = userController.register(username, "Newpassword2134");
+        assertEquals(true, response2.isError());
         assertEquals("This username is already in use.", response2.getMessage());
     }
 
     @Test
     public void testRegisterFailureEmptyUsername() {
-        Response<Boolean> response = userController.register(username, password);
-        assertEquals(false, response.getValue());
+        Response<Boolean> response = userController.register("", password);
+        assertEquals(true, response.isError());
         assertEquals("No username input.", response.getMessage());
     }
 
     @Test
     public void testCloseClientSuccess() {
         // create a new client and add them to the clients map
-
-        Client client = new Client(clientCredentials);
+        Response<UUID> clientResponse = userController.createClient();
 
         // call the closeClient function
-        Response<Boolean> response = userController.closeClient(clientCredentials);
+        Response<Boolean> response = userController.closeClient(clientResponse.getValue());
 
         // assert that the response is successful
         assertTrue(response.isSuccessful());
         assertTrue(response.getValue());
-        assertFalse(userController.isNonRegisteredClient(clientCredentials));
+        assertFalse(userController.isNonRegisteredClient(clientResponse.getValue()));
     }
     @Test
     public void testLoginSuccess() {
-        userController.register("username", "password");
+        Response<UUID> clientResponse = userController.createClient();
+        userController.register("logintest", "Password5");
 
         // call the login function
-        Response<UUID> response = userController.login(clientCredentials, "username", "password");
+        Response<UUID> response = userController.login(clientResponse.getValue(), "logintest", "Password5");
 
         // assert that the response is successful and the returned UUID matches the UUID of the logged in user
         assertTrue(response.isSuccessful());
-
     }
 
     @Test
@@ -151,7 +151,7 @@ public class UserControllerTest {
 
     @Test
     public void testAppointStoreOwnerSuccess() {
-        userController.login(userId, "u", "p");
+        userController.login(userId, "u", "Password1");
         Response<Boolean> response = userController.appointStoreOwner(userId, userId2, storeId);
         assertTrue(response.getValue());
     }
@@ -164,7 +164,7 @@ public class UserControllerTest {
         assertTrue(response.isError());
 
         // The user doesn't have permission
-        userController.register("anotheruser", "password");
+        userController.register("anotheruser", "Password7");
         UUID anotherUserId = userController.getId("anotheruser");
         Response<Boolean> response2 = userController.appointStoreOwner(userId2, anotherUserId, storeId);
         assertTrue(response2.isError());
@@ -193,8 +193,9 @@ public class UserControllerTest {
 
     @Test
     public void testLogout() {
-        // Arrange;
-        userController.login(userId, username, "p");
+        // Arrange
+        Response<UUID> clientResponse = userController.createClient();
+        userController.login(clientResponse.getValue(), user.getUsername(), "Password1");
 
         // Act
         Response<UUID> response = userController.logout(userId);
@@ -206,7 +207,7 @@ public class UserControllerTest {
         @Test
     public void testLoginFailure() {
         // call the login function with a non-existing username
-        Response<UUID> response = UserController.getInstance().login(UUID.randomUUID(), "fakeuser", "password");
+        Response<UUID> response = userController.login(UUID.randomUUID(), "fakeuser", "Password123");
 
         // assert that the response is not successful and the error message is as expected
         assertFalse(response.isSuccessful());
@@ -225,13 +226,13 @@ public class UserControllerTest {
     public void testAppointStoreManager_failure() {
         // Not a store owner
         Response<Boolean> response = userController.appointStoreManager(userId2, userId2, storeId);
-        assertFalse(response.getValue());
+        assertTrue(response.isError());
         assertFalse(storeController.getStore(storeId).getRolesMap().containsKey(userId2));
 
         // User doesn't exist
         UUID nonExistingUser = UUID.randomUUID();
         response = userController.appointStoreManager(userId, nonExistingUser, storeId);
-        assertFalse(response.getValue());
+        assertTrue(response.isError());
         assertFalse(storeController.getStore(storeId).getRolesMap().containsKey(nonExistingUser));
     }
 

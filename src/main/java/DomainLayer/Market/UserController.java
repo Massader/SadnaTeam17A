@@ -84,14 +84,16 @@ public class UserController {
         }
     }
 
-    public synchronized Response<Boolean> register(String username, String password) {
+    public Response<Boolean> register(String username, String password) {
         try{
             if (username == null || username.length()==0)
                 return Response.getFailResponse("No username input.");
-            if (usernames.containsKey(username))
-                return Response.getFailResponse("This username is already in use.");
-            //add user
-            loadUser(username, password, UUID.randomUUID());
+            synchronized (usernames) {
+                if (usernames.containsKey(username))
+                    return Response.getFailResponse("This username is already in use.");
+                //add user
+                loadUser(username, password, UUID.randomUUID());
+            }
             return Response.getSuccessResponse(true);
         }
         catch(Exception exception) {
@@ -111,13 +113,15 @@ public class UserController {
         }
     }
 
-    public synchronized Response<Boolean> closeClient(UUID clientCredentials) {
+    public Response<Boolean> closeClient(UUID clientCredentials) {
         try {
             if(!clients.containsKey(clientCredentials))
                 Response.getFailResponse("This client does not exist in the system");
-            ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
-            deleteShoppingCart(shoppingCart);
-            clients.remove(clientCredentials);
+            synchronized (clients) {
+                ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
+                deleteShoppingCart(shoppingCart);
+                clients.remove(clientCredentials);
+            }
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception){
