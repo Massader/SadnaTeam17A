@@ -29,6 +29,7 @@ public class Item {
         this.storeId = storeId;
         this.rating = rating;
         this.quantity = quantity;
+        this.description =description;
         purchaseType = new DirectPurchase();
         categories = new ConcurrentLinkedQueue<>();
         policyRules = null;

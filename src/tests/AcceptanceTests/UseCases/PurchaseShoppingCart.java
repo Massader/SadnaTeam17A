@@ -25,9 +25,9 @@ public class PurchaseShoppingCart extends ProjectTest {
     @BeforeAll
     public void setUp() {
         bridge.setReal();
-        bridge.register("founder", "pass");
+        bridge.register("founder", "Pass1");
         client = bridge.enterSystem();
-        founder = bridge.login(client, "founder", "pass");
+        founder = bridge.login(client, "founder", "Pass1");
         store = bridge.openStore(founder, "test", "test");
         storeId = store.getStoreId();
         item = bridge.stockManagementAddNewItem(founder, "item", 10, storeId, 1, "test");

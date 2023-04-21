@@ -4,6 +4,7 @@ import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
+import DomainLayer.Market.Users.Roles.StoreFounder;
 import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
@@ -283,6 +284,7 @@ public class StoreController {
         try {
             Store store = new Store(storeName, storeDescription);
             store.addRole(clientCredentials, new StoreOwner(clientCredentials));
+            store.addRole(clientCredentials,new StoreFounder(clientCredentials));
             Response<Boolean> response = userController.setAsFounder(clientCredentials, store.getStoreId());
             if (response.isError())
                 return Response.getFailResponse(response.getMessage());
