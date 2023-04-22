@@ -258,10 +258,6 @@ public class StoreController {
         }
     }
 
-    public Response<List<Message>> getStoreMessages(UUID clientId, UUID itemId){
-        return  null;
-    }
-
     public Response<List<Sale>> getStoreSaleHistory(UUID clientCredentials , UUID storeId ) {
         try{
             if(!userController.isRegisteredUser(clientCredentials)){return Response.getFailResponse("this client not user doesn't have the permissions ");}
@@ -273,12 +269,6 @@ public class StoreController {
         }
     }
 
-
-
-//        Store store = getStore(storeId).getValue();
-//        ConcurrentLinkedQueue<Sale> saleHistory = store.getSales();
-//        return Response.getSuccessResponse(saleHistory.toArray().toString());
-//    }
 
     //why do we need clientCredentials here? we call the setAsFounder function from Service.
     public Response<Store> createStore(UUID clientCredentials , String storeName , String storeDescription ) {
@@ -372,9 +362,11 @@ public class StoreController {
             Store store = storeMap.get(storeId);
             Item item = store.getItem(itemId);
             if (item == null) return Response.getFailResponse("Item does not exist.");
-            if (item.removeFromQuantity(quantity))
-                return Response.getSuccessResponse(true);
-            else return Response.getFailResponse("Failed to remove quantity from item.");
+            synchronized (item) {
+                if (item.removeFromQuantity(quantity))
+                    return Response.getSuccessResponse(true);
+                else return Response.getFailResponse("Failed to remove quantity from item.");
+            }
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
 
@@ -383,10 +375,17 @@ public class StoreController {
 
     public Response<Boolean> addItemQuantity(UUID clientId, UUID itemId, int quantity){
         try {
-            if(!itemExist(itemId))
+            if (!itemExist(itemId))
                 return Response.getFailResponse("item not exist");
-            if(getItem(itemId).getValue().addQuantity(quantity)){
-                return Response.getSuccessResponse(true);}}
+            Response<Item> itemResponse = getItem(itemId);
+            if (itemResponse.isError())
+                return Response.getFailResponse(itemResponse.getMessage());
+            synchronized (itemResponse.getValue()) {
+                if (itemResponse.getValue().addQuantity(quantity)) {
+                    return Response.getSuccessResponse(true);
+                }
+            }
+        }
         catch (Exception exception){
             return Response.getFailResponse(exception.getMessage());
 
@@ -418,9 +417,6 @@ public class StoreController {
         storeMap.put(id, store);
         return id;
     }
-    protected void addStore(Store store, UUID id){
-        storeMap.put(id, store);
-    }
 
     public void resetController() {
         instance = new StoreController();
@@ -437,5 +433,22 @@ public class StoreController {
             return Response.getFailResponse("Item does not exist.");
         item.addCategory(new Category(category));
         return Response.getSuccessResponse(true);
+    }
+
+    public Response<Boolean> removeItemFromStore(UUID clientCredentials, UUID storeId, UUID itemId) {
+        if (!storeMap.containsKey(storeId))
+            return Response.getFailResponse("Store does not exist.");
+        Store store = storeMap.get(storeId);
+        if (!store.checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT) && !(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
+            return Response.getFailResponse("User does not have item management permissions for this store.");
+        Item item = store.getItem(itemId);
+        if (item == null)
+            return Response.getFailResponse("Item does not exist.");
+        synchronized (item) {
+            userController.removeItemFromCarts(storeId, item);
+            if (!store.removeItem(itemId))
+                return Response.getFailResponse("Failed to remove item.");
+            return Response.getSuccessResponse(true);
+        }
     }
 }

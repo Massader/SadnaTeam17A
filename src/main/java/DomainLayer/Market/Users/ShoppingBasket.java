@@ -38,16 +38,14 @@ public class ShoppingBasket {
     }
 
     public boolean addItem(Item item, int quantity){
-        synchronized (item) {
-            if(item.getQuantity()<quantity)
-                return false;
-            if (this.items.get(item.getId()) == null)
-                items.put(item.getId(), 0);
-            int oldQuantity = this.items.get(item.getId());
-            items.put(item.getId(), oldQuantity + quantity);
-            item.setQuantity(item.getQuantity() - quantity);
-            return true;
-        }
+        if(item.getQuantity()<quantity)
+            return false;
+        if (this.items.get(item.getId()) == null)
+            items.put(item.getId(), 0);
+        int oldQuantity = this.items.get(item.getId());
+        items.put(item.getId(), oldQuantity + quantity);
+        item.setQuantity(item.getQuantity() - quantity);
+        return true;
     }
 
     public boolean removeItem(Item item, int quantity){
@@ -61,10 +59,10 @@ public class ShoppingBasket {
         }
     }
 
-    public synchronized void clearBasket() {
+    public void clearBasket() {
         items.clear();
     }
 
-    public int QuantityOf(UUID itemId){return items.get(itemId);}
+    public int quantityOf(UUID itemId){return items.get(itemId);}
 
 }

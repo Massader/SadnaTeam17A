@@ -45,5 +45,8 @@ public interface Bridge {
     Void resetService();
     Boolean addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category);
     ServiceItem  getItemInformation(UUID storeId, UUID itemId);
-
+    Boolean validateOrder(UUID clientCredentials);
+    Boolean validatePayment(UUID clientCredentials);
+    UUID confirmOrder(UUID clientCredentials);
+    Boolean removeItemFromStore(UUID clientCredentials, UUID storeId, UUID itemId);
 }

@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
 import DomainLayer.Security.SecurityController;
@@ -118,7 +119,7 @@ public class UserController {
     }
 
 
-        public Response<UUID> createClient() {
+    public Response<UUID> createClient() {
         try {
             UUID id = UUID.randomUUID();
             Client client = new Client(id);
@@ -165,12 +166,17 @@ public class UserController {
             if (getClientOrUser(clientCredentials) == null)
                 return Response.getFailResponse("User does not exist");
             ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
-            Response<Boolean> response = storeController.removeItemQuantity(storeId, itemId, quantity);
-            if (response.isError()) return response;
-            if (shoppingCart.addItemToCart(storeController.getItem(itemId).getValue(), storeId, quantity)) {
-                return Response.getSuccessResponse(true);
-            } else {
-                return Response.getFailResponse("Cannot add item to cart");
+            Response<Item> itemResponse = storeController.getItem(itemId);
+            if (itemResponse.isError())
+                return Response.getFailResponse(itemResponse.getMessage());
+            synchronized (itemResponse.getValue()) {
+                Response<Boolean> response = storeController.removeItemQuantity(storeId, itemId, quantity);
+                if (response.isError()) return response;
+                if (shoppingCart.addItemToCart(storeController.getItem(itemId).getValue(), storeId, quantity)) {
+                    return Response.getSuccessResponse(true);
+                } else {
+                    return Response.getFailResponse("Cannot add item to cart");
+                }
             }
         }
         catch (Exception exception) {
@@ -182,13 +188,18 @@ public class UserController {
         try{
             if (getClientOrUser(clientCredentials)==null)
                 return Response.getFailResponse("User does not exist");
-            Response<Boolean> response = storeController.addItemQuantity(storeId, itemId, quantity);
-            if (response.isError()) return response;
-            ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
-            if(shoppingCart.removeItemFromCart(storeController.getItem(itemId).getValue(), storeId, quantity))
-                return Response.getSuccessResponse(true);
-            else
-                return Response.getFailResponse("Cannot remove item quantity from cart.");
+            Response<Item> itemResponse = storeController.getItem(itemId);
+            if (itemResponse.isError())
+                return Response.getFailResponse(itemResponse.getMessage());
+            synchronized (itemResponse.getValue()) {
+                Response<Boolean> response = storeController.addItemQuantity(storeId, itemId, quantity);
+                if (response.isError()) return response;
+                ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
+                if (shoppingCart.removeItemFromCart(storeController.getItem(itemId).getValue(), storeId, quantity))
+                    return Response.getSuccessResponse(true);
+                else
+                    return Response.getFailResponse("Cannot remove item quantity from cart.");
+            }
         }
         catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -350,15 +361,6 @@ public class UserController {
         }
     }
 
-//    public Response<Boolean> getCartTotal(UUID userId) {
-//        if (getClientOrUser(userId)==null)
-//            return Response.getFailResponse("this user ID does not exist");
-//
-//
-//        return null;
-//    }
-
-
     public User getUserById(UUID id) {
         return users.get(id);
     }
@@ -426,6 +428,20 @@ public class UserController {
 
     public void resetController() {
         singleton = new UserController();
+    }
+
+    // On remove item from store, goes over all the users with the item in their carts and removes it
+    public void removeItemFromCarts(UUID storeId, Item item) {
+        for (Client client : clients.values()) {
+            ConcurrentHashMap<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
+            if (!baskets.containsKey(storeId)) continue;
+            baskets.get(storeId).getItems().remove(item.getId());
+        }
+        for (Client client : users.values()) {
+            ConcurrentHashMap<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
+            if (!baskets.containsKey(storeId)) continue;
+            baskets.get(storeId).getItems().remove(item.getId());
+        }
     }
 }
 

@@ -158,14 +158,31 @@ public class ProxyBridge implements Bridge {
 
     @Override
     public Boolean addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category) {
-        return real.addItemCategory(clientCredentials, storeId, itemId, category);
+        return real == null ? null : real.addItemCategory(clientCredentials, storeId, itemId, category);
     }
 
     public ServiceItem getItemInformation(UUID storeId, UUID itemId) {
         return real == null ? null : real.getItemInformation(storeId, itemId);
     }
 
+    @Override
+    public Boolean validateOrder(UUID clientCredentials) {
+        return real == null ? null : real.validateOrder(clientCredentials);
+    }
 
+    @Override
+    public Boolean validatePayment(UUID clientCredentials) {
+        return real == null ? null : real.validatePayment(clientCredentials);
+    }
 
+    @Override
+    public UUID confirmOrder(UUID clientCredentials) {
+        return real == null ? null : real.confirmOrder(clientCredentials);
+    }
+
+    @Override
+    public Boolean removeItemFromStore(UUID clientCredentials, UUID storeId, UUID itemId) {
+        return real == null ? null : real.removeItemFromStore(clientCredentials, storeId, itemId);
+    }
 }
 
