@@ -161,8 +161,7 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials, UUID storeId, String userName, String password) {
-        //  service.registerAdmin(clientCredentials, userName, password);
+    public List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials, UUID storeId) {
         return service.getStoreSaleHistory(clientCredentials, storeId);
     }
 
@@ -179,7 +178,5 @@ public class RealBridge implements Bridge {
         return service.getItemInformation(storeId, itemId);
     }
 
-    public  UUID getAdmin(){
-        return service.getAdmin();
-    }
+
 }

@@ -586,8 +586,5 @@ public class Service {
         return response.getValue();
     }
 
-    public UUID getAdmin(){
-        return UserController.getInstance().getId("admin");
-    }
 }
 
