@@ -2,6 +2,7 @@ package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
 import ServiceLayer.ServiceObjects.*;
 
+import java.util.List;
 import java.util.UUID;
 import org.junit.*;
 
@@ -77,5 +78,43 @@ public class AppointStoreManager extends ProjectTest {
         Boolean AppointStoreManager = bridge.appointStoreManager(storeManager,founder,storeId);
         Assert.assertFalse(AppointStoreManager);
     }
+
+
+    @Test
+    public void AppointStoreManagerBy2ManagerParallel(){
+        bridge.register("founder", "Pass1");
+        client = bridge.createClient();
+        founder = bridge.login(client, "founder", "Pass1");
+        store = bridge.createStore(founder, "test", "test");
+        storeId = store.getStoreId();
+        bridge.register("toManager", "Pass2");
+        client2 = bridge.createClient();
+        storeManager = bridge.login(client2, "toManager", "Pass2");
+        Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
+        Assert.assertTrue(AppointStoreManager);
+        UUID client3 = bridge.createClient();
+        bridge.register("toBeManager", "Pass2");
+        UUID newStoreManager = bridge.login(client3, "toBeManager", "Pass2");
+        List<ServiceUser> staffList = bridge.getStoreStaffList(founder, storeId);
+        int stafSize= staffList.size();
+
+        Thread thread1 = new Thread(()->{
+            Boolean AppointStoreManager1 = bridge.appointStoreManager(founder,newStoreManager,storeId);
+        });
+        Thread thread2 = new Thread(()->{
+            Boolean AppointStoreManager2 = bridge.appointStoreManager(storeManager,newStoreManager,storeId);
+        });
+
+        thread1.start();
+        thread2.start();
+        try{
+            thread1.join();
+            thread2.join();
+        }catch(Exception ignored){
+        }
+
+        Assert.assertTrue(bridge.getStoreStaffList(founder, storeId).size()==stafSize+1);
+    }
+
 }
 
