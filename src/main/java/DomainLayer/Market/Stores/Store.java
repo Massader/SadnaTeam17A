@@ -165,10 +165,15 @@ public class Store {
 
     };
 
-    public Object getRatingCounter() {
+    public int getRatingCounter() {
         return ratingCounter;
     }
 
-
+    public boolean removeItem(UUID itemId) {
+        if (!items.containsKey(itemId))
+            return false;
+        items.remove(itemId);
+        return true;
+    }
 }
 

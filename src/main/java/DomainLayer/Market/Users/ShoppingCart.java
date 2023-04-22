@@ -44,7 +44,7 @@ public class ShoppingCart {
     }
 
     public int quantityOf(UUID stroeId, UUID itemId){
-        return shoppingBaskets.get(stroeId).QuantityOf(itemId);
+        return shoppingBaskets.get(stroeId).quantityOf(itemId);
     }
 }
 

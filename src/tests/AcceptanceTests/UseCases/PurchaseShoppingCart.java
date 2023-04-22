@@ -21,29 +21,19 @@ public class PurchaseShoppingCart extends ProjectTest {
     ServiceItem item;
     UUID itemId;
 
-    @BeforeAll
+    @Before
     public void setUp() {
-        bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
+        client = bridge.createClient();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         item = bridge.addItemToStore(founder, "item", 10, storeId, 1, "test");
         itemId = item.getId();
     }
 
-    @BeforeEach
-    public void beforeEach()  {
-        client = bridge.createClient();
-    }
-
-    @AfterEach
-    public void tearDown() {
-        bridge.closeClient(client);
-    }
-
-    @AfterAll
+    @After
     public void afterClass() {
         bridge.closeStore(founder, storeId);
         bridge.logout(founder);
@@ -51,6 +41,14 @@ public class PurchaseShoppingCart extends ProjectTest {
 
     @Test
     public void purchaseShoppingCartSuccess() {
-        Assert.assertTrue(true);
+        bridge.addItemToCart(client, itemId, 1, storeId);
+        Assert.assertTrue( bridge.validateOrder(client));
+        Assert.assertTrue(bridge.validatePayment(client));
+        Assert.assertNotNull(bridge.confirmOrder(client));
+    }
+
+    @Test
+    public void purchaseShoppingCartWhileItemRemoved() {
+
     }
 }

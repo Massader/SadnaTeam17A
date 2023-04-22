@@ -178,5 +178,25 @@ public class RealBridge implements Bridge {
         return service.getItemInformation(storeId, itemId);
     }
 
+    @Override
+    public Boolean validateOrder(UUID clientCredentials) {
+        return service.validateOrder(clientCredentials);
+    }
+
+    @Override
+    public Boolean validatePayment(UUID clientCredentials) {
+        return service.validatePayment(clientCredentials);
+    }
+
+    @Override
+    public UUID confirmOrder(UUID clientCredentials) {
+        return service.confirmOrder(clientCredentials);
+    }
+
+    @Override
+    public Boolean removeItemFromStore(UUID clientCredentials, UUID storeId, UUID itemId) {
+        return service.removeItemFromStore(clientCredentials, storeId, itemId);
+    }
+
 
 }

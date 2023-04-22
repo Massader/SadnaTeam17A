@@ -586,5 +586,14 @@ public class Service {
         return response.getValue();
     }
 
+    public boolean removeItemFromStore(UUID clientCredentials, UUID storeId, UUID itemId) {
+        Response<Boolean> response = storeController.removeItemFromStore(clientCredentials, storeId, itemId);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully removed item " + itemId + " from store " + storeId);
+        return response.getValue();
+    }
 }
 
