@@ -64,8 +64,9 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
         founder = bridge.login(client, "founder", "Pass1");
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
-        UUID clientCredentials = bridge.getAdmin();
-        List<ServiceSale> saleHistory = bridge.getStoreSaleHistorySystemAdmin(clientCredentials,storeId,userName,password);
+        UUID clientCredentials = bridge.createClient();
+        UUID adminCredentials = bridge.login(clientCredentials, "admin", "Admin1");
+        List<ServiceSale> saleHistory = bridge.getStoreSaleHistorySystemAdmin(adminCredentials,storeId);
         Assert.assertTrue(saleHistory.isEmpty());}
     @Test
     public void GetStoreSaleHistoryNotExistingStoreFail() {
@@ -74,9 +75,9 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
         founder = bridge.login(client, "founder", "Pass1");
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
-        client2 =   bridge.getAdmin();
-        admin= bridge.login(client2, "admin", "admin");
-        List<ServiceSale> saleHistory = bridge.getStoreSaleHistorySystemAdmin(client,storeId,userName,password);
+        UUID clientCredentials = bridge.createClient();
+        UUID adminCredentials = bridge.login(clientCredentials, "admin", "Admin1");
+        List<ServiceSale> saleHistory = bridge.getStoreSaleHistorySystemAdmin(client,storeId);
         Assert.assertNull(saleHistory);
     }
 }

@@ -408,7 +408,7 @@ public class UserController {
                 UUID adminCredentials = UUID.randomUUID();
                 usernames.put("admin", adminCredentials);
                 users.put(adminCredentials, new Admin("admin", adminCredentials));
-                securityController.encryptAndSavePassword(adminCredentials, "admin");
+                securityController.encryptAndSavePassword(adminCredentials, "Admin1");
             }
         } catch (Exception ignored) {}
     }

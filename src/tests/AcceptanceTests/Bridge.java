@@ -41,10 +41,9 @@ public interface Bridge {
     List<ServiceUser> getStoreStaffList(UUID clientCredentials, UUID storeId);
     List<ServiceSale> getStoreSaleHistory(UUID clientCredentials,UUID storeId);
     Boolean storeManagerActions();
-    List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials,UUID storeId,String userName, String password);
+    List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials,UUID storeId);
     Void resetService();
     Boolean addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category);
     ServiceItem  getItemInformation(UUID storeId, UUID itemId);
 
-    UUID getAdmin();
 }

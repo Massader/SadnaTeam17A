@@ -148,8 +148,8 @@ public class ProxyBridge implements Bridge {
         return real == null ? null : real.storeManagerActions();
     }
 
-    public List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials, UUID storeId, String userName, String password) {
-        return real == null ? null : real.getStoreSaleHistorySystemAdmin(clientCredentials, storeId, userName, password);
+    public List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials, UUID storeId) {
+        return real == null ? null : real.getStoreSaleHistorySystemAdmin(clientCredentials, storeId);
     }
 
     public Void resetService() {
@@ -165,8 +165,7 @@ public class ProxyBridge implements Bridge {
         return real == null ? null : real.getItemInformation(storeId, itemId);
     }
 
-    public UUID getAdmin(){
-        return real == null ? null : real.getAdmin();
-    }
+
+
 }
 
