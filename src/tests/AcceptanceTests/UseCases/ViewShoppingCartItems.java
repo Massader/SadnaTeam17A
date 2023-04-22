@@ -36,6 +36,7 @@ public class ViewShoppingCartItems extends ProjectTest {
 
     @Test
     public void ViewShoppingCartItemsSuccessClient(){
+        bridge.register("founder", "Pass1");
         client = bridge.enterSystem();
         List<ServiceShoppingBasket> shoppingCartView=  bridge.viewShoppingCartItems(client);
         Assert.assertNotNull(shoppingCartView);
