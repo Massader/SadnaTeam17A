@@ -1,7 +1,10 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import DomainLayer.Market.Users.Client;
+import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.*;
 
+import java.util.List;
 import java.util.UUID;
 import org.junit.*;
 
@@ -82,5 +85,54 @@ public class SaveItem extends ProjectTest {
         UUID notItem = UUID.randomUUID();
         Boolean save = bridge.addItemToCart(founder,notItem,4,storeId);
         Assert.assertFalse(save);
+    }
+
+    @Test
+    public void addToCartSync(){
+        bridge.register("founder", "Pass1");
+        client = bridge.createClient();
+        founder = bridge.login(client, "founder", "Pass1");
+        store = bridge.createStore(founder, "test", "test");
+        storeId = store.getStoreId();
+        ServiceItem item = bridge.addItemToStore(founder, "bannana",5,storeId,1,"yellow fruit");
+        itemId = item.getId();
+        ServiceItem itemcheck = bridge.getItemInformation(storeId, itemId);
+        UUID clientId1 = bridge.createClient();
+        UUID clientId2 = bridge.createClient();
+
+        Thread thread1 = new Thread(()->{
+            bridge.addItemToCart(clientId1, itemId, 1, storeId);
+        });
+        Thread thread2 = new Thread(()->{
+            bridge.addItemToCart(clientId2, itemId, 1, storeId);
+        });
+
+        thread1.start();
+        thread2.start();
+    try{
+        thread1.join();
+        thread2.join();
+    }catch(Exception ignored){
+
+    }
+        List<ServiceShoppingBasket> cart1 = bridge.getCart(clientId1);
+        List<ServiceShoppingBasket> cart2 = bridge.getCart(clientId2);
+    int i =0;
+    boolean cohi1 = false;
+    for (ServiceShoppingBasket s : cart1){
+        if (s.getStoreId() == storeId && s.getItems().containsKey(itemId)){
+            cohi1= true;
+            break;
+        }
+    }
+
+    boolean cohi2 = false;
+    for (ServiceShoppingBasket s : cart2){
+        if (s.getStoreId() == storeId && s.getItems().containsKey(itemId)){
+            cohi2 = true;
+        }
+    }
+    Assert.assertTrue(cohi1 ^ cohi2);
+
     }
 }
