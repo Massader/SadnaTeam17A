@@ -30,6 +30,8 @@ public class SystemBoot extends ProjectTest {
 
     @Test
     public void systemBootSuccess() {
-        Assert.assertTrue(true);
+        UUID adminCredentials = bridge.login(clientCredentials, "admin", "admin");
+        Assert.assertNotNull(adminCredentials);
+        // When external systems implementation works add a check for valid connections with them
     }
 }
