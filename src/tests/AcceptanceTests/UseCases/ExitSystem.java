@@ -14,17 +14,13 @@ public class ExitSystem extends ProjectTest {
 
     UUID clientCredentials;
 
-    @BeforeAll
-    public void setUp() {
-        bridge.setReal();
-    }
-
-    @BeforeEach
+    @Before
     public void beforeEach()  {
+        bridge.setReal();
         clientCredentials = bridge.createClient();
     }
 
-    @AfterEach
+    @After
     public void tearDown() {
         bridge.closeClient(clientCredentials);
     }
