@@ -67,7 +67,7 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
         userName= "adminUser123456456";
         password = "Pass2";
        // bridge.register(userName,password);
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         bridge.register(userName,password);
         //admin= bridge.login(client2, userName, password);
         List<ServiceSale> saleHistory = bridge.getStoreSaleHistorySystemAdmin(client2,storeId,userName,password);
@@ -82,7 +82,7 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
         userName= "adminUser123456456";
         password = "Pass2";
       //  bridge.register(userName,password);
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         admin= bridge.login(client2, userName, password);
         List<ServiceSale> saleHistory = bridge.getStoreSaleHistorySystemAdmin(founder,storeId,userName,password);
         Assert.assertNull(saleHistory);

@@ -20,7 +20,7 @@ public class ViewShoppingCartItems extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
     }
 
     @BeforeEach
@@ -36,7 +36,7 @@ public class ViewShoppingCartItems extends ProjectTest {
     @Test
     public void ViewShoppingCartItemsSuccessClient(){
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         List<ServiceShoppingBasket> shoppingCartView=  bridge.viewShoppingCartItems(client);
         Assert.assertNotNull(shoppingCartView);
         Assert.assertTrue(shoppingCartView.isEmpty());
@@ -45,7 +45,7 @@ public class ViewShoppingCartItems extends ProjectTest {
     @Test
     public void ViewShoppingCartItemsSuccessUser() {
         bridge.register("newUser", "Pass1");
-        UUID newClient = bridge.enterSystem();
+        UUID newClient = bridge.createClient();
         UUID user = bridge.login(newClient, "newUser", "Pass1");
         List<ServiceShoppingBasket> shoppingCartView=  bridge.viewShoppingCartItems(user);
         Assert.assertNotNull(shoppingCartView);
