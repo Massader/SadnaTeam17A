@@ -170,8 +170,8 @@ public class UserController {
             if (itemResponse.isError())
                 return Response.getFailResponse(itemResponse.getMessage());
             synchronized (itemResponse.getValue()) {
-                Response<Boolean> response = storeController.removeItemQuantity(storeId, itemId, quantity);
-                if (response.isError()) return response;
+                //Response<Boolean> response = storeController.removeItemQuantity(storeId, itemId, quantity);
+                //if (response.isError()) return response;
                 if (shoppingCart.addItemToCart(storeController.getItem(itemId).getValue(), storeId, quantity)) {
                     return Response.getSuccessResponse(true);
                 } else {
