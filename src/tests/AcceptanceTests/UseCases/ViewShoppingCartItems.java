@@ -37,7 +37,7 @@ public class ViewShoppingCartItems extends ProjectTest {
     public void ViewShoppingCartItemsSuccessClient(){
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        List<ServiceShoppingBasket> shoppingCartView=  bridge.viewShoppingCartItems(client);
+        List<ServiceShoppingBasket> shoppingCartView=  bridge.getCart(client);
         Assert.assertNotNull(shoppingCartView);
         Assert.assertTrue(shoppingCartView.isEmpty());
     }
@@ -47,7 +47,7 @@ public class ViewShoppingCartItems extends ProjectTest {
         bridge.register("newUser", "Pass1");
         UUID newClient = bridge.createClient();
         UUID user = bridge.login(newClient, "newUser", "Pass1");
-        List<ServiceShoppingBasket> shoppingCartView=  bridge.viewShoppingCartItems(user);
+        List<ServiceShoppingBasket> shoppingCartView=  bridge.getCart(user);
         Assert.assertNotNull(shoppingCartView);
         Assert.assertTrue(shoppingCartView.isEmpty());
         bridge.logout(user);
@@ -57,7 +57,7 @@ public class ViewShoppingCartItems extends ProjectTest {
     @Test
     public void ViewShoppingCartItemsFail() {
         UUID notUserOrClient = UUID.randomUUID();
-        List<ServiceShoppingBasket> shoppingCartView=  bridge.viewShoppingCartItems(notUserOrClient);
+        List<ServiceShoppingBasket> shoppingCartView=  bridge.getCart(notUserOrClient);
         Assert.assertNull(shoppingCartView);
     }
 }

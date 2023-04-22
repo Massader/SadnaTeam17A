@@ -61,7 +61,7 @@ public class StockManagement extends ProjectTest {
         int quantity = 100;
         int price =5;
         String description = "yellow fruit";
-        ServiceItem item = bridge.stockManagementAddNewItem(founder, name,price,storeId,quantity,description);
+        ServiceItem item = bridge.addItemToStore(founder, name,price,storeId,quantity,description);
         Assert.assertEquals(item.getName(),name);
         Assert.assertEquals(item.getDescription(),description);
         Assert.assertTrue(item.getQuantity()==quantity);
@@ -72,7 +72,7 @@ public class StockManagement extends ProjectTest {
         Assert.assertTrue(changeItemInfo);
         ServiceItem updateItem = bridge.getItemInformation(storeId,item.getId());
         Assert.assertEquals(updateItem.getName(),newName);
-        Boolean removeItem = bridge.stockManagementRemoveItem(founder,storeId,itemId);
+        Boolean removeItem = bridge.setItemQuantity(founder,storeId,itemId);
         Assert.assertTrue(removeItem);
         ServiceItem updateItem1 = bridge.getItemInformation(storeId,item.getId());
         Assert.assertEquals(0, updateItem1.getQuantity());
@@ -91,7 +91,7 @@ public class StockManagement extends ProjectTest {
         int quantity = 10;
         int price =5;
         String description = "yellow fruit";
-        ServiceItem item = bridge.stockManagementAddNewItem(client2, name,price,storeId,quantity,description);
+        ServiceItem item = bridge.addItemToStore(client2, name,price,storeId,quantity,description);
         Assert.assertNull(item);
 
     }

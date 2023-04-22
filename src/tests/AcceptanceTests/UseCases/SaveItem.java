@@ -29,7 +29,7 @@ public class SaveItem extends ProjectTest {
         founder = bridge.login(client, "founder", "Pass1");
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
-        ServiceItem item = bridge.stockManagementAddNewItem(founder, "bannana",5,storeId,100,"yellow fruit");
+        ServiceItem item = bridge.addItemToStore(founder, "bannana",5,storeId,100,"yellow fruit");
         itemId = item.getId();
 
         client2 = bridge.createClient();
@@ -60,11 +60,11 @@ public class SaveItem extends ProjectTest {
         founder = bridge.login(client, "founder", "Pass1");
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
-        ServiceItem item = bridge.stockManagementAddNewItem(founder, "bannana",5,storeId,100,"yellow fruit");
+        ServiceItem item = bridge.addItemToStore(founder, "bannana",5,storeId,100,"yellow fruit");
         itemId = item.getId();
 
         client2 = bridge.createClient();
-        Boolean save = bridge.saveItemInShoppingCart(founder,itemId,4,storeId);
+        Boolean save = bridge.addItemToCart(founder,itemId,4,storeId);
         Assert.assertTrue(save);
     }
 
@@ -75,12 +75,12 @@ public class SaveItem extends ProjectTest {
         founder = bridge.login(client, "founder", "Pass1");
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
-        ServiceItem item = bridge.stockManagementAddNewItem(founder, "bannana",5,storeId,100,"yellow fruit");
+        ServiceItem item = bridge.addItemToStore(founder, "bannana",5,storeId,100,"yellow fruit");
         itemId = item.getId();
 
         client2 = bridge.createClient();
         UUID notItem = UUID.randomUUID();
-        Boolean save = bridge.saveItemInShoppingCart(founder,notItem,4,storeId);
+        Boolean save = bridge.addItemToCart(founder,notItem,4,storeId);
         Assert.assertFalse(save);
     }
 }

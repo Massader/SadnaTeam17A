@@ -52,7 +52,7 @@ public class ReceiveStoreInfo extends ProjectTest {
         founder = bridge.login(client, "founder", "Pass1");
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
-        ServiceStore store2 = bridge.receiveStoreInfo(storeId);
+        ServiceStore store2 = bridge.getStoreInformation(storeId);
         Assert.assertNotNull(store2);
         Assert.assertEquals(store.getStoreId(), store2.getStoreId());
         Assert.assertEquals(store.getName(), store2.getName());
@@ -66,7 +66,7 @@ public class ReceiveStoreInfo extends ProjectTest {
         founder = bridge.login(client, "founder", "Pass1");
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
-        ServiceStore store2 = bridge.receiveStoreInfo(UUID.randomUUID());
+        ServiceStore store2 = bridge.getStoreInformation(UUID.randomUUID());
         Assert.assertNull(store2);
     }
 }

@@ -80,7 +80,7 @@ public class StoreManagerActions extends ProjectTest {
         client2 = bridge.createClient();
         storeManager = bridge.login(client2, "Manager1", "Pass1");
         Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
-        ServiceItem serviceItem = bridge.stockManagementAddNewItem(storeManager, "bannana", 5.5, storeId, 20, "yellow fruit");
+        ServiceItem serviceItem = bridge.addItemToStore(storeManager, "bannana", 5.5, storeId, 20, "yellow fruit");
         Assert.assertNull(serviceItem);
     }
 }

@@ -23,7 +23,7 @@ public class SearchStoreItem extends ProjectTest {
         founder = bridge.login(client, "founder", "Password1");
         store = bridge.createStore(founder, "test", "test");
         if (item == null) {
-            item = bridge.stockManagementAddNewItem(founder, "exampleItem", 10, store.getStoreId(), 10, "test");
+            item = bridge.addItemToStore(founder, "exampleItem", 10, store.getStoreId(), 10, "test");
             bridge.addItemCategory(founder, store.getStoreId(), item.getId(), "category");
         }
         items = new ArrayList<>();

@@ -75,7 +75,7 @@ public class RealBridge implements Bridge {
         return service.login(clientCredentials, username, password);
     }
 
-    public ServiceStore receiveStoreInfo(UUID storeId) {
+    public ServiceStore getStoreInformation(UUID storeId) {
         return service.getStoreInformation(storeId);
     }
 
@@ -87,11 +87,11 @@ public class RealBridge implements Bridge {
         return service.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating);
     }
 
-    public Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
+    public Boolean addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
         return service.addItemToCart(clientCredentials, itemId, quantity, storeId);
     }
 
-    public List<ServiceShoppingBasket> viewShoppingCartItems(UUID clientCredentials) {
+    public List<ServiceShoppingBasket> getCart(UUID clientCredentials) {
         return service.getCart(clientCredentials);
     }
 
@@ -108,11 +108,11 @@ public class RealBridge implements Bridge {
         return service.createStore(clientCredentials, storeName, storeDescription);
     }
 
-    public ServiceItem stockManagementAddNewItem(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
+    public ServiceItem addItemToStore(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
         return service.addItemToStore(clientCredentials, name, price, storeId, quantity, description);
     }
 
-    public Boolean stockManagementRemoveItem(UUID clientCredentials, UUID storeId, UUID itemId) {
+    public Boolean setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId) {
         return service.setItemQuantity(clientCredentials, storeId, itemId, 0);
 
     }

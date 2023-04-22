@@ -69,8 +69,8 @@ public class ProxyBridge implements Bridge {
         return real == null ? null : real.login(clientCredentials, username, password);
     }
 
-    public ServiceStore receiveStoreInfo(UUID storeId) {
-        return real == null ? null : real.receiveStoreInfo(storeId);
+    public ServiceStore getStoreInformation(UUID storeId) {
+        return real == null ? null : real.getStoreInformation(storeId);
     }
 
     public Boolean searchStore() {
@@ -81,12 +81,12 @@ public class ProxyBridge implements Bridge {
         return real == null ? null : real.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating);
     }
 
-    public Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
-        return real == null ? null : real.saveItemInShoppingCart(clientCredentials, itemId, quantity, storeId);
+    public Boolean addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
+        return real == null ? null : real.addItemToCart(clientCredentials, itemId, quantity, storeId);
     }
 
-    public List<ServiceShoppingBasket> viewShoppingCartItems(UUID clientCredentials) {
-        return real == null ? null : real.viewShoppingCartItems(clientCredentials);
+    public List<ServiceShoppingBasket> getCart(UUID clientCredentials) {
+        return real == null ? null : real.getCart(clientCredentials);
     }
 
     public Boolean purchaseShoppingCart() {
@@ -102,12 +102,12 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.createStore(clientCredentials , storeName , storeDescription);
     }
 
-    public ServiceItem stockManagementAddNewItem(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
-        return real == null ? null : real.stockManagementAddNewItem(clientCredentials, name, price, storeId, quantity, description);
+    public ServiceItem addItemToStore(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
+        return real == null ? null : real.addItemToStore(clientCredentials, name, price, storeId, quantity, description);
     }
 
-    public Boolean stockManagementRemoveItem(UUID clientCredentials, UUID storeId, UUID itemId) {
-        return real == null ? null : real.stockManagementRemoveItem(clientCredentials, storeId, itemId);
+    public Boolean setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId) {
+        return real == null ? null : real.setItemQuantity(clientCredentials, storeId, itemId);
     }
 
     public Boolean stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name, String description) {

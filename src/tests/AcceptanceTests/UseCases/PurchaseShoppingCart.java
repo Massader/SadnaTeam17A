@@ -29,7 +29,7 @@ public class PurchaseShoppingCart extends ProjectTest {
         founder = bridge.login(client, "founder", "Pass1");
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
-        item = bridge.stockManagementAddNewItem(founder, "item", 10, storeId, 1, "test");
+        item = bridge.addItemToStore(founder, "item", 10, storeId, 1, "test");
         itemId = item.getId();
     }
 
