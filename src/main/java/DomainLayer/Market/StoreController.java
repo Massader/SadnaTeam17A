@@ -167,6 +167,7 @@ public class StoreController {
             //add the item to the store
             Store store = getStore(storeId);
             store.addItem(item);
+//            item.addQuantity(quantity);
 
             return Response.getSuccessResponse(item);}
         catch (Exception exception){

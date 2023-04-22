@@ -26,7 +26,8 @@ public class ShoppingCart {
     }
 
     public Boolean addItemToCart(Item item, UUID storeId, int quantity) {
-        if (!shoppingBaskets.containsKey(storeId)) shoppingBaskets.put(storeId, new ShoppingBasket(storeId));
+        if (!shoppingBaskets.containsKey(storeId))
+            shoppingBaskets.put(storeId, new ShoppingBasket(storeId));
         return shoppingBaskets.get(storeId).addItem(item, quantity);
     }
 
