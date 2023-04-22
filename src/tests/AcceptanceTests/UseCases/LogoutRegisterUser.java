@@ -4,7 +4,6 @@ import AcceptanceTests.*;
 import java.util.UUID;
 import org.junit.*;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.TestInstance;
@@ -15,19 +14,16 @@ public class LogoutRegisterUser extends ProjectTest {
     UUID client1;
     UUID client2;
 
-    @BeforeAll
-    public void setUp() {
+
+    @Before
+    public void setUp()  {
         bridge.setReal();
-        bridge.register("test", "test");
-    }
-
-    @BeforeEach
-    public void beforeEach()  {
+        bridge.register("test", "TestPass1");
         client1 = bridge.createClient();
-        client2 = bridge.login(client1, "test","test");
+        client2 = bridge.login(client1, "test","TestPass1");
     }
 
-    @AfterEach
+    @After
     public void tearDown() {
         bridge.closeClient(client1);
         bridge.closeClient(client2);
