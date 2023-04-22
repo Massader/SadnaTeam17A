@@ -44,4 +44,5 @@ public interface Bridge {
     List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials,UUID storeId,String userName, String password);
     Void resetService();
     Boolean addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category);
+    ServiceItem  getItemInformation(UUID storeId, UUID itemId);
 }
