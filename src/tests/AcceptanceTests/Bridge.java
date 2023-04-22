@@ -45,4 +45,6 @@ public interface Bridge {
     Void resetService();
     Boolean addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category);
     ServiceItem  getItemInformation(UUID storeId, UUID itemId);
+
+    UUID getAdmin();
 }

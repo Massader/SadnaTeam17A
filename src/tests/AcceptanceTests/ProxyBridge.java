@@ -164,5 +164,9 @@ public class ProxyBridge implements Bridge {
     public ServiceItem getItemInformation(UUID storeId, UUID itemId) {
         return real == null ? null : real.getItemInformation(storeId, itemId);
     }
+
+    public UUID getAdmin(){
+        return real == null ? null : real.getAdmin();
+    }
 }
 
