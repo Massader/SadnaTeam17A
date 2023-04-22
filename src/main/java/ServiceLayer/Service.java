@@ -585,5 +585,9 @@ public class Service {
         eventLogger.log(Level.INFO, "Successfully added category " + category + " to item " + itemId);
         return response.getValue();
     }
+
+    public UUID getAdmin(){
+        return UserController.getInstance().getId("admin");
+    }
 }
 
