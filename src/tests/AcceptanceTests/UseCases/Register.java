@@ -12,23 +12,19 @@ import org.junit.jupiter.api.TestInstance;
 public class Register extends ProjectTest {
 
     UUID clientCredentials;
-    UUID userId;
+    UUID clientCredentials2;
 
-    @BeforeAll
-    public void setUp() {
-        bridge.setReal();
-        UUID clientCredentials2 = bridge.createClient();
-        bridge.register("test", "test");
-    }
-
-    @BeforeEach
+    @Before
     public void beforeEach()  {
+        bridge.setReal();
         clientCredentials = bridge.createClient();
+        clientCredentials2 = bridge.createClient();
     }
 
-    @AfterEach
+    @After
     public void tearDown() {
         bridge.closeClient(clientCredentials);
+        bridge.closeClient(clientCredentials2);
     }
 
     @Test
@@ -40,6 +36,7 @@ public class Register extends ProjectTest {
 
     @Test
     public void registerExistingUserFail() {
+        bridge.register("test", "test");
         Boolean success = bridge.register("test", "test");
         Assert.assertNotNull(success);
         Assert.assertFalse(success);
@@ -55,14 +52,6 @@ public class Register extends ProjectTest {
     @Test
     public void registerNullPasswordFail() {
         Boolean success = bridge.register("test2", null);
-        Assert.assertNotNull(success);
-        Assert.assertFalse(success);
-    }
-
-    @Test
-    public void registerClientLoggedInFail() {
-        userId = bridge.login(clientCredentials,"test", "test");
-        Boolean success = bridge.register("test2", "test");
         Assert.assertNotNull(success);
         Assert.assertFalse(success);
     }

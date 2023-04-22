@@ -88,6 +88,8 @@ public class UserController {
         try{
             if (username == null || username.length()==0)
                 return Response.getFailResponse("No username input.");
+            if (password == null)
+                return Response.getFailResponse("No password input.");
             synchronized (usernames) {
                 if (usernames.containsKey(username))
                     return Response.getFailResponse("This username is already in use.");
