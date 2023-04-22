@@ -2,7 +2,6 @@ package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
 import ServiceLayer.ServiceObjects.*;
 
-import java.util.List;
 import java.util.UUID;
 import org.junit.*;
 
@@ -26,23 +25,23 @@ public class AppointStoreOwner extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         bridge.register("toOwner", "Pass2");
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         storeOwner = bridge.login(client2, "toOwner", "Pass2");
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.enterSystem();
+        client = bridge.createClient();
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.exitSystem(client);
+        bridge.closeClient(client);
     }
 
     @AfterAll
@@ -55,12 +54,12 @@ public class AppointStoreOwner extends ProjectTest {
     @Test
     public void AppointStoreManagerSuccess() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         bridge.register("toOwner", "Pass2");
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         storeOwner = bridge.login(client2, "toOwner", "Pass2");
         Boolean AppointStoreOwner = bridge.appointStoreOwner(founder,storeOwner,storeId);
         Assert.assertTrue(AppointStoreOwner);
@@ -68,12 +67,12 @@ public class AppointStoreOwner extends ProjectTest {
     @Test
     public void AppointStoreManagerFail() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         bridge.register("toOwner", "Pass2");
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         storeOwner = bridge.login(client2, "toOwner", "Pass2");
         Boolean AppointStoreOwner = bridge.appointStoreOwner(storeOwner,founder,storeId);
         Assert.assertFalse(AppointStoreOwner);

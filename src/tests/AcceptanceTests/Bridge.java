@@ -1,6 +1,5 @@
 package AcceptanceTests;
 
-import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.*;
 
 
@@ -19,8 +18,8 @@ public interface Bridge {
     Boolean userRealTimeAlert();
     Boolean systemDelayedAlert();
     Boolean userDelayedAlert();
-    UUID enterSystem();
-    Boolean exitSystem(UUID clientCredentials);
+    UUID createClient();
+    Boolean closeClient(UUID clientCredentials);
     Boolean register(String username, String password);
     UUID login(UUID clientCredentials, String username, String password);
     ServiceStore receiveStoreInfo(UUID storeId);
@@ -30,7 +29,7 @@ public interface Bridge {
     List<ServiceShoppingBasket> viewShoppingCartItems( UUID clientCredentials);
     Boolean purchaseShoppingCart();
     UUID logout(UUID clientCredentials);
-    ServiceStore openStore(UUID clientCredentials , String storeName , String storeDescription);
+    ServiceStore createStore(UUID clientCredentials , String storeName , String storeDescription);
     ServiceItem stockManagementAddNewItem(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description);
     Boolean stockManagementRemoveItem(UUID clientCredentials, UUID storeId, UUID itemId);
     Boolean stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name,String description);
@@ -44,7 +43,6 @@ public interface Bridge {
     Boolean storeManagerActions();
     List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials,UUID storeId,String userName, String password);
     Void resetService();
-
+    Boolean addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category);
     ServiceItem  getItemInformation(UUID storeId, UUID itemId);
-
 }

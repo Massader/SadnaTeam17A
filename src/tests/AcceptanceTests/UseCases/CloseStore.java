@@ -2,7 +2,6 @@ package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
 import ServiceLayer.ServiceObjects.*;
 
-import java.util.List;
 import java.util.UUID;
 import org.junit.*;
 
@@ -25,22 +24,22 @@ public class CloseStore extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
         store = null;
         storeId = null;
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.enterSystem();
+        client = bridge.createClient();
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.exitSystem(client);
+        bridge.closeClient(client);
     }
 
     @AfterAll
@@ -52,11 +51,11 @@ public class CloseStore extends ProjectTest {
     @Test
     public void CloseStoreSuccess() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
         store = null;
         storeId = null;
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         Boolean close = bridge.closeStore(founder,storeId);
         Assert.assertTrue(close);
@@ -65,13 +64,13 @@ public class CloseStore extends ProjectTest {
     @Test
     public void CloseStoreFail() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
         store = null;
         storeId = null;
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         Boolean close = bridge.closeStore(client2,storeId);
         Assert.assertFalse(close);
         //bridge.logout(client2);

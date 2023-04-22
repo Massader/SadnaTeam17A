@@ -26,25 +26,25 @@ public class GetStoreSaleHistory extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         String userName= "user1";
         String password = "Pass2";
         bridge.register(userName,password);
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         userId= bridge.login(client2, userName, password);
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.enterSystem();
+        client = bridge.createClient();
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.exitSystem(client);
+        bridge.closeClient(client);
     }
 
     @AfterAll
@@ -52,21 +52,21 @@ public class GetStoreSaleHistory extends ProjectTest {
         bridge.closeStore(founder, storeId);
         bridge.logout(founder);
         bridge.logout(userId);
-        bridge.exitSystem(client);
-        bridge.exitSystem(client2);
+        bridge.closeClient(client);
+        bridge.closeClient(client2);
     }
     @Test
     public void GetStoreSaleHistorySuccess() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         String userName= "user1";
         String password = "Pass2";
         bridge.register(userName,password);
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         userId= bridge.login(client2, userName, password);
         List<ServiceSale> saleHistory = bridge.getStoreSaleHistory(founder,storeId);
         Assert.assertTrue(saleHistory.isEmpty());}
@@ -74,14 +74,14 @@ public class GetStoreSaleHistory extends ProjectTest {
     public void GetStoreSaleHistoryNotExistingStoreFail() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         String userName= "user1";
         String password = "Pass2";
         bridge.register(userName,password);
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         userId= bridge.login(client2, userName, password);
         List<ServiceSale> saleHistory = bridge.getStoreSaleHistory(client2,storeId);
         Assert.assertNull(saleHistory);

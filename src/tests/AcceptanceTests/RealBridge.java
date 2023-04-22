@@ -59,11 +59,11 @@ public class RealBridge implements Bridge {
         return false;
     }
 
-    public UUID enterSystem() {
+    public UUID createClient() {
         return service.createClient();
     }
 
-    public Boolean exitSystem(UUID clientCredentials) {
+    public Boolean closeClient(UUID clientCredentials) {
         return service.closeClient(clientCredentials);
     }
 
@@ -104,7 +104,7 @@ public class RealBridge implements Bridge {
         return service.logout(clientCredentials);
     }
 
-    public ServiceStore openStore(UUID clientCredentials, String storeName, String storeDescription) {
+    public ServiceStore createStore(UUID clientCredentials, String storeName, String storeDescription) {
         return service.createStore(clientCredentials, storeName, storeDescription);
     }
 
@@ -168,6 +168,11 @@ public class RealBridge implements Bridge {
 
     public Void resetService() {
         return service.resetService();
+    }
+
+    @Override
+    public Boolean addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category) {
+        return service.addItemCategory(clientCredentials, storeId, itemId, category);
     }
 
     public ServiceItem getItemInformation(UUID storeId, UUID itemId) {

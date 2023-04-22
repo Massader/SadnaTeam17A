@@ -2,7 +2,6 @@ package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
 import ServiceLayer.ServiceObjects.*;
 
-import java.util.List;
 import java.util.UUID;
 import org.junit.*;
 
@@ -24,7 +23,7 @@ public class OpenStore extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
         store = null;
         storeId = null;
@@ -32,12 +31,12 @@ public class OpenStore extends ProjectTest {
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.enterSystem();
+        client = bridge.createClient();
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.exitSystem(client);
+        bridge.closeClient(client);
     }
 
     @AfterAll
@@ -49,9 +48,9 @@ public class OpenStore extends ProjectTest {
     @Test
     public void openStoreSuccess() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         Assert.assertNotNull(store);
     }
@@ -59,8 +58,8 @@ public class OpenStore extends ProjectTest {
     @Test
     public void openStoreNotLoggedInFail() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
-        ServiceStore storeFail = bridge.openStore(client, "fail", "fail");
+        client = bridge.createClient();
+        ServiceStore storeFail = bridge.createStore(client, "fail", "fail");
         Assert.assertNull(storeFail);
     }
 }
