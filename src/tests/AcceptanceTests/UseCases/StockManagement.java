@@ -2,7 +2,6 @@ package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
 import ServiceLayer.ServiceObjects.*;
 
-import java.util.List;
 import java.util.UUID;
 import org.junit.*;
 
@@ -24,40 +23,40 @@ public class StockManagement extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.enterSystem();
+        client = bridge.createClient();
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.exitSystem(client);
-        bridge.exitSystem(client2);
+        bridge.closeClient(client);
+        bridge.closeClient(client2);
     }
 
     @AfterAll
     public void afterClass() {
         bridge.closeStore(founder, storeId);
         bridge.logout(founder);
-        bridge.exitSystem(client);
-        bridge.exitSystem(client2);
+        bridge.closeClient(client);
+        bridge.closeClient(client2);
     }
 
     @Test
     public void StockManagementSuccess() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         String name ="bannana";
         int quantity = 100;
         int price =5;
@@ -80,11 +79,11 @@ public class StockManagement extends ProjectTest {
     @Test
     public void StockManagementFail() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
 
         String name ="pineapple";
         int quantity = 10;

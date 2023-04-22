@@ -30,18 +30,18 @@ public class GetStoreStaffList extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
 
         bridge.register("storeOwner Lior", "Pass1");
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         storeOwner2 = bridge.login(client2, "storeOwner Lior", "Pass1");
 
 
         bridge.register("storeOwner Ido ", "Pass1");
-        client3 = bridge.enterSystem();
+        client3 = bridge.createClient();
         storeOwner3 = bridge.login(client3, "storeOwner Ido ", "Pass1");
 
         check = bridge.appointStoreOwner(founder,storeOwner2,storeId);
@@ -51,14 +51,14 @@ public class GetStoreStaffList extends ProjectTest {
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.enterSystem();
+        client = bridge.createClient();
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.exitSystem(client);
-        bridge.exitSystem(client2);
-        bridge.exitSystem(client3);
+        bridge.closeClient(client);
+        bridge.closeClient(client2);
+        bridge.closeClient(client3);
     }
 
     @AfterAll
@@ -72,18 +72,18 @@ public class GetStoreStaffList extends ProjectTest {
     @Test
     public void GetStoreStaffListSuccess() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
 
         bridge.register("storeOwner Lior", "Pass1");
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         storeOwner2 = bridge.login(client2, "storeOwner Lior", "Pass1");
 
 
         bridge.register("storeOwner Ido ", "Pass1");
-        client3 = bridge.enterSystem();
+        client3 = bridge.createClient();
         storeOwner3 = bridge.login(client3, "storeOwner Ido ", "Pass1");
 
         check = bridge.appointStoreOwner(founder,storeOwner2,storeId);
@@ -96,18 +96,18 @@ public class GetStoreStaffList extends ProjectTest {
     @Test
     public void GetStoreStaffListFail() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
 
         bridge.register("storeOwner Lior", "Pass1");
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         storeOwner2 = bridge.login(client2, "storeOwner Lior", "Pass1");
 
 
         bridge.register("storeOwner Ido ", "Pass1");
-        client3 = bridge.enterSystem();
+        client3 = bridge.createClient();
         storeOwner3 = bridge.login(client3, "storeOwner Ido ", "Pass1");
 
         check = bridge.appointStoreOwner(founder,storeOwner2,storeId);

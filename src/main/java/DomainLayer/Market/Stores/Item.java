@@ -4,6 +4,7 @@ import DomainLayer.Market.Stores.PurchaseTypes.DirectPurchase;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -29,7 +30,7 @@ public class Item {
         this.storeId = storeId;
         this.rating = rating;
         this.quantity = quantity;
-        this.description =description;
+        this.description = description;
         purchaseType = new DirectPurchase();
         categories = new ConcurrentLinkedQueue<>();
         policyRules = null;
@@ -40,13 +41,14 @@ public class Item {
         this.purchaseType = purchaseType;
     }
 
-    public Collection<Category> getCategories(){
+    public Collection<Category> getCategories() {
         return categories;
     }
-    public boolean containsCategory(String category){
-        for (Category category1 : this.getCategories()){
+
+    public boolean containsCategory(String category) {
+        for (Category category1 : this.getCategories()) {
             if (category1.getCategoryName().equals(category))
-                    return true;
+                return true;
         }
         return false;
     }
@@ -111,36 +113,36 @@ public class Item {
         return reviews;
     }
 
-    public UUID addReview(UUID clientCredentials, String body){
+    public UUID addReview(UUID clientCredentials, String body) {
         Review review = new Review(body, clientCredentials);
         reviews.put(review.getId(), review);
         return review.getId();
     }
 
     // make avarage of the old ratings with the new one
-    public void addRating(int newRating){
+    public void addRating(int newRating) {
         double x = rating * ratesCount;
         x += newRating;
         ratesCount++;
-        rating = x/ratesCount;
+        rating = x / ratesCount;
     }
-    public Boolean addQuantity(int quantityToAdd){
-        this.quantity+=quantityToAdd;
-        return  true;
+
+    public Boolean addQuantity(int quantityToAdd) {
+        this.quantity += quantityToAdd;
+        return true;
     }
 
     public Boolean removeFromQuantity(int quantityToRemove) throws Exception {
-        if(this.quantity<quantityToRemove){
+        if (this.quantity < quantityToRemove) {
             throw new Exception("Passed quantity to remove is less than is available in stock.");
+        } else {
+            this.quantity -= quantityToRemove;
         }
-        else {this.quantity-=quantityToRemove;}
-        return  true;
+        return true;
     }
 
-    public void addCategory(Category category){
+    public void addCategory(Category category) {
         categories.add(category);
     }
-
-
 
 }

@@ -2,7 +2,6 @@ package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
 import ServiceLayer.ServiceObjects.*;
 
-import java.util.List;
 import java.util.UUID;
 import org.junit.*;
 
@@ -26,45 +25,45 @@ public class SaveItem extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         ServiceItem item = bridge.stockManagementAddNewItem(founder, "bannana",5,storeId,100,"yellow fruit");
         itemId = item.getId();
 
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
 
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.enterSystem();
+        client = bridge.createClient();
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.exitSystem(client);
+        bridge.closeClient(client);
     }
 
     @AfterAll
     public void afterClass() {
         bridge.closeStore(founder, storeId);
         bridge.logout(founder);
-        bridge.exitSystem(client2);
+        bridge.closeClient(client2);
     }
 
     @Test
     public void SaveItemrSuccess() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         ServiceItem item = bridge.stockManagementAddNewItem(founder, "bannana",5,storeId,100,"yellow fruit");
         itemId = item.getId();
 
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         Boolean save = bridge.saveItemInShoppingCart(founder,itemId,4,storeId);
         Assert.assertTrue(save);
     }
@@ -72,14 +71,14 @@ public class SaveItem extends ProjectTest {
     @Test
     public void SaveItemrFail() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         ServiceItem item = bridge.stockManagementAddNewItem(founder, "bannana",5,storeId,100,"yellow fruit");
         itemId = item.getId();
 
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         UUID notItem = UUID.randomUUID();
         Boolean save = bridge.saveItemInShoppingCart(founder,notItem,4,storeId);
         Assert.assertFalse(save);

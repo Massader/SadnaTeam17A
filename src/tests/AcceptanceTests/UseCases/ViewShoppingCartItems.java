@@ -9,7 +9,6 @@ import org.junit.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -21,17 +20,17 @@ public class ViewShoppingCartItems extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "pass");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.enterSystem();
+        client = bridge.createClient();
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.exitSystem(client);
+        bridge.closeClient(client);
     }
 
     @Test
@@ -44,13 +43,13 @@ public class ViewShoppingCartItems extends ProjectTest {
     @Test
     public void ViewShoppingCartItemsSuccessUser() {
         bridge.register("newUser", "pass");
-        UUID newClient = bridge.enterSystem();
+        UUID newClient = bridge.createClient();
         UUID user = bridge.login(newClient, "newUser", "pass");
         List<ServiceShoppingBasket> shoppingCartView=  bridge.viewShoppingCartItems(user);
         Assert.assertNotNull(shoppingCartView);
         Assert.assertTrue(shoppingCartView.isEmpty());
         bridge.logout(user);
-        bridge.exitSystem(newClient);
+        bridge.closeClient(newClient);
     }
 
     @Test

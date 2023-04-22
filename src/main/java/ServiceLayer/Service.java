@@ -575,5 +575,15 @@ public class Service {
         init();
         return null;
     }
+
+    public boolean addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category) {
+        Response<Boolean> response = storeController.addItemCategory(clientCredentials, storeId, itemId, category);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return false;
+        }
+        eventLogger.log(Level.INFO, "Successfully added category " + category + " to item " + itemId);
+        return response.getValue();
+    }
 }
 

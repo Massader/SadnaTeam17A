@@ -27,24 +27,24 @@ public class StoreManagerActions extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         bridge.register("Manager1", "Pass1");
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         storeManager = bridge.login(client2, "Manager1", "Pass1");
         Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.enterSystem();
+        client = bridge.createClient();
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.exitSystem(client);
+        bridge.closeClient(client);
     }
 
     @AfterAll
@@ -52,18 +52,18 @@ public class StoreManagerActions extends ProjectTest {
         bridge.closeStore(founder, storeId);
         bridge.logout(founder);
         bridge.logout(storeManager);
-        bridge.exitSystem(client2);
+        bridge.closeClient(client2);
     }
 
     @Test
     public void StoreManagerActionsSuccess() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         bridge.register("Manager1", "Pass1");
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         storeManager = bridge.login(client2, "Manager1", "Pass1");
         Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
         List<ServiceSale> saleHistory = bridge.getStoreSaleHistory(storeManager,storeId);
@@ -72,12 +72,12 @@ public class StoreManagerActions extends ProjectTest {
     @Test
     public void StoreManagerActionsFail() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         bridge.register("Manager1", "Pass1");
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         storeManager = bridge.login(client2, "Manager1", "Pass1");
         Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
         ServiceItem serviceItem = bridge.stockManagementAddNewItem(storeManager, "bannana", 5.5, storeId, 20, "yellow fruit");

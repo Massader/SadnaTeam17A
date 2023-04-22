@@ -1,5 +1,6 @@
 package DomainLayer.Market;
 
+import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
@@ -411,7 +412,7 @@ public class StoreController {
     }
 
     //add a new store
-    //TODO: guy why we need this? for unit tests
+    // for unit tests
     public UUID addStore(Store store){
         UUID id = UUID.randomUUID();
         storeMap.put(id, store);
@@ -423,5 +424,18 @@ public class StoreController {
 
     public void resetController() {
         instance = new StoreController();
+    }
+
+    public Response<Boolean> addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category) {
+        if (!storeMap.containsKey(storeId))
+            return Response.getFailResponse("Store does not exist.");
+        Store store = storeMap.get(storeId);
+        if (!store.checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT) && !(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
+            return Response.getFailResponse("User does not have item management permissions for this store.");
+        Item item = store.getItem(itemId);
+        if (item == null)
+            return Response.getFailResponse("Item does not exist.");
+        item.addCategory(new Category(category));
+        return Response.getSuccessResponse(true);
     }
 }

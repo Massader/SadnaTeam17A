@@ -53,12 +53,12 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.userDelayedAlert();
     }
 
-    public UUID enterSystem() {
-        return real == null? null : real.enterSystem();
+    public UUID createClient() {
+        return real == null? null : real.createClient();
     }
 
-    public Boolean exitSystem(UUID clientCredentials) {
-        return real == null? null : real.exitSystem(clientCredentials);
+    public Boolean closeClient(UUID clientCredentials) {
+        return real == null? null : real.closeClient(clientCredentials);
     }
 
     public Boolean register(String username, String password) {
@@ -98,8 +98,8 @@ public class ProxyBridge implements Bridge {
         return real == null? null : real.logout(clientCredentials);
     }
 
-    public ServiceStore openStore(UUID clientCredentials , String storeName , String storeDescription) {
-        return real == null? null : real.openStore(clientCredentials , storeName , storeDescription);
+    public ServiceStore createStore(UUID clientCredentials , String storeName , String storeDescription) {
+        return real == null? null : real.createStore(clientCredentials , storeName , storeDescription);
     }
 
     public ServiceItem stockManagementAddNewItem(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
@@ -154,5 +154,10 @@ public class ProxyBridge implements Bridge {
 
     public Void resetService() {
         return real == null? null : real.resetService();
+    }
+
+    @Override
+    public Boolean addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category) {
+        return real.addItemCategory(clientCredentials, storeId, itemId, category);
     }
 }

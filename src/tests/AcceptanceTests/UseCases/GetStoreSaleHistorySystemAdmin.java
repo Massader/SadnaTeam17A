@@ -41,12 +41,12 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.enterSystem();
+        client = bridge.createClient();
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.exitSystem(client);
+        bridge.closeClient(client);
     }
 
     @AfterAll
@@ -54,34 +54,34 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
         bridge.closeStore(founder, storeId);
         bridge.logout(founder);
         bridge.logout(admin);
-        bridge.exitSystem(client);
-        bridge.exitSystem(client2);
+        bridge.closeClient(client);
+        bridge.closeClient(client2);
     }
     @Test
     public void GetStoreSaleHistorySuccess() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         userName= "adminUser123456456";
         password = "Pass2";
         bridge.register(userName,password);
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         admin= bridge.login(client2, userName, password);
         List<ServiceSale> saleHistory = bridge.getStoreSaleHistorySystemAdmin(admin,storeId,userName,password);
         Assert.assertTrue(saleHistory.isEmpty());}
     @Test
     public void GetStoreSaleHistoryNotExistingStoreFail() {
         bridge.register("founder", "Pass1");
-        client = bridge.enterSystem();
+        client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
-        store = bridge.openStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         userName= "adminUser123456456";
         password = "Pass2";
         bridge.register(userName,password);
-        client2 = bridge.enterSystem();
+        client2 = bridge.createClient();
         admin= bridge.login(client2, userName, password);
         List<ServiceSale> saleHistory = bridge.getStoreSaleHistorySystemAdmin(founder,storeId,userName,password);
         Assert.assertNull(saleHistory);
