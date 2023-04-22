@@ -68,8 +68,9 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
         password = "Pass2";
        // bridge.register(userName,password);
         client2 = bridge.enterSystem();
-        admin= bridge.login(client2, userName, password);
-        List<ServiceSale> saleHistory = bridge.getStoreSaleHistorySystemAdmin(admin,storeId,userName,password);
+        bridge.register(userName,password);
+        //admin= bridge.login(client2, userName, password);
+        List<ServiceSale> saleHistory = bridge.getStoreSaleHistorySystemAdmin(client2,storeId,userName,password);
         Assert.assertTrue(saleHistory.isEmpty());}
     @Test
     public void GetStoreSaleHistoryNotExistingStoreFail() {

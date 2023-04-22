@@ -88,10 +88,10 @@ public class RealBridge implements Bridge {
     }
 
     public Boolean saveItemInShoppingCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
-        return service.addItemToCart(clientCredentials,itemId,quantity,storeId);
+        return service.addItemToCart(clientCredentials, itemId, quantity, storeId);
     }
 
-    public  List<ServiceShoppingBasket> viewShoppingCartItems(UUID clientCredentials) {
+    public List<ServiceShoppingBasket> viewShoppingCartItems(UUID clientCredentials) {
         return service.getCart(clientCredentials);
     }
 
@@ -108,22 +108,22 @@ public class RealBridge implements Bridge {
         return service.createStore(clientCredentials, storeName, storeDescription);
     }
 
-    public ServiceItem stockManagementAddNewItem(UUID clientCredentials,String name, double price, UUID storeId, int quantity, String description) {
-        return service.addItemToStore(clientCredentials,name,price,storeId,quantity,description);
+    public ServiceItem stockManagementAddNewItem(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
+        return service.addItemToStore(clientCredentials, name, price, storeId, quantity, description);
     }
 
     public Boolean stockManagementRemoveItem(UUID clientCredentials, UUID storeId, UUID itemId) {
-        return  service.setItemQuantity(clientCredentials,storeId,itemId,0);
+        return service.setItemQuantity(clientCredentials, storeId, itemId, 0);
 
     }
 
-    public Boolean stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name,String description) {
-        Boolean check=false;
-        if(description!=null){
-            check = service.setItemDescription(clientCredentials,storeId,itemId,description);
+    public Boolean stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name, String description) {
+        Boolean check = false;
+        if (description != null) {
+            check = service.setItemDescription(clientCredentials, storeId, itemId, description);
         }
-        if(name!=null){
-            check= check||service.setItemName(clientCredentials,storeId,itemId,name);
+        if (name != null) {
+            check = check && service.setItemName(clientCredentials, storeId, itemId, name);
         }
         return check;
     }
@@ -133,16 +133,16 @@ public class RealBridge implements Bridge {
     }
 
     public Boolean appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId) {
-        return service.appointStoreOwner(clientCredentials,appointee,storeId);
+        return service.appointStoreOwner(clientCredentials, appointee, storeId);
     }
 
     public Boolean appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId) {
-        return service.appointStoreManager(clientCredentials,appointee,storeId);
+        return service.appointStoreManager(clientCredentials, appointee, storeId);
     }
 
     public Boolean setStoreManagerPermissions(UUID clientCredentials, UUID manager,
                                               UUID storeId, List<Integer> permissions) {
-        return service.SetManagerPermissions(clientCredentials,manager,storeId,permissions);
+        return service.SetManagerPermissions(clientCredentials, manager, storeId, permissions);
     }
 
     public Boolean closeStore(UUID clientCredentials, UUID storeId) {
@@ -150,23 +150,27 @@ public class RealBridge implements Bridge {
     }
 
     public List<ServiceUser> getStoreStaffList(UUID clientCredentials, UUID storeId) {
-        return  service.getStoreStaff(clientCredentials,storeId);
+        return service.getStoreStaff(clientCredentials, storeId);
     }
 
-    public List<ServiceSale> getStoreSaleHistory(UUID clientCredentials,UUID storeId) {
-        return service.getStoreSaleHistory(clientCredentials,storeId);
+    public List<ServiceSale> getStoreSaleHistory(UUID clientCredentials, UUID storeId) {
+        return service.getStoreSaleHistory(clientCredentials, storeId);
     }
 
     public Boolean storeManagerActions() {
         return false;
     }
 
-    public List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials,UUID storeId, String userName, String password) {
-        service.registerAdmin(clientCredentials,userName,password);
-        return service.getStoreSaleHistory(clientCredentials,storeId);
+    public List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials, UUID storeId, String userName, String password) {
+        service.registerAdmin(clientCredentials, userName, password);
+        return service.getStoreSaleHistory(clientCredentials, storeId);
     }
 
     public Void resetService() {
         return service.resetService();
+    }
+
+    public ServiceItem getItemInformation(UUID storeId, UUID itemId) {
+        return service.getItemInformation(storeId, itemId);
     }
 }
