@@ -70,6 +70,7 @@ public class GetStoreStaffList extends ProjectTest {
     }
 
     @Test
+    //Tests that a store owner can successfully get a list of staff members for their store.
     public void GetStoreStaffListSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
@@ -95,6 +96,7 @@ public class GetStoreStaffList extends ProjectTest {
 
     @Test
     public void GetStoreStaffListFail() {
+        //Tests that attempting to get a list of staff members for a store with an invalid store owner ID fails.
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");

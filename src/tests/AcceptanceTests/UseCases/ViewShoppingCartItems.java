@@ -34,6 +34,7 @@ public class ViewShoppingCartItems extends ProjectTest {
     }
 
     @Test
+    //Tests whether a newly created client has an empty shopping cart.
     public void ViewShoppingCartItemsSuccessClient(){
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
@@ -43,6 +44,7 @@ public class ViewShoppingCartItems extends ProjectTest {
     }
 
     @Test
+    // Tests whether a newly registered user has an empty shopping cart.
     public void ViewShoppingCartItemsSuccessUser() {
         bridge.register("newUser", "Pass1");
         UUID newClient = bridge.createClient();
@@ -55,6 +57,7 @@ public class ViewShoppingCartItems extends ProjectTest {
     }
 
     @Test
+    //Tests whether an attempt to view a shopping cart by an invalid UUID fails.
     public void ViewShoppingCartItemsFail() {
         UUID notUserOrClient = UUID.randomUUID();
         List<ServiceShoppingBasket> shoppingCartView=  bridge.getCart(notUserOrClient);

@@ -30,12 +30,14 @@ public class LogoutRegisterUser extends ProjectTest {
     }
 
     @Test
+    //tests if the logout function works correctly by asserting that the client's UUID is not null after logging out.
     public void logoutSuccess() {
         client2 = bridge.logout(client2);
         Assert.assertNotNull(client2);
     }
 
     @Test
+    //tests if the logout function handles the scenario where the client is not registered or already logged out by asserting that the returned UUID is null after attempting to logout twice.
     public void logoutNotRegisterFail() {
         client2 = bridge.logout(client2);
         UUID client3 = bridge.logout(client2);

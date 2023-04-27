@@ -38,6 +38,7 @@ public class SearchStoreItem extends ProjectTest {
     }
 
     @Test
+    //Tests if searching for an item by name and category returns at least one item.
     public void searchItemSuccess() {
         items = bridge.searchItem("example", "category", 0, 100, 0, -1);
         Assert.assertNotNull(items);
@@ -45,6 +46,7 @@ public class SearchStoreItem extends ProjectTest {
     }
 
     @Test
+    //Tests if searching for an item by name and category returns no items when there are no items matching the search criteria.
     public void searchItemNoItemsSuccess() {
         items = bridge.searchItem("example", "General", 11, 100, 0, -1);
         Assert.assertNotNull(items);

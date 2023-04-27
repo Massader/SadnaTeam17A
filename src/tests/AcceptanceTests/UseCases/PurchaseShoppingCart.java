@@ -40,6 +40,7 @@ public class PurchaseShoppingCart extends ProjectTest {
     }
 
     @Test
+    //The test checks if a user can successfully purchase an item added to their shopping cart by validating the order, validating the payment, and confirming the order
     public void purchaseShoppingCartSuccess() {
         bridge.addItemToCart(client, itemId, 1, storeId);
         Assert.assertTrue( bridge.validateOrder(client));

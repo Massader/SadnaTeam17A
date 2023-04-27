@@ -31,6 +31,7 @@ public class Login extends ProjectTest {
     }
 
     @Test
+    //tests if the login function works correctly by registering and logging in with valid credentials and asserting that the client's UUID is not null.
     public void loginSuccess() {
         bridge.register("test1", "Test1");
         UUID userId = bridge.login(clientCredentials, "test1","Test1");
@@ -38,12 +39,14 @@ public class Login extends ProjectTest {
     }
 
     @Test
+    //tests if the login function handles the scenario where the username is incorrect by asserting that the returned UUID is null.
     public void loginFailWrongUsername() {
         UUID userId = bridge.login(clientCredentials, "nottest", "Notest1");
         Assert.assertNull(userId);
     }
 
     @Test
+    // tests if the login function handles the scenario where the password is incorrect by asserting that the returned UUID is null.
     public void loginFailWrongPassword() {
         UUID userId = bridge.login(clientCredentials, "test", "nottest");
         Assert.assertNull(userId);

@@ -56,6 +56,7 @@ public class GetStoreSaleHistory extends ProjectTest {
         bridge.closeClient(client2);
     }
     @Test
+    // tests if the system can successfully retrieve the sale history of a store
     public void GetStoreSaleHistorySuccess() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
@@ -71,6 +72,7 @@ public class GetStoreSaleHistory extends ProjectTest {
         List<ServiceSale> saleHistory = bridge.getStoreSaleHistory(founder,storeId);
         Assert.assertTrue(saleHistory.isEmpty());}
     @Test
+    //tests if the system fails to retrieve the sale history of a non-existing store.
     public void GetStoreSaleHistoryNotExistingStoreFail() {
         bridge.setReal();
         bridge.register("founder", "Pass1");

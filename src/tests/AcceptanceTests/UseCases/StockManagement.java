@@ -50,6 +50,7 @@ public class StockManagement extends ProjectTest {
     }
 
     @Test
+    // Test successful stock management operations including adding, changing, and removing item from a store.
     public void StockManagementSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
@@ -79,6 +80,7 @@ public class StockManagement extends ProjectTest {
     }
 
     @Test
+    // Test unsuccessful stock management operations including adding an item to a store by a non-founder client.
     public void StockManagementFail() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();

@@ -67,6 +67,7 @@ public class SetStoreManagerPermissions extends ProjectTest {
     }
 
     @Test
+    //This test verifies that a store owner can successfully set permissions for a store manager in their store.
     public void SetStoreManagerPermissionsSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
@@ -88,6 +89,7 @@ public class SetStoreManagerPermissions extends ProjectTest {
     }
 
     @Test
+    //this test verifies that a store manager cannot set permissions for a store owner in their store.
     public void SetStoreManagerPermissionsFail() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
