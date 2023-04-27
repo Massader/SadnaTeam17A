@@ -47,6 +47,7 @@ public class ErrorLogger {
     }
 
     public void log(Level level, String msg){
+        String greenMsg = "\u001B[31m" + msg + "\u001B[0m";
         LOG.log(level, msg);
     }
 }
