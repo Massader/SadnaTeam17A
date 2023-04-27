@@ -71,7 +71,7 @@ public class StoreManagerActions extends ProjectTest {
         Assert.assertTrue(saleHistory.isEmpty());}
 
     @Test
-    //his test case checks whether a store manager can add an item to the store. It creates a store, appoints a manager, and then tries to add an item to the store. The test asserts that the returned service item is null, indicating that the addition of the item failed.
+    //this test case checks whether a store manager can add an item to the store. It creates a store, appoints a manager, and then tries to add an item to the store. The test asserts that the returned service item is null, indicating that the addition of the item failed.
     public void StoreManagerActionsFail() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
