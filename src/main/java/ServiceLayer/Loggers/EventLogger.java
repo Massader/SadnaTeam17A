@@ -46,6 +46,7 @@ public class EventLogger {
     }
 
     public void log(Level level, String msg){
-        LOG.log(level, msg);
+        String greenMsg = "\u001B[32m" + msg + "\u001B[0m";
+        LOG.log(level, greenMsg);
     }
 }
