@@ -51,4 +51,16 @@ public class Login extends ProjectTest {
         UUID userId = bridge.login(clientCredentials, "test", "nottest");
         Assert.assertNull(userId);
     }
+
+    @Test
+// tests if the login function handles the scenario where the user is already logged in by asserting that the returned UUID is null.
+    public void loginFailLoginTwice() {
+        // register and log in user
+        bridge.register("test1", "Test1");
+        UUID userId = bridge.login(clientCredentials, "test1", "Test1");
+        Assert.assertNotNull(userId);
+        // try to log in again
+        UUID secondUserId = bridge.login(clientCredentials, "test1", "Test1");
+        Assert.assertNull(secondUserId);
+    }
 }
