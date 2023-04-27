@@ -57,6 +57,7 @@ public class SaveItem extends ProjectTest {
     }
 
     @Test
+    //Tests that a client can successfully add an item to their cart.
     public void SaveItemrSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
@@ -72,6 +73,7 @@ public class SaveItem extends ProjectTest {
     }
 
     @Test
+    // Tests that a client cannot add a non-existing item to their cart.
     public void SaveItemrFail() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
@@ -88,6 +90,7 @@ public class SaveItem extends ProjectTest {
     }
 
     @Test
+    //Tests that two clients can simultaneously add an item to their cart without any synchronization issues.
     public void addToCartSync(){
         bridge.register("founder", "Pass1");
         client = bridge.createClient();

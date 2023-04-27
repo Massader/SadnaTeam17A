@@ -28,6 +28,7 @@ public class Register extends ProjectTest {
     }
 
     @Test
+    //Tests whether the registration of a new user with valid credentials is successful.
     public void registerSuccess() {
         Boolean success = bridge.register("test2", "test");
         Assert.assertNotNull(success);
@@ -35,6 +36,7 @@ public class Register extends ProjectTest {
     }
 
     @Test
+    //Tests whether the registration of a user with already existing username fails.
     public void registerExistingUserFail() {
         bridge.register("test", "test");
         Boolean success = bridge.register("test", "test");
@@ -43,6 +45,7 @@ public class Register extends ProjectTest {
     }
 
     @Test
+    //Tests whether the registration of a user with a null username fails.
     public void registerNullUsernameFail() {
         Boolean success = bridge.register(null, "test");
         Assert.assertNotNull(success);
@@ -50,6 +53,7 @@ public class Register extends ProjectTest {
     }
 
     @Test
+    //Tests whether the registration of a user with a null password fails.
     public void registerNullPasswordFail() {
         Boolean success = bridge.register("test2", null);
         Assert.assertNotNull(success);

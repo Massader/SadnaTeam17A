@@ -26,6 +26,7 @@ public class ExitSystem extends ProjectTest {
     }
 
     @Test
+    //Tests that a client can successfully exit the system. It creates a client and then attempts to close it, asserting that the operation is successful.
     public void exitSystemSuccess() {
         Boolean success = bridge.closeClient(clientCredentials);
         Assert.assertNotNull(success);

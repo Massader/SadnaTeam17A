@@ -46,6 +46,7 @@ public class ReceiveStoreInfo extends ProjectTest {
     }
 
     @Test
+    // retrieves the information of a store and verifies that it is equal to the information of the store created
     public void receiveStoreInfoSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
@@ -61,6 +62,7 @@ public class ReceiveStoreInfo extends ProjectTest {
 
     @Test
     public void receiveStoreInfoNotExistingStoreFail() {
+        //tries to retrieve the information of a non-existing store and verifies that the result is null
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");

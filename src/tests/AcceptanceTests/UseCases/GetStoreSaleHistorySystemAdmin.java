@@ -59,6 +59,7 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
     }
     @Test
     public void GetStoreSaleHistorySuccess() {
+        //Tests whether the system admin can successfully retrieve the sale history of a store.
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");
@@ -70,6 +71,7 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
         Assert.assertTrue(saleHistory.isEmpty());}
     @Test
     public void GetStoreSaleHistoryNotExistingStoreFail() {
+        // Tests whether the system admin fails to retrieve the sale history of a store that does not exist
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");

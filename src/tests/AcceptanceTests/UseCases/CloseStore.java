@@ -49,6 +49,7 @@ public class CloseStore extends ProjectTest {
     }
 
     @Test
+    //tests whether a store can be closed successfully by its founder.
     public void CloseStoreSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
@@ -63,6 +64,7 @@ public class CloseStore extends ProjectTest {
 
     @Test
     public void CloseStoreFail() {
+        //Tests whether a store can be closed unsuccessfully by a client who is not the founder of the store.
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
         founder = bridge.login(client, "founder", "Pass1");

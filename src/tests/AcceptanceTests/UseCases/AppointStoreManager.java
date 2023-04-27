@@ -53,6 +53,7 @@ public class AppointStoreManager extends ProjectTest {
     }
 
     @Test
+    //  Tests that a store manager can be successfully appointed to a store by a store founder.
     public void AppointStoreManagerSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
@@ -66,6 +67,7 @@ public class AppointStoreManager extends ProjectTest {
     Assert.assertTrue(AppointStoreManager);
     }
     @Test
+    //Tests that a store manager cannot be appointed to a store by someone other than the store founder.
     public void AppointStoreManagerFail() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
@@ -81,6 +83,7 @@ public class AppointStoreManager extends ProjectTest {
 
 
     @Test
+    //Tests that two store managers cannot simultaneously appoint a third store manager to a store, and that only one appointment is successful.
     public void AppointStoreManagerBy2ManagerParallel(){
         bridge.register("founder", "Pass1");
         client = bridge.createClient();

@@ -46,6 +46,7 @@ public class OpenStore extends ProjectTest {
     }
 
     @Test
+    //tests if the createStore function works correctly by registering a founder, logging in, creating a store with valid credentials, and asserting that the returned store object is not null
     public void openStoreSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
@@ -56,6 +57,7 @@ public class OpenStore extends ProjectTest {
     }
 
     @Test
+    //tests if the createStore function handles the scenario where the founder is not logged in by attempting to create a store with invalid credentials and asserting that the returned store object is null.
     public void openStoreNotLoggedInFail() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();

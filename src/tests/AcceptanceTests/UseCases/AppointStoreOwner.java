@@ -52,6 +52,7 @@ public class AppointStoreOwner extends ProjectTest {
     }
 
     @Test
+    //Tests if a store owner can be successfully appointed by the store's founder.
     public void AppointStoreManagerSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
@@ -65,6 +66,7 @@ public class AppointStoreOwner extends ProjectTest {
         Assert.assertTrue(AppointStoreOwner);
     }
     @Test
+    //Tests if a store owner cannot be appointed by a user who is not at list store's manager.
     public void AppointStoreManagerFail() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();

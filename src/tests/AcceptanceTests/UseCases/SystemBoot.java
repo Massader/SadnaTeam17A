@@ -29,6 +29,7 @@ public class SystemBoot extends ProjectTest {
     }
 
     @Test
+    // test verifies that the system can successfully log in an admin user with valid credentials and checks for valid connections with external systems once they are implemented.
     public void systemBootSuccess() {
         UUID adminCredentials = bridge.login(clientCredentials, "admin", "Admin1");
         Assert.assertNotNull(adminCredentials);
