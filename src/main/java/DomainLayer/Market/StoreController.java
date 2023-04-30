@@ -10,11 +10,9 @@ import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 public class StoreController {
@@ -410,6 +408,14 @@ public class StoreController {
             return Response.getFailResponse(exception.getMessage());
         }
     }
+    public double VerificationCartPrice(ShoppingCart shoppingCart){
+        double price =0;
+        for (UUID storeId : shoppingCart.getShoppingBaskets().keySet()) {// iterator on the storeId
+            price += storeMap.get(storeId).calculatePriceOfBasket(shoppingCart.getShoppingBaskets().get(storeId).getItems());
+        }
+        return  price;
+
+    }
 
     //add a new store
     // for unit tests
@@ -452,4 +458,5 @@ public class StoreController {
             return Response.getSuccessResponse(true);
         }
     }
+
 }

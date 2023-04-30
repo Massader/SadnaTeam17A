@@ -4,6 +4,7 @@ import DomainLayer.Market.Stores.Discounts.Discount;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
+import DomainLayer.Market.Users.ShoppingBasket;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,13 +19,13 @@ public class Store {
     private boolean shutdown;
     private int ratingCounter;
     private ConcurrentHashMap<UUID, Item> items;
-    private ConcurrentHashMap<UUID,Discount> discounts; // Map of Item ID -> Discount
+    private ConcurrentHashMap<UUID, Discount> discounts; // Map of Item ID -> Discount
     private Policy policy;
     private ConcurrentLinkedQueue<Sale> sales;
     private ConcurrentHashMap<UUID, Role> rolesMap;
 
 
-    public ConcurrentHashMap<UUID,Discount> getDiscounts() {
+    public ConcurrentHashMap<UUID, Discount> getDiscounts() {
         return discounts;
     }
 
@@ -47,20 +48,20 @@ public class Store {
         return rolesMap;
     }
 
-    public StoreOwner getOwner(UUID owner){
-        if(rolesMap.containsKey(owner))
-            if(rolesMap.get(owner).getPermissions().contains(StorePermissions.STORE_OWNER))
+    public StoreOwner getOwner(UUID owner) {
+        if (rolesMap.containsKey(owner))
+            if (rolesMap.get(owner).getPermissions().contains(StorePermissions.STORE_OWNER))
                 return (StoreOwner) rolesMap.get(owner);
         return null;
     }
 
-    public boolean checkPermission(UUID clientCredentials, StorePermissions permission){
-        if(!rolesMap.containsKey(clientCredentials))
+    public boolean checkPermission(UUID clientCredentials, StorePermissions permission) {
+        if (!rolesMap.containsKey(clientCredentials))
             return false;
         return (rolesMap.get(clientCredentials).getPermissions().contains(permission));
     }
 
-    public Map<UUID, Item> getItems(){
+    public Map<UUID, Item> getItems() {
         return items;
     }
 
@@ -72,7 +73,7 @@ public class Store {
     }
 
     public boolean closeStore() {
-        if(!shutdown && !closed){
+        if (!shutdown && !closed) {
             this.closed = true;
             return true;
         }
@@ -97,11 +98,11 @@ public class Store {
         return description;
     }
 
-    public void addRole(UUID clientCredentials, Role role){
+    public void addRole(UUID clientCredentials, Role role) {
         rolesMap.put(clientCredentials, role);
     }
 
-    public void removeRole(UUID idToRemove){
+    public void removeRole(UUID idToRemove) {
         rolesMap.remove(idToRemove);
     }
 
@@ -141,29 +142,30 @@ public class Store {
     }
 
     public ConcurrentLinkedQueue<Sale> getSales(UUID clientCredentials) throws Exception {
-        if (rolesMap.containsKey(clientCredentials))
-        {
-            return sales;}
-        throw new Exception("the user is not have permissions to get sale history of store "+this.name);
+        if (rolesMap.containsKey(clientCredentials)) {
+            return sales;
+        }
+        throw new Exception("the user is not have permissions to get sale history of store " + this.name);
     }
 
     public ConcurrentLinkedQueue<Sale> getSales() {
         return sales;
     }
 
-    public double calculatePriceOfBasket(ConcurrentHashMap<UUID,Integer> items) { // Map of Item ID -> Quantity
+    public double calculatePriceOfBasket(ConcurrentHashMap<UUID, Integer> items) { // Map of Item ID -> Quantity
         double price = 0;
-        for(UUID key : items.keySet()){
+        for (UUID key : items.keySet()) {
             int quantity = items.get(key);
-            double basePrice = getItem(key).getPrice()*quantity;
+            double basePrice = getItem(key).getPrice() * quantity;
             if (discounts.containsKey(key)) {
                 price += discounts.get(key).calculatePrice(basePrice);
-            }
-            else price += basePrice;
+            } else price += basePrice;
         }
         return price;
 
-    };
+    }
+
+    ;
 
     public int getRatingCounter() {
         return ratingCounter;
@@ -175,5 +177,35 @@ public class Store {
         items.remove(itemId);
         return true;
     }
+
+    public ConcurrentLinkedQueue<Item> itemsAvailable(ShoppingBasket shoppingBasket){
+        ConcurrentHashMap<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
+        ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
+        synchronized (items) {
+            for (UUID itemId : shoppingBasketItems.keySet()) {
+                int quantityToRemove = shoppingBasketItems.get(itemId);
+                int oldQuantity = items.get(itemId).getQuantity();
+                if (oldQuantity < quantityToRemove)
+                    missingItems.add(items.get(itemId));
+            }
+            return missingItems;
+    }}
+
+    public ConcurrentLinkedQueue<Item> purchaseBasket(ShoppingBasket shoppingBasket) {
+        ConcurrentHashMap<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
+        ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
+        synchronized (items) {
+            for (UUID itemId : shoppingBasketItems.keySet()) {
+                int quantityToRemove = shoppingBasketItems.get(itemId);
+                int oldQuantity = items.get(itemId).getQuantity();
+                if (oldQuantity < quantityToRemove)
+                    missingItems.add(items.get(itemId));
+                items.get(itemId).setQuantity(oldQuantity - quantityToRemove);
+            }
+        }
+        return missingItems;
+    }
 }
+
+
 

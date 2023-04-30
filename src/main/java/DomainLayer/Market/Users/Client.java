@@ -29,6 +29,11 @@ public class Client {
         return cart;
     }
 
+    public void RemovingPurchases(){
+        getCart().RemovingPurchases();
+    }
+
+
 
 
 

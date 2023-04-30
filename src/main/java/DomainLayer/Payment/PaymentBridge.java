@@ -2,7 +2,9 @@ package DomainLayer.Payment;
 
 public interface PaymentBridge {
     public void setReal();
-    int pay();
+    Boolean pay(double price,int credit);
     Boolean validatePaymentDetails();
-    int requestPayment();
+
+
+    Boolean cancelPay(double nowPrice,int credit);
 }

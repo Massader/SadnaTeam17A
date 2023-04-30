@@ -6,8 +6,10 @@ import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
 import DomainLayer.Payment.PaymentController;
+import DomainLayer.Payment.PaymentProxy;
 import DomainLayer.Security.SecurityController;
 import DomainLayer.Supply.SupplyController;
+import DomainLayer.Supply.SupplyProxy;
 import ServiceLayer.Loggers.ErrorLogger;
 import ServiceLayer.Loggers.EventLogger;
 import ServiceLayer.ServiceObjects.*;
@@ -24,10 +26,13 @@ public class Service {
     private final ErrorLogger errorLogger = ErrorLogger.getInstance();
     private StoreController storeController;
     private UserController userController;
+    private PurchaseController purchaseController;
     private SecurityController securityController;
     private MessageController messageController;
     private SupplyController supplyController;
     private PaymentController paymentController;
+    private SupplyProxy supplyProxy;
+    private PaymentProxy paymentProxy;
     private NotificationController notificationController;
     private SearchController searchController;
 
@@ -49,6 +54,8 @@ public class Service {
         storeController.init();
         userController = UserController.getInstance();
         userController.init();  // Creates default admin
+        purchaseController = PurchaseController.getInstance();
+        purchaseController.init();
         securityController = SecurityController.getInstance();
         //securityController.init();
         messageController = MessageController.getInstance();
@@ -56,6 +63,9 @@ public class Service {
         supplyController = SupplyController.getInstance();
         //supplyController.init();
         paymentController = PaymentController.getInstance();
+        supplyProxy.setReal();;
+        paymentProxy.setReal();
+
         //paymentController.init();
         notificationController = NotificationController.getInstance();
         notificationController.init();
@@ -594,6 +604,20 @@ public class Service {
         }
         eventLogger.log(Level.INFO, "Successfully removed item " + itemId + " from store " + storeId);
         return response.getValue();
+    }
+
+    public Boolean purchaseCart(UUID clientCredentials,  double expectedPrice, String address, int credit){
+        Response<ShoppingCart> response1 = userController.viewCart(clientCredentials);
+        if(response1.isError()){
+            errorLogger.log(Level.WARNING, response1.getMessage());
+            return  null;
+        }
+        Response<Boolean>  response2 = purchaseController.purchaseCart(userController.getClientOrUser(clientCredentials),response1.getValue(),expectedPrice,address,credit);
+        if(response1.isError()){
+            errorLogger.log(Level.WARNING, response2.getMessage());
+            return  null;
+        }
+        return response2.getValue();
     }
 }
 

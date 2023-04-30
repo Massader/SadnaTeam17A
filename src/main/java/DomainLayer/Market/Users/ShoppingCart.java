@@ -47,6 +47,11 @@ public class ShoppingCart {
     public int quantityOf(UUID stroeId, UUID itemId){
         return shoppingBaskets.get(stroeId).quantityOf(itemId);
     }
+    public void RemovingPurchases(){
+        shoppingBaskets.clear();
+
+    }
 }
+
 
 
