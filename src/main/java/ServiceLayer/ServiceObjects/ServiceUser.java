@@ -1,25 +1,35 @@
 package ServiceLayer.ServiceObjects;
 
-import DomainLayer.Market.Users.Purchase;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Component
 public class ServiceUser {
     private UUID id;
     private String username;
     private Map<UUID,List<StorePermissions>> roles;
 
+    public ServiceUser() {}
+
     public ServiceUser(User user){
         this.username = user.getUsername();
-        this.roles = new HashMap<UUID,List<StorePermissions>>();
+        this.roles = new HashMap<>();
         for(Role role : user.getRoles())
             roles.put(role.getStoreId(), role.getPermissions());
+    }
+    @Autowired
+    public ServiceUser(UUID id, String username) {
+        this.id = id;
+        this.username = username;
     }
 
     public UUID getId() {
@@ -32,5 +42,17 @@ public class ServiceUser {
 
     public Map<UUID, List<StorePermissions>> getRoles() {
         return roles;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setRoles(Map<UUID, List<StorePermissions>> roles) {
+        this.roles = roles;
     }
 }

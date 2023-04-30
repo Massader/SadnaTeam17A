@@ -11,12 +11,12 @@ import DomainLayer.Supply.SupplyController;
 import ServiceLayer.Loggers.ErrorLogger;
 import ServiceLayer.Loggers.EventLogger;
 import ServiceLayer.ServiceObjects.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
+@org.springframework.stereotype.Service
 public class Service {
     private static Service instance = null;
     private static final Object instanceLock = new Object();
