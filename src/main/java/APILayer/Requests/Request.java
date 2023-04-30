@@ -2,7 +2,7 @@ package APILayer.Requests;
 
 import java.util.UUID;
 
-public abstract class Request {
+public class Request {
     private UUID clientCredentials;
 
     public Request(UUID clientCredentials) {
