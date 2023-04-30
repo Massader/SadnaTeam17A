@@ -1,5 +1,7 @@
 package DomainLayer.Supply;
 
+import DomainLayer.Market.Users.ShoppingCart;
+
 public class SupplyReal implements SupplyBridge {
 
     @Override
@@ -7,12 +9,12 @@ public class SupplyReal implements SupplyBridge {
     
 
     @Override
-    public Boolean validateOrder() {
+    public Boolean validateOrder(String address) {
         return null;
     }
 
     @Override
-    public int sendOrder() {
-        return 0;
+    public Boolean sendOrder(ShoppingCart shoppingCart) {
+        return true;
     }
 }

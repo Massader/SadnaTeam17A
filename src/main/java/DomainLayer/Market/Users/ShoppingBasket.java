@@ -44,7 +44,7 @@ public class ShoppingBasket {
             items.put(item.getId(), 0);
         int oldQuantity = this.items.get(item.getId());
         items.put(item.getId(), oldQuantity + quantity);
-        item.setQuantity(item.getQuantity() - quantity);
+        //item.setQuantity(item.getQuantity() - quantity);
         return true;
     }
 
@@ -54,7 +54,7 @@ public class ShoppingBasket {
             if (oldQuantity < quantity)
                 return false;
             items.put(item.getId(), oldQuantity - quantity);
-            item.setQuantity(item.getQuantity() + quantity);
+           // item.setQuantity(item.getQuantity() + quantity);
             return true;
         }
     }

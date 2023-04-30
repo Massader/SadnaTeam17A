@@ -1,21 +1,20 @@
 package DomainLayer.Supply;
 
+import DomainLayer.Market.Users.ShoppingCart;
 import DomainLayer.Payment.PaymentReal;
 
 public class SupplyProxy implements SupplyBridge{
     SupplyBridge real = null;
     public void setReal() {
-        real = new SupplyReal();
+        if(real ==null){real = new SupplyReal();}
     }
-
-
     @Override
-    public Boolean validateOrder() {
-        return real == null ? null : real.validateOrder();
+    public Boolean validateOrder(String address) {
+        return real == null ? null : real.validateOrder(address);
     }
 
     @Override
-    public int sendOrder() {
-        return real == null ? null : real.sendOrder();
+    public Boolean sendOrder(ShoppingCart shoppingCart) {
+        return real == null ? null : real.sendOrder(shoppingCart);
     }
 }

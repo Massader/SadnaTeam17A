@@ -152,6 +152,7 @@ public class UserController {
             deleteShoppingBasket(shoppingBasket);
     }
 
+
     private void deleteShoppingBasket(ShoppingBasket shoppingBasket){
         UUID storeId = shoppingBasket.getStoreId();
         Store store = storeController.getStore(storeId);
