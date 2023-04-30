@@ -36,7 +36,10 @@ public class Service {
     private NotificationController notificationController;
     private SearchController searchController;
 
+    private boolean initialized;
+
     private Service() {
+        initialized = false;
     }
 
     public static Service getInstance() {
@@ -49,6 +52,10 @@ public class Service {
     }
 
     public boolean init() {
+        synchronized (this) {
+            if (initialized) return true;
+            initialized = true;
+        }
         eventLogger.log(Level.INFO, "Booting system");
         storeController = StoreController.getInstance();
         storeController.init();

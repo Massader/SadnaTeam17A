@@ -21,7 +21,7 @@ public class StoreController {
         service.init();
     }
 
-    @PostMapping(path = "/createStore")
+    @PostMapping(path = "/create-store")
     public ServiceStore createStore(@RequestBody CreateStoreRequest req) {
         ServiceStore store = service.createStore(req.getClientCredentials(), req.getName(), req.getDescription());
         return store;
