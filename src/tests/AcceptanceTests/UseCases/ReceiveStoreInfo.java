@@ -24,7 +24,7 @@ public class ReceiveStoreInfo extends ProjectTest {
         bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
     }
@@ -50,7 +50,7 @@ public class ReceiveStoreInfo extends ProjectTest {
     public void receiveStoreInfoSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         ServiceStore store2 = bridge.getStoreInformation(storeId);
@@ -65,7 +65,7 @@ public class ReceiveStoreInfo extends ProjectTest {
         //tries to retrieve the information of a non-existing store and verifies that the result is null
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         ServiceStore store2 = bridge.getStoreInformation(UUID.randomUUID());

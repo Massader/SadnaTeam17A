@@ -6,6 +6,7 @@ import DomainLayer.Market.Users.Client;
 import DomainLayer.Market.Users.ShoppingCart;
 import DomainLayer.Market.Users.User;
 import ServiceLayer.Response;
+import ServiceLayer.ServiceObjects.ServiceUser;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -97,7 +98,7 @@ public class UserControllerTest {
         userController.register("logintest", "Password5");
 
         // call the login function
-        Response<UUID> response = userController.login(clientResponse.getValue(), "logintest", "Password5");
+        Response<User> response = userController.login(clientResponse.getValue(), "logintest", "Password5");
 
         // assert that the response is successful and the returned UUID matches the UUID of the logged in user
         assertTrue(response.isSuccessful());
@@ -208,7 +209,7 @@ public class UserControllerTest {
         @Test
     public void testLoginFailure() {
         // call the login function with a non-existing username
-        Response<UUID> response = userController.login(UUID.randomUUID(), "fakeuser", "Password123");
+        Response<User> response = userController.login(UUID.randomUUID(), "fakeuser", "Password123");
 
         // assert that the response is not successful and the error message is as expected
         assertFalse(response.isSuccessful());

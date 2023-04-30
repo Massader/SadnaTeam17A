@@ -25,7 +25,7 @@ public class CloseStore extends ProjectTest {
         bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = null;
         storeId = null;
         store = bridge.createStore(founder, "test", "test");
@@ -53,7 +53,7 @@ public class CloseStore extends ProjectTest {
     public void CloseStoreSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = null;
         storeId = null;
         store = bridge.createStore(founder, "test", "test");
@@ -67,7 +67,7 @@ public class CloseStore extends ProjectTest {
         //Tests whether a store can be closed unsuccessfully by a client who is not the founder of the store.
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = null;
         storeId = null;
         store = bridge.createStore(founder, "test", "test");

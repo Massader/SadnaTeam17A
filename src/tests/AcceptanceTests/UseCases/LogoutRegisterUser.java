@@ -20,7 +20,7 @@ public class LogoutRegisterUser extends ProjectTest {
         bridge.setReal();
         bridge.register("test", "TestPass1");
         client1 = bridge.createClient();
-        client2 = bridge.login(client1, "test","TestPass1");
+        client2 = bridge.login(client1, "test","TestPass1").getId();
     }
 
     @After

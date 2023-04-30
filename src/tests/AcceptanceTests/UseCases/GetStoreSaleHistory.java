@@ -27,14 +27,14 @@ public class GetStoreSaleHistory extends ProjectTest {
         bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         String userName= "user1";
         String password = "Pass2";
         bridge.register(userName,password);
         client2 = bridge.createClient();
-        userId= bridge.login(client2, userName, password);
+        userId= bridge.login(client2, userName, password).getId();
     }
 
     @BeforeEach
@@ -61,14 +61,14 @@ public class GetStoreSaleHistory extends ProjectTest {
         bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         String userName= "user1";
         String password = "Pass2";
         bridge.register(userName,password);
         client2 = bridge.createClient();
-        userId= bridge.login(client2, userName, password);
+        userId= bridge.login(client2, userName, password).getId();
         List<ServiceSale> saleHistory = bridge.getStoreSaleHistory(founder,storeId);
         Assert.assertTrue(saleHistory.isEmpty());}
     @Test
@@ -77,14 +77,14 @@ public class GetStoreSaleHistory extends ProjectTest {
         bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         String userName= "user1";
         String password = "Pass2";
         bridge.register(userName,password);
         client2 = bridge.createClient();
-        userId= bridge.login(client2, userName, password);
+        userId= bridge.login(client2, userName, password).getId();
         List<ServiceSale> saleHistory = bridge.getStoreSaleHistory(client2,storeId);
         Assert.assertNull(saleHistory);
     }

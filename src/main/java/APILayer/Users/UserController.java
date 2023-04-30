@@ -1,5 +1,6 @@
 package APILayer.Users;
 
+import APILayer.Requests.LoginRegisterRequest;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.ServiceUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "api/v1/hello")
+@RequestMapping(path = "api/v1/users")
 public class UserController {
 
     private final Service service;
@@ -19,21 +20,23 @@ public class UserController {
         service.init();
     }
 
-    @GetMapping(path = "/getUser/id={id}")
-    public ServiceUser getUser(@PathVariable(name = "id") UUID id) {
-        //UUID uuid = UUID.fromString(id);
-        ServiceUser user = service.getUserInfo(id);
-        if (user == null) return new ServiceUser(UUID.fromString("3c4cefa-bde3-40c8-9254-29e0df6c387f"), "person");
-        return user;
+    @PostMapping(path = "/register")
+    public boolean register(@RequestBody LoginRegisterRequest request) {
+        return service.register(request.getUsername(), request.getPassword());
     }
 
-    @PostMapping(path = "/addUser")
-    public ServiceUser register(@RequestBody ServiceUser user) {
-        return user;
+    @PostMapping(path = "/login")
+    public ServiceUser login(@RequestBody LoginRegisterRequest request) {
+        return service.login(request.getClientCredentials(), request.getUsername(), request.getPassword());
     }
 
-    @GetMapping(path = "/hello")
-    public String hello() {
-        return "Hello world";
+    @PostMapping(path = "/createClient")
+    public UUID createClient() {
+        return service.createClient();
+    }
+
+    @PostMapping(path = "/logout")
+    public UUID logout() {
+        return service.logout();
     }
 }

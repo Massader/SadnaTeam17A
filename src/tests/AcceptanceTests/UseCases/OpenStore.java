@@ -24,7 +24,7 @@ public class OpenStore extends ProjectTest {
         bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = null;
         storeId = null;
     }
@@ -50,7 +50,7 @@ public class OpenStore extends ProjectTest {
     public void openStoreSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         Assert.assertNotNull(store);
