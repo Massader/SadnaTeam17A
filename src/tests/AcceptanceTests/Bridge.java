@@ -21,7 +21,7 @@ public interface Bridge {
     UUID createClient();
     Boolean closeClient(UUID clientCredentials);
     Boolean register(String username, String password);
-    UUID login(UUID clientCredentials, String username, String password);
+    ServiceUser login(UUID clientCredentials, String username, String password);
     ServiceStore getStoreInformation(UUID storeId);
     Boolean searchStore();
     List<ServiceItem> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating);

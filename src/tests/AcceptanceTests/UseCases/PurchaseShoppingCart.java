@@ -25,7 +25,7 @@ public class PurchaseShoppingCart extends ProjectTest {
     public void setUp() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         client = bridge.createClient();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();

@@ -31,18 +31,18 @@ public class GetStoreStaffList extends ProjectTest {
         bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
 
         bridge.register("storeOwner Lior", "Pass1");
         client2 = bridge.createClient();
-        storeOwner2 = bridge.login(client2, "storeOwner Lior", "Pass1");
+        storeOwner2 = bridge.login(client2, "storeOwner Lior", "Pass1").getId();
 
 
         bridge.register("storeOwner Ido ", "Pass1");
         client3 = bridge.createClient();
-        storeOwner3 = bridge.login(client3, "storeOwner Ido ", "Pass1");
+        storeOwner3 = bridge.login(client3, "storeOwner Ido ", "Pass1").getId();
 
         check = bridge.appointStoreOwner(founder,storeOwner2,storeId);
         check = check&&  bridge.appointStoreOwner(founder,storeOwner3,storeId);
@@ -74,18 +74,18 @@ public class GetStoreStaffList extends ProjectTest {
     public void GetStoreStaffListSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
 
         bridge.register("storeOwner Lior", "Pass1");
         client2 = bridge.createClient();
-        storeOwner2 = bridge.login(client2, "storeOwner Lior", "Pass1");
+        storeOwner2 = bridge.login(client2, "storeOwner Lior", "Pass1").getId();
 
 
         bridge.register("storeOwner Ido ", "Pass1");
         client3 = bridge.createClient();
-        storeOwner3 = bridge.login(client3, "storeOwner Ido ", "Pass1");
+        storeOwner3 = bridge.login(client3, "storeOwner Ido ", "Pass1").getId();
 
         check = bridge.appointStoreOwner(founder,storeOwner2,storeId);
         check = check&&  bridge.appointStoreOwner(founder,storeOwner3,storeId);
@@ -99,18 +99,18 @@ public class GetStoreStaffList extends ProjectTest {
         //Tests that attempting to get a list of staff members for a store with an invalid store owner ID fails.
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
 
         bridge.register("storeOwner Lior", "Pass1");
         client2 = bridge.createClient();
-        storeOwner2 = bridge.login(client2, "storeOwner Lior", "Pass1");
+        storeOwner2 = bridge.login(client2, "storeOwner Lior", "Pass1").getId();
 
 
         bridge.register("storeOwner Ido ", "Pass1");
         client3 = bridge.createClient();
-        storeOwner3 = bridge.login(client3, "storeOwner Ido ", "Pass1");
+        storeOwner3 = bridge.login(client3, "storeOwner Ido ", "Pass1").getId();
 
         check = bridge.appointStoreOwner(founder,storeOwner2,storeId);
         check = check&&  bridge.appointStoreOwner(founder,storeOwner3,storeId);

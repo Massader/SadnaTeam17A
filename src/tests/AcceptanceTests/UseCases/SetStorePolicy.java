@@ -24,7 +24,7 @@ public class SetStorePolicy extends ProjectTest {
         bridge.setReal();
         bridge.register("founder", "pass");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "pass");
+        founder = bridge.login(client, "founder", "pass").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
     }

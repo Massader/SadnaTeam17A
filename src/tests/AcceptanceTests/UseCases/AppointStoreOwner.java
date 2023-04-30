@@ -26,12 +26,12 @@ public class AppointStoreOwner extends ProjectTest {
         bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         bridge.register("toOwner", "Pass2");
         client2 = bridge.createClient();
-        storeOwner = bridge.login(client2, "toOwner", "Pass2");
+        storeOwner = bridge.login(client2, "toOwner", "Pass2").getId();
     }
 
     @BeforeEach
@@ -56,12 +56,12 @@ public class AppointStoreOwner extends ProjectTest {
     public void AppointStoreManagerSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         bridge.register("toOwner", "Pass2");
         client2 = bridge.createClient();
-        storeOwner = bridge.login(client2, "toOwner", "Pass2");
+        storeOwner = bridge.login(client2, "toOwner", "Pass2").getId();
         Boolean AppointStoreOwner = bridge.appointStoreOwner(founder,storeOwner,storeId);
         Assert.assertTrue(AppointStoreOwner);
     }
@@ -70,12 +70,12 @@ public class AppointStoreOwner extends ProjectTest {
     public void AppointStoreManagerFail() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         bridge.register("toOwner", "Pass2");
         client2 = bridge.createClient();
-        storeOwner = bridge.login(client2, "toOwner", "Pass2");
+        storeOwner = bridge.login(client2, "toOwner", "Pass2").getId();
         Boolean AppointStoreOwner = bridge.appointStoreOwner(storeOwner,founder,storeId);
         Assert.assertFalse(AppointStoreOwner);
     }

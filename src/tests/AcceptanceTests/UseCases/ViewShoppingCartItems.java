@@ -48,7 +48,7 @@ public class ViewShoppingCartItems extends ProjectTest {
     public void ViewShoppingCartItemsSuccessUser() {
         bridge.register("newUser", "Pass1");
         UUID newClient = bridge.createClient();
-        UUID user = bridge.login(newClient, "newUser", "Pass1");
+        UUID user = bridge.login(newClient, "newUser", "Pass1").getId();
         List<ServiceShoppingBasket> shoppingCartView=  bridge.getCart(user);
         Assert.assertNotNull(shoppingCartView);
         Assert.assertTrue(shoppingCartView.isEmpty());

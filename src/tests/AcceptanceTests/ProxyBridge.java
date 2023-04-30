@@ -65,7 +65,7 @@ public class ProxyBridge implements Bridge {
         return real == null ? null : real.register(username, password);
     }
 
-    public UUID login(UUID clientCredentials, String username, String password) {
+    public ServiceUser login(UUID clientCredentials, String username, String password) {
         return real == null ? null : real.login(clientCredentials, username, password);
     }
 
