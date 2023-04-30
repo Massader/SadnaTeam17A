@@ -21,14 +21,14 @@ public class ServiceUser {
     public ServiceUser() {}
 
     public ServiceUser(User user){
+        this.id = user.getId();
         this.username = user.getUsername();
         this.roles = new HashMap<>();
         for(Role role : user.getRoles())
             roles.put(role.getStoreId(), role.getPermissions());
     }
     @Autowired
-    public ServiceUser(UUID id, String username) {
-        this.id = id;
+    public ServiceUser(String username) {
         this.username = username;
     }
 

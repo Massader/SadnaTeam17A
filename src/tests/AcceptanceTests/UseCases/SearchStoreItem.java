@@ -20,7 +20,7 @@ public class SearchStoreItem extends ProjectTest {
         bridge.setReal();
         bridge.register("founder", "Password1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Password1");
+        founder = bridge.login(client, "founder", "Password1").getId();
         store = bridge.createStore(founder, "test", "test");
         if (item == null) {
             item = bridge.addItemToStore(founder, "exampleItem", 10, store.getStoreId(), 10, "test");

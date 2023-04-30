@@ -27,12 +27,12 @@ public class AppointStoreManager extends ProjectTest {
         bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         bridge.register("toManager", "Pass2");
         client2 = bridge.createClient();
-        storeManager = bridge.login(client2, "toManager", "Pass2");
+        storeManager = bridge.login(client2, "toManager", "Pass2").getId();
     }
 
     @BeforeEach
@@ -57,12 +57,12 @@ public class AppointStoreManager extends ProjectTest {
     public void AppointStoreManagerSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         bridge.register("toManager", "Pass2");
         client2 = bridge.createClient();
-        storeManager = bridge.login(client2, "toManager", "Pass2");
+        storeManager = bridge.login(client2, "toManager", "Pass2").getId();
     Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
     Assert.assertTrue(AppointStoreManager);
     }
@@ -71,12 +71,12 @@ public class AppointStoreManager extends ProjectTest {
     public void AppointStoreManagerFail() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         bridge.register("toManager", "Pass2");
         client2 = bridge.createClient();
-        storeManager = bridge.login(client2, "toManager", "Pass2");
+        storeManager = bridge.login(client2, "toManager", "Pass2").getId();
         Boolean AppointStoreManager = bridge.appointStoreManager(storeManager,founder,storeId);
         Assert.assertFalse(AppointStoreManager);
     }
@@ -87,17 +87,17 @@ public class AppointStoreManager extends ProjectTest {
     public void AppointStoreManagerBy2ManagerParallel(){
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         bridge.register("toManager", "Pass2");
         client2 = bridge.createClient();
-        storeManager = bridge.login(client2, "toManager", "Pass2");
+        storeManager = bridge.login(client2, "toManager", "Pass2").getId();
         Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
         Assert.assertTrue(AppointStoreManager);
         UUID client3 = bridge.createClient();
         bridge.register("toBeManager", "Pass2");
-        UUID newStoreManager = bridge.login(client3, "toBeManager", "Pass2");
+        UUID newStoreManager = bridge.login(client3, "toBeManager", "Pass2").getId();
         List<ServiceUser> staffList = bridge.getStoreStaffList(founder, storeId);
         int stafSize= staffList.size();
 

@@ -29,7 +29,7 @@ public class SaveItem extends ProjectTest {
         bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         ServiceItem item = bridge.addItemToStore(founder, "bannana",5,storeId,100,"yellow fruit");
@@ -61,7 +61,7 @@ public class SaveItem extends ProjectTest {
     public void SaveItemrSuccess() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         ServiceItem item = bridge.addItemToStore(founder, "bannana",5,storeId,100,"yellow fruit");
@@ -77,7 +77,7 @@ public class SaveItem extends ProjectTest {
     public void SaveItemrFail() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         ServiceItem item = bridge.addItemToStore(founder, "bannana",5,storeId,100,"yellow fruit");
@@ -94,7 +94,7 @@ public class SaveItem extends ProjectTest {
     public void addToCartSync(){
         bridge.register("founder", "Pass1");
         client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1");
+        founder = bridge.login(client, "founder", "Pass1").getId();
         store = bridge.createStore(founder, "test", "test");
         storeId = store.getStoreId();
         ServiceItem item = bridge.addItemToStore(founder, "bannana",5,storeId,1,"yellow fruit");

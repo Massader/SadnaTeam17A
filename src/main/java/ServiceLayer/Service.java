@@ -78,14 +78,14 @@ public class Service {
         return response.getValue();
     }
 
-    public UUID login(UUID clientCredentials, String username, String password) {
-        Response<UUID> response = userController.login(clientCredentials, username, password);
+    public ServiceUser login(UUID clientCredentials, String username, String password) {
+        Response<User> response = userController.login(clientCredentials, username, password);
         if (response.isError()) {
             errorLogger.log(Level.SEVERE, response.getMessage());
             return null;
         }
         eventLogger.log(Level.INFO, "Successfully logged in user " + username);
-        return response.getValue();
+        return new ServiceUser(response.getValue());
     }
 
     public UUID logout(UUID clientCredentials){

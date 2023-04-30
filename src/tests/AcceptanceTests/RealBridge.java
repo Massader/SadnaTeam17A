@@ -71,7 +71,7 @@ public class RealBridge implements Bridge {
         return service.register(username, password);
     }
 
-    public UUID login(UUID clientCredentials, String username, String password) {
+    public ServiceUser login(UUID clientCredentials, String username, String password) {
         return service.login(clientCredentials, username, password);
     }
 
