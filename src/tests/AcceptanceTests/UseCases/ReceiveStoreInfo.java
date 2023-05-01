@@ -23,15 +23,15 @@ public class ReceiveStoreInfo extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
-        store = bridge.createStore(founder, "test", "test");
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.createClient();
+        client = bridge.createClient().getValue();
     }
 
     @AfterEach
@@ -49,11 +49,11 @@ public class ReceiveStoreInfo extends ProjectTest {
     // retrieves the information of a store and verifies that it is equal to the information of the store created
     public void receiveStoreInfoSuccess() {
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
-        store = bridge.createStore(founder, "test", "test");
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
-        ServiceStore store2 = bridge.getStoreInformation(storeId);
+        ServiceStore store2 = bridge.getStoreInformation(storeId).getValue();
         Assert.assertNotNull(store2);
         Assert.assertEquals(store.getStoreId(), store2.getStoreId());
         Assert.assertEquals(store.getName(), store2.getName());
@@ -64,11 +64,11 @@ public class ReceiveStoreInfo extends ProjectTest {
     public void receiveStoreInfoNotExistingStoreFail() {
         //tries to retrieve the information of a non-existing store and verifies that the result is null
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
-        store = bridge.createStore(founder, "test", "test");
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
-        ServiceStore store2 = bridge.getStoreInformation(UUID.randomUUID());
+        ServiceStore store2 = bridge.getStoreInformation(UUID.randomUUID()).getValue();
         Assert.assertNull(store2);
     }
 }

@@ -21,7 +21,7 @@ public class Payment extends ProjectTest {
 
     @BeforeEach
     public void beforeEach() {
-        clientCredentials = bridge.createClient();
+        clientCredentials = bridge.createClient().getValue();
     }
 
     @AfterEach

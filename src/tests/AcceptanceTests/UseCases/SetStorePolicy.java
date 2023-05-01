@@ -23,15 +23,15 @@ public class SetStorePolicy extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "pass");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "pass").getId();
-        store = bridge.createStore(founder, "test", "test");
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "pass").getValue().getId();
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.createClient();
+        client = bridge.createClient().getValue();
     }
 
     @AfterEach

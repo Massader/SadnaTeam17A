@@ -23,15 +23,15 @@ public class OpenStore extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
         store = null;
         storeId = null;
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.createClient();
+        client = bridge.createClient().getValue();
     }
 
     @AfterEach
@@ -49,9 +49,9 @@ public class OpenStore extends ProjectTest {
     //tests if the createStore function works correctly by registering a founder, logging in, creating a store with valid credentials, and asserting that the returned store object is not null
     public void openStoreSuccess() {
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
-        store = bridge.createStore(founder, "test", "test");
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
         Assert.assertNotNull(store);
     }
@@ -60,8 +60,8 @@ public class OpenStore extends ProjectTest {
     //tests if the createStore function handles the scenario where the founder is not logged in by attempting to create a store with invalid credentials and asserting that the returned store object is null.
     public void openStoreNotLoggedInFail() {
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        ServiceStore storeFail = bridge.createStore(client, "fail", "fail");
+        client = bridge.createClient().getValue();
+        ServiceStore storeFail = bridge.createStore(client, "fail", "fail").getValue();
         Assert.assertNull(storeFail);
     }
 }

@@ -19,8 +19,8 @@ public class LogoutRegisterUser extends ProjectTest {
     public void setUp()  {
         bridge.setReal();
         bridge.register("test", "TestPass1");
-        client1 = bridge.createClient();
-        client2 = bridge.login(client1, "test","TestPass1").getId();
+        client1 = bridge.createClient().getValue();
+        client2 = bridge.login(client1, "test","TestPass1").getValue().getId();
     }
 
     @After
@@ -32,15 +32,15 @@ public class LogoutRegisterUser extends ProjectTest {
     @Test
     //tests if the logout function works correctly by asserting that the client's UUID is not null after logging out.
     public void logoutSuccess() {
-        client2 = bridge.logout(client2);
+        client2 = bridge.logout(client2).getValue();
         Assert.assertNotNull(client2);
     }
 
     @Test
     //tests if the logout function handles the scenario where the client is not registered or already logged out by asserting that the returned UUID is null after attempting to logout twice.
     public void logoutNotRegisterFail() {
-        client2 = bridge.logout(client2);
-        UUID client3 = bridge.logout(client2);
+        client2 = bridge.logout(client2).getValue();
+        UUID client3 = bridge.logout(client2).getValue();
         Assert.assertNull(client3);
     }
 }
