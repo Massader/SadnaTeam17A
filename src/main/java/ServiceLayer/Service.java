@@ -100,10 +100,9 @@ public class Service {
         Response<User> response = userController.login(clientCredentials, username, password);
         if (response.isError()) {
             errorLogger.log(Level.SEVERE, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
         }
-        else{
-            eventLogger.log(Level.INFO, "Successfully logged in user " + username);
-        }
+        eventLogger.log(Level.INFO, "Successfully logged in user " + username);
         return Response.getSuccessResponse(new ServiceUser(response.getValue()));
     }
 
