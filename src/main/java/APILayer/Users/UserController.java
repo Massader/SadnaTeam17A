@@ -1,12 +1,10 @@
 package APILayer.Users;
 
-import APILayer.Requests.SecurityQuestionRequest;
-import APILayer.Requests.TargetUserRequest;
-import APILayer.Requests.LoginRegisterRequest;
-import APILayer.Requests.Request;
+import APILayer.Requests.*;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.ServicePurchase;
+import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
 import ServiceLayer.ServiceObjects.ServiceUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin
 @RequestMapping(path = "api/v1/users")
 public class UserController {
 
@@ -51,14 +50,14 @@ public class UserController {
         return service.closeClient(request.getClientCredentials());
     }
 
-    @PostMapping(path = "/admin/delete-user")
-    public Response<Boolean> deleteUser(@RequestBody TargetUserRequest request) {
-        return service.deleteUser(request.getClientCredentials(), request.getTargetUser());
+    @DeleteMapping(path = "/admin/delete-user")
+    public Response<Boolean> deleteUser(@RequestBody TargetRequest request) {
+        return service.deleteUser(request.getClientCredentials(), request.getTargetId());
     }
 
     @PostMapping(path = "/purchase-history")
-    public Response<List<ServicePurchase>> getPurchaseHistory(@RequestBody TargetUserRequest request) {
-        return service.getPurchaseHistory(request.getClientCredentials(), request.getTargetUser());
+    public Response<List<ServicePurchase>> getPurchaseHistory(@RequestBody TargetRequest request) {
+        return service.getPurchaseHistory(request.getClientCredentials(), request.getTargetId());
     }
 
     @GetMapping(path = "/info")
@@ -85,5 +84,28 @@ public class UserController {
     public Response<Boolean> registerAdmin(@RequestBody LoginRegisterRequest request) {
         return service.registerAdmin(request.getClientCredentials(), request.getUsername(), request.getPassword());
     }
+
+    @PutMapping(path = "/security/change-password")
+    public Response<Boolean> changePassword(@RequestBody ChangePasswordRequest request) {
+        return service.changePassword(request.getClientCredentials(), request.getOldPassword(), request.getNewPassword());
+    }
+
+    @GetMapping(path = "/get-cart")
+    public Response<List<ServiceShoppingBasket>> getCart(@RequestBody Request request) {
+        return service.getCart(request.getClientCredentials());
+    }
+
+    @PostMapping(path = "/add-to-cart")
+    public Response<Boolean> addItemToCart(@RequestBody CartItemRequest request) {
+        return service.addItemToCart(request.getClientCredentials(), request.getItemId(), request.getQuantity(),
+                request.getStoreId());
+    }
+
+    @DeleteMapping(path = "/remove-from-cart")
+    public Response<Boolean> removeItemFromCart(@RequestBody CartItemRequest request) {
+        return service.removeItemFromCart(request.getClientCredentials(), request.getItemId(), request.getQuantity(),
+                request.getStoreId());
+    }
+
 
 }

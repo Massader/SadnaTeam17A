@@ -142,7 +142,7 @@ public class RealBridge implements Bridge {
 
     public Boolean setStoreManagerPermissions(UUID clientCredentials, UUID manager,
                                               UUID storeId, List<Integer> permissions) {
-        return service.SetManagerPermissions(clientCredentials, manager, storeId, permissions);
+        return service.setManagerPermissions(clientCredentials, manager, storeId, permissions);
     }
 
     public Boolean closeStore(UUID clientCredentials, UUID storeId) {
