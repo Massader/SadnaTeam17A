@@ -95,9 +95,8 @@ public class UserController {
                 if (usernames.containsKey(username))
                     return Response.getFailResponse("This username is already in use.");
                 //add user
-                loadUser(username, password, UUID.randomUUID());
+                return loadUser(username, password, UUID.randomUUID());
             }
-            return Response.getSuccessResponse(true);
         }
         catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -105,7 +104,7 @@ public class UserController {
     }
 
     // add a new user to all the data structured
-    private Response<User> loadUser(String username, String password, UUID id) {
+    private Response<Boolean> loadUser(String username, String password, UUID id) {
         try {
             User user = new User(username, id);
             users.put(id, user);
@@ -114,9 +113,8 @@ public class UserController {
             if (response.isError()) {
                 users.remove(id);
                 usernames.remove(username);
-                return Response.getFailResponse(response.getMessage());
             }
-            return Response.getSuccessResponse(user);
+            return response;
         }
         catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
