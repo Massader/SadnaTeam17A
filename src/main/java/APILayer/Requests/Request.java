@@ -5,6 +5,9 @@ import java.util.UUID;
 public class Request {
     private UUID clientCredentials;
 
+    public Request() {
+    }
+
     public Request(UUID clientCredentials) {
         this.clientCredentials = clientCredentials;
     }
