@@ -276,7 +276,7 @@ public class Service {
         return reviewResponse.getValue();
     }
 
-    public boolean SetManagerPermissions(UUID clientCredentials, UUID manager,
+    public boolean setManagerPermissions(UUID clientCredentials, UUID manager,
                                          UUID storeId, List<Integer> permissions){
         Response<Boolean> response = userController.setManagerPermissions(clientCredentials, manager, storeId, permissions);
         if(response.isError()){
