@@ -5,7 +5,7 @@ import DomainLayer.Market.Users.ShoppingBasket;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class CompositConditionOr extends CompositCondition{
+public class CompositeConditionOr extends CompositeCondition {
     private ConcurrentLinkedQueue<Condition> conditions;
     @Override
     public Boolean conditionOccurs(ShoppingBasket shoppingBasket, Store store) {
