@@ -274,8 +274,9 @@ public class StoreController {
         try {
             if (storeName == null || storeName.length() == 0)
                 return Response.getFailResponse("Store must have a name.");
-            if (storeMap.containsKey(storeName))
-                return Response.getFailResponse("A Store with this name already exists.");
+            for (Store store : storeMap.values())
+                if (store.getName().equals(storeName))
+                    return Response.getFailResponse("A Store with this name already exists.");
             Store store = new Store(storeName, storeDescription);
             store.addRole(clientCredentials, new StoreOwner(clientCredentials));
             store.addRole(clientCredentials,new StoreFounder(clientCredentials));
