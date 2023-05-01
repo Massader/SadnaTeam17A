@@ -32,8 +32,8 @@ public class PurchaseController {
     public void init() {
 
         storeController = StoreController.getInstance();
-        paymentProxy.setReal();
-        supplyProxy.setReal();
+//        paymentProxy.setReal();
+//        supplyProxy.setReal();
     }
 
 

@@ -70,8 +70,8 @@ public class Service {
         supplyController = SupplyController.getInstance();
         //supplyController.init();
         paymentController = PaymentController.getInstance();
-        supplyProxy.setReal();;
-        paymentProxy.setReal();
+//        supplyProxy.setReal();;
+//        paymentProxy.setReal();
 
         //paymentController.init();
         notificationController = NotificationController.getInstance();

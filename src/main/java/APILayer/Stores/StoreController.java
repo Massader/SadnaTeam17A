@@ -5,6 +5,7 @@ import DomainLayer.Market.Stores.Sale;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.ServiceItem;
+import ServiceLayer.ServiceObjects.ServiceSale;
 import ServiceLayer.ServiceObjects.ServiceStore;
 import ServiceLayer.ServiceObjects.ServiceUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,20 +99,20 @@ public class StoreController {
                 request.getItem().getId(), request.getItem().getName());
     }
 
-    @PutMapping(path = "/item/quantity")
+    @PutMapping(path = "/item/description")
     public Response<Boolean> setItemDescription(@RequestBody ItemRequest request) {
         return service.setItemDescription(request.getClientCredentials(), request.getItem().getStoreId(),
                 request.getItem().getId(), request.getItem().getDescription());
     }
 
-    @PutMapping(path = "/item/quantity")
+    @PutMapping(path = "/item/price")
     public Response<Boolean> setItemPrice(@RequestBody ItemRequest request) {
         return service.setItemPrice(request.getClientCredentials(), request.getItem().getStoreId(),
                 request.getItem().getId(), request.getItem().getPrice());
     }
 
     @GetMapping(path = "/sale-history")
-    public Response<List<Sale>> getStoreSaleHistory(@RequestBody TargetRequest request) {
+    public Response<List<ServiceSale>> getStoreSaleHistory(@RequestBody TargetRequest request) {
         return service.getStoreSaleHistory(request.getClientCredentials(), request.getTargetId());
     }
 }
