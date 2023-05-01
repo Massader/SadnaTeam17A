@@ -19,149 +19,149 @@ public class RealBridge implements Bridge {
         service.init();
     }
 
-    public Boolean systemBoot() {
-        return false;
+    public Response<Boolean> systemBoot() {
+        return null;
     }
 
-    public Boolean integrityTest() {
-        return false;
+    public Response<Boolean> integrityTest() {
+        return null;
     }
 
-    public Boolean addService() {
-        return false;
+    public Response<Boolean> addService() {
+        return null;
     }
 
-    public Boolean updateService() {
-        return false;
+    public Response<Boolean> updateService() {
+        return null;
     }
 
-    public Boolean payForShoppingCart() {
-        return false;
+    public Response<Boolean> payForShoppingCart() {
+        return null;
     }
 
-    public Boolean checkForSupply() {
-        return false;
+    public Response<Boolean> checkForSupply() {
+        return null;
     }
 
-    public Boolean systemRealTimeAlert() {
-        return false;
+    public Response<Boolean> systemRealTimeAlert() {
+        return null;
     }
 
-    public Boolean userRealTimeAlert() {
-        return false;
+    public Response<Boolean> userRealTimeAlert() {
+        return null;
     }
 
-    public Boolean systemDelayedAlert() {
-        return false;
+    public Response<Boolean> systemDelayedAlert() {
+        return null;
     }
 
-    public Boolean userDelayedAlert() {
-        return false;
+    public Response<Boolean> userDelayedAlert() {
+        return null;
     }
 
-    public UUID createClient() {
+    public Response<UUID> createClient() {
         return service.createClient();
     }
 
-    public Boolean closeClient(UUID clientCredentials) {
+    public Response<Boolean> closeClient(UUID clientCredentials) {
         return service.closeClient(clientCredentials);
     }
 
-    public Boolean register(String username, String password) {
+    public Response<Boolean> register(String username, String password) {
         return service.register(username, password);
     }
 
-    public ServiceUser login(UUID clientCredentials, String username, String password) {
+    public Response<ServiceUser> login(UUID clientCredentials, String username, String password) {
         return service.login(clientCredentials, username, password);
     }
 
-    public ServiceStore getStoreInformation(UUID storeId) {
+    public Response<ServiceStore> getStoreInformation(UUID storeId) {
         return service.getStoreInformation(storeId);
     }
 
-    public Boolean searchStore() {
-        return false;
+    public Response<Boolean> searchStore() {
+        return null;
     }
 
-    public List<ServiceItem> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating) {
+    public Response<List<ServiceItem>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating) {
         return service.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating);
     }
 
-    public Boolean addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
+    public Response<Boolean> addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
         return service.addItemToCart(clientCredentials, itemId, quantity, storeId);
     }
 
-    public List<ServiceShoppingBasket> getCart(UUID clientCredentials) {
+    public Response<List<ServiceShoppingBasket>> getCart(UUID clientCredentials) {
         return service.getCart(clientCredentials);
     }
 
-    public Boolean purchaseShoppingCart() {
-        return false;
+    public Response<Boolean> purchaseShoppingCart() {
+        return null;
     }
 
 
-    public UUID logout(UUID clientCredentials) {
+    public Response<UUID> logout(UUID clientCredentials) {
         return service.logout(clientCredentials);
     }
 
-    public ServiceStore createStore(UUID clientCredentials, String storeName, String storeDescription) {
+    public Response<ServiceStore> createStore(UUID clientCredentials, String storeName, String storeDescription) {
         return service.createStore(clientCredentials, storeName, storeDescription);
     }
 
-    public ServiceItem addItemToStore(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
+    public Response<ServiceItem> addItemToStore(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
         return service.addItemToStore(clientCredentials, name, price, storeId, quantity, description);
     }
 
-    public Boolean setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId) {
+    public Response<Boolean> setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId) {
         return service.setItemQuantity(clientCredentials, storeId, itemId, 0);
 
     }
 
-    public Boolean stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name, String description) {
+    public Response<Boolean> stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name, String description) {
         Boolean check = false;
         if (description != null) {
-            check = service.setItemDescription(clientCredentials, storeId, itemId, description);
+            check = service.setItemDescription(clientCredentials, storeId, itemId, description).getValue();
         }
         if (name != null) {
-            check = check && service.setItemName(clientCredentials, storeId, itemId, name);
+            check = check && service.setItemName(clientCredentials, storeId, itemId, name).getValue();
         }
-        return check;
+        return Response.getSuccessResponse(check);
     }
 
-    public Boolean setStorePolicy() {
-        return false;
+    public Response<Boolean> setStorePolicy() {
+        return null;
     }
 
-    public Boolean appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId) {
+    public Response<Boolean> appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId) {
         return service.appointStoreOwner(clientCredentials, appointee, storeId);
     }
 
-    public Boolean appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId) {
+    public Response<Boolean> appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId) {
         return service.appointStoreManager(clientCredentials, appointee, storeId);
     }
 
-    public Boolean setStoreManagerPermissions(UUID clientCredentials, UUID manager,
+    public Response<Boolean> setStoreManagerPermissions(UUID clientCredentials, UUID manager,
                                               UUID storeId, List<Integer> permissions) {
         return service.setManagerPermissions(clientCredentials, manager, storeId, permissions);
     }
 
-    public Boolean closeStore(UUID clientCredentials, UUID storeId) {
+    public Response<Boolean> closeStore(UUID clientCredentials, UUID storeId) {
         return service.closeStore(clientCredentials, storeId);
     }
 
-    public List<ServiceUser> getStoreStaffList(UUID clientCredentials, UUID storeId) {
+    public Response<List<ServiceUser>> getStoreStaffList(UUID clientCredentials, UUID storeId) {
         return service.getStoreStaff(clientCredentials, storeId);
     }
 
-    public List<ServiceSale> getStoreSaleHistory(UUID clientCredentials, UUID storeId) {
+    public Response<List<ServiceSale>> getStoreSaleHistory(UUID clientCredentials, UUID storeId) {
         return service.getStoreSaleHistory(clientCredentials, storeId);
     }
 
-    public Boolean storeManagerActions() {
-        return false;
+    public Response<Boolean> storeManagerActions() {
+        return null;
     }
 
-    public List<ServiceSale> getStoreSaleHistorySystemAdmin(UUID clientCredentials, UUID storeId) {
+    public Response<List<ServiceSale>> getStoreSaleHistorySystemAdmin(UUID clientCredentials, UUID storeId) {
         return service.getStoreSaleHistory(clientCredentials, storeId);
     }
 
@@ -170,31 +170,31 @@ public class RealBridge implements Bridge {
     }
 
     @Override
-    public Boolean addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category) {
+    public Response<Boolean> addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category) {
         return service.addItemCategory(clientCredentials, storeId, itemId, category);
     }
 
-    public ServiceItem getItemInformation(UUID storeId, UUID itemId) {
+    public Response<ServiceItem> getItemInformation(UUID storeId, UUID itemId) {
         return service.getItemInformation(storeId, itemId);
     }
 
     @Override
-    public Boolean validateOrder(UUID clientCredentials) {
+    public Response<Boolean> validateOrder(UUID clientCredentials) {
         return service.validateOrder(clientCredentials);
     }
 
     @Override
-    public Boolean validatePayment(UUID clientCredentials) {
+    public Response<Boolean> validatePayment(UUID clientCredentials) {
         return service.validatePayment(clientCredentials);
     }
 
     @Override
-    public UUID confirmOrder(UUID clientCredentials) {
+    public Response<UUID> confirmOrder(UUID clientCredentials) {
         return service.confirmOrder(clientCredentials);
     }
 
     @Override
-    public Boolean removeItemFromStore(UUID clientCredentials, UUID storeId, UUID itemId) {
+    public Response<Boolean> removeItemFromStore(UUID clientCredentials, UUID storeId, UUID itemId) {
         return service.removeItemFromStore(clientCredentials, storeId, itemId);
     }
 

@@ -20,7 +20,7 @@ public class SystemBoot extends ProjectTest {
 
     @BeforeEach
     public void beforeEach() {
-        clientCredentials = bridge.createClient();
+        clientCredentials = bridge.createClient().getValue();
     }
 
     @AfterEach
@@ -31,7 +31,7 @@ public class SystemBoot extends ProjectTest {
     @Test
     // test verifies that the system can successfully log in an admin user with valid credentials and checks for valid connections with external systems once they are implemented.
     public void systemBootSuccess() {
-        UUID adminCredentials = bridge.login(clientCredentials, "admin", "Admin1").getId();
+        UUID adminCredentials = bridge.login(clientCredentials, "admin", "Admin1").getValue().getId();
         Assert.assertNotNull(adminCredentials);
         // When external systems implementation works add a check for valid connections with them
     }

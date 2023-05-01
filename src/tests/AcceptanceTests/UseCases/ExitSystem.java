@@ -17,7 +17,7 @@ public class ExitSystem extends ProjectTest {
     @Before
     public void beforeEach()  {
         bridge.setReal();
-        clientCredentials = bridge.createClient();
+        clientCredentials = bridge.createClient().getValue();
     }
 
     @After
@@ -28,7 +28,7 @@ public class ExitSystem extends ProjectTest {
     @Test
     //Tests that a client can successfully exit the system. It creates a client and then attempts to close it, asserting that the operation is successful.
     public void exitSystemSuccess() {
-        Boolean success = bridge.closeClient(clientCredentials);
+        Boolean success = bridge.closeClient(clientCredentials).getValue();
         Assert.assertNotNull(success);
         Assert.assertTrue(success);
     }

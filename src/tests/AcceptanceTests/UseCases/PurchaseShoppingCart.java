@@ -24,12 +24,12 @@ public class PurchaseShoppingCart extends ProjectTest {
     @Before
     public void setUp() {
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
-        client = bridge.createClient();
-        store = bridge.createStore(founder, "test", "test");
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
+        client = bridge.createClient().getValue();
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
-        item = bridge.addItemToStore(founder, "item", 10, storeId, 1, "test");
+        item = bridge.addItemToStore(founder, "item", 10, storeId, 1, "test").getValue();
         itemId = item.getId();
     }
 
@@ -43,9 +43,9 @@ public class PurchaseShoppingCart extends ProjectTest {
     //The test checks if a user can successfully purchase an item added to their shopping cart by validating the order, validating the payment, and confirming the order
     public void purchaseShoppingCartSuccess() {
         bridge.addItemToCart(client, itemId, 1, storeId);
-        Assert.assertTrue( bridge.validateOrder(client));
-        Assert.assertTrue(bridge.validatePayment(client));
-        Assert.assertNotNull(bridge.confirmOrder(client));
+        Assert.assertTrue( bridge.validateOrder(client).getValue());
+        Assert.assertTrue(bridge.validatePayment(client).getValue());
+        Assert.assertNotNull(bridge.confirmOrder(client).getValue());
     }
 
     @Test

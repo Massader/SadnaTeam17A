@@ -31,24 +31,24 @@ public class SetStoreManagerPermissions extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
-        store = bridge.createStore(founder, "test", "test");
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
         bridge.register("Manager1", "Pass1");
-        client2 = bridge.createClient();
-        storeManager = bridge.login(client2, "Manager1", "Pass1").getId();
-        Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
+        client2 = bridge.createClient().getValue();
+        storeManager = bridge.login(client2, "Manager1", "Pass1").getValue().getId();
+        Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId).getValue();
         bridge.register("toOwner", "Pass1");
-        client3 = bridge.createClient();
-        storeOwner = bridge.login(client3, "toOwner", "Pass1").getId();
-        Boolean AppointStoreOwner = bridge.appointStoreOwner(founder,storeOwner,storeId);
+        client3 = bridge.createClient().getValue();
+        storeOwner = bridge.login(client3, "toOwner", "Pass1").getValue().getId();
+        Boolean AppointStoreOwner = bridge.appointStoreOwner(founder,storeOwner,storeId).getValue();
         permissions = new ArrayList<>();
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.createClient();
+        client = bridge.createClient().getValue();
     }
 
     @AfterEach
@@ -70,21 +70,21 @@ public class SetStoreManagerPermissions extends ProjectTest {
     //This test verifies that a store owner can successfully set permissions for a store manager in their store.
     public void SetStoreManagerPermissionsSuccess() {
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
-        store = bridge.createStore(founder, "test", "test");
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
         bridge.register("Manager1", "Pass1");
-        client2 = bridge.createClient();
-        storeManager = bridge.login(client2, "Manager1", "Pass1").getId();
-        Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
+        client2 = bridge.createClient().getValue();
+        storeManager = bridge.login(client2, "Manager1", "Pass1").getValue().getId();
+        Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId).getValue();
         bridge.register("toOwner", "Pass1");
-        client3 = bridge.createClient();
-        storeOwner = bridge.login(client3, "toOwner", "Pass1").getId();
-        Boolean AppointStoreOwner = bridge.appointStoreOwner(founder,storeOwner,storeId);
+        client3 = bridge.createClient().getValue();
+        storeOwner = bridge.login(client3, "toOwner", "Pass1").getValue().getId();
+        Boolean AppointStoreOwner = bridge.appointStoreOwner(founder,storeOwner,storeId).getValue();
         permissions = new ArrayList<>();
         permissions.add(3);
-        Boolean setPermission = bridge.setStoreManagerPermissions(storeOwner,storeManager,storeId,permissions);
+        Boolean setPermission = bridge.setStoreManagerPermissions(storeOwner,storeManager,storeId,permissions).getValue();
         Assert.assertTrue(setPermission);
     }
 
@@ -92,21 +92,21 @@ public class SetStoreManagerPermissions extends ProjectTest {
     //this test verifies that a store manager cannot set permissions for a store owner in their store.
     public void SetStoreManagerPermissionsFail() {
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
-        store = bridge.createStore(founder, "test", "test");
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
         bridge.register("Manager1", "Pass1");
-        client2 = bridge.createClient();
-        storeManager = bridge.login(client2, "Manager1", "Pass1").getId();
-        Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId);
+        client2 = bridge.createClient().getValue();
+        storeManager = bridge.login(client2, "Manager1", "Pass1").getValue().getId();
+        Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId).getValue();
         bridge.register("toOwner", "Pass1");
-        client3 = bridge.createClient();
-        storeOwner = bridge.login(client3, "toOwner", "Pass1").getId();
-        Boolean AppointStoreOwner = bridge.appointStoreOwner(founder,storeOwner,storeId);
+        client3 = bridge.createClient().getValue();
+        storeOwner = bridge.login(client3, "toOwner", "Pass1").getValue().getId();
+        Boolean AppointStoreOwner = bridge.appointStoreOwner(founder,storeOwner,storeId).getValue();
         permissions = new ArrayList<>();
         permissions.add(3);
-        Boolean setPermission = bridge.setStoreManagerPermissions(storeManager,storeOwner,storeId,permissions);
+        Boolean setPermission = bridge.setStoreManagerPermissions(storeManager,storeOwner,storeId,permissions).getValue();
         Assert.assertFalse(setPermission);
     }
 }

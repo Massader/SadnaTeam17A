@@ -19,15 +19,15 @@ public class SearchStoreItem extends ProjectTest {
     public void beforeEach()  {
         bridge.setReal();
         bridge.register("founder", "Password1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Password1").getId();
-        store = bridge.createStore(founder, "test", "test");
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Password1").getValue().getId();
+        store = bridge.createStore(founder, "test", "test").getValue();
         if (item == null) {
-            item = bridge.addItemToStore(founder, "exampleItem", 10, store.getStoreId(), 10, "test");
+            item = bridge.addItemToStore(founder, "exampleItem", 10, store.getStoreId(), 10, "test").getValue();
             bridge.addItemCategory(founder, store.getStoreId(), item.getId(), "category");
         }
         items = new ArrayList<>();
-        client = bridge.createClient();
+        client = bridge.createClient().getValue();
     }
 
     @After
@@ -40,7 +40,7 @@ public class SearchStoreItem extends ProjectTest {
     @Test
     //Tests if searching for an item by name and category returns at least one item.
     public void searchItemSuccess() {
-        items = bridge.searchItem("example", "category", 0, 100, 0, -1);
+        items = bridge.searchItem("example", "category", 0, 100, 0, -1).getValue();
         Assert.assertNotNull(items);
         Assert.assertTrue(items.size() > 0);
     }
@@ -48,7 +48,7 @@ public class SearchStoreItem extends ProjectTest {
     @Test
     //Tests if searching for an item by name and category returns no items when there are no items matching the search criteria.
     public void searchItemNoItemsSuccess() {
-        items = bridge.searchItem("example", "General", 11, 100, 0, -1);
+        items = bridge.searchItem("example", "General", 11, 100, 0, -1).getValue();
         Assert.assertNotNull(items);
         Assert.assertEquals(0, items.size());
     }

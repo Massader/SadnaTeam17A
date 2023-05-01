@@ -24,17 +24,17 @@ public class CloseStore extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
         store = null;
         storeId = null;
-        store = bridge.createStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.createClient();
+        client = bridge.createClient().getValue();
     }
 
     @AfterEach
@@ -52,13 +52,13 @@ public class CloseStore extends ProjectTest {
     //tests whether a store can be closed successfully by its founder.
     public void CloseStoreSuccess() {
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
         store = null;
         storeId = null;
-        store = bridge.createStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
-        Boolean close = bridge.closeStore(founder,storeId);
+        Boolean close = bridge.closeStore(founder,storeId).getValue();
         Assert.assertTrue(close);
     }
 
@@ -66,14 +66,14 @@ public class CloseStore extends ProjectTest {
     public void CloseStoreFail() {
         //Tests whether a store can be closed unsuccessfully by a client who is not the founder of the store.
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
         store = null;
         storeId = null;
-        store = bridge.createStore(founder, "test", "test");
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
-        client2 = bridge.createClient();
-        Boolean close = bridge.closeStore(client2,storeId);
+        client2 = bridge.createClient().getValue();
+        Boolean close = bridge.closeStore(client2,storeId).getValue();
         Assert.assertFalse(close);
         //bridge.logout(client2);
     }

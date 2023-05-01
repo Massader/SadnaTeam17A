@@ -23,16 +23,16 @@ public class StockManagement extends ProjectTest {
     public void setUp() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
-        store = bridge.createStore(founder, "test", "test");
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
-        client2 = bridge.createClient();
+        client2 = bridge.createClient().getValue();
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.createClient();
+        client = bridge.createClient().getValue();
     }
 
     @AfterEach
@@ -53,29 +53,29 @@ public class StockManagement extends ProjectTest {
     // Test successful stock management operations including adding, changing, and removing item from a store.
     public void StockManagementSuccess() {
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
-        store = bridge.createStore(founder, "test", "test");
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
-        client2 = bridge.createClient();
+        client2 = bridge.createClient().getValue();
         String name ="bannana";
         int quantity = 100;
         int price =5;
         String description = "yellow fruit";
-        ServiceItem item = bridge.addItemToStore(founder, name,price,storeId,quantity,description);
+        ServiceItem item = bridge.addItemToStore(founder, name,price,storeId,quantity,description).getValue();
         Assert.assertEquals(item.getName(),name);
         Assert.assertEquals(item.getDescription(),description);
-        Assert.assertTrue(item.getQuantity()==quantity);
+        Assert.assertEquals(item.getQuantity(), quantity);
         UUID itemId = item.getId();
         String newName = "apple";
         String newDescription = "green fruit";
-        Boolean changeItemInfo = bridge.stockManagementChangeItemInfo(founder,storeId,itemId,newName,newDescription);
+        Boolean changeItemInfo = bridge.stockManagementChangeItemInfo(founder,storeId,itemId,newName,newDescription).getValue();
         Assert.assertTrue(changeItemInfo);
-        ServiceItem updateItem = bridge.getItemInformation(storeId,item.getId());
+        ServiceItem updateItem = bridge.getItemInformation(storeId,item.getId()).getValue();
         Assert.assertEquals(updateItem.getName(),newName);
-        Boolean removeItem = bridge.setItemQuantity(founder,storeId,itemId);
+        Boolean removeItem = bridge.setItemQuantity(founder,storeId,itemId).getValue();
         Assert.assertTrue(removeItem);
-        ServiceItem updateItem1 = bridge.getItemInformation(storeId,item.getId());
+        ServiceItem updateItem1 = bridge.getItemInformation(storeId,item.getId()).getValue();
         Assert.assertEquals(0, updateItem1.getQuantity());
     }
 
@@ -83,17 +83,17 @@ public class StockManagement extends ProjectTest {
     // Test unsuccessful stock management operations including adding an item to a store by a non-founder client.
     public void StockManagementFail() {
         bridge.register("founder", "Pass1");
-        client = bridge.createClient();
-        founder = bridge.login(client, "founder", "Pass1").getId();
-        store = bridge.createStore(founder, "test", "test");
+        client = bridge.createClient().getValue();
+        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
+        store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
-        client2 = bridge.createClient();
+        client2 = bridge.createClient().getValue();
 
         String name ="pineapple";
         int quantity = 10;
         int price =5;
         String description = "yellow fruit";
-        ServiceItem item = bridge.addItemToStore(client2, name,price,storeId,quantity,description);
+        ServiceItem item = bridge.addItemToStore(client2, name,price,storeId,quantity,description).getValue();
         Assert.assertNull(item);
 
     }
