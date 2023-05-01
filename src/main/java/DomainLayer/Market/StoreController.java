@@ -272,6 +272,10 @@ public class StoreController {
     //why do we need clientCredentials here? we call the setAsFounder function from Service.
     public Response<Store> createStore(UUID clientCredentials , String storeName , String storeDescription ) {
         try {
+            if (storeName == null || storeName.length() == 0)
+                return Response.getFailResponse("Store must have a name.");
+            if (storeMap.containsKey(storeName))
+                return Response.getFailResponse("A Store with this name already exists.");
             Store store = new Store(storeName, storeDescription);
             store.addRole(clientCredentials, new StoreOwner(clientCredentials));
             store.addRole(clientCredentials,new StoreFounder(clientCredentials));
