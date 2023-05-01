@@ -89,7 +89,7 @@ public class UserController {
         try{
             if (username == null || username.length()==0)
                 return Response.getFailResponse("No username input.");
-            if (password == null)
+            if (password == null || password.length()==0)
                 return Response.getFailResponse("No password input.");
             synchronized (usernames) {
                 if (usernames.containsKey(username))
@@ -105,12 +105,17 @@ public class UserController {
     }
 
     // add a new user to all the data structured
-    private Response<User> loadUser(String userName, String password, UUID id) {
+    private Response<User> loadUser(String username, String password, UUID id) {
         try {
-            User user = new User(userName, id);
+            User user = new User(username, id);
             users.put(id, user);
             usernames.put(user.getUsername(), id);
-            securityController.encryptAndSavePassword(id, password);
+            Response<Boolean> response = securityController.encryptAndSavePassword(id, password);
+            if (response.isError()) {
+                users.remove(id);
+                usernames.remove(username);
+                return Response.getFailResponse(response.getMessage());
+            }
             return Response.getSuccessResponse(user);
         }
         catch(Exception exception) {

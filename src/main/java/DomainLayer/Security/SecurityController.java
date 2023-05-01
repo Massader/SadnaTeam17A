@@ -29,6 +29,8 @@ public class SecurityController {
 
     public Response<Boolean> validatePassword(UUID id, String password) {
         try {
+            if (!passwords.containsKey(id))
+                return Response.getFailResponse("User does not have a registered password.");
             if(passwords.get(id).equals(encryptor.encrypt(password)))
                 return Response.getSuccessResponse(true);
             else return Response.getFailResponse("Incorrect password");
