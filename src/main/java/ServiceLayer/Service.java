@@ -578,7 +578,6 @@ public class Service {
         return response;
     }
 
-
     public Void resetService() {
         messageController.resetController();
         notificationController.resetController();
