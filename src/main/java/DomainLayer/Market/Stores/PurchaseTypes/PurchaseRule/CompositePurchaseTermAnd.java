@@ -5,20 +5,16 @@ import DomainLayer.Market.Users.ShoppingBasket;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CompositePurchaseTermAnd extends CompositePurchaseTerm {
-    private ConcurrentLinkedQueue<PurchaseTerm> purchaseTerms;
 
-    public CompositePurchaseTermAnd(PurchaseRule PurchaseTerm, ConcurrentLinkedQueue<PurchaseTerm> purchaseTerms) {
+
+    public CompositePurchaseTermAnd(PurchaseRule PurchaseTerm) {
         super(PurchaseTerm);
-        purchaseTerms = purchaseTerms;
     }
 
-    public ConcurrentLinkedQueue<PurchaseTerm> getPurchaseTerms() {
-        return purchaseTerms;
-    }
 
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket) {
-        for (PurchaseTerm purchaseTerm : getPurchaseTerms()) {
+        for (PurchaseTerm purchaseTerm : getPurchaseTerm()) {
             if (!purchaseTerm.purchaseRuleOccurs(shoppingBasket))
                 return false;
         }
