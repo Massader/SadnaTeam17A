@@ -3,6 +3,7 @@ package APILayer.Users;
 import APILayer.Requests.*;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
+import ServiceLayer.ServiceObjects.ServiceComplaint;
 import ServiceLayer.ServiceObjects.ServicePurchase;
 import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
 import ServiceLayer.ServiceObjects.ServiceUser;
@@ -105,6 +106,11 @@ public class UserController {
     public Response<Boolean> removeItemFromCart(@RequestBody CartItemRequest request) {
         return service.removeItemFromCart(request.getClientCredentials(), request.getItemId(), request.getQuantity(),
                 request.getStoreId());
+    }
+
+    @PostMapping(path = "/sendMessage")
+    public Response<UUID> sendMessage(@RequestBody MessageRequest request){
+        return service.sendMessage(request.getClientCredentials(), request.getSender(), request.getRecipient(), request.getBody());
     }
 
 

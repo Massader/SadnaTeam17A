@@ -1,14 +1,12 @@
 package APILayer.Stores;
 
 import APILayer.Requests.*;
+import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
-import ServiceLayer.ServiceObjects.ServiceItem;
-import ServiceLayer.ServiceObjects.ServiceSale;
-import ServiceLayer.ServiceObjects.ServiceStore;
-import ServiceLayer.ServiceObjects.ServiceUser;
+import ServiceLayer.ServiceObjects.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -122,4 +120,49 @@ public class StoreController {
     public Response<Collection<Store>> getPartOfStores(@RequestBody GetPartOfStoresRequest request) {
         return service.getPartOfStores(request.getNumber(), request.getPage());
     }
+
+    @GetMapping(path = "searchItem")
+    public Response<List<ServiceItem>> searchItem(@RequestBody searchItemRequest request) {
+        return service.searchItem(request.getKeyword(), request.getCategory(), request.getMinPrice(),
+                request.getMaxPrice(), request.getItemRating(), request.getStoreRating());
+    }
+    @PutMapping(path = "searchItem")
+    public Response<ServiceItem> addItemToStore(@RequestBody ItemRequest request){
+        ServiceItem item = request.getItem();
+        return service.addItemToStore(request.getClientCredentials(), item.getName(), item.getPrice(),
+                item.getStoreId(), item.getQuantity(), item.getDescription());
+    }
+
+    @GetMapping(path = "/getComplaints")
+    public Response<List<ServiceComplaint>> getComplaints(@RequestBody Request request){
+        return service.getComplaints(request.getClientCredentials());
+    }
+
+    @GetMapping(path = "/getComplaint")
+    public Response<ServiceComplaint> getComplaint(@RequestBody TargetRequest request){
+        return service.getComplaint(request.getClientCredentials(), request.getTargetId());
+    }
+
+    @PutMapping(path = "/assignAdminToComplaint")
+    public Response<Boolean> assignAdminToComplaint(@RequestBody TargetRequest request){
+        return service.assignAdminToComplaint(request.getClientCredentials(), request.getTargetId());
+    }
+
+    @PostMapping(path = "/addItemCategory")
+    public Response<Boolean> addItemCategory(@RequestBody CategoryRequest request){
+        return service.addItemCategory(request.getClientCredentials(),
+                request.getStoreId(), request.getItemId(), request.getCategory());
+    }
+    @DeleteMapping(path = "/removeItemFromStore")
+    public Response<Boolean> removeItemFromStore(@RequestBody TargetItemRequest request){
+        return service.removeItemFromStore(request.getClientCredentials(),
+                request.getStoreId(), request.getItemId());
+    }
+
+    @PutMapping(path = "/purchaseCart")
+    public Response<Boolean> purchaseCart(@RequestBody PurchaseCartRequest request){
+        return service.purchaseCart(request.getClientCredentials(),
+                request.getExpectedPrice(), request.getAddress(), request.getCredit());
+    }
+
 }
