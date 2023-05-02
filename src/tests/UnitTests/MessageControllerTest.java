@@ -30,7 +30,7 @@ public class MessageControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        client = service.createClient();
+        client = service.createClient().getValue();
         service.register("sender", "Sender1");
         service.register("recipient", "Recipient1");
     }
@@ -45,8 +45,8 @@ public class MessageControllerTest {
 
     @Test
     public void testSendMessage() {
-        ServiceUser sender = service.login(client, "sender", "Sender1");
-        ServiceUser recipient = service.login(client, "recipient", "Recipient1");
+        ServiceUser sender = service.login(client, "sender", "Sender1").getValue();
+        ServiceUser recipient = service.login(client, "recipient", "Recipient1").getValue();
         Response<UUID> response = messageController.sendMessage(sender.getId(), sender.getId(), recipient.getId(), body);
         assertTrue(response.isSuccessful());
         assertNotNull(response.getValue());
@@ -58,14 +58,14 @@ public class MessageControllerTest {
         assertEquals(sender.getId(), message.getSender());
         assertEquals(recipient.getId(), message.getRecipient());
         assertEquals(body, message.getBody());
-        client = service.logout(sender.getId());
-        client = service.logout(recipient.getId());
+        client = service.logout(sender.getId()).getValue();
+        client = service.logout(recipient.getId()).getValue();
     }
 
     @Test
     public void testGetMessages() {
-        ServiceUser sender = service.login(client, "sender", "Sender1");
-        ServiceUser recipient = service.login(client, "recipient", "Recipient1");
+        ServiceUser sender = service.login(client, "sender", "Sender1").getValue();
+        ServiceUser recipient = service.login(client, "recipient", "Recipient1").getValue();
         List<Message> messages = messageController.getMessages(sender.getId(), sender.getId()).getValue();
         assertNotNull(messages);
         assertEquals(0, messages.size());
@@ -76,14 +76,14 @@ public class MessageControllerTest {
         assertEquals(sender.getId(), message.getSender());
         assertEquals(recipient.getId(), message.getRecipient());
         assertEquals(body, message.getBody());
-        client = service.logout(sender.getId());
-        client = service.logout(recipient.getId());
+        client = service.logout(sender.getId()).getValue();
+        client = service.logout(recipient.getId()).getValue();
     }
 
     @Test
     public void testGetMessage() {
-        ServiceUser sender = service.login(client, "sender", "Sender1");
-        ServiceUser recipient = service.login(client, "recipient", "Recipient1");
+        ServiceUser sender = service.login(client, "sender", "Sender1").getValue();
+        ServiceUser recipient = service.login(client, "recipient", "Recipient1").getValue();
         UUID messageId = messageController.sendMessage(sender.getId(), sender.getId(), recipient.getId(), body).getValue();
         Response<Message> response = messageController.getMessage(recipient.getId(), recipient.getId(), messageId);
         assertTrue(response.isSuccessful());
@@ -92,29 +92,29 @@ public class MessageControllerTest {
         assertEquals(sender.getId(), message.getSender());
         assertEquals(recipient.getId(), message.getRecipient());
         assertEquals(body, message.getBody());
-        client = service.logout(sender.getId());
-        client = service.logout(recipient.getId());
+        client = service.logout(sender.getId()).getValue();
+        client = service.logout(recipient.getId()).getValue();
     }
 
     @Test
     public void testGetNonExistentMessage() {
-        ServiceUser recipient = service.login(client, "recipient", "Recipient1");
+        ServiceUser recipient = service.login(client, "recipient", "Recipient1").getValue();
         UUID messageId = UUID.randomUUID();
         Response<Message> response = messageController.getMessage(recipient.getId(), recipient.getId(), messageId);
         assertFalse(response.isSuccessful());
         assertNull(response.getValue());
         assertEquals("Message not found.", response.getMessage());
-        client = service.logout(recipient.getId());
+        client = service.logout(recipient.getId()).getValue();
     }
 
     @Test
     public void testGetMessagesWithInvalidCredentials() {
-        ServiceUser recipient = service.login(client, "recipient", "Recipient1");
+        ServiceUser recipient = service.login(client, "recipient", "Recipient1").getValue();
         UUID invalidCredentials = UUID.randomUUID();
         Response<List<Message>> response = messageController.getMessages(invalidCredentials, recipient.getId());
         assertFalse(response.isSuccessful());
         assertNull(response.getValue());
         assertEquals("Passed recipient ID do not match logged in user or an existing store.", response.getMessage());
-        client = service.logout(recipient.getId());
+        client = service.logout(recipient.getId()).getValue();
     }
 }
