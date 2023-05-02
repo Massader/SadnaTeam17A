@@ -198,5 +198,8 @@ public class RealBridge implements Bridge {
         return service.removeItemFromStore(clientCredentials, storeId, itemId);
     }
 
-
+    @Override
+    public Response<Boolean> isLoggedIn(UUID userId) {
+        return service.isLoggedIn(userId);
+    }
 }

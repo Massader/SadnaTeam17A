@@ -185,5 +185,10 @@ public class ProxyBridge implements Bridge {
     public Response<Boolean> removeItemFromStore(UUID clientCredentials, UUID storeId, UUID itemId) {
         return real == null ? null : real.removeItemFromStore(clientCredentials, storeId, itemId);
     }
+
+    @Override
+    public Response<Boolean> isLoggedIn(UUID userId) {
+        return real == null ? null : real.isLoggedIn(userId);
+    }
 }
 

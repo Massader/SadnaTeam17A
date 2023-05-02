@@ -633,5 +633,12 @@ public class Service {
         }
         return response;
     }
+
+    public Response<Boolean> isLoggedIn(UUID userId) {
+        /*-------------------------------*/
+        /* need to implement this method */
+        /*-------------------------------*/
+        return Response.getFailResponse("not implemented yet");
+    }
 }
 
