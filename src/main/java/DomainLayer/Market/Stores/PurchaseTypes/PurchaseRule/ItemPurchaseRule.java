@@ -3,6 +3,7 @@ package DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,15 +19,21 @@ public class ItemPurchaseRule implements PurchaseRule {
     }
 
     @Override
-    public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, int quantity,Boolean atList) {
+    public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity,Boolean atList) {
         ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
-        int basketQuantity= items.get(getItemId());
+        int basketQuantity=0;
+        if(items.containsKey(getItemId())){
+            basketQuantity= items.get(getItemId());}
         boolean moreThenQuantity = basketQuantity>=quantity;
         return  (quantity==basketQuantity||atList&&moreThenQuantity||(!atList&&!moreThenQuantity));
     }
 
     @Override
-    public Double getPrice(ShoppingBasket shoppingBasket, Store store) {
-        return null;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemPurchaseRule that = (ItemPurchaseRule) o;
+        return Objects.equals(itemId, that.itemId);
     }
+
 }

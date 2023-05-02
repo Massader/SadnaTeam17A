@@ -61,7 +61,7 @@ public class Store {
         return (rolesMap.get(clientCredentials).getPermissions().contains(permission));
     }
 
-    public Map<UUID, Item> getItems() {
+    public ConcurrentHashMap<UUID, Item> getItems() {
         return items;
     }
 
