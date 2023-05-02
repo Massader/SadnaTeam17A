@@ -113,9 +113,9 @@ public class StoreController {
         return service.getStoreSaleHistory(request.getClientCredentials(), request.getTargetId());
     }
 
-    @GetMapping(path = "/getPartOfStores")
-    public Response<List<Store>> getPartOfStores(@RequestBody GetPartOfStoresRequest request) {
-        return service.getPartOfStores(request.getNumber(), request.getPage());
+    @GetMapping(path = "/get-stores-page/number={number}&page={page}")
+    public Response<List<Store>> getStoresPage(@PathVariable(name = "number") int number, @PathVariable(name = "page") int page) {
+        return service.getStoresPage(number, page);
     }
 
     @GetMapping(path = "searchItem")
