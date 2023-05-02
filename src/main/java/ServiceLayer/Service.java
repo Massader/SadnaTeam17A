@@ -13,9 +13,8 @@ import DomainLayer.Supply.SupplyProxy;
 import ServiceLayer.Loggers.ErrorLogger;
 import ServiceLayer.Loggers.EventLogger;
 import ServiceLayer.ServiceObjects.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.logging.Level;
 
 @org.springframework.stereotype.Service
@@ -625,6 +624,15 @@ public class Service {
             return Response.getFailResponse(response2.getMessage());
         }
         return response2;
+    }
+
+    public Response<Collection<Store>> getPartOfStores(int number, int page){
+        Response<Collection<Store>> response = storeController.getPartOfStores(number, page);
+        if(response.isError()){
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        return response;
     }
 }
 

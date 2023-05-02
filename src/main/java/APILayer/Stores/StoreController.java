@@ -2,6 +2,7 @@ package APILayer.Stores;
 
 import APILayer.Requests.*;
 import DomainLayer.Market.Stores.Sale;
+import DomainLayer.Market.Stores.Store;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.ServiceItem;
@@ -11,6 +12,7 @@ import ServiceLayer.ServiceObjects.ServiceUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -114,5 +116,10 @@ public class StoreController {
     @GetMapping(path = "/sale-history")
     public Response<List<ServiceSale>> getStoreSaleHistory(@RequestBody TargetRequest request) {
         return service.getStoreSaleHistory(request.getClientCredentials(), request.getTargetId());
+    }
+
+    @GetMapping(path = "/getPartOfStores")
+    public Response<Collection<Store>> getPartOfStores(@RequestBody GetPartOfStoresRequest request) {
+        return service.getPartOfStores(request.getNumber(), request.getPage());
     }
 }
