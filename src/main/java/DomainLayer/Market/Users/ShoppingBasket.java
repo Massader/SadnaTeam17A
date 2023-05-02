@@ -1,7 +1,6 @@
 package DomainLayer.Market.Users;
 
 import DomainLayer.Market.Stores.Item;
-import DomainLayer.Market.Stores.Store;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,7 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ShoppingBasket {
     private UUID id;
     private UUID storeId;
-    private  Store store;
     private ConcurrentHashMap<UUID,Integer> items;//UUID itemId, int quantity
 
     public ConcurrentHashMap<UUID, Integer> getItems() {
@@ -17,12 +15,10 @@ public class ShoppingBasket {
     }
 
 
-    public ShoppingBasket(Store store) {
+    public ShoppingBasket(UUID storeId) {
         this.id = UUID.randomUUID();
-        this.storeId = store.getStoreId();
+        this.storeId = storeId;
         this.items = new ConcurrentHashMap<>();
-        this.store=store;
-
     }
 
     public UUID getId() {
