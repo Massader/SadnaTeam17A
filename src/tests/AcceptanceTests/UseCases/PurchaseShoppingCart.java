@@ -52,4 +52,14 @@ public class PurchaseShoppingCart extends ProjectTest {
     public void purchaseShoppingCartWhileItemRemoved() {
 
     }
+
+    @Test
+    public void purchaseShoppingCartWrongDetailsFail() {
+
+    }
+
+    @Test
+    public void purchaseShoppingCartNotMatchToPolicyFail() {
+
+    }
 }
