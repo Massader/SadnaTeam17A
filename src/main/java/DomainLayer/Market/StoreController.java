@@ -11,6 +11,7 @@ import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
 
 import java.security.cert.CertStoreSpi;
+import java.sql.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -41,13 +42,11 @@ public class StoreController {
         return storeMap.values();
     }
 
-    public Response<Collection<Store>> getPartOfStores(int number, int page){
-        List<Store> returnStores = new LinkedList<>();
-        Store[] stores = (Store[])storeMap.values().toArray();
-        for(int i = page*number; i< (page+1)*number && i<stores.length; i++){
-            returnStores.add(stores[i]);
-        }
-        return Response.getSuccessResponse(returnStores);
+    public Response<List<Store>> getPartOfStores(int number, int page){
+        if (storeMap == null || storeMap.size() == 0) return Response.getSuccessResponse(new ArrayList<Store>());
+        List<Store> stores = new ArrayList<>(storeMap.values());
+        int start = (page - 1) * number;
+        return Response.getSuccessResponse(stores.subList(start, Math.min(start + number, stores.size() - 1)));
     }
 
 

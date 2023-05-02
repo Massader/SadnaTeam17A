@@ -1,8 +1,6 @@
 package APILayer.Stores;
 
 import APILayer.Requests.*;
-import DomainLayer.Market.Stores.Item;
-import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
@@ -10,7 +8,6 @@ import ServiceLayer.ServiceObjects.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -117,7 +114,7 @@ public class StoreController {
     }
 
     @GetMapping(path = "/getPartOfStores")
-    public Response<Collection<Store>> getPartOfStores(@RequestBody GetPartOfStoresRequest request) {
+    public Response<List<Store>> getPartOfStores(@RequestBody GetPartOfStoresRequest request) {
         return service.getPartOfStores(request.getNumber(), request.getPage());
     }
 
