@@ -36,6 +36,9 @@ public class Login extends ProjectTest {
         bridge.register("test1", "Test1");
         UUID userId = bridge.login(clientCredentials, "test1","Test1").getValue().getId();
         Assert.assertNotNull(userId);
+
+        Boolean loggedIn = bridge.isLoggedIn(userId).getValue();
+        Assert.assertTrue(loggedIn);
     }
 
     @Test

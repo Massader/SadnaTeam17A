@@ -50,4 +50,6 @@ public interface Bridge {
     Response<Boolean> validatePayment(UUID clientCredentials);
     Response<UUID> confirmOrder(UUID clientCredentials);
     Response<Boolean> removeItemFromStore(UUID clientCredentials, UUID storeId, UUID itemId);
+
+    Response<Boolean> isLoggedIn(UUID userId);
 }
