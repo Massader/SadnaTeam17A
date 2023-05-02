@@ -10,12 +10,8 @@ import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
 
-import java.security.cert.CertStoreSpi;
-import java.sql.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 public class StoreController {
     private static StoreController instance = null;
@@ -42,11 +38,14 @@ public class StoreController {
         return storeMap.values();
     }
 
-    public Response<List<Store>> getPartOfStores(int number, int page){
+    public Response<List<Store>> getStoresPage(int number, int page){
+        if (number <= 0) return Response.getFailResponse("Number of stores per page can't be lower than 1.");
         if (storeMap == null || storeMap.size() == 0) return Response.getSuccessResponse(new ArrayList<Store>());
+        if (page == 0 || page > (storeMap.size() / number) + 1) return Response.getFailResponse("Page number can't be 0 or larger than available stores.");
         List<Store> stores = new ArrayList<>(storeMap.values());
         int start = (page - 1) * number;
-        return Response.getSuccessResponse(stores.subList(start, Math.min(start + number, stores.size() - 1)));
+        int end = Math.min(start + number - 1, stores.size());
+        return Response.getSuccessResponse(stores.subList(start, end));
     }
 
 

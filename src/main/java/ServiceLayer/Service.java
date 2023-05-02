@@ -625,8 +625,8 @@ public class Service {
         return response2;
     }
 
-    public Response<List<Store>> getPartOfStores(int number, int page){
-        Response<List<Store>> response = storeController.getPartOfStores(number, page);
+    public Response<List<Store>> getStoresPage(int number, int page){
+        Response<List<Store>> response = storeController.getStoresPage(number, page);
         if(response.isError()){
             errorLogger.log(Level.WARNING, response.getMessage());
             return Response.getFailResponse(response.getMessage());
