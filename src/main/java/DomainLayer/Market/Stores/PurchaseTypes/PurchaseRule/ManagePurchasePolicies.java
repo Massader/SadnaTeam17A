@@ -5,14 +5,14 @@ import DomainLayer.Market.Users.ShoppingBasket;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class managePurchasePolicies {
+public class ManagePurchasePolicies {
     /**
      * managePurchasePolicies is a class that manages the purchase policies of a shop.
      * It stores PurchaseTerm and provides methods for adding and removing them.
      */
     private ConcurrentLinkedQueue<PurchaseTerm> purchasePolicies;
 
-    public managePurchasePolicies(ConcurrentLinkedQueue<PurchaseTerm> purchasePolicies) {
+    public ManagePurchasePolicies(ConcurrentLinkedQueue<PurchaseTerm> purchasePolicies) {
         this.purchasePolicies = purchasePolicies;
     }
 
