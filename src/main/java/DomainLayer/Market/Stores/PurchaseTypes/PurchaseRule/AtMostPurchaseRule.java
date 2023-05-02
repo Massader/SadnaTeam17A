@@ -1,5 +1,6 @@
 package DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule;
 
+import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 
 public class AtMostPurchaseRule extends PurchaseTerm {
@@ -18,8 +19,8 @@ public class AtMostPurchaseRule extends PurchaseTerm {
 
 
 
-    public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket) {
-        return purchaseRule.purchaseRuleOccurs(shoppingBasket,this.quantity,false);
+    public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store) {
+        return purchaseRule.purchaseRuleOccurs(shoppingBasket,store,this.quantity,false);
     }
 
 }

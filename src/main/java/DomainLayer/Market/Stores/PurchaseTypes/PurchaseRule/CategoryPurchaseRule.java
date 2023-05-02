@@ -5,6 +5,7 @@ import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,13 +21,14 @@ public class CategoryPurchaseRule implements PurchaseRule {
     }
 
     @Override
-    public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, int quantity, Boolean atList) {
+    public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity, Boolean atList) {
         int categoryQuantity = 0;
-        // ConcurrentHashMap<Item,Integer> items = shoppingBasket.getItems(); change
-        ConcurrentHashMap<Item, Integer> items = new ConcurrentHashMap<>();
-        for (Item item : items.keySet()) {
-            if (item.getCategories().equals(getCategory())) {
-                categoryQuantity++;
+        ConcurrentHashMap<UUID,Item> storeItems = store.getItems();
+         ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
+        for (UUID itemId : items.keySet()) {
+            Item item=  storeItems.get(itemId);
+            if (item!=null&&item.getCategories().equals(getCategory())) {
+                categoryQuantity+=items.get(itemId);
             }
         }
         boolean moreThenQuantity = categoryQuantity >= quantity;
@@ -34,8 +36,21 @@ public class CategoryPurchaseRule implements PurchaseRule {
     }
 
     @Override
-    public Double getPrice(ShoppingBasket shoppingBasket, Store store) {
-        return null;
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final CategoryPurchaseRule other = (CategoryPurchaseRule) obj;
+        if (!Objects.equals(this.category, other.category)) {
+            return false;
+        }
+        return true;
     }
+
+
+
 }
 
