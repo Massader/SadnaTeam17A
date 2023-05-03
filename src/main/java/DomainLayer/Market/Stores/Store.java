@@ -157,15 +157,12 @@ public class Store {
         for (UUID key : items.keySet()) {
             int quantity = items.get(key);
             double basePrice = getItem(key).getPrice() * quantity;
-            if (discounts.containsKey(key)) {
-                price += discounts.get(key).calculatePrice(basePrice);
-            } else price += basePrice;
+            price += basePrice;
         }
         return price;
 
     }
-
-    ;
+    
 
     public int getRatingCounter() {
         return ratingCounter;

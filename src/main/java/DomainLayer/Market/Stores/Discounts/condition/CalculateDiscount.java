@@ -6,6 +6,6 @@ import DomainLayer.Market.Users.ShoppingBasket;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public interface CalculateDiscount {
-    public ConcurrentLinkedQueue<Double> CalculateDiscount(ShoppingBasket shoppingBasket, Store store, Double discountPercentage);
+    public Double CalculateDiscount(ShoppingBasket shoppingBasket, Store store, Double discountPercentage);
 
 }
