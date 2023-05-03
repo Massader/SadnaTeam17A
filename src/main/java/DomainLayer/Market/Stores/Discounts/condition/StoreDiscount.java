@@ -14,6 +14,10 @@ public class StoreDiscount {
     public StoreDiscount(NumericalAssemblyOfDiscount discountsAssembly) {
         this.discountsAssembly = discountsAssembly;
     }
+    public StoreDiscount(Boolean max){
+        if(max){this.discountsAssembly= new MaxDiscounts();}
+            else{this.discountsAssembly= new CombiningDiscounts();}}
+
 
     public NumericalAssemblyOfDiscount getDiscountsAssembly() {
         return discountsAssembly;

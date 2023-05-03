@@ -12,6 +12,11 @@ public abstract class NumericalAssemblyOfDiscount {
         this.discounts = discounts;
     }
 
+    public NumericalAssemblyOfDiscount(){
+        this.discounts= new ConcurrentLinkedQueue<>();
+    }
+
+
     public ConcurrentLinkedQueue<Discount> getDiscounts() {
         return discounts;
     }

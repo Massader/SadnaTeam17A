@@ -1,6 +1,8 @@
 package DomainLayer.Market.Stores;
 
 import DomainLayer.Market.Stores.Discounts.Discount;
+import DomainLayer.Market.Stores.Discounts.condition.StoreDiscount;
+import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.StorePurchasePolicies;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
@@ -19,15 +21,13 @@ public class Store {
     private boolean shutdown;
     private int ratingCounter;
     private ConcurrentHashMap<UUID, Item> items;
-    private ConcurrentHashMap<UUID, Discount> discounts; // Map of Item ID -> Discount
-    private Policy policy;
+    private StoreDiscount discounts; // Map of Item ID -> Discount
+    private StorePurchasePolicies policy;
     private ConcurrentLinkedQueue<Sale> sales;
     private ConcurrentHashMap<UUID, Role> rolesMap;
 
 
-    public ConcurrentHashMap<UUID, Discount> getDiscounts() {
-        return discounts;
-    }
+
 
     public Store(String name, String description) {
         this.name = name;
@@ -38,12 +38,19 @@ public class Store {
         this.shutdown = false;
         this.ratingCounter = 0;
         items = new ConcurrentHashMap<>();
-        discounts = new ConcurrentHashMap<>();
-        policy = new Policy();
+        discounts = new StoreDiscount(true);// always max until change
+        policy = new StorePurchasePolicies();
         sales = new ConcurrentLinkedQueue<>();
         rolesMap = new ConcurrentHashMap<>();
     }
 
+    public StoreDiscount getDiscounts() {
+        return discounts;
+    }
+
+    public StorePurchasePolicies getPolicy() {
+        return policy;
+    }
     public ConcurrentHashMap<UUID, Role> getRolesMap() {
         return rolesMap;
     }
