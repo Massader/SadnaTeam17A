@@ -485,6 +485,21 @@ public class UserController {
         }
     }
 
+    public Response<Boolean> CancelSubscriptionNotRole(UUID adminCredentials, UUID clientCredentials){
+        if (!users.containsKey(clientCredentials))
+            return Response.getFailResponse("User does not exist.");
+        if (!users.containsKey(adminCredentials))
+            return Response.getFailResponse("this admin does not exist.");
+        if(!users.get(adminCredentials).isAdmin())
+            return Response.getFailResponse("Only admins can delete users.");
+        User user = users.get(clientCredentials);
+        if(user.getRoles().isEmpty()){
+            return  deleteUser(adminCredentials,clientCredentials);
+        }
+        else return Response.getFailResponse("User have role cant unsubscribe user.");
+
+    }
+
 
 
 
