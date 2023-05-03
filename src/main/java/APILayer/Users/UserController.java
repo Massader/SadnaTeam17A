@@ -109,7 +109,7 @@ public class UserController {
                 request.getStoreId());
     }
 
-    @PostMapping(path = "/sendMessage")
+    @PostMapping(path = "/send-message")
     public Response<UUID> sendMessage(@RequestBody MessageRequest request){
         return service.sendMessage(request.getClientCredentials(), request.getSender(), request.getRecipient(), request.getBody());
     }

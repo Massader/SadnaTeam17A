@@ -95,9 +95,11 @@ public class SecurityController {
     public Response<Boolean> ValidateSecurityQuestion(UUID id, String answer){
         try{
             if(securityQuestions.get(id) != null){
-        boolean valid = securityQuestions.get(id).validateAnswer(answer);
-        return Response.getSuccessResponse(valid);}
-        else return Response.getSuccessResponse(null);}
+                boolean valid = securityQuestions.get(id).validateAnswer(answer);
+                return Response.getSuccessResponse(valid);
+            }
+            else return Response.getFailResponse("User does not have a security question.");
+        }
         catch (Exception exception){
             return Response.getFailResponse(exception.getMessage());
         }

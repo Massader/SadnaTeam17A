@@ -428,8 +428,10 @@ public class Service {
 
     public Response<Boolean> validateSecurityQuestion(UUID clientCredentials, String answer ){
         Response<Boolean> response = securityController.ValidateSecurityQuestion(clientCredentials,answer);
-        if(response.isError()|| response.getValue()==null)
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
             return Response.getFailResponse(response.getMessage());
+        }
         return response;
     }
 
@@ -639,6 +641,10 @@ public class Service {
         /* need to implement this method */
         /*-------------------------------*/
         return Response.getFailResponse("not implemented yet");
+    }
+
+    public Response<Integer> numOfStores(){
+        return storeController.numOfStores();
     }
 }
 
