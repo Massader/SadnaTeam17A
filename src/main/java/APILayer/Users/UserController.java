@@ -46,7 +46,7 @@ public class UserController {
         return service.logout(request.getClientCredentials());
     }
 
-    @PostMapping(path = "/close-client")
+    @DeleteMapping(path = "/close-client")
     public Response<Boolean> closeClient(@RequestBody Request request) {
         return service.closeClient(request.getClientCredentials());
     }
