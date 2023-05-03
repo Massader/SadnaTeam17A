@@ -117,9 +117,10 @@ public class StoreController {
     }
 
     @GetMapping(path = "/get-stores-page/number={number}&page={page}")
-    public Response<List<Store>> getStoresPage(@PathVariable(name = "number") int number, @PathVariable(name = "page") int page) {
+    public Response<List<ServiceStore>> getStoresPage(@PathVariable(name = "number") int number, @PathVariable(name = "page") int page) {
         return service.getStoresPage(number, page);
     }
+
 
     @GetMapping(path = "/search-item/keyword={keyword}&category={category}&minPrice={minPrice}" +
                         "&maxPrice={maxPrice}&itemRating={itemRating}&storeRating={storeRating}")
@@ -138,6 +139,7 @@ public class StoreController {
         return service.addItemToStore(request.getClientCredentials(), item.getName(), item.getPrice(),
                 item.getStoreId(), item.getQuantity(), item.getDescription());
     }
+
 
     @GetMapping(path = "/get-complaints/id={id}")
     public Response<List<ServiceComplaint>> getComplaints(@PathVariable(name = "id") UUID id){
@@ -171,6 +173,14 @@ public class StoreController {
         return service.purchaseCart(request.getClientCredentials(),
                 request.getExpectedPrice(), request.getAddress(), request.getCredit());
     }
+
+    @GetMapping(path = "/get-items-page/number={number}&page={page}&storeId={storeId}")
+    public Response<List<ServiceItem>> getItemsPage(@PathVariable(name = "number") int number,
+                                                    @PathVariable(name = "page") int page,
+                                                    @PathVariable(name = "storeId", required = false) UUID storeId) {
+        return service.getItemsPage(number, page, storeId);
+    }
+
     @GetMapping(path = "/numOfStores")
     public Response<Integer> numOfStores(){
         return service.numOfStores();
