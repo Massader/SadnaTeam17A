@@ -803,8 +803,10 @@ public class Service {
 
     public Response<List<ServiceUser>> getNotLoginUser(UUID clientCredentials){
         Response<List<User>> response =userController.getNotLoginUser(clientCredentials);
-        if(response.isError())
-            return Response.getFailResponse(response.getMessage());
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return Response.getFailResponse(response.getMessage());}
+        eventLogger.log(Level.INFO, "Successfully get all user that not Login");
         List<ServiceUser> serviceUsers = new ArrayList<ServiceUser>();
         for(User user : response.getValue())
             serviceUsers.add(new ServiceUser(user));
@@ -813,13 +815,28 @@ public class Service {
 
     public Response<List<ServiceUser>> getLoginUser(UUID clientCredentials){
         Response<List<User>> response =userController.getAllLoginUsers(clientCredentials);
-        if(response.isError())
-            return Response.getFailResponse(response.getMessage());
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return Response.getFailResponse(response.getMessage());}
+        eventLogger.log(Level.INFO, "Successfully get all LoginUser");
         List<ServiceUser> serviceUsers = new ArrayList<ServiceUser>();
         for(User user : response.getValue())
             serviceUsers.add(new ServiceUser(user));
         return Response.getSuccessResponse(serviceUsers);
     }
+
+    public Response<Boolean> CancelSubscriptionNotRole(UUID adminCredentials, UUID clientCredentials){
+        Response<Boolean> response = userController.CancelSubscriptionNotRole(adminCredentials, clientCredentials);
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return Response.getFailResponse(response.getMessage());}
+        eventLogger.log(Level.INFO, "Successfully  Cancel subscription  of user " + clientCredentials);
+        return response;
+    }
+
+
+
+
 
 
 
