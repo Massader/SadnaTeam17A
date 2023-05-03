@@ -790,5 +790,17 @@ public class Service {
         eventLogger.log(Level.INFO, "Successfully remove discount to store " + storeId);
         return response;
     }
+
+    public Response<Integer> numOfItems(UUID storeId) {
+        Response<Integer> response = storeController.numOfItems(storeId);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        eventLogger.log(Level.INFO, "return the number of items"  +  response.getValue());
+        return response;
+    }
+
+
 }
 

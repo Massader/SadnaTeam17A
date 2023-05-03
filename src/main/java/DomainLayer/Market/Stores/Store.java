@@ -219,6 +219,7 @@ public class Store {
         return missingItems;
     }
 
+
     public Boolean addPolicyTermByStoreOwner( PurchaseTerm term) throws Exception {
         this.policy.addPurchaseTerm(term);
         return true;
@@ -240,12 +241,9 @@ public class Store {
     }
 
 
-
-
-
-
-
-
+    public int numOfItems() {
+        return items.size();
+    }
 
 }
 

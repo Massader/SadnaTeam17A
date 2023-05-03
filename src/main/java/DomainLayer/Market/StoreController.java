@@ -495,6 +495,7 @@ public class StoreController {
         return Response.getSuccessResponse(num);
     }
 
+
     public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
         try {
             if (!storeMap.containsKey(storeId))
@@ -554,5 +555,24 @@ public class StoreController {
     }
 
 
+
+
+    public Response<Integer> numOfItems(UUID storeId) {
+        if (storeId == null)
+            return Response.getSuccessResponse(numOfItems());
+
+        if (!storeExist(storeId))
+            return Response.getFailResponse("store no exist");
+        int num = getStore(storeId).numOfItems();
+        return Response.getSuccessResponse(num);
+    }
+
+    private Integer numOfItems() {
+        int num = 0;
+        for (Store store : storeMap.values())
+            num+= store.numOfItems();
+        return num;
+
+    }
 
 }
