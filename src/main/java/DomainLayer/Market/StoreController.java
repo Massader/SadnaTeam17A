@@ -511,7 +511,7 @@ public class StoreController {
         int num = getStore(storeId).numOfItems();
         return Response.getSuccessResponse(num);
     }
-    
+
     private Integer numOfItems() {
         int num = 0;
         for (Store store : storeMap.values())
