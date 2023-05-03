@@ -7,4 +7,5 @@ public interface PaymentBridge {
 
 
     Boolean cancelPay(double nowPrice,int credit);
+    Integer requestPayment();
 }
