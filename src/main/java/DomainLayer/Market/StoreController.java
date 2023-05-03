@@ -44,7 +44,7 @@ public class StoreController {
         if (page == 0 || page > (storeMap.size() / number) + 1) return Response.getFailResponse("Page number can't be 0 or larger than available stores.");
         List<Store> stores = new ArrayList<>(storeMap.values());
         int start = (page - 1) * number;
-        int end = Math.min(start + number - 1, stores.size());
+        int end = Math.min(start + number, stores.size());
         return Response.getSuccessResponse(stores.subList(start, end));
     }
 
