@@ -642,5 +642,9 @@ public class Service {
         /*-------------------------------*/
         return Response.getFailResponse("not implemented yet");
     }
+
+    public Response<Integer> numOfStores(){
+        return storeController.numOfStores();
+    }
 }
 

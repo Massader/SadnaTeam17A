@@ -473,4 +473,9 @@ public class StoreController {
         }
     }
 
+    public Response<Integer> numOfStores(){
+        int num = storeMap.size();
+        return Response.getSuccessResponse(num);
+    }
+
 }
