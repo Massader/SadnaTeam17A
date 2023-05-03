@@ -1,7 +1,9 @@
 package ServiceLayer;
 
 import DomainLayer.Market.*;
+import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Item;
+import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
@@ -747,6 +749,46 @@ public class Service {
 
     public Response<Integer> numOfStores(){
         return storeController.numOfStores();
+    }
+
+    public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
+        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, term);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return response;
+        }
+        eventLogger.log(Level.INFO, "Successfully add Policy to store " + storeId);
+        return response;
+    }
+
+    public Response<Boolean> removePolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
+        Response<Boolean> response = storeController.removePolicyTermByStoreOwner(clientCredentials, storeId, term);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return response;
+        }
+        eventLogger.log(Level.INFO, "Successfully add Policy to store " + storeId);
+        return response;
+    }
+
+    public Response<Boolean> addDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
+        Response<Boolean> response = storeController.addDiscountByStoreOwner(clientCredentials, storeId, discount);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return response;
+        }
+        eventLogger.log(Level.INFO, "Successfully add discount to store " + storeId);
+        return response;
+    }
+
+    public Response<Boolean> removeDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
+        Response<Boolean> response = storeController.removeDiscountByStoreOwner(clientCredentials, storeId, discount);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return response;
+        }
+        eventLogger.log(Level.INFO, "Successfully remove discount to store " + storeId);
+        return response;
     }
 }
 

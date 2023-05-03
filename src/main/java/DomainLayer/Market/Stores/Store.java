@@ -1,7 +1,9 @@
 package DomainLayer.Market.Stores;
 
-import DomainLayer.Market.Stores.Discounts.Discount;
+import DomainLayer.Market.Stores.Discounts.DiscountType;
+import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Discounts.condition.StoreDiscount;
+import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.StorePurchasePolicies;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreOwner;
@@ -169,6 +171,13 @@ public class Store {
         return price;
 
     }
+
+    public  double calculatePriceOfBasketWithPolicyAndDiscount(ShoppingBasket shoppingBasket) throws Exception { // Map of Item ID -> Quantity)
+        if(policy.purchaseRuleOccurs(shoppingBasket,this)){
+            return discounts.CalculateShoppingBasket(shoppingBasket,this);
+        }
+        throw new Exception("The shopping Basket is not accepted by Store Policy");
+    }
     
 
     public int getRatingCounter() {
@@ -209,6 +218,35 @@ public class Store {
         }
         return missingItems;
     }
+
+    public Boolean addPolicyTermByStoreOwner( PurchaseTerm term) throws Exception {
+        this.policy.addPurchaseTerm(term);
+        return true;
+    }
+
+    public Boolean removePolicyTermByStoreOwner( PurchaseTerm term) throws Exception {
+        this.policy.removePurchaseTerm(term);
+        return true;
+    }
+
+    public Boolean addDiscountByStoreOwner(Discount discount) throws Exception {
+        this.discounts.addDiscount(discount);
+        return true;
+    }
+
+    public Boolean removeDiscountByStoreOwner(Discount discount) throws Exception {
+        this.discounts.removeDiscount(discount);
+        return true;
+    }
+
+
+
+
+
+
+
+
+
 }
 
 
