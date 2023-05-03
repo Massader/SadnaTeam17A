@@ -118,45 +118,45 @@ public class StoreController {
         return service.getStoresPage(number, page);
     }
 
-    @GetMapping(path = "searchItem")
+    @GetMapping(path = "search-item")
     public Response<List<ServiceItem>> searchItem(@RequestBody searchItemRequest request) {
         return service.searchItem(request.getKeyword(), request.getCategory(), request.getMinPrice(),
                 request.getMaxPrice(), request.getItemRating(), request.getStoreRating());
     }
-    @PutMapping(path = "searchItem")
+    @PutMapping(path = "search-item")
     public Response<ServiceItem> addItemToStore(@RequestBody ItemRequest request){
         ServiceItem item = request.getItem();
         return service.addItemToStore(request.getClientCredentials(), item.getName(), item.getPrice(),
                 item.getStoreId(), item.getQuantity(), item.getDescription());
     }
 
-    @GetMapping(path = "/getComplaints")
+    @GetMapping(path = "/get-complaints")
     public Response<List<ServiceComplaint>> getComplaints(@RequestBody Request request){
         return service.getComplaints(request.getClientCredentials());
     }
 
-    @GetMapping(path = "/getComplaint")
+    @GetMapping(path = "/get-complaint")
     public Response<ServiceComplaint> getComplaint(@RequestBody TargetRequest request){
         return service.getComplaint(request.getClientCredentials(), request.getTargetId());
     }
 
-    @PutMapping(path = "/assignAdminToComplaint")
+    @PutMapping(path = "/assign-admin-to-complaint")
     public Response<Boolean> assignAdminToComplaint(@RequestBody TargetRequest request){
         return service.assignAdminToComplaint(request.getClientCredentials(), request.getTargetId());
     }
 
-    @PostMapping(path = "/addItemCategory")
+    @PostMapping(path = "/add-item-category")
     public Response<Boolean> addItemCategory(@RequestBody CategoryRequest request){
         return service.addItemCategory(request.getClientCredentials(),
                 request.getStoreId(), request.getItemId(), request.getCategory());
     }
-    @DeleteMapping(path = "/removeItemFromStore")
+    @DeleteMapping(path = "/remove-item-from-store")
     public Response<Boolean> removeItemFromStore(@RequestBody TargetItemRequest request){
         return service.removeItemFromStore(request.getClientCredentials(),
                 request.getStoreId(), request.getItemId());
     }
 
-    @PutMapping(path = "/purchaseCart")
+    @PutMapping(path = "/purchase-cart")
     public Response<Boolean> purchaseCart(@RequestBody PurchaseCartRequest request){
         return service.purchaseCart(request.getClientCredentials(),
                 request.getExpectedPrice(), request.getAddress(), request.getCredit());
