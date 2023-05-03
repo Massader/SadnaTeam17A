@@ -209,6 +209,10 @@ public class Store {
         }
         return missingItems;
     }
+
+    public int numOfItems() {
+        return items.size();
+    }
 }
 
 

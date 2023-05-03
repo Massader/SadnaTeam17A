@@ -181,8 +181,13 @@ public class StoreController {
         return service.getItemsPage(number, page, storeId);
     }
 
-    @GetMapping(path = "/numOfStores")
+    @GetMapping(path = "/num-of-stores")
     public Response<Integer> numOfStores(){
         return service.numOfStores();
+    }
+
+    @GetMapping(path = "/num-of-items/storeId")
+    public Response<Integer> numOfItems(@PathVariable(name = "storeId", required = false) UUID storeId){
+        return service.numOfItems(storeId);
     }
 }

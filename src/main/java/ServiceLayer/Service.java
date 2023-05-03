@@ -748,5 +748,15 @@ public class Service {
     public Response<Integer> numOfStores(){
         return storeController.numOfStores();
     }
+
+    public Response<Integer> numOfItems(UUID storeId) {
+        Response<Integer> response = storeController.numOfItems(storeId);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        eventLogger.log(Level.INFO, "return the number of items"  +  response.getValue());
+        return response;
+    }
 }
 

@@ -502,4 +502,10 @@ public class StoreController {
         return Response.getSuccessResponse(num);
     }
 
+    public Response<Integer> numOfItems(UUID storeId) {
+        if (!storeExist(storeId))
+            return Response.getFailResponse("store no exist");
+        int num = getStore(storeId).numOfItems();
+        return Response.getSuccessResponse(num);
+    }
 }
