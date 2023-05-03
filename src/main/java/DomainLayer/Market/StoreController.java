@@ -479,14 +479,13 @@ public class StoreController {
         List<Item> output = new ArrayList<>();
         if (storeId == null) {
             List<Item> allItems = new ArrayList<>();
-            for(Store store : getStores()) {
+            for (Store store : getStores()) {
                 allItems.addAll(store.getItems().values());
             }
             int start = (page - 1) * number;
             int end = Math.min(start + number, allItems.size());
             output.addAll(allItems.subList(start, end));
-        }
-        else {
+        } else {
             Store store = getStore(storeId);
             if (store == null)
                 return Response.getFailResponse("Store does not exist");
@@ -496,6 +495,7 @@ public class StoreController {
             output.addAll(allItems.subList(start, end));
         }
         return Response.getSuccessResponse(output);
+    }
 
     public Response<Integer> numOfStores(){
         int num = storeMap.size();

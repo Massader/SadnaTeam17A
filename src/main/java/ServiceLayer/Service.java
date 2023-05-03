@@ -743,6 +743,7 @@ public class Service {
             output.add(new ServiceItem(item));
         }
         return Response.getSuccessResponse(output);
+    }
 
     public Response<Integer> numOfStores(){
         return storeController.numOfStores();
