@@ -1,7 +1,7 @@
 package DomainLayer.Market.Stores.Discounts;
 
-public class VisibleDiscount extends Discount {
-    public VisibleDiscount(double discount) {
+public class VisibleDiscountType extends DiscountType {
+    public VisibleDiscountType(double discount) {
         super(discount);
     }
 

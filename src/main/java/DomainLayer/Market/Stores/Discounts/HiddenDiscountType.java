@@ -1,7 +1,7 @@
 package DomainLayer.Market.Stores.Discounts;
 
-public class HiddenDiscount extends Discount{
-    public HiddenDiscount(double discount) {
+public class HiddenDiscountType extends DiscountType {
+    public HiddenDiscountType(double discount) {
         super(discount);
     }
 
