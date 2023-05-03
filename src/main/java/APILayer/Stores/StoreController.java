@@ -43,14 +43,15 @@ public class StoreController {
         return service.shutdownStore(request.getClientCredentials(), request.getTargetId());
     }
 
-    @GetMapping(path = "/store-info")
-    public Response<ServiceStore> getStoreInfo(@RequestBody TargetRequest request) {
-        return service.getStoreInformation(request.getTargetId());
+    @GetMapping(path = "/store-info/storeId={storeId}")
+    public Response<ServiceStore> getStoreInfo(@PathVariable(name = "storeId") UUID storeId) {
+        return service.getStoreInformation(storeId);
     }
 
-    @GetMapping(path = "/item-info")
-    public Response<ServiceItem> getItemInfo(@RequestBody TargetItemRequest request) {
-        return service.getItemInformation(request.getStoreId(), request.getItemId());
+    @GetMapping(path = "/item-info/storeId={storeId}&itemId={itemId}")
+    public Response<ServiceItem> getItemInfo(@PathVariable(name = "storeId") UUID storeId,
+                                                @PathVariable(name = "itemId") UUID itemId) {
+        return service.getItemInformation(storeId, itemId);
     }
 
     @PostMapping(path = "/post-review")
@@ -64,9 +65,10 @@ public class StoreController {
                 request.getStoreId(), request.getPermissions());
     }
 
-    @GetMapping(path = "/store-staff")
-    public Response<List<ServiceUser>> getStoreStaff(@RequestBody TargetRequest request) {
-        return service.getStoreStaff(request.getClientCredentials(), request.getTargetId());
+    @GetMapping(path = "/store-staff/id={id}&storeId={storeId}")
+    public Response<List<ServiceUser>> getStoreStaff(@PathVariable(name = "id") UUID id,
+                                                     @PathVariable(name = "storeId") UUID storeId) {
+        return service.getStoreStaff(id, storeId);
     }
 
     @PostMapping(path = "/role/appoint-manager")
@@ -108,9 +110,10 @@ public class StoreController {
                 request.getItem().getId(), request.getItem().getPrice());
     }
 
-    @GetMapping(path = "/sale-history")
-    public Response<List<ServiceSale>> getStoreSaleHistory(@RequestBody TargetRequest request) {
-        return service.getStoreSaleHistory(request.getClientCredentials(), request.getTargetId());
+    @GetMapping(path = "/sale-history/id={id}&storeId={storeId}")
+    public Response<List<ServiceSale>> getStoreSaleHistory(@PathVariable(name = "id") UUID id,
+                                                           @PathVariable(name = "storeId") UUID storeId) {
+        return service.getStoreSaleHistory(id, storeId);
     }
 
     @GetMapping(path = "/get-stores-page/number={number}&page={page}")
@@ -118,26 +121,35 @@ public class StoreController {
         return service.getStoresPage(number, page);
     }
 
-    @GetMapping(path = "search-item")
-    public Response<List<ServiceItem>> searchItem(@RequestBody searchItemRequest request) {
-        return service.searchItem(request.getKeyword(), request.getCategory(), request.getMinPrice(),
-                request.getMaxPrice(), request.getItemRating(), request.getStoreRating());
+
+    @GetMapping(path = "/search-item/keyword={keyword}&category={category}&minPrice={minPrice}" +
+                        "&maxPrice={maxPrice}&itemRating={itemRating}&storeRating={storeRating}")
+    public Response<List<ServiceItem>> searchItem(@PathVariable(name = "keyword") String keyword,
+                                                  @PathVariable(name = "category") String category,
+                                                  @PathVariable(name = "minPrice") double minPrice,
+                                                  @PathVariable(name = "maxPrice") double maxPrice,
+                                                  @PathVariable(name = "itemRating") int itemRating,
+                                                  @PathVariable(name = "storeRating") int storeRating) {
+        return service.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating);
     }
-    @PutMapping(path = "search-item")
+
+    @PutMapping(path = "/add-item-to-store")
     public Response<ServiceItem> addItemToStore(@RequestBody ItemRequest request){
         ServiceItem item = request.getItem();
         return service.addItemToStore(request.getClientCredentials(), item.getName(), item.getPrice(),
                 item.getStoreId(), item.getQuantity(), item.getDescription());
     }
 
-    @GetMapping(path = "/get-complaints")
-    public Response<List<ServiceComplaint>> getComplaints(@RequestBody Request request){
-        return service.getComplaints(request.getClientCredentials());
+
+    @GetMapping(path = "/get-complaints/id={id}")
+    public Response<List<ServiceComplaint>> getComplaints(@PathVariable(name = "id") UUID id){
+        return service.getComplaints(id);
     }
 
-    @GetMapping(path = "/get-complaint")
-    public Response<ServiceComplaint> getComplaint(@RequestBody TargetRequest request){
-        return service.getComplaint(request.getClientCredentials(), request.getTargetId());
+    @GetMapping(path = "/get-complaint/id={id}&complaintId={complaintId}")
+    public Response<ServiceComplaint> getComplaint(@PathVariable(name = "id") UUID id,
+                                                   @PathVariable(name = "complaintId") UUID complaintId){
+        return service.getComplaint(id,complaintId);
     }
 
     @PutMapping(path = "/assign-admin-to-complaint")
@@ -169,4 +181,8 @@ public class StoreController {
         return service.getItemsPage(number, page, storeId);
     }
 
+    @GetMapping(path = "/numOfStores")
+    public Response<Integer> numOfStores(){
+        return service.numOfStores();
+    }
 }

@@ -496,6 +496,10 @@ public class StoreController {
             output.addAll(allItems.subList(start, end));
         }
         return Response.getSuccessResponse(output);
+
+    public Response<Integer> numOfStores(){
+        int num = storeMap.size();
+        return Response.getSuccessResponse(num);
     }
 
 }
