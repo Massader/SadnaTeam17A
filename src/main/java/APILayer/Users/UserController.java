@@ -61,9 +61,9 @@ public class UserController {
         return service.getPurchaseHistory(request.getClientCredentials(), request.getTargetId());
     }
 
-    @GetMapping(path = "/info")
-    public Response<ServiceUser> getUserInfo(@RequestBody Request request) {
-        return service.getUserInfo(request.getClientCredentials());
+    @GetMapping(path = "/info/id={id}")
+    public Response<ServiceUser> getUserInfo(@PathVariable(name = "id") UUID clientCredentials) {
+        return service.getUserInfo(clientCredentials);
     }
 
     @PostMapping(path = "/security/add-question")
@@ -71,14 +71,15 @@ public class UserController {
         return service.addSecurityQuestion(request.getClientCredentials(), request.getQuestion(), request.getAnswer());
     }
 
-    @GetMapping(path = "/security/validate-question")
-    public Response<Boolean> validateSecurityQuestion(@RequestBody SecurityQuestionRequest request) {
-        return service.validateSecurityQuestion(request.getClientCredentials(), request.getAnswer());
+    @GetMapping(path = "/security/validate-question/id={id}&answer={answer}")
+    public Response<Boolean> validateSecurityQuestion(@PathVariable(name = "id") UUID clientCredentials,
+                                                      @PathVariable(name = "answer") String answer) {
+        return service.validateSecurityQuestion(clientCredentials, answer);
     }
 
-    @GetMapping(path = "/security/get-question")
-    public Response<String> getSecurityQuestion(@RequestBody Request request) {
-        return service.getSecurityQuestion(request.getClientCredentials());
+    @GetMapping(path = "/security/get-question/id={id}")
+    public Response<String> getSecurityQuestion(@PathVariable(name = "id") UUID clientCredentials) {
+        return service.getSecurityQuestion(clientCredentials);
     }
 
     @PostMapping(path = "/admin/register")
@@ -91,9 +92,9 @@ public class UserController {
         return service.changePassword(request.getClientCredentials(), request.getOldPassword(), request.getNewPassword());
     }
 
-    @GetMapping(path = "/get-cart")
-    public Response<List<ServiceShoppingBasket>> getCart(@RequestBody Request request) {
-        return service.getCart(request.getClientCredentials());
+    @GetMapping(path = "/get-cart/id={id}")
+    public Response<List<ServiceShoppingBasket>> getCart(@PathVariable(name = "id") UUID clientCredentials) {
+        return service.getCart(clientCredentials);
     }
 
     @PostMapping(path = "/add-to-cart")
