@@ -801,6 +801,28 @@ public class Service {
         return response;
     }
 
+    public Response<List<ServiceUser>> getNotLoginUser(UUID clientCredentials){
+        Response<List<User>> response =userController.getNotLoginUser(clientCredentials);
+        if(response.isError())
+            return Response.getFailResponse(response.getMessage());
+        List<ServiceUser> serviceUsers = new ArrayList<ServiceUser>();
+        for(User user : response.getValue())
+            serviceUsers.add(new ServiceUser(user));
+        return Response.getSuccessResponse(serviceUsers);
+    }
+
+    public Response<List<ServiceUser>> getLoginUser(UUID clientCredentials){
+        Response<List<User>> response =userController.getAllLoginUsers(clientCredentials);
+        if(response.isError())
+            return Response.getFailResponse(response.getMessage());
+        List<ServiceUser> serviceUsers = new ArrayList<ServiceUser>();
+        for(User user : response.getValue())
+            serviceUsers.add(new ServiceUser(user));
+        return Response.getSuccessResponse(serviceUsers);
+    }
+
+
+
 
 }
 
