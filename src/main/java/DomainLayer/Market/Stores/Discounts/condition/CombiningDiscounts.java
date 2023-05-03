@@ -10,6 +10,9 @@ public class CombiningDiscounts extends NumericalAssemblyOfDiscount {
     public CombiningDiscounts(ConcurrentLinkedQueue<Discount> discounts) {
         super(discounts);
     }
+    public CombiningDiscounts() {
+        super();
+    }
 
     @Override
     public Double CalculateDiscount(ShoppingBasket shoppingBasket, Store store) {

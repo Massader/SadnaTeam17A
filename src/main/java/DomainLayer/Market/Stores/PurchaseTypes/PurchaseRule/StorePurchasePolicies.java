@@ -15,6 +15,9 @@ public class StorePurchasePolicies {
     public StorePurchasePolicies(ConcurrentLinkedQueue<PurchaseTerm> purchasePolicies) {
         this.purchasePolicies = purchasePolicies;
     }
+    public StorePurchasePolicies() {
+        this.purchasePolicies = new ConcurrentLinkedQueue<>();
+    }
 
     public ConcurrentLinkedQueue<PurchaseTerm> getPurchasePolicies() {
         return purchasePolicies;

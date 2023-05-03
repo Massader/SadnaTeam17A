@@ -10,6 +10,9 @@ public class MaxDiscounts extends NumericalAssemblyOfDiscount {
     public MaxDiscounts(ConcurrentLinkedQueue<Discount> discounts) {
         super(discounts);
     }
+    public MaxDiscounts() {
+        super();
+    }
 
     @Override
     public Double CalculateDiscount(ShoppingBasket shoppingBasket, Store store) {
