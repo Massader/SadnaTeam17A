@@ -7,14 +7,21 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CombiningDiscounts extends NumericalAssemblyOfDiscount {
 
-    public CombiningDiscounts(CalculateDiscount calculateDiscount) {
-        super(calculateDiscount);
+    public CombiningDiscounts(ConcurrentLinkedQueue<Discount> discounts) {
+        super(discounts);
     }
 
     @Override
-    public Double CalculateDiscount(ShoppingBasket shoppingBasket, Store store, Double discountPercentage) {
-        ConcurrentLinkedQueue<Double> discountOption =getCalculateDiscount().CalculateDiscount(shoppingBasket,store, discountPercentage);
-        Double maxDiscount = discountOption.stream().max(Double::compare).orElse(0.0);
-        return  maxDiscount;
-    }
+    public Double CalculateDiscount(ShoppingBasket shoppingBasket, Store store) {
+        ConcurrentLinkedQueue<Double> discountOption = new ConcurrentLinkedQueue<>();
+        for ( Discount discount:getDiscounts()) {
+            Double pricePerDiscount = discount.CalculateDiscount(shoppingBasket,store);
+            discountOption.add(pricePerDiscount);
+        }
+        Double sumDiscount=0.0;
+        for (Double discount : discountOption) {
+            sumDiscount += discount;
+        }
+        return  sumDiscount;
+            }
 }

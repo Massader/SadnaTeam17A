@@ -29,8 +29,8 @@ public class ItemCalculateDiscount implements CalculateDiscount {
 
 
     @Override
-    public ConcurrentLinkedQueue<Double> CalculateDiscount(ShoppingBasket shoppingBasket, Store store, Double discountPercentage) {
-        ConcurrentLinkedQueue<Double> discountOption = new ConcurrentLinkedQueue<>();
+    public Double CalculateDiscount(ShoppingBasket shoppingBasket, Store store, Double discountPercentage) {
+      //  ConcurrentLinkedQueue<Double> discountOption = new ConcurrentLinkedQueue<>();
         double price = store.calculatePriceOfBasket(shoppingBasket.getItems());
         double discount = 0;
         ConcurrentHashMap<UUID, Item> storeItems = store.getItems();
@@ -39,8 +39,8 @@ public class ItemCalculateDiscount implements CalculateDiscount {
             int quantity = items.get(itemId);
             discount = storeItems.get(getItemId()).getPrice() * quantity * discountPercentage;
         }
-        discountOption.add(discount);
-        return  discountOption;
+       // discountOption.add(discount);
+        return  discount;
     }
 
 }
