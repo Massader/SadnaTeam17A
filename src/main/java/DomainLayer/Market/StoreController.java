@@ -34,8 +34,8 @@ public class StoreController {
         userController = UserController.getInstance();
     }
 
-    public Collection<Store> getStores(){
-        return storeMap.values();
+    public List<Store> getStores(){
+        return new ArrayList<>(storeMap.values());
     }
 
     public Response<List<Store>> getStoresPage(int number, int page){
@@ -115,8 +115,11 @@ public class StoreController {
         try {
             if(!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist");
-//            if(!isAdmin(clientCredentials))
-//                return Response.getFailResponse("User doesn't have permission.");
+            Response<User> response = userController.getUser(clientCredentials);
+            if (response.isError())
+                return Response.getFailResponse(response.getMessage());
+            if(!response.getValue().isAdmin())
+                return Response.getFailResponse("User doesn't have permission.");
             if (storeMap.get(storeId).shutdownStore()) {
                 return Response.getSuccessResponse(true);
             }
@@ -174,7 +177,6 @@ public class StoreController {
             //add the item to the store
             Store store = getStore(storeId);
             store.addItem(item);
-//            item.addQuantity(quantity);
 
             return Response.getSuccessResponse(item);}
         catch (Exception exception){
@@ -471,6 +473,29 @@ public class StoreController {
                 return Response.getFailResponse("Failed to remove item.");
             return Response.getSuccessResponse(true);
         }
+    }
+
+    public Response<List<Item>> getItemsPage(int number, int page, UUID storeId) {
+        List<Item> output = new ArrayList<>();
+        if (storeId == null) {
+            List<Item> allItems = new ArrayList<>();
+            for(Store store : getStores()) {
+                allItems.addAll(store.getItems().values());
+            }
+            int start = (page - 1) * number;
+            int end = Math.min(start + number, allItems.size());
+            output.addAll(allItems.subList(start, end));
+        }
+        else {
+            Store store = getStore(storeId);
+            if (store == null)
+                return Response.getFailResponse("Store does not exist");
+            List<Item> allItems = new ArrayList<>(store.getItems().values());
+            int start = (page - 1) * number;
+            int end = Math.min(start + number, allItems.size());
+            output.addAll(allItems.subList(start, end));
+        }
+        return Response.getSuccessResponse(output);
     }
 
 }

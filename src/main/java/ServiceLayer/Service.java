@@ -625,13 +625,17 @@ public class Service {
         return response2;
     }
 
-    public Response<List<Store>> getStoresPage(int number, int page){
+    public Response<List<ServiceStore>> getStoresPage(int number, int page){
         Response<List<Store>> response = storeController.getStoresPage(number, page);
         if(response.isError()){
             errorLogger.log(Level.WARNING, response.getMessage());
             return Response.getFailResponse(response.getMessage());
         }
-        return response;
+        List<ServiceStore> output = new ArrayList<>();
+        for (Store store : response.getValue()) {
+            output.add(new ServiceStore(store));
+        }
+        return Response.getSuccessResponse(output);
     }
 
     public Response<Boolean> isLoggedIn(UUID userId) {
@@ -639,6 +643,19 @@ public class Service {
         /* need to implement this method */
         /*-------------------------------*/
         return Response.getFailResponse("not implemented yet");
+    }
+
+    public Response<List<ServiceItem>> getItemsPage(int number, int page, UUID storeId) {
+        Response<List<Item>> response = storeController.getItemsPage(number, page, storeId);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        List<ServiceItem> output = new ArrayList<>();
+        for (Item item : response.getValue()) {
+            output.add(new ServiceItem(item));
+        }
+        return Response.getSuccessResponse(output);
     }
 }
 
