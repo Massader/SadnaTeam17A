@@ -19,4 +19,9 @@ public class PaymentReal implements PaymentBridge{
     public Boolean cancelPay(double nowPrice, int credit) {
         return true;
     }
+
+    @Override
+    public Integer requestPayment() {
+        return  1;
+    }
 }

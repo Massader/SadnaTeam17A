@@ -80,7 +80,7 @@ public class PurchaseController {
                 if(!paymentProxy.pay(nowPrice,credit)){
                     return Response.getFailResponse("There was a problem with your payment" );
                 }
-                if(!supplyProxy.sendOrder(shoppingCart)){
+                if(supplyProxy.sendOrder()==null){
                     paymentProxy.cancelPay(nowPrice,credit);
                     return Response.getFailResponse("There was a problem with the purchase, you received a refund" );
 

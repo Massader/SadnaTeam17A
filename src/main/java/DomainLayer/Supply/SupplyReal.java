@@ -14,7 +14,7 @@ public class SupplyReal implements SupplyBridge {
     }
 
     @Override
-    public Boolean sendOrder(ShoppingCart shoppingCart) {
-        return true;
+    public Integer sendOrder() {
+        return 1;
     }
 }

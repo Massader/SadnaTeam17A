@@ -700,7 +700,7 @@ public class Service {
         return response;
     }
 
-    public Response<Boolean> purchaseCart(UUID clientCredentials,  double expectedPrice, String address, int credit){
+    public Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, int credit){
         Response<ShoppingCart> response1 = userController.viewCart(clientCredentials);
         if(response1.isError()){
             errorLogger.log(Level.WARNING, response1.getMessage());
