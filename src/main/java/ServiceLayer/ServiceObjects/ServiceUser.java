@@ -17,6 +17,7 @@ public class ServiceUser {
     private UUID id;
     private String username;
     private Map<UUID,List<StorePermissions>> roles;
+    private boolean isAdmin;
 
     public ServiceUser() {}
 
@@ -26,6 +27,7 @@ public class ServiceUser {
         this.roles = new HashMap<>();
         for(Role role : user.getRoles())
             roles.put(role.getStoreId(), role.getPermissions());
+        this.isAdmin = user.isAdmin();
     }
     @Autowired
     public ServiceUser(String username) {
@@ -44,6 +46,10 @@ public class ServiceUser {
         return roles;
     }
 
+    public boolean getIsAdmin() {
+        return isAdmin;
+    }
+
     public void setId(UUID id) {
         this.id = id;
     }
@@ -54,5 +60,9 @@ public class ServiceUser {
 
     public void setRoles(Map<UUID, List<StorePermissions>> roles) {
         this.roles = roles;
+    }
+
+    public void setIsAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 }
