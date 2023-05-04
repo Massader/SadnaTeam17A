@@ -309,6 +309,8 @@ public class Service {
         return Response.getSuccessResponse(list);
     }
 
+
+
     public Response<ServiceStore> getStoreInformation(UUID storeId){
         Response<Store> response = storeController.getStoreInformation(storeId);
         if(response.isError())
@@ -835,11 +837,16 @@ public class Service {
     }
 
 
-
-
-
-
-
-
+    public Response<List<ServiceItem>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating, int number, int page, UUID storeId) {
+        Response<List<Item>> response = searchController.searchItem(keyword,
+                category, minPrice, maxPrice, itemRating, storeRating, number, page, storeId);
+        if(response.isError())
+            return Response.getFailResponse(response.getMessage());
+        List<ServiceItem> list = new ArrayList<ServiceItem>();
+        for (Item item : response.getValue()) {
+            list.add(new ServiceItem(item));
+        }
+        return Response.getSuccessResponse(list);
+    }
 }
 

@@ -123,14 +123,18 @@ public class StoreController {
 
 
     @GetMapping(path = "/search-item/keyword={keyword}&category={category}&minPrice={minPrice}" +
-                        "&maxPrice={maxPrice}&itemRating={itemRating}&storeRating={storeRating}")
-    public Response<List<ServiceItem>> searchItem(@PathVariable(name = "keyword") String keyword,
-                                                  @PathVariable(name = "category") String category,
-                                                  @PathVariable(name = "minPrice") double minPrice,
-                                                  @PathVariable(name = "maxPrice") double maxPrice,
-                                                  @PathVariable(name = "itemRating") int itemRating,
-                                                  @PathVariable(name = "storeRating") int storeRating) {
-        return service.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating);
+                        "&maxPrice={maxPrice}&itemRating={itemRating}&storeRating={storeRating}" +
+                        "&storeId={storeId}&number={number}&page={page}")
+    public Response<List<ServiceItem>> searchItem(@PathVariable(name = "keyword", required = false) String keyword,
+                                                  @PathVariable(name = "category", required = false) String category,
+                                                  @PathVariable(name = "minPrice", required = false) double minPrice,
+                                                  @PathVariable(name = "maxPrice", required = false) double maxPrice,
+                                                  @PathVariable(name = "itemRating", required = false) int itemRating,
+                                                  @PathVariable(name = "number", required = false) int number,
+                                                  @PathVariable(name = "page", required = false) int page,
+                                                  @PathVariable(name = "storeId", required = false) UUID storeId,
+                                                  @PathVariable(name = "storeRating", required = false) int storeRating) {
+        return service.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating, number, page, storeId);
     }
 
     @PutMapping(path = "/add-item-to-store")
