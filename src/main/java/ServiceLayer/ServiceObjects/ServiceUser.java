@@ -46,7 +46,7 @@ public class ServiceUser {
         return roles;
     }
 
-    public boolean IsAdmin() {
+    public boolean getIsAdmin() {
         return isAdmin;
     }
 
