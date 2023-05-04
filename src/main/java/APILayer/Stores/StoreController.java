@@ -190,4 +190,8 @@ public class StoreController {
     public Response<Integer> numOfItems(@PathVariable(name = "storeId", required = false) UUID storeId){
         return service.numOfItems(storeId);
     }
+
+//    @GetMapping(path ="/get-store/storeId={storeId}")(){
+//
+//    }
 }
