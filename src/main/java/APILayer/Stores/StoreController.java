@@ -127,13 +127,13 @@ public class StoreController {
                         "&storeId={storeId}&number={number}&page={page}")
     public Response<List<ServiceItem>> searchItem(@PathVariable(name = "keyword", required = false) String keyword,
                                                   @PathVariable(name = "category", required = false) String category,
-                                                  @PathVariable(name = "minPrice", required = false) double minPrice,
-                                                  @PathVariable(name = "maxPrice", required = false) double maxPrice,
-                                                  @PathVariable(name = "itemRating", required = false) int itemRating,
-                                                  @PathVariable(name = "number", required = false) int number,
-                                                  @PathVariable(name = "page", required = false) int page,
+                                                  @PathVariable(name = "minPrice", required = false) Double minPrice,
+                                                  @PathVariable(name = "maxPrice", required = false) Double maxPrice,
+                                                  @PathVariable(name = "itemRating", required = false) Integer itemRating,
+                                                  @PathVariable(name = "number", required = false) Integer number,
+                                                  @PathVariable(name = "page", required = false) Integer page,
                                                   @PathVariable(name = "storeId", required = false) UUID storeId,
-                                                  @PathVariable(name = "storeRating", required = false) int storeRating) {
+                                                  @PathVariable(name = "storeRating", required = false) Integer storeRating) {
         return service.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating, number, page, storeId);
     }
 

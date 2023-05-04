@@ -56,41 +56,37 @@ public class SearchController {
         instance = new SearchController();
     }
 
-    public Response<List<Item>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating, int number, int page, UUID storeId) {
+    public Response<List<Item>> searchItem(String keyword, String category, Double minPrice, Double maxPrice, Integer itemRating, Integer storeRating, Integer number, Integer page, UUID storeId) {
         List<Item> items = new LinkedList<>();
         for (Store store : storeController.getStores()){
-            for (Item item : store.getItems().values()){
-                items.add(item);
-            }
+            items.addAll(store.getItems().values());
         }
-        if (keyword!=null){
+        if (!keyword.isEmpty()){
             items = items.stream().filter(item -> item.getName().contains(keyword)).toList();
         }
 
-        if(category!=null){
+        if(!category.isEmpty()){
             items = items.stream().filter(item -> item.containsCategory(category)).toList();
         }
-        if(minPrice!=	0.0d){
+        if(minPrice != null){
             items = items.stream().filter(item -> item.getPrice() >= minPrice).toList();
         }
-        if(maxPrice!=	0.0d){
+        if(maxPrice != null){
             items = items.stream().filter(item -> item.getPrice() >= minPrice).toList();
         }
-        if(itemRating != 0){
+        if(itemRating != null){
             items = items.stream().filter(item -> item.getRating()>=itemRating).toList();
         }
-        if(storeRating != 0){
+        if(storeRating != null){
             items = items.stream().filter(item -> item.getRating()>=storeRating).toList();
         }
         if(storeId!= null){
             items = items.stream().filter(item -> item.getStoreId()==storeId).toList();
         }
-        if (number != 0 & page != 0){
-            List<Item> output = new LinkedList<>();
+        if (number != null && page != null){
             int start = (page - 1) * number;
             int end = Math.min(start + number, items.size());
-            output.addAll(items.subList(start, end));
-            items = output;
+            items = new LinkedList<>(items.subList(start, end));
         }
 
         return Response.getSuccessResponse(items);
