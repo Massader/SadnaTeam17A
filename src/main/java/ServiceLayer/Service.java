@@ -838,7 +838,7 @@ public class Service {
     }
 
 
-    public Response<List<ServiceItem>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating, int number, int page, UUID storeId) {
+    public Response<List<ServiceItem>> searchItem(String keyword, String category, Double minPrice, Double maxPrice, Integer itemRating, Integer storeRating, Integer number, Integer page, UUID storeId) {
         Response<List<Item>> response = searchController.searchItem(keyword,
                 category, minPrice, maxPrice, itemRating, storeRating, number, page, storeId);
         if(response.isError()) {
@@ -858,6 +858,20 @@ public class Service {
             errorLogger.log(Level.WARNING, rolesResponse.getMessage());
         }
         return rolesResponse;
+    }
+
+    public Response<Integer> searchItemNum(String keyword, String category, Double minPrice, Double maxPrice, Integer itemRating, Integer storeRating, Integer number, Integer page, UUID storeId) {
+        Response<List<Item>> response = searchController.searchItem(keyword,
+                category, minPrice, maxPrice, itemRating, storeRating, number, page, storeId);
+        if(response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        List<ServiceItem> list = new ArrayList<ServiceItem>();
+        for (Item item : response.getValue()) {
+            list.add(new ServiceItem(item));
+        }
+        return Response.getSuccessResponse(list.size());
     }
 }
 
