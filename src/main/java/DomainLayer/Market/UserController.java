@@ -500,7 +500,12 @@ public class UserController {
 
     }
 
-
+    public Response<List<Role>> getUserRoles(UUID clientCredentials) {
+        User user = getUserById(clientCredentials);
+        if (user == null)
+            return Response.getFailResponse("User does not exist.");
+        return Response.getSuccessResponse(new ArrayList<>(user.getRoles()));
+    }
 
 
 //        public Response<Boolean> UnsubscribingUserByAdmin(UUID clientCredentials, UUID userId) {

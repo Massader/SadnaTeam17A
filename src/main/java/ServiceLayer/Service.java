@@ -7,6 +7,7 @@ import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
+import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Payment.PaymentController;
 import DomainLayer.Payment.PaymentProxy;
 import DomainLayer.Security.SecurityController;
@@ -840,13 +841,23 @@ public class Service {
     public Response<List<ServiceItem>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating, int number, int page, UUID storeId) {
         Response<List<Item>> response = searchController.searchItem(keyword,
                 category, minPrice, maxPrice, itemRating, storeRating, number, page, storeId);
-        if(response.isError())
+        if(response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
             return Response.getFailResponse(response.getMessage());
+        }
         List<ServiceItem> list = new ArrayList<ServiceItem>();
         for (Item item : response.getValue()) {
             list.add(new ServiceItem(item));
         }
         return Response.getSuccessResponse(list);
+    }
+
+    public Response<List<Role>> getUserRoles(UUID clientCredentials) {
+        Response<List<Role>> rolesResponse = userController.getUserRoles(clientCredentials);
+        if (rolesResponse.isError()) {
+            errorLogger.log(Level.WARNING, rolesResponse.getMessage());
+        }
+        return rolesResponse;
     }
 }
 
