@@ -837,7 +837,7 @@ public class Service {
     }
 
 
-    public Response<List<ServiceItem>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating, int number, int page, UUID storeId) {
+    public Response<List<ServiceItem>> searchItem(String keyword, String category, Double minPrice, Double maxPrice, Integer itemRating, Integer storeRating, Integer number, Integer page, UUID storeId) {
         Response<List<Item>> response = searchController.searchItem(keyword,
                 category, minPrice, maxPrice, itemRating, storeRating, number, page, storeId);
         if(response.isError())
