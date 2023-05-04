@@ -1,6 +1,7 @@
 package APILayer.Users;
 
 import APILayer.Requests.*;
+import DomainLayer.Market.Users.Roles.Role;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.ServiceComplaint;
@@ -112,6 +113,11 @@ public class UserController {
     @PostMapping(path = "/send-message")
     public Response<UUID> sendMessage(@RequestBody MessageRequest request){
         return service.sendMessage(request.getClientCredentials(), request.getSender(), request.getRecipient(), request.getBody());
+    }
+
+    @GetMapping(path = "/get-user-roles/id={id}")
+    public Response<List<Role>> getUserRoles(@PathVariable(name = "id") UUID clientCredentials) {
+        return service.getUserRoles(clientCredentials);
     }
 
 
