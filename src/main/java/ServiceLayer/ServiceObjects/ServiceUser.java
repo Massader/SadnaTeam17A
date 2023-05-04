@@ -46,7 +46,7 @@ public class ServiceUser {
         return roles;
     }
 
-    public boolean getIsAdmin() {
+    public boolean IsAdmin() {
         return isAdmin;
     }
 
@@ -62,7 +62,7 @@ public class ServiceUser {
         this.roles = roles;
     }
 
-    public void setIsAdmin(boolean isAdmin) {
+    public void setAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
     }
 }
