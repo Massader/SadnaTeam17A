@@ -14,7 +14,7 @@ public class SupplyProxy implements SupplyBridge{
     }
 
     @Override
-    public Boolean sendOrder(ShoppingCart shoppingCart) {
-        return real == null ? null : real.sendOrder(shoppingCart);
+    public Integer sendOrder() {
+        return real == null ? null : real.sendOrder();
     }
 }

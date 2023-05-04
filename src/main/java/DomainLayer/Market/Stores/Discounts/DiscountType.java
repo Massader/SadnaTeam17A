@@ -1,11 +1,11 @@
 package DomainLayer.Market.Stores.Discounts;
 
-public abstract class Discount {
+public abstract class DiscountType {
     private double discount;
 
     public abstract double calculatePrice(double basePrice);
 
-    public Discount(double discount) {
+    public DiscountType(double discount) {
         this.discount = discount;
     }
 

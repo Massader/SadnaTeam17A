@@ -3,11 +3,11 @@ package DomainLayer.Market.Stores.Discounts;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConditionalDiscount extends Discount {
+public class ConditionalDiscountType extends DiscountType {
 
     List<DiscountCondition> conditions;
 
-    public ConditionalDiscount(double discount) {
+    public ConditionalDiscountType(double discount) {
         super(discount);
         conditions = new ArrayList<>();
     }

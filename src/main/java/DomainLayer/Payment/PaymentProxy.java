@@ -21,4 +21,9 @@ public class PaymentProxy implements  PaymentBridge{
     public Boolean cancelPay(double nowPrice, int credit) {
         return real == null ? false : real.cancelPay(nowPrice,credit);
     }
+
+    @Override
+    public Integer requestPayment() {
+        return real == null ? 0 : real.requestPayment();
+    }
 }

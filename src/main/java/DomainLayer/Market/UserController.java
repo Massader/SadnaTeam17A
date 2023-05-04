@@ -447,7 +447,72 @@ public class UserController {
             baskets.get(storeId).getItems().remove(item.getId());
         }
     }
-}
+
+
+    public Response<List<User>> getAllLoginUsers(UUID clientCredentials) {
+        try {
+            if (!users.containsKey(clientCredentials))
+                return Response.getFailResponse("User does not exist.");
+            if(!users.get(clientCredentials).isAdmin())
+                return Response.getFailResponse("Only admins can delete users.");
+            List<User> loginUser = new ArrayList<>();
+            for (String loginUserName:loggedInUser) {
+                loginUser.add(users.get(getId(loginUserName)));
+            }
+            return Response.getSuccessResponse(loginUser);
+        }
+        catch(Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+
+    }
+
+    public Response<List<User>> getNotLoginUser(UUID clientCredentials) {
+        try {
+            if (!users.containsKey(clientCredentials))
+                return Response.getFailResponse("User does not exist.");
+            if(!users.get(clientCredentials).isAdmin())
+                return Response.getFailResponse("Only admins can delete users.");
+            List<User> notLoginUser = new ArrayList<>();
+            for (String notLoginUserName:usernames.keySet()) {
+                if (!loggedInUser.contains(notLoginUserName)) {
+                    notLoginUser.add(users.get(getId(notLoginUserName)));
+                }}
+            return Response.getSuccessResponse(notLoginUser);
+        }
+        catch(Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
+    public Response<Boolean> CancelSubscriptionNotRole(UUID adminCredentials, UUID clientCredentials){
+        if (!users.containsKey(clientCredentials))
+            return Response.getFailResponse("User does not exist.");
+        if (!users.containsKey(adminCredentials))
+            return Response.getFailResponse("this admin does not exist.");
+        if(!users.get(adminCredentials).isAdmin())
+            return Response.getFailResponse("Only admins can delete users.");
+        User user = users.get(clientCredentials);
+        if(user.getRoles().isEmpty()){
+            return  deleteUser(adminCredentials,clientCredentials);
+        }
+        else return Response.getFailResponse("User have role cant unsubscribe user.");
+
+    }
+
+
+
+
+//        public Response<Boolean> UnsubscribingUserByAdmin(UUID clientCredentials, UUID userId) {
+//            try {
+//                if (!users.containsKey(clientCredentials))
+//                    return Response.getFailResponse("User does not exist.");
+//                if (!users.get(clientCredentials).isAdmin())
+//                    return Response.getFailResponse("Only admins can unsubscribing users.");
+//
+//                }
+//            }
+        }
 
 
 

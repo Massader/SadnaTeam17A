@@ -1,7 +1,9 @@
 package ServiceLayer;
 
 import DomainLayer.Market.*;
+import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Item;
+import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
@@ -698,7 +700,7 @@ public class Service {
         return response;
     }
 
-    public Response<Boolean> purchaseCart(UUID clientCredentials,  double expectedPrice, String address, int credit){
+    public Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, int credit){
         Response<ShoppingCart> response1 = userController.viewCart(clientCredentials);
         if(response1.isError()){
             errorLogger.log(Level.WARNING, response1.getMessage());
@@ -749,6 +751,46 @@ public class Service {
         return storeController.numOfStores();
     }
 
+    public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
+        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, term);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return response;
+        }
+        eventLogger.log(Level.INFO, "Successfully add Policy to store " + storeId);
+        return response;
+    }
+
+    public Response<Boolean> removePolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
+        Response<Boolean> response = storeController.removePolicyTermByStoreOwner(clientCredentials, storeId, term);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return response;
+        }
+        eventLogger.log(Level.INFO, "Successfully add Policy to store " + storeId);
+        return response;
+    }
+
+    public Response<Boolean> addDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
+        Response<Boolean> response = storeController.addDiscountByStoreOwner(clientCredentials, storeId, discount);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return response;
+        }
+        eventLogger.log(Level.INFO, "Successfully add discount to store " + storeId);
+        return response;
+    }
+
+    public Response<Boolean> removeDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
+        Response<Boolean> response = storeController.removeDiscountByStoreOwner(clientCredentials, storeId, discount);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return response;
+        }
+        eventLogger.log(Level.INFO, "Successfully remove discount to store " + storeId);
+        return response;
+    }
+
     public Response<Integer> numOfItems(UUID storeId) {
         Response<Integer> response = storeController.numOfItems(storeId);
         if (response.isError()) {
@@ -758,6 +800,46 @@ public class Service {
         eventLogger.log(Level.INFO, "return the number of items"  +  response.getValue());
         return response;
     }
+
+    public Response<List<ServiceUser>> getNotLoginUser(UUID clientCredentials){
+        Response<List<User>> response =userController.getNotLoginUser(clientCredentials);
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return Response.getFailResponse(response.getMessage());}
+        eventLogger.log(Level.INFO, "Successfully get all user that not Login");
+        List<ServiceUser> serviceUsers = new ArrayList<ServiceUser>();
+        for(User user : response.getValue())
+            serviceUsers.add(new ServiceUser(user));
+        return Response.getSuccessResponse(serviceUsers);
+    }
+
+    public Response<List<ServiceUser>> getLoginUser(UUID clientCredentials){
+        Response<List<User>> response =userController.getAllLoginUsers(clientCredentials);
+        if(response.isError()){
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return Response.getFailResponse(response.getMessage());}
+        eventLogger.log(Level.INFO, "Successfully get all LoginUser");
+        List<ServiceUser> serviceUsers = new ArrayList<ServiceUser>();
+        for(User user : response.getValue())
+            serviceUsers.add(new ServiceUser(user));
+        return Response.getSuccessResponse(serviceUsers);
+    }
+
+    public Response<Boolean> CancelSubscriptionNotRole(UUID adminCredentials, UUID clientCredentials){
+        Response<Boolean> response = userController.CancelSubscriptionNotRole(adminCredentials, clientCredentials);
+        if(response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return Response.getFailResponse(response.getMessage());}
+        eventLogger.log(Level.INFO, "Successfully  Cancel subscription  of user " + clientCredentials);
+        return response;
+    }
+
+
+
+
+
+
+
 
 }
 
