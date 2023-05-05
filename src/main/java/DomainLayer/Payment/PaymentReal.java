@@ -11,17 +11,17 @@ public class PaymentReal implements PaymentBridge{
 
     @Override
     public Boolean validatePaymentDetails() {
-        return null;
+        return true;
     }
 
 
     @Override
-    public Boolean cancelPay(double nowPrice, int credit) {
+    public Boolean cancelPay(double price, int credit) {
         return true;
     }
 
     @Override
     public Integer requestPayment() {
-        return  1;
+        return 1;
     }
 }

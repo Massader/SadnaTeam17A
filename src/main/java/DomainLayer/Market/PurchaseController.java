@@ -9,6 +9,7 @@ import DomainLayer.Payment.PaymentProxy;
 import DomainLayer.Supply.SupplyProxy;
 import ServiceLayer.Response;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -30,16 +31,16 @@ public class PurchaseController {
         return instance;
     }
     public void init() {
-
         storeController = StoreController.getInstance();
 //        paymentProxy.setReal();
 //        supplyProxy.setReal();
     }
 
 
-    public Response<Boolean> purchaseCart(Client client,ShoppingCart shoppingCart,  double expectedPrice, String address,int credit) {
+    public Response<Boolean> purchaseCart(Client client, ShoppingCart shoppingCart, double expectedPrice,
+                                          String address, int credit) {
         try {//check
-             if (shoppingCart.getShoppingBaskets().isEmpty()){
+            if (shoppingCart.getShoppingBaskets().isEmpty()){
                 return Response.getFailResponse("shopping cart is empty");}
             if(paymentProxy==null){
                 return Response.getFailResponse("the payment service is not available");}
@@ -56,20 +57,17 @@ public class PurchaseController {
                     UUID storeId = entry.getKey();
                     ShoppingBasket basket = entry.getValue();
                     Store store = storeController.getStore(storeId);
-                    for (Item item : store.itemsAvailable(basket)) {
-                        missingItems.add(item);
-                    }
+                    missingItems.addAll(store.getUnavailableItems(basket));
                     if (!missingItems.isEmpty()) {
-                        return Response.getFailResponse(" the Item's are not available any more" + missingItems.toArray().toString());
+                        return Response.getFailResponse("The following items are no longer available "
+                                + Arrays.toString(missingItems.toArray()));
                     }
                 }
 
-
-                double nowPrice =storeController.VerificationCartPrice(shoppingCart);
+                double nowPrice = storeController.verifyCartPrice(shoppingCart);
                 if(expectedPrice!=nowPrice){
-                    return Response.getFailResponse("Price for shopping cart has changed, it's "+nowPrice );
+                    return Response.getFailResponse("Price for shopping cart has changed, it's " + nowPrice);
                 }
-
 
                 //purchase all Basket -> cart
                 for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
@@ -78,18 +76,16 @@ public class PurchaseController {
                     storeController.getStore(storeId).purchaseBasket(basket);
                 }
                 if(!paymentProxy.pay(nowPrice,credit)){
-                    return Response.getFailResponse("There was a problem with your payment" );
+                    return Response.getFailResponse("There was a problem with your payment");
                 }
-                if(supplyProxy.sendOrder()==null){
+                if(supplyProxy.sendOrder() == null){
                     paymentProxy.cancelPay(nowPrice,credit);
-                    return Response.getFailResponse("There was a problem with the purchase, you received a refund" );
+                    return Response.getFailResponse("Supply request failed");
 
                 }
-                client.RemovingPurchases();
+                client.clearCart();
                 return Response.getSuccessResponse(true);
-
             }
-
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }

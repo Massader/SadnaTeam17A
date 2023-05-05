@@ -417,7 +417,7 @@ public class StoreController {
         }
     }
 
-    public double VerificationCartPrice(ShoppingCart shoppingCart) throws Exception {
+    public double verifyCartPrice(ShoppingCart shoppingCart) throws Exception {
         double price = 0;
         for (UUID storeId : shoppingCart.getShoppingBaskets().keySet()) {// iterator on the storeId
             price += storeMap.get(storeId).calculatePriceOfBasketWithPolicyAndDiscount(shoppingCart.getShoppingBaskets().get(storeId));

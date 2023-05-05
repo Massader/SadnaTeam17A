@@ -1,6 +1,5 @@
 package DomainLayer.Market.Stores;
 
-import DomainLayer.Market.Stores.Discounts.DiscountType;
 import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Discounts.condition.StoreDiscount;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
@@ -22,11 +21,11 @@ public class Store {
     private boolean closed;
     private boolean shutdown;
     private int ratingCounter;
-    private ConcurrentHashMap<UUID, Item> items;
-    private StoreDiscount discounts; // Map of Item ID -> Discount
-    private StorePurchasePolicies policy;
-    private ConcurrentLinkedQueue<Sale> sales;
-    private ConcurrentHashMap<UUID, Role> rolesMap;
+    private final ConcurrentHashMap<UUID, Item> items;
+    private final StoreDiscount discounts; // Map of Item ID -> Discount
+    private final StorePurchasePolicies policy;
+    private final ConcurrentLinkedQueue<Sale> sales;
+    private final ConcurrentHashMap<UUID, Role> rolesMap;
 
 
 
@@ -191,7 +190,7 @@ public class Store {
         return true;
     }
 
-    public ConcurrentLinkedQueue<Item> itemsAvailable(ShoppingBasket shoppingBasket){
+    public ConcurrentLinkedQueue<Item> getUnavailableItems(ShoppingBasket shoppingBasket){
         ConcurrentHashMap<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
         ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
         synchronized (items) {
@@ -202,7 +201,8 @@ public class Store {
                     missingItems.add(items.get(itemId));
             }
             return missingItems;
-    }}
+        }
+    }
 
     public ConcurrentLinkedQueue<Item> purchaseBasket(ShoppingBasket shoppingBasket) {
         ConcurrentHashMap<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();

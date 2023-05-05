@@ -342,7 +342,7 @@ public class Service {
     }
 
     public Response<List<ServiceShoppingBasket>> getCart(UUID clientCredentials){
-        Response<ShoppingCart> response = userController.viewCart(clientCredentials);
+        Response<ShoppingCart> response = userController.getCart(clientCredentials);
         if(response.isError())
             return Response.getFailResponse(response.getMessage());
         List<ServiceShoppingBasket> cart = new ArrayList<>();
@@ -704,7 +704,7 @@ public class Service {
     }
 
     public Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, int credit){
-        Response<ShoppingCart> response1 = userController.viewCart(clientCredentials);
+        Response<ShoppingCart> response1 = userController.getCart(clientCredentials);
         if(response1.isError()){
             errorLogger.log(Level.WARNING, response1.getMessage());
             return Response.getFailResponse(response1.getMessage());

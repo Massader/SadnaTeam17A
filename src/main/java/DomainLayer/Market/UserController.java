@@ -53,7 +53,7 @@ public class UserController {
         }
     }
 
-    public Response<ShoppingCart> viewCart(UUID clientCredentials){
+    public Response<ShoppingCart> getCart(UUID clientCredentials){
         try {
             Client client = getClientOrUser(clientCredentials);
             return Response.getSuccessResponse(client.getCart());

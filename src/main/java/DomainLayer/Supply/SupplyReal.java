@@ -10,7 +10,7 @@ public class SupplyReal implements SupplyBridge {
 
     @Override
     public Boolean validateOrder(String address) {
-        return null;
+        return true;
     }
 
     @Override

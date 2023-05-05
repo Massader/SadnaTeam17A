@@ -1,8 +1,6 @@
 package DomainLayer.Market.Users;
 
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Client {
     private UUID clientCredentials;
@@ -29,8 +27,8 @@ public class Client {
         return cart;
     }
 
-    public void RemovingPurchases(){
-        getCart().RemovingPurchases();
+    public void clearCart(){
+        cart.clearCart();
     }
 
 
