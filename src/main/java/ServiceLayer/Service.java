@@ -150,11 +150,11 @@ public class Service {
         storeController.addItemToStore(userCredentials,"Guy's Balls", 10.0, storeResponse.getValue().getStoreId(), 10, "");
         clientCredentials = userController.logout(userCredentials).getValue();
 
-        userCredentials = userController.login(clientCredentials, "Roei", "RoeiHaKelev1").getValue().getId();
-        storeResponse = storeController.createStore(userCredentials, "Roei's Dildo Store", "");
-        storeController.addItemToStore(userCredentials,"Big Dildo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Pink Dildo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Black Dildo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+        userCredentials = userController.login(clientCredentials, "Roei", "Roei1").getValue().getId();
+        storeResponse = storeController.createStore(userCredentials, "Roei's Color Store", "");
+        storeController.addItemToStore(userCredentials,"Kelev", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+        storeController.addItemToStore(userCredentials,"Pink", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+        storeController.addItemToStore(userCredentials,"Black", 10.0, storeResponse.getValue().getStoreId(), 10, "");
         storeResponse = storeController.createStore(userCredentials, "Roei's Frontend Store", "");
         storeController.addItemToStore(userCredentials,"Grid", 10.0, storeResponse.getValue().getStoreId(), 10, "");
         storeController.addItemToStore(userCredentials,"Component", 10.0, storeResponse.getValue().getStoreId(), 10, "");
