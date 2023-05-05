@@ -2,8 +2,6 @@ package APILayer.Requests;
 
 import ServiceLayer.ServiceObjects.ServiceItem;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class ItemRequest extends Request {

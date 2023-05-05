@@ -598,7 +598,7 @@ public class Service {
         Response<Item> response = storeController.addItemToStore(clientCredentials,name,price,storeId,quantity,description);
         if(response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
-            Response.getFailResponse(response.getMessage());
+            return Response.getFailResponse(response.getMessage());
         }else{
             eventLogger.log(Level.INFO, "Successfully add "+quantity+" Item: "+name+" to store ");
         }
