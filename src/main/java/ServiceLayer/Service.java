@@ -895,6 +895,7 @@ public class Service {
             return Response.getFailResponse(response.getMessage());
         }
         return response;
+    }
 
     public Response<List<Notification>> getNotifications(UUID clientCredentials, UUID recipient) {
         Response<List<Notification>> notificationResponse = notificationController.getNotifications(clientCredentials, recipient);
