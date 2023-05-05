@@ -1,10 +1,10 @@
 package APILayer.Users;
 
+import APILayer.Alerts.AlertController;
 import APILayer.Requests.*;
 import DomainLayer.Market.Users.Roles.Role;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
-import ServiceLayer.ServiceObjects.ServiceComplaint;
 import ServiceLayer.ServiceObjects.ServicePurchase;
 import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
 import ServiceLayer.ServiceObjects.ServiceUser;
@@ -19,12 +19,14 @@ import java.util.UUID;
 @RequestMapping(path = "api/v1/users")
 public class UserController {
 
+    private final AlertController alertController;
     private final Service service;
 
     @Autowired
-    public UserController(Service service) {
+    public UserController(Service service, AlertController alertController) {
         this.service = service;
         service.init();
+        this.alertController = alertController;
     }
 
     @PostMapping(path = "/register")
@@ -34,7 +36,13 @@ public class UserController {
 
     @PostMapping(path = "/login")
     public Response<ServiceUser> login(@RequestBody LoginRegisterRequest request) {
-        return service.login(request.getClientCredentials(), request.getUsername(), request.getPassword());
+        Response<ServiceUser> response = service.login(request.getClientCredentials(), request.getUsername(),
+                request.getPassword(), alertController::sendNotification);
+        if (!response.isError()) {
+            response.getValue().setEmitter(alertController.createNotifier(response.getValue().getId()));
+        }
+        service.getNotifications(response.getValue().getId(), response.getValue().getId());
+        return response;
     }
 
     @PostMapping(path = "/create-client")
@@ -44,7 +52,10 @@ public class UserController {
 
     @PostMapping(path = "/logout")
     public Response<UUID> logout(@RequestBody Request request) {
-        return service.logout(request.getClientCredentials());
+        Response<UUID> response = service.logout(request.getClientCredentials());
+        if (!response.isError())
+            alertController.closeEmitter(request.getClientCredentials());
+        return response;
     }
 
     @DeleteMapping(path = "/close-client")

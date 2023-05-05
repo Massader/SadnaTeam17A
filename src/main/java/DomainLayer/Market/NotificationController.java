@@ -3,17 +3,16 @@ package DomainLayer.Market;
 import ServiceLayer.Response;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.stream.Collectors;
+import java.util.function.BiConsumer;
 
 public class NotificationController {
     private ConcurrentHashMap<UUID, ConcurrentHashMap<UUID, Notification>> notifications;
     private static NotificationController instance = null;
-    private static Object instanceLock = new Object();
+    private static final Object instanceLock = new Object();
+    private ConcurrentHashMap<UUID, BiConsumer<UUID, Notification>> notifiers;
 
     public static NotificationController getInstance() {
         synchronized (instanceLock) {
@@ -27,6 +26,7 @@ public class NotificationController {
 
     public void init() {
         notifications = new ConcurrentHashMap<>();
+        notifiers = new ConcurrentHashMap<>();
     }
 
     public Response<Boolean> sendNotification(UUID recipient, String body) {
@@ -34,7 +34,10 @@ public class NotificationController {
             notifications.put(recipient, new ConcurrentHashMap<>());
         ConcurrentHashMap<UUID, Notification> userNotifications = notifications.get(recipient);
         Notification notification = new Notification(body);
-        userNotifications.put(notification.getId(), notification);
+        if (notifiers.containsKey(recipient))
+            notifiers.get(recipient).accept(recipient, notification);   //Send real time event
+        else
+            userNotifications.put(notification.getId(), notification);
         return Response.getSuccessResponse(true);
     }
 
@@ -53,4 +56,7 @@ public class NotificationController {
         instance = new NotificationController();
     }
 
+    public void addNotifier(UUID clientCredentials, BiConsumer<UUID, Notification> notificationSender) {
+        notifiers.put(clientCredentials, notificationSender);
+    }
 }

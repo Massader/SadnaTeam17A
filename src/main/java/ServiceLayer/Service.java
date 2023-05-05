@@ -1,5 +1,6 @@
 package ServiceLayer;
 
+import APILayer.Alerts.AlertController;
 import DomainLayer.Market.*;
 import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Item;
@@ -18,6 +19,8 @@ import ServiceLayer.Loggers.EventLogger;
 import ServiceLayer.ServiceObjects.*;
 
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 @org.springframework.stereotype.Service
@@ -183,12 +186,14 @@ public class Service {
         return response;
     }
 
-    public Response<ServiceUser> login(UUID clientCredentials, String username, String password) {
+    public Response<ServiceUser> login(UUID clientCredentials, String username, String password,
+                                       BiConsumer<UUID, Notification> notificationSender) {
         Response<User> response = userController.login(clientCredentials, username, password);
         if (response.isError()) {
             errorLogger.log(Level.SEVERE, response.getMessage());
             return Response.getFailResponse(response.getMessage());
         }
+        notificationController.addNotifier(response.getValue().getId(), notificationSender);
         eventLogger.log(Level.INFO, "Successfully logged in user " + username);
         return Response.getSuccessResponse(new ServiceUser(response.getValue()));
     }
@@ -872,6 +877,14 @@ public class Service {
             list.add(new ServiceItem(item));
         }
         return Response.getSuccessResponse(list.size());
+    }
+
+    public Response<List<Notification>> getNotifications(UUID clientCredentials, UUID recipient) {
+        Response<List<Notification>> notificationResponse = notificationController.getNotifications(clientCredentials, recipient);
+        if (notificationResponse.isError()) {
+            errorLogger.log(Level.WARNING, notificationResponse.getMessage());
+        }
+        return notificationResponse;
     }
 }
 
