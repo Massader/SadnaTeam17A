@@ -1,5 +1,6 @@
 package ServiceLayer;
 
+import APILayer.Alerts.AlertController;
 import DomainLayer.Market.*;
 import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Item;
@@ -18,6 +19,8 @@ import ServiceLayer.Loggers.EventLogger;
 import ServiceLayer.ServiceObjects.*;
 
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 @org.springframework.stereotype.Service
@@ -147,11 +150,11 @@ public class Service {
         storeController.addItemToStore(userCredentials,"Guy's Balls", 10.0, storeResponse.getValue().getStoreId(), 10, "");
         clientCredentials = userController.logout(userCredentials).getValue();
 
-        userCredentials = userController.login(clientCredentials, "Roei", "RoeiHaKelev1").getValue().getId();
-        storeResponse = storeController.createStore(userCredentials, "Roei's Dildo Store", "");
-        storeController.addItemToStore(userCredentials,"Big Dildo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Pink Dildo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Black Dildo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+        userCredentials = userController.login(clientCredentials, "Roei", "Roei1").getValue().getId();
+        storeResponse = storeController.createStore(userCredentials, "Roei's Color Store", "");
+        storeController.addItemToStore(userCredentials,"Kelev", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+        storeController.addItemToStore(userCredentials,"Pink", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+        storeController.addItemToStore(userCredentials,"Black", 10.0, storeResponse.getValue().getStoreId(), 10, "");
         storeResponse = storeController.createStore(userCredentials, "Roei's Frontend Store", "");
         storeController.addItemToStore(userCredentials,"Grid", 10.0, storeResponse.getValue().getStoreId(), 10, "");
         storeController.addItemToStore(userCredentials,"Component", 10.0, storeResponse.getValue().getStoreId(), 10, "");
@@ -183,12 +186,14 @@ public class Service {
         return response;
     }
 
-    public Response<ServiceUser> login(UUID clientCredentials, String username, String password) {
+    public Response<ServiceUser> login(UUID clientCredentials, String username, String password,
+                                       BiConsumer<UUID, Notification> notificationSender) {
         Response<User> response = userController.login(clientCredentials, username, password);
         if (response.isError()) {
             errorLogger.log(Level.SEVERE, response.getMessage());
             return Response.getFailResponse(response.getMessage());
         }
+        notificationController.addNotifier(response.getValue().getId(), notificationSender);
         eventLogger.log(Level.INFO, "Successfully logged in user " + username);
         return Response.getSuccessResponse(new ServiceUser(response.getValue()));
     }
@@ -890,6 +895,13 @@ public class Service {
             return Response.getFailResponse(response.getMessage());
         }
         return response;
+
+    public Response<List<Notification>> getNotifications(UUID clientCredentials, UUID recipient) {
+        Response<List<Notification>> notificationResponse = notificationController.getNotifications(clientCredentials, recipient);
+        if (notificationResponse.isError()) {
+            errorLogger.log(Level.WARNING, notificationResponse.getMessage());
+        }
+        return notificationResponse;
     }
 }
 

@@ -3,6 +3,9 @@ package DomainLayer.Market;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.Client;
+import DomainLayer.Market.Users.Roles.Role;
+import DomainLayer.Market.Users.Roles.StoreOwner;
+import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.ShoppingBasket;
 import DomainLayer.Market.Users.ShoppingCart;
 import DomainLayer.Payment.PaymentProxy;
@@ -20,6 +23,7 @@ public class PurchaseController {
     StoreController storeController;
     PaymentProxy paymentProxy;
     SupplyProxy supplyProxy;
+    NotificationController notificationController;
 
     private PurchaseController() { }
 
@@ -32,6 +36,7 @@ public class PurchaseController {
     }
     public void init() {
         storeController = StoreController.getInstance();
+        notificationController = NotificationController.getInstance();
 //        paymentProxy.setReal();
 //        supplyProxy.setReal();
     }
@@ -73,7 +78,13 @@ public class PurchaseController {
                 for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
                     UUID storeId = entry.getKey();
                     ShoppingBasket basket = entry.getValue();
-                    storeController.getStore(storeId).purchaseBasket(basket);
+                    Store store = storeController.getStore(storeId);
+                    store.purchaseBasket(basket);
+                    for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
+                        if (role.getValue().getPermissions().contains(StorePermissions.STORE_OWNER))
+                        notificationController.sendNotification(role.getKey(), "A purchase from "
+                                + store.getName() + " has been made.");
+                    }
                 }
                 if(!paymentProxy.pay(nowPrice,credit)){
                     return Response.getFailResponse("There was a problem with your payment");
@@ -81,8 +92,8 @@ public class PurchaseController {
                 if(supplyProxy.sendOrder() == null){
                     paymentProxy.cancelPay(nowPrice,credit);
                     return Response.getFailResponse("Supply request failed");
-
                 }
+
                 client.clearCart();
                 return Response.getSuccessResponse(true);
             }
