@@ -3,12 +3,14 @@ package APILayer.Alerts;
 import DomainLayer.Market.Notification;
 import ServiceLayer.Loggers.ErrorLogger;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
+@Component
 @Scope(value = "singleton")
 public class AlertController {
 
