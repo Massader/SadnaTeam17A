@@ -873,5 +873,23 @@ public class Service {
         }
         return Response.getSuccessResponse(list.size());
     }
+
+    public Response<Integer> numOfUsers() {
+        Response<Integer> response = userController.numOfUsers();
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        return response;
+    }
+
+    public Response<Integer> numOfClients() {
+        Response<Integer> response = userController.numOfClients();
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        return response;
+    }
 }
 
