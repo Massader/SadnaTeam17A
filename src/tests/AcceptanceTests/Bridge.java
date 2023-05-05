@@ -1,6 +1,8 @@
 package AcceptanceTests;
 
+import DomainLayer.Market.Users.Roles.Role;
 import ServiceLayer.Response;
+import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.*;
 
 
@@ -50,6 +52,11 @@ public interface Bridge {
     Response<Boolean> validatePayment(UUID clientCredentials);
     Response<UUID> confirmOrder(UUID clientCredentials);
     Response<Boolean> removeItemFromStore(UUID clientCredentials, UUID storeId, UUID itemId);
-
     Response<Boolean> isLoggedIn(UUID userId);
+    Response<Integer> numOfUsers();
+    Response<Integer> numOfStores();
+    Response<Integer> numOfClients();
+    Response<List<Role>> getUserRoles(UUID clientCredentials);
+
+    Response<ServiceUser> getUserInfo(UUID clientCredentials);
 }

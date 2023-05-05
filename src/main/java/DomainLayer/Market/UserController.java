@@ -512,6 +512,26 @@ public class UserController {
         return Response.getSuccessResponse(new ArrayList<>(user.getRoles()));
     }
 
+    public Response<Integer> numOfUsers() {
+        try {
+            int users = this.users.size();
+            return Response.getSuccessResponse(users);
+        }
+        catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
+    public Response<Integer> numOfClients() {
+        try {
+            int clients = this.clients.size();
+            return Response.getSuccessResponse(clients);
+        }
+        catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
 
 //        public Response<Boolean> UnsubscribingUserByAdmin(UUID clientCredentials, UUID userId) {
 //            try {

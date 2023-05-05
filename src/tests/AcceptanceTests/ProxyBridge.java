@@ -1,5 +1,6 @@
 package AcceptanceTests;
 
+import DomainLayer.Market.Users.Roles.Role;
 import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.*;
 
@@ -189,6 +190,22 @@ public class ProxyBridge implements Bridge {
     @Override
     public Response<Boolean> isLoggedIn(UUID userId) {
         return real == null ? null : real.isLoggedIn(userId);
+    }
+
+    public Response<Integer> numOfUsers() {
+        return real == null ? null : real.numOfUsers();
+    }
+
+    public Response<Integer> numOfStores() {
+        return real == null ? null : real.numOfStores();
+    }
+
+    public Response<Integer> numOfClients() {
+        return real == null ? null : real.numOfClients();
+    }
+
+    public Response<List<Role>> getUserRoles(UUID clientCredentials) {
+        return real == null ? null : real.getUserRoles(clientCredentials);
     }
 }
 

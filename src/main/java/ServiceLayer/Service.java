@@ -150,11 +150,11 @@ public class Service {
         storeController.addItemToStore(userCredentials,"Guy's Balls", 10.0, storeResponse.getValue().getStoreId(), 10, "");
         clientCredentials = userController.logout(userCredentials).getValue();
 
-        userCredentials = userController.login(clientCredentials, "Roei", "RoeiHaKelev1").getValue().getId();
-        storeResponse = storeController.createStore(userCredentials, "Roei's Dildo Store", "");
-        storeController.addItemToStore(userCredentials,"Big Dildo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Pink Dildo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Black Dildo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+        userCredentials = userController.login(clientCredentials, "Roei", "Roei1").getValue().getId();
+        storeResponse = storeController.createStore(userCredentials, "Roei's Color Store", "");
+        storeController.addItemToStore(userCredentials,"Kelev", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+        storeController.addItemToStore(userCredentials,"Pink", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+        storeController.addItemToStore(userCredentials,"Black", 10.0, storeResponse.getValue().getStoreId(), 10, "");
         storeResponse = storeController.createStore(userCredentials, "Roei's Frontend Store", "");
         storeController.addItemToStore(userCredentials,"Grid", 10.0, storeResponse.getValue().getStoreId(), 10, "");
         storeController.addItemToStore(userCredentials,"Component", 10.0, storeResponse.getValue().getStoreId(), 10, "");
@@ -599,7 +599,7 @@ public class Service {
         Response<Item> response = storeController.addItemToStore(clientCredentials,name,price,storeId,quantity,description);
         if(response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
-            Response.getFailResponse(response.getMessage());
+            return Response.getFailResponse(response.getMessage());
         }else{
             eventLogger.log(Level.INFO, "Successfully add "+quantity+" Item: "+name+" to store ");
         }
@@ -878,6 +878,24 @@ public class Service {
             list.add(new ServiceItem(item));
         }
         return Response.getSuccessResponse(list.size());
+    }
+
+    public Response<Integer> numOfUsers() {
+        Response<Integer> response = userController.numOfUsers();
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        return response;
+    }
+
+    public Response<Integer> numOfClients() {
+        Response<Integer> response = userController.numOfClients();
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        return response;
     }
 
     public Response<List<Notification>> getNotifications(UUID clientCredentials, UUID recipient) {
