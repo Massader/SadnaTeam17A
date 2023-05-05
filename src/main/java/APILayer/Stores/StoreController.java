@@ -152,7 +152,7 @@ public class StoreController {
         return service.searchItemNum(keyword, category, minPrice, maxPrice, itemRating, storeRating, number, page, storeId);
     }
 
-    @PutMapping(path = "/add-item-to-store")
+    @PostMapping(path = "/add-item-to-store")
     public Response<ServiceItem> addItemToStore(@RequestBody ItemRequest request){
         ServiceItem item = request.getItem();
         return service.addItemToStore(request.getClientCredentials(), item.getName(), item.getPrice(),

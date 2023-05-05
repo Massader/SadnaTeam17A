@@ -6,6 +6,7 @@ import DomainLayer.Market.Users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ public class ServiceUser {
     private String username;
     private Map<UUID,List<StorePermissions>> roles;
     private boolean isAdmin;
+    private SseEmitter emitter;
 
     public ServiceUser() {}
 
@@ -62,7 +64,15 @@ public class ServiceUser {
         this.roles = roles;
     }
 
-    public void setAdmin(boolean isAdmin) {
+    public void setIsAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
+    }
+
+    public SseEmitter getEmitter() {
+        return emitter;
+    }
+
+    public void setEmitter(SseEmitter emitter) {
+        this.emitter = emitter;
     }
 }
