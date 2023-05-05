@@ -134,9 +134,19 @@ public class Store {
         return name;
     }
 
-    public void addItem(Item item) {
-        UUID id = item.getId();
-        items.put(id, item);
+    public void addItem(Item item) throws Exception {
+        if (item.getName() == null || item.getName().length() <= 0)
+            throw new Exception("Item name must not be empty");
+        if (item.getPrice() <= 0)
+            throw new Exception("Item price must be larger than 0");
+        synchronized (items) {
+            for (Item existingItem : items.values()) {
+                if (item.getName().equals(existingItem.getName()))
+                    throw new Exception("Store already has item of this name.");
+            }
+            UUID id = item.getId();
+            items.put(id, item);
+        }
     }
 
     public Item getItem(UUID itemId) {

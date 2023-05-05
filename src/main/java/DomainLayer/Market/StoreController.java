@@ -174,27 +174,6 @@ public class StoreController {
         return Response.getFailResponse("item doesn't exist");
     }
 
-    // create item and add it to a store
-    public Response<Item> addItem(String name, double price, UUID storeId, int quantity, String description) {
-        try {
-            if (!storeMap.containsKey(storeId))
-                return Response.getFailResponse("store doesn't exist");
-
-            UUID id = UUID.randomUUID();
-            Item item = new Item(id, name, price, storeId, 0, quantity, description);
-
-
-            //add the item to the store
-            Store store = getStore(storeId);
-            store.addItem(item);
-
-            return Response.getSuccessResponse(item);
-        } catch (Exception exception) {
-            return Response.getFailResponse(exception.getMessage());
-        }
-
-    }
-
     public Response<Item> addItemToStore(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
         try {
             if (!storeExist(storeId))
