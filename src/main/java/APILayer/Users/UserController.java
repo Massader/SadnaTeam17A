@@ -2,6 +2,7 @@ package APILayer.Users;
 
 import APILayer.Alerts.AlertController;
 import APILayer.Requests.*;
+import DomainLayer.Market.Notification;
 import DomainLayer.Market.Users.Roles.Role;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
@@ -41,7 +42,6 @@ public class UserController {
         if (!response.isError()) {
             response.getValue().setEmitter(alertController.createNotifier(response.getValue().getId()));
         }
-        service.getNotifications(response.getValue().getId(), response.getValue().getId());
         return response;
     }
 
@@ -129,6 +129,11 @@ public class UserController {
     @GetMapping(path = "/get-user-roles/id={id}")
     public Response<List<Role>> getUserRoles(@PathVariable(name = "id") UUID clientCredentials) {
         return service.getUserRoles(clientCredentials);
+    }
+
+    @GetMapping(path = "/get-notifications/id={id}")
+    public Response<List<Notification>> getUserNotifications(@PathVariable(name = "id") UUID clientCredentials) {
+        return service.getNotifications(clientCredentials, clientCredentials);
     }
 
 

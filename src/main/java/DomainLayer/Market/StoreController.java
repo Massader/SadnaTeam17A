@@ -7,6 +7,7 @@ import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
+import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreFounder;
 import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
@@ -20,6 +21,7 @@ public class StoreController {
     private static final Object instanceLock = new Object();
     private ConcurrentHashMap<UUID, Store> storeMap;
     private UserController userController;
+    private NotificationController notificationController;
 
     private StoreController() {
     }
@@ -35,6 +37,7 @@ public class StoreController {
     public void init() {
         storeMap = new ConcurrentHashMap<>();
         userController = UserController.getInstance();
+        notificationController = NotificationController.getInstance();
     }
 
     public List<Store> getStores() {
@@ -86,10 +89,21 @@ public class StoreController {
         try {
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist");
-            if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_FOUNDER))
+            Store store = getStore(storeId);
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_FOUNDER))
                 return Response.getFailResponse("User doesn't have permission.");
-            if (getStore(storeId).closeStore())
+            if (store.closeStore()) {
+                for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
+                    List<StorePermissions> rolePermissions = role.getValue().getPermissions();
+                    if (rolePermissions.contains(StorePermissions.STORE_OWNER)
+                            && !rolePermissions.contains(StorePermissions.STORE_FOUNDER)) {
+                        User user = userController.getUserById(role.getKey());
+                        if (user != null) notificationController.sendNotification(clientCredentials,
+                                "Owned store " + store.getName() + " has been closed by founder.");
+                    }
+                }
                 return Response.getSuccessResponse(true);
+            }
             return Response.getFailResponse("Store already closed.");
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -100,9 +114,19 @@ public class StoreController {
         try {
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist");
-            if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_FOUNDER))
+            Store store = getStore(storeId);
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_FOUNDER))
                 return Response.getFailResponse("User doesn't have permission.");
-            if (storeMap.get(storeId).reopenStore()) {
+            if (store.reopenStore()) {
+                for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
+                    List<StorePermissions> rolePermissions = role.getValue().getPermissions();
+                    if (rolePermissions.contains(StorePermissions.STORE_OWNER)
+                            && !rolePermissions.contains(StorePermissions.STORE_FOUNDER)) {
+                        User user = userController.getUserById(role.getKey());
+                        if (user != null) notificationController.sendNotification(clientCredentials,
+                                "Owned store " + store.getName() + " has been reopened by founder.");
+                    }
+                }
                 return Response.getSuccessResponse(true);
             }
             return Response.getFailResponse("can not reopen store");
@@ -114,13 +138,23 @@ public class StoreController {
     public Response<Boolean> shutdownStore(UUID clientCredentials, UUID storeId) {
         try {
             if (!storeExist(storeId))
-                return Response.getFailResponse("Store does not exist");
-            Response<User> response = userController.getUser(clientCredentials);
-            if (response.isError())
-                return Response.getFailResponse(response.getMessage());
-            if (!response.getValue().isAdmin())
-                return Response.getFailResponse("User doesn't have permission.");
+                return Response.getFailResponse("Store does not exist.");
+            Store store = getStore(storeId);
+            User user = userController.getUserById(clientCredentials);
+            if (user == null)
+                return Response.getFailResponse("User does not exist.");
+            if (!user.isAdmin())
+                return Response.getFailResponse("Only admins can shutdown stores.");
             if (storeMap.get(storeId).shutdownStore()) {
+                for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
+                    List<StorePermissions> rolePermissions = role.getValue().getPermissions();
+                    if (rolePermissions.contains(StorePermissions.STORE_OWNER)
+                            && !rolePermissions.contains(StorePermissions.STORE_FOUNDER)) {
+                        user = userController.getUserById(role.getKey());
+                        if (user != null) notificationController.sendNotification(clientCredentials,
+                                "Owned store " + store.getName() + " has been shut down by admin.");
+                    }
+                }
                 return Response.getSuccessResponse(true);
             }
             return Response.getFailResponse("Cannot shutdown store.");

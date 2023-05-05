@@ -14,16 +14,15 @@ public class ItemRequest extends Request {
     private int quantity;
     private String description;
 
-
-    public ItemRequest(UUID clientCredentials, ServiceItem item) {
+    public ItemRequest(UUID clientCredentials, UUID id, String name, double price, UUID storeId, double rating, int quantity, String description) {
         super(clientCredentials);
-        this.id = item.getId();
-        this.name = item.getName();
-        this.price = item.getPrice();
-        this.storeId = item.getStoreId();
-        this.rating = item.getRating();
-        this.quantity = item.getQuantity();
-        this.description = item.getDescription();
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.storeId = storeId;
+        this.rating = rating;
+        this.quantity = quantity;
+        this.description = description;
     }
 
     public UUID getId() {

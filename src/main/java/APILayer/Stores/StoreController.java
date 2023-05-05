@@ -152,7 +152,7 @@ public class StoreController {
     }
 
     @PostMapping(path = "/add-item-to-store")
-    public Response<ServiceItem> addItemToStore(@RequestBody ItemRequest request){;
+    public Response<ServiceItem> addItemToStore(@RequestBody ItemRequest request){
         return service.addItemToStore(request.getClientCredentials(), request.getName(), request.getPrice(),
                 request.getStoreId(), request.getQuantity(), request.getDescription());
     }
