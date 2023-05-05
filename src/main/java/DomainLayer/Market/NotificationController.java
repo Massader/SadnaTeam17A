@@ -59,4 +59,8 @@ public class NotificationController {
     public void addNotifier(UUID clientCredentials, BiConsumer<UUID, Notification> notificationSender) {
         notifiers.put(clientCredentials, notificationSender);
     }
+
+    public void removeNotifier(UUID clientCredentials) {
+        notifiers.remove(clientCredentials);
+    }
 }

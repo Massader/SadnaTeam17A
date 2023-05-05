@@ -1,7 +1,6 @@
 package APILayer.Stores;
 
 import APILayer.Requests.*;
-import DomainLayer.Market.Stores.Store;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.*;

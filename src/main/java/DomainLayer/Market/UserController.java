@@ -21,6 +21,7 @@ public class UserController {
     private SecurityController securityController;
     private ConcurrentHashMap<UUID, Client> clients;  // for non-registered clients only!
     private StoreController storeController;
+    private NotificationController notificationController;
 
     private UserController() {
 
@@ -33,6 +34,7 @@ public class UserController {
         securityController = SecurityController.getInstance();
         clients = new ConcurrentHashMap<>();
         storeController = StoreController.getInstance();
+        notificationController = NotificationController.getInstance();
         registerDefaultAdmin();
     }
 
@@ -272,21 +274,24 @@ public class UserController {
         try {
             if(!storeController.storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
-            if(!storeController.getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
+            Store store = storeController.getStore(storeId);
+            if(!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
                 || !users.get(clientCredentials).isAdmin())
                 return Response.getFailResponse("User doesn't have permission.");
             Response<User> response2 = this.getUser(roleToRemove);
             if(response2.isError())
                 return Response.getFailResponse("User does not exist.");
-            if(storeController.getStore(storeId).getRolesMap().containsKey(roleToRemove))
+            if(store.getRolesMap().containsKey(roleToRemove))
                 return Response.getFailResponse("User does not have role in the shop.");
-            if(!storeController.getStore(storeId).getOwner(clientCredentials).getAppoints().contains(roleToRemove))
+            if(store.getOwner(clientCredentials).getAppoints().contains(roleToRemove))
                 return Response.getFailResponse("Owner was not appointed by this user.");
             response2.getValue().removeStoreRole(storeId);
-            for(UUID appointee : storeController.getStore(storeId).getOwner(roleToRemove).getAppoints())
+            for(UUID appointee : store.getOwner(roleToRemove).getAppoints())
                 removeStoreRole(roleToRemove, appointee, storeId);
-            storeController.getStore(storeId).removeRole(roleToRemove);
-            storeController.getStore(storeId).getOwner(clientCredentials).removeAppoint(roleToRemove);
+            store.removeRole(roleToRemove);
+            store.getOwner(clientCredentials).removeAppoint(roleToRemove);
+            notificationController.sendNotification(roleToRemove, "Your role has been removed from "
+                    + store.getName());
             return Response.getSuccessResponse(true);
         }
         catch(Exception exception){
