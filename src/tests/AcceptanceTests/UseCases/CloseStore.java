@@ -51,6 +51,7 @@ public class CloseStore extends ProjectTest {
     @Test
     //tests whether a store can be closed successfully by its founder.
     public void CloseStoreSuccess() {
+        int stores0 = bridge.numOfStores().getValue();
         bridge.register("founder", "Pass1");
         client = bridge.createClient().getValue();
         founder = bridge.login(client, "founder", "Pass1").getValue().getId();
@@ -59,12 +60,16 @@ public class CloseStore extends ProjectTest {
         store = bridge.createStore(founder, "test", "test").getValue();
         storeId = store.getStoreId();
         Boolean close = bridge.closeStore(founder,storeId).getValue();
+        int stores1 = bridge.numOfStores().getValue();
+
         Assert.assertTrue(close);
+        Assert.assertEquals(stores0 - 1, stores1);
     }
 
     @Test
     public void CloseStoreFail() {
         //Tests whether a store can be closed unsuccessfully by a client who is not the founder of the store.
+        int stores0 = bridge.numOfStores().getValue();
         bridge.register("founder", "Pass1");
         client = bridge.createClient().getValue();
         founder = bridge.login(client, "founder", "Pass1").getValue().getId();
@@ -74,7 +79,10 @@ public class CloseStore extends ProjectTest {
         storeId = store.getStoreId();
         client2 = bridge.createClient().getValue();
         Boolean close = bridge.closeStore(client2,storeId).getValue();
+        int stores1 = bridge.numOfStores().getValue();
+
         Assert.assertFalse(close);
+        Assert.assertEquals(stores0, stores1);
         //bridge.logout(client2);
     }
 }

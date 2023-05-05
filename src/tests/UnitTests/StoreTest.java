@@ -1,8 +1,7 @@
 package UnitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
-import DomainLayer.Market.Stores.Discounts.Discount;
-import DomainLayer.Market.Stores.Discounts.VisibleDiscount;
+import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.Roles.Role;

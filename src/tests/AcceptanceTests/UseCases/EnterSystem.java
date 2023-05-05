@@ -31,7 +31,11 @@ public class EnterSystem extends ProjectTest {
     @Test
     //checks if a client can enter the system by creating a new client credentials and ensuring that the client credentials is not null.
     public void enterSystemSuccess() {
+        int clients0 = bridge.numOfClients().getValue();
         clientCredentials = bridge.createClient().getValue();
+        int clients1 = bridge.numOfClients().getValue();
+
         Assert.assertNotNull(clientCredentials);
+        Assert.assertEquals(clients0 + 1, clients1);
     }
 }

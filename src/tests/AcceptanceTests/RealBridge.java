@@ -1,4 +1,5 @@
 package AcceptanceTests;
+import DomainLayer.Market.Users.Roles.Role;
 import ServiceLayer.*;
 import ServiceLayer.ServiceObjects.*;
 
@@ -201,5 +202,21 @@ public class RealBridge implements Bridge {
     @Override
     public Response<Boolean> isLoggedIn(UUID userId) {
         return service.isLoggedIn(userId);
+    }
+
+    public Response<Integer> numOfUsers() {
+        return service.numOfUsers();
+    }
+
+    public Response<Integer> numOfStores() {
+        return service.numOfStores();
+    }
+
+    public Response<Integer> numOfClients() {
+        return service.numOfClients();
+    }
+
+    public Response<List<Role>> getUserRoles(UUID clientCredentials) {
+        return service.getUserRoles(clientCredentials);
     }
 }
