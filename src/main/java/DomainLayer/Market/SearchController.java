@@ -32,9 +32,9 @@ public class SearchController {
 
     public Response<List<Item>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating){
         try{
-            Collection<Store> stores = storeController.getStores();
+            List<Store> stores = storeController.getStores();
             List<Store> filteredStores = stores.stream().filter(store -> store.getRating() >= storeRating).toList();
-            List<Item> items = new ArrayList<Item>();
+            List<Item> items = new ArrayList<>();
             for (Store store : filteredStores) {
                 items.addAll(store.getItems().values().stream().filter(item ->
                         item.containsCategory(category) &
@@ -57,36 +57,40 @@ public class SearchController {
     }
 
     public Response<List<Item>> searchItem(String keyword, String category, Double minPrice, Double maxPrice, Integer itemRating, Integer storeRating, Integer number, Integer page, UUID storeId) {
-        List<Item> items = new LinkedList<>();
-        for (Store store : storeController.getStores()){
-            items.addAll(store.getItems().values());
+        List<Item> items = new ArrayList<>();
+        if(storeId != null){
+            Store store = storeController.getStore(storeId);
+            if (store == null)
+                return Response.getFailResponse("Store does not exist");
+            items = store.getItems().values().stream().filter(item -> item.getStoreId().equals(storeId)).toList();
         }
-        if (!keyword.isEmpty()){
+        else {
+            for (Store store : storeController.getStores()) {
+                items.addAll(store.getItems().values());
+            }
+        }
+        if (keyword != null && !keyword.isEmpty()){
             items = items.stream().filter(item -> item.getName().contains(keyword)).toList();
         }
-
-        if(!category.isEmpty()){
+        if(category != null && !category.isEmpty()){
             items = items.stream().filter(item -> item.containsCategory(category)).toList();
         }
         if(minPrice != null){
             items = items.stream().filter(item -> item.getPrice() >= minPrice).toList();
         }
         if(maxPrice != null){
-            items = items.stream().filter(item -> item.getPrice() >= minPrice).toList();
+            items = items.stream().filter(item -> item.getPrice() <= maxPrice).toList();
         }
         if(itemRating != null){
-            items = items.stream().filter(item -> item.getRating()>=itemRating).toList();
+            items = items.stream().filter(item -> item.getRating() >= itemRating).toList();
         }
         if(storeRating != null){
-            items = items.stream().filter(item -> item.getRating()>=storeRating).toList();
-        }
-        if(storeId!= null){
-            items = items.stream().filter(item -> item.getStoreId()==storeId).toList();
+            items = items.stream().filter(item -> item.getRating() >= storeRating).toList();
         }
         if (number != null && page != null){
             int start = (page - 1) * number;
             int end = Math.min(start + number, items.size());
-            items = new LinkedList<>(items.subList(start, end));
+            items = new ArrayList<>(items.subList(start, end));
         }
 
         return Response.getSuccessResponse(items);
