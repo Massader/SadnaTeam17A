@@ -2,7 +2,7 @@ package APILayer.Requests;
 
 import java.util.UUID;
 
-public class searchItemRequest extends Request {
+public class SearchItemRequest extends Request {
     private String keyword;
     private String category;
     private double minPrice;
@@ -10,7 +10,7 @@ public class searchItemRequest extends Request {
     private int itemRating;
     private int storeRating;
 
-    public searchItemRequest(UUID clientCredentials, String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating) {
+    public SearchItemRequest(UUID clientCredentials, String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating) {
         super(clientCredentials);
         this.keyword = keyword;
         this.category = category;

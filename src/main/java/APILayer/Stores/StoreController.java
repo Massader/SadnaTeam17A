@@ -87,26 +87,26 @@ public class StoreController {
 
     @PutMapping(path = "/item/quantity")
     public Response<Boolean> setItemQuantity(@RequestBody ItemRequest request) {
-        return service.setItemQuantity(request.getClientCredentials(), request.getItem().getStoreId(),
-                request.getItem().getId(), request.getItem().getQuantity());
+        return service.setItemQuantity(request.getClientCredentials(), request.getStoreId(),
+                request.getId(), request.getQuantity());
     }
 
     @PutMapping(path = "/item/name")
     public Response<Boolean> setItemName(@RequestBody ItemRequest request) {
-        return service.setItemName(request.getClientCredentials(), request.getItem().getStoreId(),
-                request.getItem().getId(), request.getItem().getName());
+        return service.setItemName(request.getClientCredentials(), request.getStoreId(),
+                request.getId(), request.getName());
     }
 
     @PutMapping(path = "/item/description")
     public Response<Boolean> setItemDescription(@RequestBody ItemRequest request) {
-        return service.setItemDescription(request.getClientCredentials(), request.getItem().getStoreId(),
-                request.getItem().getId(), request.getItem().getDescription());
+        return service.setItemDescription(request.getClientCredentials(), request.getStoreId(),
+                request.getId(), request.getDescription());
     }
 
     @PutMapping(path = "/item/price")
     public Response<Boolean> setItemPrice(@RequestBody ItemRequest request) {
-        return service.setItemPrice(request.getClientCredentials(), request.getItem().getStoreId(),
-                request.getItem().getId(), request.getItem().getPrice());
+        return service.setItemPrice(request.getClientCredentials(), request.getStoreId(),
+                request.getId(), request.getPrice());
     }
 
     @GetMapping(path = "/sale-history/id={id}&storeId={storeId}")
@@ -153,9 +153,8 @@ public class StoreController {
 
     @PostMapping(path = "/add-item-to-store")
     public Response<ServiceItem> addItemToStore(@RequestBody ItemRequest request){
-        ServiceItem item = request.getItem();
-        return service.addItemToStore(request.getClientCredentials(), item.getName(), item.getPrice(),
-                item.getStoreId(), item.getQuantity(), item.getDescription());
+        return service.addItemToStore(request.getClientCredentials(), request.getName(), request.getPrice(),
+                request.getStoreId(), request.getQuantity(), request.getDescription());
     }
 
 
