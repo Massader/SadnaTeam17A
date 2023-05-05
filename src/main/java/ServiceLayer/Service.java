@@ -94,7 +94,7 @@ public class Service {
     private void loadObjects() {
         userController.register("Nitzan", "Nitzan1");
         userController.register("Guy", "Guy1");
-        userController.register("Roei", "RoeiHaKelev1");
+        userController.register("Roei", "Roei1");
         userController.register("LiorW", "Lior1");
         userController.register("LiorL", "Lior1");
 
@@ -205,6 +205,7 @@ public class Service {
         }
         else{
             eventLogger.log(Level.INFO, "Successfully logged out user " + clientCredentials);
+            notificationController.removeNotifier(clientCredentials);
         }
         return response;
     }
