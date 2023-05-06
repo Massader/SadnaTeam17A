@@ -47,7 +47,7 @@ public class Item {
 
     public boolean containsCategory(String category) {
         for (Category category1 : this.getCategories()) {
-            if (category1.getCategoryName().equals(category))
+            if (category1.getCategoryName().equalsIgnoreCase(category))
                 return true;
         }
         return false;

@@ -40,7 +40,7 @@ public class SearchController {
                         item.containsCategory(category) &
                                 priceRange(item, minPrice, maxPrice) &
                                 item.getRating() >= itemRating &
-                                item.getName().contains(keyword)).toList());
+                                item.getName().toLowerCase().contains(keyword.toLowerCase())).toList());
             }
             return Response.getSuccessResponse(items);
         }
@@ -70,7 +70,7 @@ public class SearchController {
             }
         }
         if (keyword != null && !keyword.isEmpty()){
-            items = items.stream().filter(item -> item.getName().contains(keyword)).toList();
+            items = items.stream().filter(item -> item.getName().toLowerCase().contains(keyword.toLowerCase())).toList();
         }
         if(category != null && !category.isEmpty()){
             items = items.stream().filter(item -> item.containsCategory(category)).toList();
