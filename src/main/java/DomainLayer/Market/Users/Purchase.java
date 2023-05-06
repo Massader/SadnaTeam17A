@@ -10,6 +10,7 @@ public class Purchase {
     private UUID itemId;
     private Date date;
     private int quantity;
+    private boolean rated;
 
 
     public Purchase(UUID userId, UUID itemId, int quantity) {
@@ -18,6 +19,7 @@ public class Purchase {
         this.itemId = itemId;
         this.userId = userId;
         this.quantity = quantity;
+        rated = false;
     }
 
     public UUID getId() {
@@ -38,5 +40,13 @@ public class Purchase {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public boolean isRated() {
+        return rated;
+    }
+
+    public void setRated(boolean rated) {
+        this.rated = rated;
     }
 }
