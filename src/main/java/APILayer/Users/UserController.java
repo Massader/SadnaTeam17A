@@ -11,6 +11,7 @@ import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
 import ServiceLayer.ServiceObjects.ServiceUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.UUID;
@@ -39,9 +40,8 @@ public class UserController {
     public Response<ServiceUser> login(@RequestBody LoginRegisterRequest request) {
         Response<ServiceUser> response = service.login(request.getClientCredentials(), request.getUsername(),
                 request.getPassword(), alertController::sendNotification);
-        if (!response.isError()) {
-            response.getValue().setEmitter(alertController.createNotifier(response.getValue().getId()));
-        }
+        if (!response.isError())
+            alertController.createNotifier(request.getClientCredentials());
         return response;
     }
 
