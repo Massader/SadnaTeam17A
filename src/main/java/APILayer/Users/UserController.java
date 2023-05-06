@@ -136,5 +136,8 @@ public class UserController {
         return service.getNotifications(clientCredentials, clientCredentials);
     }
 
-
+    @GetMapping(path = "/get-cart-price/id={id}")
+    public Response<Double> getCartPrice(@PathVariable(name = "id") UUID clientCredentials){
+        return service.getCartTotal(clientCredentials);
+    }
 }

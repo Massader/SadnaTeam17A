@@ -519,6 +519,9 @@ public class Service {
 
     public  Response<Double> getCartTotal(UUID clientCredentials){
         Response<Double> response = storeController.getCartTotal(clientCredentials);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+        }
         return response;
     }
 
