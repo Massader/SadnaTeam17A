@@ -19,7 +19,6 @@ public class ServiceUser {
     private String username;
     private Map<UUID,List<StorePermissions>> roles;
     private boolean isAdmin;
-    private SseEmitter emitter;
 
     public ServiceUser() {}
 
@@ -66,13 +65,5 @@ public class ServiceUser {
 
     public void setIsAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
-    }
-
-    public SseEmitter getEmitter() {
-        return emitter;
-    }
-
-    public void setEmitter(SseEmitter emitter) {
-        this.emitter = emitter;
     }
 }
