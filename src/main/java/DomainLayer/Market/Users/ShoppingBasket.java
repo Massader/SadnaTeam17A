@@ -53,6 +53,10 @@ public class ShoppingBasket {
             int oldQuantity = items.get(item.getId());
             if (oldQuantity < quantity)
                 return false;
+            if (oldQuantity == quantity) {
+                items.remove(item.getId());
+                return true;
+            }
             items.put(item.getId(), oldQuantity - quantity);
            // item.setQuantity(item.getQuantity() + quantity);
             return true;
