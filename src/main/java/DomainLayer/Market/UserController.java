@@ -201,7 +201,7 @@ public class UserController {
                 //Response<Boolean> response = storeController.addItemQuantity(storeId, itemId, quantity);
                 //if (response.isError()) return response;
                 ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
-                if (shoppingCart.removeItemFromCart(storeController.getItem(itemId).getValue(), storeId, quantity))
+                if (shoppingCart.removeItemFromCart(itemResponse.getValue(), storeId, quantity))
                     return Response.getSuccessResponse(true);
                 else
                     return Response.getFailResponse("Cannot remove item quantity from cart.");

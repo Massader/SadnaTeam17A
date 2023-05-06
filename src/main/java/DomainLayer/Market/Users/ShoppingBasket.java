@@ -49,8 +49,8 @@ public class ShoppingBasket {
     }
 
     public boolean removeItem(Item item, int quantity){
-        synchronized (item) {
-            int oldQuantity = item.getQuantity();
+        synchronized (this) {
+            int oldQuantity = items.get(item.getId());
             if (oldQuantity < quantity)
                 return false;
             items.put(item.getId(), oldQuantity - quantity);

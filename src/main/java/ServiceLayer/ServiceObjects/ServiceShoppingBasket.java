@@ -6,18 +6,18 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class ServiceShoppingBasket {
-    private UUID userId;
+    private UUID id;
     private UUID storeId;
     private HashMap<UUID, Integer> items; // Map of Item ID -> Quantity
 
     public ServiceShoppingBasket(ShoppingBasket basket) {
-        this.userId = basket.getId();
+        this.id = basket.getId();
         this.storeId = basket.getStoreId();
         items = new HashMap<>(basket.getItems());
     }
 
-    public UUID getUserId() {
-        return userId;
+    public UUID getId() {
+        return id;
     }
 
     public UUID getStoreId() {
