@@ -1,5 +1,6 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.*;
 
 import java.util.UUID;
@@ -14,75 +15,132 @@ import org.junit.jupiter.api.TestInstance;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CloseStore extends ProjectTest {
 
-    UUID founder;
-    UUID client;
-    UUID client2;
+    UUID storeFounderId;
+    UUID storeOwnerId;
+    UUID storeManagerId;
+    UUID userId;
     ServiceStore store;
     UUID storeId;
 
     @BeforeAll
     public void setUp() {
-        bridge.setReal();
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
-        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
-        store = null;
-        storeId = null;
-        store = bridge.createStore(founder, "test", "test").getValue();
+        bridge.resetService();
+        bridge.register("founder", "1234");
+        bridge.register("owner", "1234");
+        bridge.register("manager", "1234");
+        bridge.register("user1", "1234");
+        bridge.register("user2", "1234");
+
+        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "1234").getValue().getId();
+        storeOwnerId = bridge.login(bridge.createClient().getValue(), "owner", "1234").getValue().getId();
+        storeManagerId = bridge.login(bridge.createClient().getValue(), "manager", "1234").getValue().getId();
+        userId = bridge.login(bridge.createClient().getValue(), "user", "1234").getValue().getId();
+
+        store = bridge.createStore(storeFounderId, "test", "test").getValue();
         storeId = store.getStoreId();
+
+        bridge.appointStoreOwner(storeFounderId, storeOwnerId, storeId);
+        bridge.appointStoreManager(storeFounderId, storeManagerId, storeId);
+
+        bridge.logout(storeFounderId);
+        bridge.logout(storeOwnerId);
+        bridge.logout(storeManagerId);
+        bridge.logout(userId);
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.createClient().getValue();
+        bridge.login(bridge.createClient().getValue(), "founder", "1234");
+        bridge.login(bridge.createClient().getValue(), "owner", "1234");
+        bridge.login(bridge.createClient().getValue(), "manager", "1234");
+        bridge.login(bridge.createClient().getValue(), "user", "1234");
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.closeClient(client);
+        bridge.logout(storeFounderId);
+        bridge.logout(storeOwnerId);
+        bridge.logout(storeManagerId);
+        bridge.logout(userId);
     }
 
     @AfterAll
     public void afterClass() {
-        bridge.closeStore(founder, storeId);
-        bridge.logout(founder);
+        bridge.closeStore(storeFounderId, storeId);
     }
 
     @Test
     //tests whether a store can be closed successfully by its founder.
     public void CloseStoreSuccess() {
-        int stores0 = bridge.numOfStores().getValue();
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
-        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
-        store = null;
-        storeId = null;
-        store = bridge.createStore(founder, "test", "test").getValue();
-        storeId = store.getStoreId();
-        Boolean close = bridge.closeStore(founder,storeId).getValue();
-        int stores1 = bridge.numOfStores().getValue();
+        Response<Integer> stores0 = bridge.numOfStores();
+        Response<Boolean> close = bridge.closeStore(storeFounderId, storeId);
+        Response<Integer> stores1 = bridge.numOfStores();
 
-        Assert.assertTrue(close);
-        Assert.assertEquals(stores0 - 1, stores1);
+        Assert.assertFalse(stores0.isError());
+        Assert.assertFalse(close.isError());
+        Assert.assertFalse(stores1.isError());
+
+        Assert.assertTrue(close.getValue());
+        Assert.assertEquals(1, stores0.getValue() - stores1.getValue());
     }
 
     @Test
-    public void CloseStoreFail() {
-        //Tests whether a store can be closed unsuccessfully by a client who is not the founder of the store.
-        int stores0 = bridge.numOfStores().getValue();
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
-        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
-        store = null;
-        storeId = null;
-        store = bridge.createStore(founder, "test", "test").getValue();
-        storeId = store.getStoreId();
-        client2 = bridge.createClient().getValue();
-        Boolean close = bridge.closeStore(client2,storeId).getValue();
-        int stores1 = bridge.numOfStores().getValue();
+    //Tests whether a store can be closed unsuccessfully by a client who is not the founder of the store.
+    public void CloseStoreByOwnerFail() {
+        Response<Integer> stores0 = bridge.numOfStores();
+        Response<Boolean> close = bridge.closeStore(storeOwnerId, storeId);
+        Response<Integer> stores1 = bridge.numOfStores();
 
-        Assert.assertFalse(close);
-        Assert.assertEquals(stores0, stores1);
-        //bridge.logout(client2);
+        Assert.assertFalse(stores0.isError());
+        Assert.assertTrue(close.isError());
+        Assert.assertFalse(stores1.isError());
+
+        Assert.assertEquals(stores0.getValue(), stores1.getValue());
+    }
+
+    @Test
+    //Tests whether a store can be closed unsuccessfully by a client who is not the founder of the store.
+    public void CloseStoreByManagerFail() {
+        Response<Integer> stores0 = bridge.numOfStores();
+        Response<Boolean> close = bridge.closeStore(storeManagerId, storeId);
+        Response<Integer> stores1 = bridge.numOfStores();
+
+        Assert.assertFalse(stores0.isError());
+        Assert.assertTrue(close.isError());
+        Assert.assertFalse(stores1.isError());
+
+        Assert.assertEquals(stores0.getValue(), stores1.getValue());
+    }
+
+    @Test
+    //Tests whether a store can be closed unsuccessfully by a client who is not the founder of the store.
+    public void CloseStoreByUserFail() {
+        Response<Integer> stores0 = bridge.numOfStores();
+        Response<Boolean> close = bridge.closeStore(userId, storeId);
+        Response<Integer> stores1 = bridge.numOfStores();
+
+        Assert.assertFalse(stores0.isError());
+        Assert.assertTrue(close.isError());
+        Assert.assertFalse(stores1.isError());
+
+        Assert.assertEquals(stores0.getValue(), stores1.getValue());
+    }
+
+    @Test
+    //Tests whether a store can be closed unsuccessfully by a logged-out founder of the store.
+    public void CloseStoreByLoggedOutFounderFail() {
+        Response<Integer> stores0 = bridge.numOfStores();
+        Response<UUID> logout = bridge.logout(storeFounderId);
+        Response<Boolean> close = bridge.closeStore(storeFounderId, storeId);
+        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "founder", "1234");
+        Response<Integer> stores1 = bridge.numOfStores();
+
+        Assert.assertFalse(stores0.isError());
+        Assert.assertFalse(logout.isError());
+        Assert.assertTrue(close.isError());
+        Assert.assertFalse(login.isError());
+        Assert.assertFalse(stores1.isError());
+
+        Assert.assertEquals(stores0.getValue(), stores1.getValue());
     }
 }

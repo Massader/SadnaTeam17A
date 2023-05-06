@@ -1,5 +1,6 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.*;
 
 import java.util.UUID;
@@ -14,54 +15,80 @@ import org.junit.jupiter.api.TestInstance;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OpenStore extends ProjectTest {
 
-    UUID founder;
-    UUID client;
-    ServiceStore store;
+    UUID storeFounderId;
     UUID storeId;
-
     @BeforeAll
     public void setUp() {
-        bridge.setReal();
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
-        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
-        store = null;
+        bridge.resetService();
+        bridge.register("founder", "1234");
+
+        storeFounderId = bridge.login(bridge.createClient().getValue(),"founder", "1234").getValue().getId();
+        bridge.logout(storeFounderId);
+
         storeId = null;
     }
 
     @BeforeEach
     public void beforeEach()  {
-        client = bridge.createClient().getValue();
+        bridge.login(bridge.createClient().getValue(),"founder", "1234").getValue().getId();
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.closeClient(client);
+        bridge.logout(storeFounderId);
     }
 
     @AfterAll
     public void afterClass() {
-        bridge.closeStore(founder, storeId);
-        bridge.logout(founder);
+        bridge.closeStore(storeFounderId, storeId);
     }
 
     @Test
     //tests if the createStore function works correctly by registering a founder, logging in, creating a store with valid credentials, and asserting that the returned store object is not null
     public void openStoreSuccess() {
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
-        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
-        store = bridge.createStore(founder, "test", "test").getValue();
-        storeId = store.getStoreId();
-        Assert.assertNotNull(store);
+        Response<Integer> stores0 = bridge.numOfStores();
+        Response<ServiceStore> open = bridge.createStore(storeFounderId, "store", "desc");
+        Response<Integer> stores1 = bridge.numOfStores();
+
+        Assert.assertFalse(stores0.isError());
+        Assert.assertFalse(open.isError());
+        Assert.assertNotNull(open.getValue());
+        Assert.assertFalse(stores1.isError());
+
+        storeId = open.getValue().getStoreId();
+
+        Assert.assertEquals(1, stores1.getValue() - stores0.getValue());
     }
 
     @Test
     //tests if the createStore function handles the scenario where the founder is not logged in by attempting to create a store with invalid credentials and asserting that the returned store object is null.
-    public void openStoreNotLoggedInFail() {
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
-        ServiceStore storeFail = bridge.createStore(client, "fail", "fail").getValue();
-        Assert.assertNull(storeFail);
+    public void openStoreLoggedOutUserFail() {
+        Response<Integer> stores0 = bridge.numOfStores();
+        Response<UUID> logout = bridge.logout(storeFounderId);
+        Response<Boolean> open = bridge.closeStore(storeFounderId, storeId);
+        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "founder", "1234");
+        Response<Integer> stores1 = bridge.numOfStores();
+
+        Assert.assertFalse(stores0.isError());
+        Assert.assertFalse(logout.isError());
+        Assert.assertTrue(open.isError());
+        Assert.assertFalse(login.isError());
+        Assert.assertFalse(stores1.isError());
+
+        Assert.assertEquals(stores0.getValue(), stores1.getValue());
+    }
+
+    @Test
+    //tests if the createStore function handles the scenario where the founder is not logged in by attempting to create a store with invalid credentials and asserting that the returned store object is null.
+    public void openStoreNotRegisteredUserFail() {
+        Response<Integer> stores0 = bridge.numOfStores();
+        Response<Boolean> open = bridge.closeStore(bridge.createClient().getValue(), storeId);
+        Response<Integer> stores1 = bridge.numOfStores();
+
+        Assert.assertFalse(stores0.isError());
+        Assert.assertTrue(open.isError());
+        Assert.assertFalse(stores1.isError());
+
+        Assert.assertEquals(stores0.getValue(), stores1.getValue());
     }
 }
