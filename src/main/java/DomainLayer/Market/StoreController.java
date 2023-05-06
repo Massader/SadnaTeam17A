@@ -15,6 +15,8 @@ import ServiceLayer.Response;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class StoreController {
     private static StoreController instance = null;
@@ -249,13 +251,24 @@ public class StoreController {
     }
 
     //calculate new rating given a new one
-    public Response<Boolean> addItemRating(UUID itemId, UUID storeId, int rating) {
+    public Response<Boolean> addItemRating(UUID clientCredentials, UUID itemId, UUID storeId, int rating) {
         try {
             if (!storeMap.containsKey(storeId)) return Response.getFailResponse("Store not found.");
             Item item = storeMap.get(storeId).getItem(itemId);
             if (item == null) return Response.getFailResponse("Item not found");
-            item.addRating(rating);
-            return Response.getSuccessResponse(true);
+            if (!userController.isRegisteredUser(clientCredentials))
+                return Response.getFailResponse("User not found.");
+            ConcurrentLinkedQueue<Purchase> purchases = userController.getUserById(clientCredentials).getPurchases();
+            for (Purchase purchase : purchases) {
+                if (purchase.getItemId().equals(itemId)) {
+                    if (purchase.isRated())
+                        return Response.getFailResponse("Item has already been rated by user.");
+                    item.addRating(rating);
+                    return Response.getSuccessResponse(true);
+                }
+            }
+            return Response.getFailResponse("Only purchased items can be rated.");
+
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }

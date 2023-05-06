@@ -208,7 +208,9 @@ public class StoreController {
         return service.numOfItems(storeId);
     }
 
-//    @GetMapping(path ="/get-store/storeId={storeId}")(){
-//
-//    }
+    @PostMapping(path = "/rate-item")
+    public Response<Boolean> rateItem(@RequestBody ItemRatingRequest request) {
+        return service.addItemRating(request.getClientCredentials(), request.getItemId(), request.getStoreId(),
+                request.getRating());
+    }
 }

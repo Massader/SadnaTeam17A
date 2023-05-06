@@ -566,7 +566,7 @@ public class Service {
         Response<Boolean> response1 = userController.isUser(clientCredentials);
         if(response1.isError())
             return response1;
-        Response<Boolean> ratingResponse = storeController.addItemRating(itemId, storeId, rating);
+        Response<Boolean> ratingResponse = storeController.addItemRating(clientCredentials, itemId, storeId, rating);
         if(ratingResponse.isError()){
             errorLogger.log(Level.SEVERE, ratingResponse.getMessage());
             return ratingResponse;
