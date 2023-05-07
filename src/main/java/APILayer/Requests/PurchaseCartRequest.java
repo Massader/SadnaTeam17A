@@ -5,9 +5,9 @@ import java.util.UUID;
 public class PurchaseCartRequest extends Request {
     private double expectedPrice;
     private String address;
-    private int credit;
+    private String credit;
 
-    public PurchaseCartRequest(UUID clientCredentials, double expectedPrice, String address, int credit) {
+    public PurchaseCartRequest(UUID clientCredentials, double expectedPrice, String address, String credit) {
         super(clientCredentials);
         this.expectedPrice = expectedPrice;
         this.address = address;
@@ -30,11 +30,11 @@ public class PurchaseCartRequest extends Request {
         this.address = address;
     }
 
-    public int getCredit() {
+    public String getCredit() {
         return credit;
     }
 
-    public void setCredit(int credit) {
+    public void setCredit(String credit) {
         this.credit = credit;
     }
 }

@@ -31,11 +31,11 @@ public class PaymentController {
         paymentProxy.setReal();
     }
 
-    public Response<Boolean> pay(double price, int credit) {
+    public Response<Boolean> pay(double price, String credit) {
         return Response.getSuccessResponse(paymentProxy.pay(price, credit));
     }
 
-    public Response<Boolean> cancelPay(double nowPrice, int credit) {
+    public Response<Boolean> cancelPay(double nowPrice, String credit) {
         return Response.getSuccessResponse(paymentProxy.cancelPay(nowPrice, credit));
     }
 }

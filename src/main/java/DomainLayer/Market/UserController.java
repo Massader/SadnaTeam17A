@@ -532,6 +532,9 @@ public class UserController {
         }
     }
 
+    public ConcurrentHashMap<String, UUID> getUsernames() {
+        return usernames;
+    }
 
 //        public Response<Boolean> UnsubscribingUserByAdmin(UUID clientCredentials, UUID userId) {
 //            try {
