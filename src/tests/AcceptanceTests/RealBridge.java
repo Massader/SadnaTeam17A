@@ -73,7 +73,8 @@ public class RealBridge implements Bridge {
     }
 
     public Response<ServiceUser> login(UUID clientCredentials, String username, String password) {
-        return service.login(clientCredentials, username, password);
+        //return service.login(clientCredentials, username, password);
+        return null;
     }
 
     public Response<ServiceStore> getStoreInformation(UUID storeId) {
@@ -96,8 +97,8 @@ public class RealBridge implements Bridge {
         return service.getCart(clientCredentials);
     }
 
-    public Response<Boolean> purchaseShoppingCart() {
-        return null;
+    public Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, String credit) {
+        return service.purchaseCart(clientCredentials, expectedPrice, address, credit);
     }
 
 
@@ -212,11 +213,27 @@ public class RealBridge implements Bridge {
         return service.numOfStores();
     }
 
+    public Response<Integer> numOfOpenStores() {
+        return service.numOfOpenStores();
+    }
+
     public Response<Integer> numOfClients() {
         return service.numOfClients();
     }
 
     public Response<List<Role>> getUserRoles(UUID clientCredentials) {
         return service.getUserRoles(clientCredentials);
+    }
+
+    public Response<ServiceUser> getUserInfo(UUID clientCredentials) {
+        return service.getUserInfo(clientCredentials);
+    }
+
+    public Response<Boolean> reopenStore(UUID clientCredentials, UUID storeId) {
+        return service.reopenStore(clientCredentials, storeId);
+    }
+
+    public Response<UUID> getAdminCredentials() {
+        return service.getAdminCredentials();
     }
 }

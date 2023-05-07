@@ -30,7 +30,7 @@ public interface Bridge {
     Response<List<ServiceItem>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating);
     Response<Boolean> addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId);
     Response<List<ServiceShoppingBasket>> getCart(UUID clientCredentials);
-    Response<Boolean> purchaseShoppingCart();
+    Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, String credit);
     Response<UUID> logout(UUID clientCredentials);
     Response<ServiceStore> createStore(UUID clientCredentials , String storeName , String storeDescription);
     Response<ServiceItem> addItemToStore(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description);
@@ -55,8 +55,10 @@ public interface Bridge {
     Response<Boolean> isLoggedIn(UUID userId);
     Response<Integer> numOfUsers();
     Response<Integer> numOfStores();
+    Response<Integer> numOfOpenStores();
     Response<Integer> numOfClients();
     Response<List<Role>> getUserRoles(UUID clientCredentials);
-
     Response<ServiceUser> getUserInfo(UUID clientCredentials);
+    Response<Boolean> reopenStore(UUID clientCredentials, UUID storeId);
+    Response<UUID> getAdminCredentials();
 }

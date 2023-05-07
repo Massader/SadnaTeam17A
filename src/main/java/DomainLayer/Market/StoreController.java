@@ -601,4 +601,13 @@ public class StoreController {
 
     }
 
+    public Response<Integer> numOfOpenStores() {
+        try {
+            int openStores = storeMap.values().stream().filter(store -> !store.isClosed()).toList().size();
+            return Response.getSuccessResponse(openStores);
+        }
+        catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
 }

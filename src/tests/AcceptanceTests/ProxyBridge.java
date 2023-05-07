@@ -91,8 +91,8 @@ public class ProxyBridge implements Bridge {
         return real == null ? null : real.getCart(clientCredentials);
     }
 
-    public Response<Boolean> purchaseShoppingCart() {
-        return real == null ? null : real.purchaseShoppingCart();
+    public Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, String credit) {
+        return real == null ? null : real.purchaseCart(clientCredentials, expectedPrice, address, credit);
     }
 
 
@@ -198,7 +198,10 @@ public class ProxyBridge implements Bridge {
 
     public Response<Integer> numOfStores() {
         return real == null ? null : real.numOfStores();
+    }public Response<Integer> numOfOpenStores() {
+        return real == null ? null : real.numOfOpenStores();
     }
+
 
     public Response<Integer> numOfClients() {
         return real == null ? null : real.numOfClients();
@@ -206,6 +209,18 @@ public class ProxyBridge implements Bridge {
 
     public Response<List<Role>> getUserRoles(UUID clientCredentials) {
         return real == null ? null : real.getUserRoles(clientCredentials);
+    }
+
+    public Response<ServiceUser> getUserInfo(UUID clientCredentials) {
+        return real == null ? null : real.getUserInfo(clientCredentials);
+    }
+
+    public Response<Boolean> reopenStore(UUID clientCredentials, UUID storeId) {
+        return real == null ? null : real.reopenStore(clientCredentials, storeId);
+    }
+
+    public Response<UUID> getAdminCredentials() {
+        return real == null ? null : real.getAdminCredentials();
     }
 }
 

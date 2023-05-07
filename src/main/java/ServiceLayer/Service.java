@@ -922,5 +922,21 @@ public class Service {
         }
         return Response.getSuccessResponse(serviceUsers);
     }
+
+    public Response<Integer> numOfOpenStores() {
+        Response<Integer> openStoresResponse = storeController.numOfOpenStores();
+        if (openStoresResponse.isError()) {
+            errorLogger.log(Level.WARNING, openStoresResponse.getMessage());
+        }
+        return openStoresResponse;
+    }
+
+    public Response<UUID> getAdminCredentials() {
+        Response<UUID> adminResponse = userController.getAdminCredentials();
+        if (adminResponse.isError()) {
+            errorLogger.log(Level.WARNING, adminResponse.getMessage());
+        }
+        return adminResponse;
+    }
 }
 

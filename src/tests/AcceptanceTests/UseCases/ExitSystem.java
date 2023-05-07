@@ -6,16 +6,14 @@ import java.util.UUID;
 import ServiceLayer.Response;
 import org.junit.*;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ExitSystem extends ProjectTest {
 
-    @BeforeAll
-    public void setUp() {
+    @AfterAll
+    public void afterAll() {
         bridge.resetService();
     }
 
