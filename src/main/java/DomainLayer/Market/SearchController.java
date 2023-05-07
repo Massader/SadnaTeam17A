@@ -2,6 +2,7 @@ package DomainLayer.Market;
 
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
+import DomainLayer.Market.Users.User;
 import DomainLayer.Security.SecurityController;
 import DomainLayer.Supply.SupplyController;
 import ServiceLayer.Response;
@@ -94,5 +95,21 @@ public class SearchController {
         }
 
         return Response.getSuccessResponse(items);
+    }
+
+    public Response<List<User>> searchUser(String username) {
+        try {
+            UserController userController = UserController.getInstance();
+            ConcurrentHashMap<String, UUID> usernames = userController.getUsernames();
+            List<User> users = new ArrayList<>();
+            for (Map.Entry<String, UUID> entry : usernames.entrySet()) {
+                if (entry.getKey().toLowerCase().contains(username.toLowerCase()))
+                    users.add(userController.getUserById(entry.getValue()));
+            }
+            return Response.getSuccessResponse(users);
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+
     }
 }

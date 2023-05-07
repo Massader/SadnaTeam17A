@@ -712,7 +712,7 @@ public class Service {
         return response;
     }
 
-    public Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, int credit){
+    public Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, String credit){
         Response<ShoppingCart> response1 = userController.getCart(clientCredentials);
         if(response1.isError()){
             errorLogger.log(Level.WARNING, response1.getMessage());
@@ -907,6 +907,20 @@ public class Service {
             errorLogger.log(Level.WARNING, notificationResponse.getMessage());
         }
         return notificationResponse;
+    }
+
+    public Response<List<ServiceUser>> searchUser(String username) {
+        Response<List<User>> usersResponse = searchController.searchUser(username);
+        if (usersResponse.isError()) {
+            errorLogger.log(Level.WARNING, usersResponse.getMessage());
+            return Response.getFailResponse(usersResponse.getMessage());
+        }
+        List<User> users = usersResponse.getValue();
+        List<ServiceUser> serviceUsers = new ArrayList<>();
+        for (User user : users) {
+            serviceUsers.add(new ServiceUser(user));
+        }
+        return Response.getSuccessResponse(serviceUsers);
     }
 }
 

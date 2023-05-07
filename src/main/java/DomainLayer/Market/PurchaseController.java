@@ -43,17 +43,18 @@ public class PurchaseController {
 
 
     public Response<Boolean> purchaseCart(Client client, ShoppingCart shoppingCart, double expectedPrice,
-                                          String address, int credit) {
+                                          String address, String credit) {
         try {//check
             if (shoppingCart.getShoppingBaskets().isEmpty()){
                 return Response.getFailResponse("shopping cart is empty");}
-            if(paymentProxy==null){
-                return Response.getFailResponse("the payment service is not available");}
-            if(supplyProxy==null){
-                return Response.getFailResponse("the supply service is not available");}
-            if(!supplyProxy.validateOrder(address)){
-                return Response.getFailResponse("the address is not available for supply");}
-
+            if(paymentProxy==null)
+                return Response.getFailResponse("the payment service is not available");
+            if(supplyProxy==null)
+                return Response.getFailResponse("the supply service is not available");
+            if(!supplyProxy.validateOrder(address))
+                return Response.getFailResponse("the address is not available for supply");
+            if (!credit.matches("[0-9]+"))  // check if the credit card number is all numbers
+                return Response.getFailResponse("Credit card number must consist only of numbers");
 
             ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
             synchronized (instanceLock) {
@@ -86,11 +87,11 @@ public class PurchaseController {
                                 + store.getName() + " has been made.");
                     }
                 }
-                if(!paymentProxy.pay(nowPrice,credit)){
+                if(!paymentProxy.pay(nowPrice, credit)){
                     return Response.getFailResponse("There was a problem with your payment");
                 }
                 if(supplyProxy.sendOrder() == null){
-                    paymentProxy.cancelPay(nowPrice,credit);
+                    paymentProxy.cancelPay(nowPrice, credit);
                     return Response.getFailResponse("Supply request failed");
                 }
 

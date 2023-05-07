@@ -1,13 +1,13 @@
 package DomainLayer.Payment;
 
-public class PaymentProxy implements  PaymentBridge{
+public class PaymentProxy implements PaymentBridge{
     PaymentBridge real = null;
     public void setReal() {
         if(real==null){
             real = new PaymentReal();}
     }
     @Override
-    public Boolean pay(double price,int credit) {
+    public Boolean pay(double price, String credit) {
         return real == null ? false : real.pay(price, credit);
     }
 
@@ -18,7 +18,7 @@ public class PaymentProxy implements  PaymentBridge{
 
 
     @Override
-    public Boolean cancelPay(double nowPrice, int credit) {
+    public Boolean cancelPay(double nowPrice, String credit) {
         return real == null ? false : real.cancelPay(nowPrice,credit);
     }
 

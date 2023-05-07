@@ -4,6 +4,7 @@ import APILayer.Alerts.AlertController;
 import APILayer.Requests.*;
 import DomainLayer.Market.Notification;
 import DomainLayer.Market.Users.Roles.Role;
+import DomainLayer.Market.Users.User;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.ServicePurchase;
@@ -139,5 +140,10 @@ public class UserController {
     @GetMapping(path = "/get-cart-price/id={id}")
     public Response<Double> getCartPrice(@PathVariable(name = "id") UUID clientCredentials){
         return service.getCartTotal(clientCredentials);
+    }
+
+    @GetMapping(path = "/search-user/username={username}")
+    public Response<List<ServiceUser>> searchUser(@PathVariable(name = "username") String username) {
+        return service.searchUser(username);
     }
 }

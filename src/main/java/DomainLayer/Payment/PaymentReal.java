@@ -5,7 +5,7 @@ public class PaymentReal implements PaymentBridge{
     public void setReal() {}
 
     @Override
-    public Boolean pay(double price,int credit) {
+    public Boolean pay(double price, String credit) {
         return true;
     }
 
@@ -16,7 +16,7 @@ public class PaymentReal implements PaymentBridge{
 
 
     @Override
-    public Boolean cancelPay(double price, int credit) {
+    public Boolean cancelPay(double price, String credit) {
         return true;
     }
 
