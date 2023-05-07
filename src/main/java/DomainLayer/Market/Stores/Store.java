@@ -214,19 +214,17 @@ public class Store {
         }
     }
 
-    public ConcurrentLinkedQueue<Item> purchaseBasket(ShoppingBasket shoppingBasket) {
+    public void purchaseBasket(ShoppingBasket shoppingBasket) throws Exception {
         ConcurrentHashMap<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
-        ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
         synchronized (items) {
             for (UUID itemId : shoppingBasketItems.keySet()) {
                 int quantityToRemove = shoppingBasketItems.get(itemId);
                 int oldQuantity = items.get(itemId).getQuantity();
-                if (oldQuantity < quantityToRemove)
-                    missingItems.add(items.get(itemId));
-                items.get(itemId).setQuantity(oldQuantity - quantityToRemove);
+                if (quantityToRemove <= oldQuantity)
+                    items.get(itemId).setQuantity(oldQuantity - quantityToRemove);
+                else throw new Exception("Quantity of item in store is lower than quantity to purchase.");
             }
         }
-        return missingItems;
     }
 
 
