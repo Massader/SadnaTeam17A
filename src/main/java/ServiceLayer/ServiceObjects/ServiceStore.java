@@ -13,11 +13,14 @@ public class ServiceStore {
     private String description;
     private double rating;
 
+    private boolean closed;
+
     public ServiceStore(Store store) {
         this.name = store.getName();
         this.storeId = store.getStoreId();
         this.description = store.getDescription();
         this.rating = store.getRating();
+        this.closed = store.isClosed();
     }
 
     @Autowired
@@ -40,5 +43,9 @@ public class ServiceStore {
 
     public double getRating() {
         return rating;
+    }
+
+    public boolean isClosed() {
+        return closed;
     }
 }

@@ -532,6 +532,12 @@ public class UserController {
         }
     }
 
+    public Response<UUID> getAdminCredentials() {
+        UUID admin = usernames.get("admin");
+        if (admin == null) return Response.getFailResponse("There is no admin");
+        return Response.getSuccessResponse(admin);
+    }
+
     public ConcurrentHashMap<String, UUID> getUsernames() {
         return usernames;
     }

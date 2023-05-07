@@ -29,7 +29,6 @@ public class AppointStoreManager extends ProjectTest {
 
     @BeforeAll
     public void setUp() {
-        bridge.resetService();
         bridge.register("founder", "1234");
         bridge.register("owner", "1234");
         bridge.register("manager1", "1234");
