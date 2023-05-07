@@ -35,7 +35,11 @@ public class ShoppingCart {
         if(!shoppingBaskets.containsKey(storeId))
             return false;
         ShoppingBasket shoppingBasket = shoppingBaskets.get(storeId);
-        return shoppingBasket.removeItem(item,quantity);
+        boolean removalSuccess = shoppingBasket.removeItem(item,quantity);
+        if (removalSuccess && shoppingBasket.getItems().isEmpty()) {
+            shoppingBaskets.remove(storeId);
+        }
+        return removalSuccess;
     }
 
     public synchronized void clearCart() {
