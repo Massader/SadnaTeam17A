@@ -142,16 +142,16 @@ class SecurityControllerTest {
 
     @Test
     void testValidateSecurityQuestionSuccess() {
-        Response<UUID> response = securityController.validateSecurityQuestion(id, answer);
+        Response<Boolean> response = securityController.ValidateSecurityQuestion(id, answer);
         assertTrue(response.isSuccessful());
-        assertEquals(response.getValue(), id);
+        assertTrue(response.getValue());
     }
 
     @Test
     void testValidateSecurityQuestionFailure() {
-        Response<UUID> response = securityController.validateSecurityQuestion(id, "wrong answer");
+        Response<Boolean> response = securityController.ValidateSecurityQuestion(id, "wrong answer");
         assertTrue(response.isSuccessful());
-        assertEquals(response.getValue(), id);
+        assertFalse(response.getValue());
     }
 
 
