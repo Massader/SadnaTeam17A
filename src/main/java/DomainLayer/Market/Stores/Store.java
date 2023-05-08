@@ -4,10 +4,13 @@ import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Discounts.condition.StoreDiscount;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.StorePurchasePolicies;
+import DomainLayer.Market.Users.Client;
+import DomainLayer.Market.Users.Purchase;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.ShoppingBasket;
+import DomainLayer.Market.Users.User;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -99,8 +102,10 @@ public class Store {
 
     public boolean shutdownStore() {
         shutdown = true;
+        closed= true;
         return true;
     }
+
 
     public String getDescription() {
         return description;
@@ -214,18 +219,41 @@ public class Store {
         }
     }
 
-    public void purchaseBasket(ShoppingBasket shoppingBasket) throws Exception {
+    public void purchaseBasket(Client client, ShoppingBasket shoppingBasket) throws Exception {
         ConcurrentHashMap<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
         synchronized (items) {
             for (UUID itemId : shoppingBasketItems.keySet()) {
                 int quantityToRemove = shoppingBasketItems.get(itemId);
                 int oldQuantity = items.get(itemId).getQuantity();
-                if (quantityToRemove <= oldQuantity)
+                if (quantityToRemove <= oldQuantity){
+                //update Store, history Sale Store, User purchase
                     items.get(itemId).setQuantity(oldQuantity - quantityToRemove);
+                    Sale sale = new Sale(client.getId(),itemId,quantityToRemove);
+                    sales.add(sale);
+                    if(client instanceof User){
+                        Purchase purchase = new Purchase(client.getId(),itemId,quantityToRemove);
+                        ((User) client).addPurchase(purchase);
+                    }}
                 else throw new Exception("Quantity of item in store is lower than quantity to purchase.");
             }
         }
     }
+    public void unPurchaseBasket(Client client, ShoppingBasket shoppingBasket) throws Exception {
+        ConcurrentHashMap<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
+        synchronized (items) {
+            for (UUID itemId : shoppingBasketItems.keySet()) {
+                int quantityToRemove = shoppingBasketItems.get(itemId);
+                int oldQuantity = items.get(itemId).getQuantity();
+                    //update Store, history Sale Store, User purchase
+                    items.get(itemId).setQuantity(oldQuantity + quantityToRemove);
+                    Sale sale = new Sale(client.getId(),itemId,quantityToRemove);
+                    sales.remove(sale);
+                    if(client instanceof User){
+                        Purchase purchase = new Purchase(client.getId(),itemId,quantityToRemove);
+                        ((User) client).removePurchase(purchase);
+                    }}}
+    }
+
 
 
     public Boolean addPolicyTermByStoreOwner( PurchaseTerm term) throws Exception {

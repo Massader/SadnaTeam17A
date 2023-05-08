@@ -51,6 +51,8 @@ public class User extends Client{
                 return;
             }
     }
+    public void addPurchase(Purchase purchase){this.purchases.add(purchase);}
+    public void removePurchase(Purchase purchase){this.purchases.remove(purchase);}
 
     public void setPurchases(ConcurrentLinkedQueue<Purchase> purchases){
         this.purchases=purchases;
