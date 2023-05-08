@@ -111,7 +111,17 @@ public class Store {
         return description;
     }
 
-    public void addRole(UUID clientCredentials, Role role) {
+    public void addRole(UUID clientCredentials, Role role) throws Exception {
+        if (rolesMap.containsKey(clientCredentials)) {
+            Role existingRole = rolesMap.get(clientCredentials);
+            if (role.getPermissions().contains(StorePermissions.STORE_OWNER)
+                    && !existingRole.getPermissions().contains(StorePermissions.STORE_OWNER)) {
+                rolesMap.put(clientCredentials, role);
+                return;
+            } else {
+                throw new Exception("User is already a member of store staff.");
+            }
+        }
         rolesMap.put(clientCredentials, role);
     }
 

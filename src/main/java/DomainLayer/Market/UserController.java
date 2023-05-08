@@ -233,14 +233,14 @@ public class UserController {
                 return Response.getFailResponse("User doesn't have permission.");
             Response<User> response2 = this.getUser(appointee);
             if(response2.isError())
-                return Response.getFailResponse("User does not exist.");
+                return Response.getFailResponse(response2.getMessage());
             if(storeController.getStore(storeId).getRolesMap().containsKey(appointee) &&
                     storeController.getStore(storeId).checkPermission(appointee, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("User already owner of the shop.");
             StoreOwner storeOwner = new StoreOwner(storeId);
             response2.getValue().addStoreRole(storeOwner);
             storeController.getStore(storeId).addRole(appointee, storeOwner);
-            storeController.getStore(storeId).getOwner(clientCredentials).addAppoint(appointee);
+            storeController.getStore(storeId).getOwner(clientCredentials).addAppointee(appointee);
             return Response.getSuccessResponse(true);
         }
         catch(Exception exception){
@@ -262,7 +262,7 @@ public class UserController {
             StoreManager storeManager = new StoreManager(storeId);
             response2.getValue().addStoreRole(storeManager);
             storeController.getStore(storeId).addRole(appointee, storeManager);
-            storeController.getStore(storeId).getOwner(clientCredentials).addAppoint(appointee);
+            storeController.getStore(storeId).getOwner(clientCredentials).addAppointee(appointee);
             return Response.getSuccessResponse(true);
         }
         catch(Exception exception){
@@ -283,13 +283,13 @@ public class UserController {
                 return Response.getFailResponse("User does not exist.");
             if(store.getRolesMap().containsKey(roleToRemove))
                 return Response.getFailResponse("User does not have role in the shop.");
-            if(store.getOwner(clientCredentials).getAppoints().contains(roleToRemove))
+            if(store.getOwner(clientCredentials).getAppointees().contains(roleToRemove))
                 return Response.getFailResponse("Owner was not appointed by this user.");
             response2.getValue().removeStoreRole(storeId);
-            for(UUID appointee : store.getOwner(roleToRemove).getAppoints())
+            for(UUID appointee : store.getOwner(roleToRemove).getAppointees())
                 removeStoreRole(roleToRemove, appointee, storeId);
             store.removeRole(roleToRemove);
-            store.getOwner(clientCredentials).removeAppoint(roleToRemove);
+            store.getOwner(clientCredentials).removeAppointee(roleToRemove);
             notificationController.sendNotification(roleToRemove, "Your role has been removed from "
                     + store.getName());
             return Response.getSuccessResponse(true);
@@ -567,21 +567,4 @@ public class UserController {
     public void loginFromSecurityQuestion(UUID id) {    //For use from security controller only
         loggedInUsers.add(users.get(id).getUsername());
     }
-
-//        public Response<Boolean> UnsubscribingUserByAdmin(UUID clientCredentials, UUID userId) {
-//            try {
-//                if (!users.containsKey(clientCredentials))
-//                    return Response.getFailResponse("User does not exist.");
-//                if (!users.get(clientCredentials).isAdmin())
-//                    return Response.getFailResponse("Only admins can unsubscribing users.");
-//
-//                }
-//            }
-        }
-
-
-
-
-
-
-
+}
