@@ -17,7 +17,7 @@ public class UserController {
     private static UserController singleton = null;
     private ConcurrentHashMap<UUID, User> users;// for registered clients only!
     private ConcurrentHashMap<String, UUID> usernames;    // for registered clients only!
-    private ConcurrentLinkedQueue<String> loggedInUser; // for logged-in users only!
+    private ConcurrentLinkedQueue<String> loggedInUsers; // for logged-in users only!
     private SecurityController securityController;
     private ConcurrentHashMap<UUID, Client> clients;  // for non-registered clients only!
     private StoreController storeController;
@@ -30,7 +30,7 @@ public class UserController {
     public void init() {
         users = new ConcurrentHashMap<>();
         usernames = new ConcurrentHashMap<>();
-        loggedInUser = new ConcurrentLinkedQueue<>();
+        loggedInUsers = new ConcurrentLinkedQueue<>();
         securityController = SecurityController.getInstance();
         clients = new ConcurrentHashMap<>();
         storeController = StoreController.getInstance();
@@ -67,7 +67,7 @@ public class UserController {
 
     public Response<User> login(UUID clientCredentials, String username, String password) {
         try {
-            if (loggedInUser.contains(username))
+            if (loggedInUsers.contains(username))
                 return Response.getFailResponse("User is already logged in, please log out first.");
             if (!usernames.containsKey(username) || !users.containsKey(usernames.get(username)))
                 return Response.getFailResponse("User is not registered in the system.");
@@ -76,7 +76,7 @@ public class UserController {
             if (securityResponse.isError()) return Response.getFailResponse(securityResponse.getMessage());
             if (securityResponse.getValue()) {
                 //transfer the client to the logged in users, and delete it from the non registered clients list
-                loggedInUser.add(username);
+                loggedInUsers.add(username);
                 closeClient(clientCredentials);
                 return Response.getSuccessResponse(users.get(usernames.get(username)));
             }
@@ -330,7 +330,7 @@ public class UserController {
             if (userId.equals(usernames.get("admin")))
                 return Response.getFailResponse("Can't delete default admin.");
             User user = users.get(userId);
-            if (loggedInUser.contains(user.getUsername()))
+            if (loggedInUsers.contains(user.getUsername()))
                 logout(userId);
             //remove from both HashMaps
             user = users.remove(userId);
@@ -352,9 +352,9 @@ public class UserController {
             if (!users.containsKey(userId))
                 return Response.getFailResponse("this user ID does not exist");
             User user = users.get(userId);
-            if (!loggedInUser.contains(user.getUsername()))
+            if (!loggedInUsers.contains(user.getUsername()))
                 return Response.getFailResponse("this user is already logged out");
-            loggedInUser.remove(user.getUsername());
+            loggedInUsers.remove(user.getUsername());
             return createClient();
         }
         catch (Exception exception){
@@ -390,7 +390,7 @@ public class UserController {
         try {
             User user = users.get(clientCredentials);
             if (user == null) return Response.getFailResponse("User does not exist.");
-            if (!loggedInUser.contains(user.getUsername())) return Response.getFailResponse("User is logged-out.");
+            if (!loggedInUsers.contains(user.getUsername())) return Response.getFailResponse("User is logged-out.");
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception) {
@@ -473,7 +473,7 @@ public class UserController {
             if(!users.get(clientCredentials).isAdmin())
                 return Response.getFailResponse("Only admins can delete users.");
             List<User> loginUser = new ArrayList<>();
-            for (String loginUserName:loggedInUser) {
+            for (String loginUserName: loggedInUsers) {
                 loginUser.add(users.get(getId(loginUserName)));
             }
             return Response.getSuccessResponse(loginUser);
@@ -492,7 +492,7 @@ public class UserController {
                 return Response.getFailResponse("Only admins can delete users.");
             List<User> notLoginUser = new ArrayList<>();
             for (String notLoginUserName:usernames.keySet()) {
-                if (!loggedInUser.contains(notLoginUserName)) {
+                if (!loggedInUsers.contains(notLoginUserName)) {
                     notLoginUser.add(users.get(getId(notLoginUserName)));
                 }}
             return Response.getSuccessResponse(notLoginUser);
@@ -556,12 +556,16 @@ public class UserController {
 
     public Response<Integer> numOfLoggedInUsers() {
         try {
-            int loggedInUsers = loggedInUser.size();
+            int loggedInUsers = this.loggedInUsers.size();
             return Response.getSuccessResponse(loggedInUsers);
         }
         catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
+    }
+    
+    public void loginFromSecurityQuestion(UUID id) {    //For use from security controller only
+        loggedInUsers.add(users.get(id).getUsername());
     }
 
 //        public Response<Boolean> UnsubscribingUserByAdmin(UUID clientCredentials, UUID userId) {

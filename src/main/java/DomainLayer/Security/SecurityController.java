@@ -1,6 +1,8 @@
 package DomainLayer.Security;
 
 import DomainLayer.Market.StoreController;
+import DomainLayer.Market.UserController;
+import DomainLayer.Market.Users.User;
 import ServiceLayer.Response;
 
 import java.util.UUID;
@@ -92,11 +94,15 @@ public class SecurityController {
         }
     }
 
-    public Response<Boolean> ValidateSecurityQuestion(UUID id, String answer){
+    public Response<Boolean> validateSecurityQuestion(UUID id, String answer){
         try{
             if(securityQuestions.get(id) != null){
                 boolean valid = securityQuestions.get(id).validateAnswer(answer);
-                return Response.getSuccessResponse(valid);
+                if (valid) {
+                    UserController.getInstance().loginFromSecurityQuestion(id);
+                    return Response.getSuccessResponse(true);
+                }
+                return Response.getFailResponse("Security question verification failed.");
             }
             else return Response.getFailResponse("User does not have a security question.");
         }
