@@ -1,5 +1,6 @@
 package ServiceLayer;
 
+import APILayer.Alerts.AlertController;
 import DomainLayer.Market.*;
 import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Item;
@@ -19,6 +20,7 @@ import ServiceLayer.ServiceObjects.*;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 @org.springframework.stereotype.Service
@@ -523,8 +525,8 @@ public class Service {
         return response;
     }
 
-    public Response<UUID> validateSecurityQuestion(UUID clientCredentials, String answer ){
-        Response<UUID> response = securityController.validateSecurityQuestion(clientCredentials,answer);
+    public Response<Boolean> validateSecurityQuestion(UUID clientCredentials, String answer ){
+        Response<Boolean> response = securityController.ValidateSecurityQuestion(clientCredentials,answer);
         if(response.isError()) {
             errorLogger.log(Level.SEVERE, response.getMessage());
             return Response.getFailResponse(response.getMessage());

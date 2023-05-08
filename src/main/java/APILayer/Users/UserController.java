@@ -85,7 +85,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/security/validate-question/id={id}&answer={answer}")
-    public Response<UUID> validateSecurityQuestion(@PathVariable(name = "id") UUID clientCredentials,
+    public Response<Boolean> validateSecurityQuestion(@PathVariable(name = "id") UUID clientCredentials,
                                                       @PathVariable(name = "answer") String answer) {
         return service.validateSecurityQuestion(clientCredentials, answer);
     }
