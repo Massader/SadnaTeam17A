@@ -4,7 +4,6 @@ import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.Client;
 import DomainLayer.Market.Users.Roles.Role;
-import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.ShoppingBasket;
 import DomainLayer.Market.Users.ShoppingCart;
@@ -63,6 +62,8 @@ public class PurchaseController {
                     UUID storeId = entry.getKey();
                     ShoppingBasket basket = entry.getValue();
                     Store store = storeController.getStore(storeId);
+                    if(store==null){return Response.getFailResponse("The store is not exist "+storeId);}
+                    if(store.isClosed()){return Response.getFailResponse("The store is close "+storeId);}
                     missingItems.addAll(store.getUnavailableItems(basket));
                     if (!missingItems.isEmpty()) {
                         return Response.getFailResponse("The following items are no longer available "
@@ -80,7 +81,7 @@ public class PurchaseController {
                     UUID storeId = entry.getKey();
                     ShoppingBasket basket = entry.getValue();
                     Store store = storeController.getStore(storeId);
-                    store.purchaseBasket(basket);
+                    store.purchaseBasket(client,basket);
                     for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
                         if (role.getValue().getPermissions().contains(StorePermissions.STORE_OWNER))
                         notificationController.sendNotification(role.getKey(), "A purchase from "
@@ -88,9 +89,11 @@ public class PurchaseController {
                     }
                 }
                 if(!paymentProxy.pay(nowPrice, credit)){
+                    unPurchaseCart(client,shoppingCart);
                     return Response.getFailResponse("There was a problem with your payment");
                 }
                 if(supplyProxy.sendOrder() == null){
+                    unPurchaseCart(client,shoppingCart);
                     paymentProxy.cancelPay(nowPrice, credit);
                     return Response.getFailResponse("Supply request failed");
                 }
@@ -103,4 +106,10 @@ public class PurchaseController {
         }
     }
 
-}
+    public void unPurchaseCart(Client client, ShoppingCart shoppingCart) throws Exception {
+         for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
+            UUID storeId = entry.getKey();
+            ShoppingBasket basket = entry.getValue();
+            Store store = storeController.getStore(storeId);
+            store.unPurchaseBasket(client,basket);
+    }}}
