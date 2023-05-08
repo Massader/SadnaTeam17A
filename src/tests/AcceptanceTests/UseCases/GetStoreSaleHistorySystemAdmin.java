@@ -49,11 +49,11 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
 
         bridge.addItemToCart(user1Id, item1Id, 3, storeId);
         bridge.addItemToCart(user1Id, item2Id, 6, storeId);
-        bridge.purchaseCart(user1Id, 3*10 + 6*20, "address", "credit");
+        bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "1234000012340000");
 
         bridge.addItemToCart(user2Id, item3Id, 9, storeId);
         bridge.addItemToCart(user2Id, item4Id, 12, storeId);
-        bridge.purchaseCart(user2Id, 9*30 + 12*40, "address", "credit");
+        bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue(), "address", "1234000012340000");
 
         bridge.logout(storeFounderId);
         bridge.logout(user1Id);
@@ -76,8 +76,9 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
 
     @AfterAll
     public void afterClass() {
-        bridge.closeStore(storeFounderId, storeId);
+        bridge.resetService();
     }
+
 
     @Test
     //checks if the admin can get the store history

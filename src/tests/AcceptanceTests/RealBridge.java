@@ -5,6 +5,7 @@ import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RealBridge implements Bridge {
 
@@ -243,5 +244,13 @@ public class RealBridge implements Bridge {
 
     public Response<Integer> numOfLoggedInUsers() {
         return service.numOfLoggedInUsers();
+    }
+
+    public Response<ConcurrentHashMap<String, UUID>> getUserNames() {
+        return service.getUserNames();
+    }
+
+    public Response<Double> getCartTotal(UUID clientCredentials) {
+        return service.getCartTotal(clientCredentials);
     }
 }

@@ -35,8 +35,9 @@ public class LogoutRegisterUser extends ProjectTest {
 
     @AfterAll
     public void afterClass() {
-
+        bridge.resetService();
     }
+
 
     @Test
     //tests if the logout function works correctly by asserting that the client's UUID is not null after logging out.
@@ -74,8 +75,8 @@ public class LogoutRegisterUser extends ProjectTest {
     public void logoutConcurrently() {
         UUID[] ids = new UUID[1000];
         for (int i = 0; i < 1000; i++) {
-            bridge.register("user" + i, "1234");
-            ids[i] = bridge.login(bridge.createClient().getValue(), "user" + i, "1234").getValue().getId();
+            bridge.register("user_" + i, "1234");
+            ids[i] = bridge.login(bridge.createClient().getValue(), "user_" + i, "1234").getValue().getId();
         }
 
         Response<Integer> loggedInUsers0 = bridge.numOfLoggedInUsers();

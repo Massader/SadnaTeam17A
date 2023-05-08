@@ -1,7 +1,10 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.junit.*;
 
@@ -14,61 +17,72 @@ import org.junit.jupiter.api.TestInstance;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ReceiveStoreInfo extends ProjectTest {
 
-    UUID founder;
-    UUID client;
+    UUID storeFounderId;
     ServiceStore store;
     UUID storeId;
+    UUID item1Id;
+    UUID item2Id;
+    UUID item3Id;
+    UUID item4Id;
 
     @BeforeAll
     public void beforeClass() {
-        bridge.setReal();
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
-        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
-        store = bridge.createStore(founder, "test", "test").getValue();
+        bridge.register("founder", "1234");
+
+        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "1234").getValue().getId();
+
+        store = bridge.createStore(storeFounderId, "test", "test").getValue();
         storeId = store.getStoreId();
+
+        item1Id = bridge.addItemToStore(storeFounderId, "item1", 10, storeId, 100, "test").getValue().getId();
+        item2Id = bridge.addItemToStore(storeFounderId, "item2", 20, storeId, 100, "test").getValue().getId();
+        item3Id = bridge.addItemToStore(storeFounderId, "item3", 30, storeId, 100, "test").getValue().getId();
+        item4Id = bridge.addItemToStore(storeFounderId, "item4", 40, storeId, 100, "test").getValue().getId();
+
+        bridge.logout(storeFounderId);
     }
 
     @BeforeEach
     public void setUp()  {
-        client = bridge.createClient().getValue();
+        bridge.login(bridge.createClient().getValue(), "founder", "1234");
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.closeClient(client);
+        bridge.logout(storeFounderId);
     }
 
     @AfterAll
     public void afterClass() {
-        bridge.closeStore(founder, storeId);
-        bridge.logout(founder);
+        bridge.resetService();
     }
 
     @Test
-    // retrieves the information of a store and verifies that it is equal to the information of the store created
-    public void receiveStoreInfoSuccess() {
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
-        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
-        store = bridge.createStore(founder, "test", "test").getValue();
-        storeId = store.getStoreId();
-        ServiceStore store2 = bridge.getStoreInformation(founder, storeId).getValue();
-        Assert.assertNotNull(store2);
-        Assert.assertEquals(store.getStoreId(), store2.getStoreId());
-        Assert.assertEquals(store.getName(), store2.getName());
-        Assert.assertEquals(store.getDescription(), store2.getDescription());
+    public void getStoreInfoSuccess() {
+        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, storeId);
+
+        Assert.assertFalse(storeInfo.isError());
+        Assert.assertNotNull(storeInfo.getValue());
+        Assert.assertEquals(storeId, storeInfo.getValue().getStoreId());
+        Assert.assertEquals("test", storeInfo.getValue().getName());
+        Assert.assertEquals(4, storeInfo.getValue().);
     }
 
     @Test
-    public void receiveStoreInfoNotExistingStoreFail() {
-        //tries to retrieve the information of a non-existing store and verifies that the result is null
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
-        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
-        store = bridge.createStore(founder, "test", "test").getValue();
-        storeId = store.getStoreId();
-        ServiceStore store2 = bridge.getStoreInformation(founder, UUID.randomUUID()).getValue();
-        Assert.assertNull(store2);
+    public void getStoreInfoNotExistFail() {
+        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, UUID.randomUUID());
+
+        Assert.assertTrue(storeInfo.isError());
+        Assert.assertEquals("Store does not exist.", storeInfo.getMessage());
+    }
+
+    @Test
+    public void getStoreInfoClosedStoreFail() {
+        bridge.closeStore(storeFounderId, storeId);
+
+        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, storeId);
+
+        Assert.assertTrue(storeInfo.isError());
+        Assert.assertEquals("Store is closed.", storeInfo.getMessage());
     }
 }

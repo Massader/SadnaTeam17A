@@ -6,6 +6,7 @@ import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ProxyBridge implements Bridge {
 
@@ -228,6 +229,14 @@ public class ProxyBridge implements Bridge {
     }
     public Response<Integer> numOfLoggedInUsers() {
         return real == null ? null : real.numOfLoggedInUsers();
+    }
+
+    public Response<ConcurrentHashMap<String, UUID>> getUserNames() {
+        return real == null ? null : real.getUserNames();
+    }
+
+    public Response<Double> getCartTotal(UUID clientCredentials) {
+        return real == null ? null : real.getCartTotal(clientCredentials);
     }
 
 }
