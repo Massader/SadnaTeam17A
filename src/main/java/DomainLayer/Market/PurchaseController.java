@@ -12,6 +12,7 @@ import DomainLayer.Supply.SupplyProxy;
 import ServiceLayer.Response;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -59,6 +60,7 @@ public class PurchaseController {
 
             ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
             synchronized (instanceLock) {
+                StringBuilder missingItemList = new StringBuilder();
                 //check items are Available
                 for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
                     UUID storeId = entry.getKey();
@@ -70,14 +72,14 @@ public class PurchaseController {
                     if(store.isClosed()){
                         return Response.getFailResponse("The store has been closed and the item is no longer available.");
                     }
-                    missingItems.addAll(store.getUnavailableItems(basket));
-                    if (!missingItems.isEmpty()) {
-                        StringBuilder missingItemList = new StringBuilder();
-                        for (Item item : missingItems) {
-                            missingItemList.append("\nItem Name: ").append(item.getName()).append(" - Store Name: ").append(store.getName());
-                        }
-                        return Response.getFailResponse("The following items are no longer available:" + missingItemList);
+                    ConcurrentLinkedQueue<Item> storeMissingItems = store.getUnavailableItems(basket);
+                    for (Item item : storeMissingItems) {
+                        missingItemList.append("\nItem Name: ").append(item.getName()).append(" - Store Name: ").append(store.getName());
                     }
+                    missingItems.addAll(storeMissingItems);
+                }
+                if (!missingItems.isEmpty()) {
+                    return Response.getFailResponse("The following items are no longer available:" + missingItemList);
                 }
 
                 double nowPrice = storeController.verifyCartPrice(shoppingCart);
