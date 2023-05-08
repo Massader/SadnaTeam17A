@@ -51,7 +51,7 @@ public class StoreController {
         if (storeMap == null || storeMap.size() == 0) return Response.getSuccessResponse(new ArrayList<Store>());
         if (page == 0 || page > (storeMap.size() / number) + 1)
             return Response.getFailResponse("Page number can't be 0 or larger than available stores.");
-        List<Store> stores = new ArrayList<>(storeMap.values());
+        List<Store> stores = new ArrayList<>(storeMap.values().stream().filter(store -> !store.isClosed() && !store.isShutdown()).toList());
         int start = (page - 1) * number;
         int end = Math.min(start + number, stores.size());
         return Response.getSuccessResponse(stores.subList(start, end));
@@ -498,7 +498,8 @@ public class StoreController {
         if (storeId == null) {
             List<Item> allItems = new ArrayList<>();
             for (Store store : getStores()) {
-                allItems.addAll(store.getItems().values());
+                if (!store.isClosed() && !store.isShutdown())
+                    allItems.addAll(store.getItems().values());
             }
             int start = (page - 1) * number;
             int end = Math.min(start + number, allItems.size());
@@ -578,9 +579,6 @@ public class StoreController {
             return Response.getFailResponse(exception.getMessage());
         }
     }
-
-
-
 
     public Response<Integer> numOfItems(UUID storeId) {
         if (storeId == null)
