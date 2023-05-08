@@ -69,9 +69,9 @@ public class UserController {
         return service.deleteUser(request.getClientCredentials(), request.getTargetId());
     }
 
-    @PostMapping(path = "/purchase-history")
-    public Response<List<ServicePurchase>> getPurchaseHistory(@RequestBody TargetRequest request) {
-        return service.getPurchaseHistory(request.getClientCredentials(), request.getTargetId());
+    @GetMapping(path = "/purchase-history/id={id}")
+    public Response<List<ServicePurchase>> getPurchaseHistory(@PathVariable(name = "id") UUID clientCredentials) {
+        return service.getPurchaseHistory(clientCredentials, clientCredentials);
     }
 
     @GetMapping(path = "/info/id={id}")

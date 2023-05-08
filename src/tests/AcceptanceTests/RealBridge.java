@@ -78,8 +78,8 @@ public class RealBridge implements Bridge {
         return null;
     }
 
-    public Response<ServiceStore> getStoreInformation(UUID storeId) {
-        return service.getStoreInformation(storeId);
+    public Response<ServiceStore> getStoreInformation(UUID clientCredentials, UUID storeId) {
+        return service.getStoreInformation(clientCredentials, storeId);
     }
 
     public Response<Boolean> searchStore() {

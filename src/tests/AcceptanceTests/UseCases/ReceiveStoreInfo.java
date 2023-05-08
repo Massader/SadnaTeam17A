@@ -59,7 +59,7 @@ public class ReceiveStoreInfo extends ProjectTest {
 
     @Test
     public void getStoreInfoSuccess() {
-        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeId);
+        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, storeId);
 
         Assert.assertFalse(storeInfo.isError());
         Assert.assertNotNull(storeInfo.getValue());
@@ -70,7 +70,7 @@ public class ReceiveStoreInfo extends ProjectTest {
 
     @Test
     public void getStoreInfoNotExistFail() {
-        Response<ServiceStore> storeInfo = bridge.getStoreInformation(UUID.randomUUID());
+        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, UUID.randomUUID());
 
         Assert.assertTrue(storeInfo.isError());
         Assert.assertEquals("Store does not exist.", storeInfo.getMessage());
@@ -80,7 +80,7 @@ public class ReceiveStoreInfo extends ProjectTest {
     public void getStoreInfoClosedStoreFail() {
         bridge.closeStore(storeFounderId, storeId);
 
-        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeId);
+        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, storeId);
 
         Assert.assertTrue(storeInfo.isError());
         Assert.assertEquals("Store is closed.", storeInfo.getMessage());

@@ -42,9 +42,10 @@ public class StoreController {
         return service.shutdownStore(request.getClientCredentials(), request.getTargetId());
     }
 
-    @GetMapping(path = "/store-info/storeId={storeId}")
-    public Response<ServiceStore> getStoreInfo(@PathVariable(name = "storeId") UUID storeId) {
-        return service.getStoreInformation(storeId);
+    @GetMapping(path = "/store-info/id={id}&storeId={storeId}")
+    public Response<ServiceStore> getStoreInfo(@PathVariable(name = "id") UUID clientCredentials,
+                                               @PathVariable(name = "storeId") UUID storeId) {
+        return service.getStoreInformation(clientCredentials, storeId);
     }
 
     @GetMapping(path = "/item-info/storeId={storeId}&itemId={itemId}")

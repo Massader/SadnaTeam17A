@@ -75,7 +75,7 @@ public class CloseStore extends ProjectTest {
         Response<Integer> stores0 = bridge.numOfOpenStores();
         Response<Boolean> close = bridge.closeStore(storeFounderId, storeId);
         Response<Integer> stores1 = bridge.numOfOpenStores();
-        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeId);
+        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, storeId);
 
         Assert.assertFalse(stores0.isError());
         Assert.assertFalse(close.isError());
@@ -93,7 +93,7 @@ public class CloseStore extends ProjectTest {
         Response<Integer> stores0 = bridge.numOfOpenStores();
         Response<Boolean> close = bridge.closeStore(storeOwnerId, storeId);
         Response<Integer> stores1 = bridge.numOfOpenStores();
-        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeId);
+        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeOwnerId, storeId);
 
         Assert.assertFalse(stores0.isError());
         Assert.assertFalse(close.isError());
@@ -111,7 +111,7 @@ public class CloseStore extends ProjectTest {
         Response<Integer> stores0 = bridge.numOfOpenStores();
         Response<Boolean> close = bridge.closeStore(storeManagerId, storeId);
         Response<Integer> stores1 = bridge.numOfOpenStores();
-        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeId);
+        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeManagerId, storeId);
 
         Assert.assertFalse(stores0.isError());
         Assert.assertTrue(close.isError());
@@ -128,7 +128,7 @@ public class CloseStore extends ProjectTest {
         Response<Integer> stores0 = bridge.numOfOpenStores();
         Response<Boolean> close = bridge.closeStore(userId, storeId);
         Response<Integer> stores1 = bridge.numOfOpenStores();
-        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeId);
+        Response<ServiceStore> storeInfo = bridge.getStoreInformation(userId, storeId);
 
         Assert.assertFalse(stores0.isError());
         Assert.assertTrue(close.isError());
@@ -147,7 +147,7 @@ public class CloseStore extends ProjectTest {
         Response<Boolean> close = bridge.closeStore(storeFounderId, storeId);
         Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "founder", "1234");
         Response<Integer> stores1 = bridge.numOfOpenStores();
-        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeId);
+        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, storeId);
 
         Assert.assertFalse(stores0.isError());
         Assert.assertFalse(logout.isError());

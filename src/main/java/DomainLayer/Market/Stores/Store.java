@@ -102,7 +102,7 @@ public class Store {
 
     public boolean shutdownStore() {
         shutdown = true;
-        closed= true;
+        closed = true;
         return true;
     }
 

@@ -62,11 +62,11 @@ public class StoreController {
         return this.storeMap.containsKey(storeId);
     }
 
-    public Response<Store> getStoreInformation(UUID storeId) {
+    public Response<Store> getStoreInformation(UUID clientCredentials, UUID storeId) {
         try {
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
-            if (getStore(storeId).isClosed())
+            if (getStore(storeId).isClosed() && !getStore(storeId).getRolesMap().containsKey(clientCredentials))
                 return Response.getFailResponse("Store is closed.");
             return Response.getSuccessResponse(getStore(storeId));
         } catch (Exception exception) {
@@ -153,8 +153,12 @@ public class StoreController {
                     if (rolePermissions.contains(StorePermissions.STORE_OWNER)
                             && !rolePermissions.contains(StorePermissions.STORE_FOUNDER)) {
                         user = userController.getUserById(role.getKey());
-                        if (user != null) notificationController.sendNotification(clientCredentials,
-                                "Owned store " + store.getName() + " has been shut down by admin.");
+                        if (user != null) {
+                            notificationController.sendNotification(clientCredentials,
+                                    "Owned store " + store.getName() + " has been shut down by admin.");
+                            user.removeStoreRole(storeId);
+                            // TODO: Remove role from store as well? --Nitzan
+                        }
                     }
                 }
                 return Response.getSuccessResponse(true);
@@ -506,8 +510,10 @@ public class StoreController {
             output.addAll(allItems.subList(start, end));
         } else {
             Store store = getStore(storeId);
-            if (store == null)
+            if (store == null || store.isShutdown())
                 return Response.getFailResponse("Store does not exist");
+            if (store.isClosed())
+                return Response.getFailResponse("Store is temporarily closed.");
             List<Item> allItems = new ArrayList<>(store.getItems().values());
             int start = (page - 1) * number;
             int end = Math.min(start + number, allItems.size());

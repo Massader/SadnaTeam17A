@@ -72,8 +72,8 @@ public class ProxyBridge implements Bridge {
         return real == null ? null : real.login(clientCredentials, username, password);
     }
 
-    public Response<ServiceStore> getStoreInformation(UUID storeId) {
-        return real == null ? null : real.getStoreInformation(storeId);
+    public Response<ServiceStore> getStoreInformation(UUID clientCredentials, UUID storeId) {
+        return real == null ? null : real.getStoreInformation(clientCredentials, storeId);
     }
 
     public Response<Boolean> searchStore() {
