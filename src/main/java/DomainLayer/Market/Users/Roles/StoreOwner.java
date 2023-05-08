@@ -6,11 +6,11 @@ import java.util.UUID;
 
 public class StoreOwner extends Role {
 
-    private List<UUID> appoints;
+    private List<UUID> appointees;
 
     public StoreOwner(UUID storeId) {
         super(storeId);
-        appoints = new ArrayList<UUID>();
+        appointees = new ArrayList<UUID>();
     }
 
     @Override
@@ -24,15 +24,15 @@ public class StoreOwner extends Role {
     public void addPermission(StorePermissions permission) {
     }
 
-    public List<UUID> getAppoints() {
-        return appoints;
+    public List<UUID> getAppointees() {
+        return appointees;
     }
 
-    public void addAppoint(UUID appoint){
-        appoints.add(appoint);
+    public void addAppointee(UUID appoint){
+        appointees.add(appoint);
     }
 
-    public void removeAppoint(UUID appoint){
-        appoints.remove(appoint);
+    public void removeAppointee(UUID appoint){
+        appointees.remove(appoint);
     }
 }

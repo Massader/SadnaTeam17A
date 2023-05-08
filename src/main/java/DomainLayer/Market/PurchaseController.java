@@ -12,6 +12,7 @@ import DomainLayer.Supply.SupplyProxy;
 import ServiceLayer.Response;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -36,8 +37,10 @@ public class PurchaseController {
     public void init() {
         storeController = StoreController.getInstance();
         notificationController = NotificationController.getInstance();
-//        paymentProxy.setReal();
-//        supplyProxy.setReal();
+        paymentProxy = new PaymentProxy();
+        supplyProxy = new SupplyProxy();
+        paymentProxy.setReal();
+        supplyProxy.setReal();
     }
 
 
@@ -57,18 +60,26 @@ public class PurchaseController {
 
             ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
             synchronized (instanceLock) {
+                StringBuilder missingItemList = new StringBuilder();
                 //check items are Available
                 for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
                     UUID storeId = entry.getKey();
                     ShoppingBasket basket = entry.getValue();
                     Store store = storeController.getStore(storeId);
-                    if(store==null){return Response.getFailResponse("The store is not exist "+storeId);}
-                    if(store.isClosed()){return Response.getFailResponse("The store is close "+storeId);}
-                    missingItems.addAll(store.getUnavailableItems(basket));
-                    if (!missingItems.isEmpty()) {
-                        return Response.getFailResponse("The following items are no longer available "
-                                + Arrays.toString(missingItems.toArray()));
+                    if(store==null){
+                        return Response.getFailResponse("The store is not exist "+storeId);
                     }
+                    if(store.isClosed()){
+                        return Response.getFailResponse("The store has been closed and the item is no longer available.");
+                    }
+                    ConcurrentLinkedQueue<Item> storeMissingItems = store.getUnavailableItems(basket);
+                    for (Item item : storeMissingItems) {
+                        missingItemList.append("\nItem Name: ").append(item.getName()).append(" - Store Name: ").append(store.getName());
+                    }
+                    missingItems.addAll(storeMissingItems);
+                }
+                if (!missingItems.isEmpty()) {
+                    return Response.getFailResponse("The following items are no longer available:" + missingItemList);
                 }
 
                 double nowPrice = storeController.verifyCartPrice(shoppingCart);

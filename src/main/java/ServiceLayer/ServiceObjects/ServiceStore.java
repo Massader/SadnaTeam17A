@@ -12,14 +12,16 @@ public class ServiceStore {
     private UUID storeId;
     private String description;
     private double rating;
-    private boolean closed;
+    private boolean isShutdown;
+    private boolean isClosed;
 
     public ServiceStore(Store store) {
         this.name = store.getName();
         this.storeId = store.getStoreId();
         this.description = store.getDescription();
         this.rating = store.getRating();
-        this.closed = store.isClosed();
+        this.isClosed = store.isClosed();
+        this.isShutdown = store.isShutdown();
     }
 
     @Autowired
@@ -44,7 +46,35 @@ public class ServiceStore {
         return rating;
     }
 
-    public boolean isClosed() {
-        return closed;
+    public boolean getIsClosed() {
+        return isClosed;
+    }
+    
+    public boolean getIsShutdown() {
+        return isShutdown;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public void setStoreId(UUID storeId) {
+        this.storeId = storeId;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+    
+    public void setShutdown(boolean shutdown) {
+        isShutdown = shutdown;
+    }
+    
+    public void setClosed(boolean closed) {
+        isClosed = closed;
     }
 }

@@ -29,8 +29,10 @@ public class StoreTest {
         store = new Store("Test Store", "A test store for unit testing");
         item1 = new Item(UUID.randomUUID(), "This is a test item1", 10.0, store.getStoreId(), 2.0, 2, "aaaa");
         item2 = new Item(UUID.randomUUID(), "This is a test item2", 15.0, store.getStoreId(),  5.0, 3, "bbb");
-        store.addItem(item1);
-        store.addItem(item2);
+        try {
+            store.addItem(item1);
+            store.addItem(item2);
+        } catch (Exception ignored) {}
         items = new ConcurrentHashMap<>();
         items.put(item1.getId(), 2);
         items.put(item2.getId(), 1);
