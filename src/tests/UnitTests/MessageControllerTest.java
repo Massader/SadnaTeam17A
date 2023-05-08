@@ -1,6 +1,7 @@
 package UnitTests;
 
 import DomainLayer.Market.MessageController;
+import DomainLayer.Market.Notification;
 import DomainLayer.Market.UserController;
 import DomainLayer.Market.Users.Message;
 import ServiceLayer.Response;
@@ -10,6 +11,7 @@ import org.junit.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 import static org.junit.Assert.*;
 
@@ -18,8 +20,9 @@ public class MessageControllerTest {
     private static Service service;
     private static MessageController messageController;
     private UUID client;
-    private String body = "Hello, World!";;
-
+    private String body = "Hello, World!";
+    BiConsumer<UUID, Notification> consumer = new BiConsumer<UUID, Notification>() {public void accept(UUID uuid, Notification notification) {} }; //Used for alerts
+    
     @BeforeClass
     public static void beforeClass() {
         service = Service.getInstance();
@@ -45,8 +48,8 @@ public class MessageControllerTest {
 
     @Test
     public void testSendMessage() {
-        ServiceUser sender = service.login(client, "sender", "Sender1").getValue();
-        ServiceUser recipient = service.login(client, "recipient", "Recipient1").getValue();
+        ServiceUser sender = service.login(client, "sender", "Sender1", consumer).getValue();
+        ServiceUser recipient = service.login(client, "recipient", "Recipient1", consumer).getValue();
         Response<UUID> response = messageController.sendMessage(sender.getId(), sender.getId(), recipient.getId(), body);
         assertTrue(response.isSuccessful());
         assertNotNull(response.getValue());
@@ -64,8 +67,8 @@ public class MessageControllerTest {
 
     @Test
     public void testGetMessages() {
-        ServiceUser sender = service.login(client, "sender", "Sender1").getValue();
-        ServiceUser recipient = service.login(client, "recipient", "Recipient1").getValue();
+        ServiceUser sender = service.login(client, "sender", "Sender1", consumer).getValue();
+        ServiceUser recipient = service.login(client, "recipient", "Recipient1", consumer).getValue();
         List<Message> messages = messageController.getMessages(sender.getId(), sender.getId()).getValue();
         assertNotNull(messages);
         assertEquals(0, messages.size());
@@ -82,8 +85,8 @@ public class MessageControllerTest {
 
     @Test
     public void testGetMessage() {
-        ServiceUser sender = service.login(client, "sender", "Sender1").getValue();
-        ServiceUser recipient = service.login(client, "recipient", "Recipient1").getValue();
+        ServiceUser sender = service.login(client, "sender", "Sender1", consumer).getValue();
+        ServiceUser recipient = service.login(client, "recipient", "Recipient1", consumer).getValue();
         UUID messageId = messageController.sendMessage(sender.getId(), sender.getId(), recipient.getId(), body).getValue();
         Response<Message> response = messageController.getMessage(recipient.getId(), recipient.getId(), messageId);
         assertTrue(response.isSuccessful());
@@ -98,7 +101,7 @@ public class MessageControllerTest {
 
     @Test
     public void testGetNonExistentMessage() {
-        ServiceUser recipient = service.login(client, "recipient", "Recipient1").getValue();
+        ServiceUser recipient = service.login(client, "recipient", "Recipient1", consumer).getValue();
         UUID messageId = UUID.randomUUID();
         Response<Message> response = messageController.getMessage(recipient.getId(), recipient.getId(), messageId);
         assertFalse(response.isSuccessful());
@@ -109,7 +112,7 @@ public class MessageControllerTest {
 
     @Test
     public void testGetMessagesWithInvalidCredentials() {
-        ServiceUser recipient = service.login(client, "recipient", "Recipient1").getValue();
+        ServiceUser recipient = service.login(client, "recipient", "Recipient1", consumer).getValue();
         UUID invalidCredentials = UUID.randomUUID();
         Response<List<Message>> response = messageController.getMessages(invalidCredentials, recipient.getId());
         assertFalse(response.isSuccessful());
