@@ -64,12 +64,19 @@ public class PurchaseController {
                     UUID storeId = entry.getKey();
                     ShoppingBasket basket = entry.getValue();
                     Store store = storeController.getStore(storeId);
-                    if(store==null){return Response.getFailResponse("The store is not exist "+storeId);}
-                    if(store.isClosed()){return Response.getFailResponse("The store is close "+storeId);}
+                    if(store==null){
+                        return Response.getFailResponse("The store is not exist "+storeId);
+                    }
+                    if(store.isClosed()){
+                        return Response.getFailResponse("The store has been closed and the item is no longer available.");
+                    }
                     missingItems.addAll(store.getUnavailableItems(basket));
                     if (!missingItems.isEmpty()) {
-                        return Response.getFailResponse("The following items are no longer available "
-                                + Arrays.toString(missingItems.toArray()));
+                        StringBuilder missingItemList = new StringBuilder();
+                        for (Item item : missingItems) {
+                            missingItemList.append("\nItem Name: ").append(item.getName()).append(" - Store Name: ").append(store.getName());
+                        }
+                        return Response.getFailResponse("The following items are no longer available:" + missingItemList);
                     }
                 }
 
