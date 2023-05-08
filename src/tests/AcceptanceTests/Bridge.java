@@ -8,6 +8,7 @@ import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public interface Bridge {
     public void setReal();
@@ -64,4 +65,6 @@ public interface Bridge {
     Response<Boolean> shutdownStore(UUID clientCredentials, UUID storeId);
 
     Response<Integer> numOfLoggedInUsers();
+    Response<ConcurrentHashMap<String, UUID>> getUserNames();
+    Response<Double> getCartTotal(UUID clientCredentials);
 }

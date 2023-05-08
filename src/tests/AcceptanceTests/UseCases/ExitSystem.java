@@ -57,12 +57,12 @@ public class ExitSystem extends ProjectTest {
         }
 
         Response<Integer> clients0 = bridge.numOfClients();
-        Response<Boolean>[] responses = new Response[1000];
+        Response<Boolean>[] exits = new Response[1000];
         Thread[] threads = new Thread[1000];
         try {
             for (int i = 0; i < 1000; i++) {
                 final int index = i;
-                threads[i] = new Thread(() -> responses[index] = bridge.closeClient(clients[index]));
+                threads[i] = new Thread(() -> exits[index] = bridge.closeClient(clients[index]));
                 threads[i].start();
             }
             for (Thread t : threads) {
@@ -74,9 +74,9 @@ public class ExitSystem extends ProjectTest {
 
         Assert.assertFalse(clients0.isError());
         Assert.assertFalse(clients1.isError());
-        for (Response<Boolean> r : responses) {
-            Assert.assertFalse(r.isError());
-            Assert.assertTrue(r.getValue());
+        for (Response<Boolean> e : exits) {
+            Assert.assertFalse(e.isError());
+            Assert.assertTrue(e.getValue());
         }
         Assert.assertEquals(1000, clients0.getValue() - clients1.getValue());
     }

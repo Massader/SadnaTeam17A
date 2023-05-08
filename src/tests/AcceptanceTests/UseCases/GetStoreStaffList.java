@@ -88,8 +88,9 @@ public class GetStoreStaffList extends ProjectTest {
 
     @AfterAll
     public void afterClass() {
-        bridge.closeStore(storeFounderId, storeId);
+        bridge.resetService();
     }
+
 
     @Test
     public void getStoreStaffListFounderSuccess() {

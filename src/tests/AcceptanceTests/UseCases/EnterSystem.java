@@ -32,6 +32,7 @@ public class EnterSystem extends ProjectTest {
         bridge.resetService();
     }
 
+
     @Test
     //checks if a client can enter the system by creating a new client credentials and ensuring that the client credentials is not null.
     public void enterSystemSuccess() {
@@ -52,12 +53,12 @@ public class EnterSystem extends ProjectTest {
     public void enterSystemConcurrently(){
         Response<Integer> clients0 = bridge.numOfClients();
 
-        Response<UUID>[] responses = new Response[1000];
+        Response<UUID>[] enters = new Response[1000];
         Thread[] threads = new Thread[1000];
         try {
             for (int i = 0; i < 1000; i++) {
                 final int index = i;
-                threads[i] = new Thread(() -> responses[index] = bridge.createClient());
+                threads[i] = new Thread(() -> enters[index] = bridge.createClient());
                 threads[i].start();
             }
             for (Thread t : threads) {
@@ -70,9 +71,9 @@ public class EnterSystem extends ProjectTest {
 
         Assert.assertFalse(clients0.isError());
         Assert.assertFalse(clients1.isError());
-        for (Response<UUID> r : responses) {
-            Assert.assertFalse(r.isError());
-            Assert.assertNotNull(r.getValue());
+        for (Response<UUID> e : enters) {
+            Assert.assertFalse(e.isError());
+            Assert.assertNotNull(e.getValue());
         }
         Assert.assertEquals(1000, clients1.getValue() - clients0.getValue());
     }

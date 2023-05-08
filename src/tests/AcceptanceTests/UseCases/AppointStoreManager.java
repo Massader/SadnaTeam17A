@@ -80,7 +80,7 @@ public class AppointStoreManager extends ProjectTest {
 
     @AfterAll
     public void afterClass() {
-        bridge.closeStore(storeFounderId, storeId);
+        bridge.resetService();
     }
 
     @Test

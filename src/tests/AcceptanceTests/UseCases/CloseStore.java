@@ -65,8 +65,9 @@ public class CloseStore extends ProjectTest {
 
     @AfterAll
     public void afterClass() {
-        bridge.closeStore(storeFounderId, storeId);
+        bridge.resetService();
     }
+
 
     @Test
     //tests whether a store can be closed successfully by its founder.

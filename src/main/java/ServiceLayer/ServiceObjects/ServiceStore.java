@@ -12,7 +12,6 @@ public class ServiceStore {
     private UUID storeId;
     private String description;
     private double rating;
-
     private boolean closed;
 
     public ServiceStore(Store store) {
