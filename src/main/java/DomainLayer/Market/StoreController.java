@@ -313,7 +313,6 @@ public class StoreController {
                 if (store.getName().equals(storeName))
                     return Response.getFailResponse("A Store with this name already exists.");
             Store store = new Store(storeName, storeDescription);
-            store.addRole(clientCredentials, new StoreOwner(clientCredentials));
             store.addRole(clientCredentials, new StoreFounder(clientCredentials));
             Response<Boolean> response = userController.setAsFounder(clientCredentials, store.getStoreId());
             if (response.isError())

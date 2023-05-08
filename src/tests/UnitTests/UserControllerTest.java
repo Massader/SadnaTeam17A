@@ -52,7 +52,7 @@ public class UserControllerTest {
         userId2 = userController.getId("u2");
         user2 = userController.getUserById(userId2);
         storeId = storeController.createStore(userId, "store", "des").getValue().getStoreId();
-        item = storeController.addItem("phone", 10, storeId, 100, "aaaaa").getValue();
+        item = storeController.addItemToStore(userId, "phone", 10, storeId, 100, "aaaaa").getValue();
         itemId = item.getId();
     }
 

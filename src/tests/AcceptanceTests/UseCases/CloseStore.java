@@ -118,7 +118,7 @@ public class CloseStore extends ProjectTest {
         Assert.assertFalse(storeInfo.isError());
 
         Assert.assertEquals(stores0.getValue(), stores1.getValue());
-        Assert.assertFalse(storeInfo.getValue().isClosed());
+        Assert.assertFalse(storeInfo.getValue().getIsClosed());
     }
 
     @Test
@@ -135,7 +135,7 @@ public class CloseStore extends ProjectTest {
         Assert.assertFalse(storeInfo.isError());
 
         Assert.assertEquals(stores0.getValue(), stores1.getValue());
-        Assert.assertFalse(storeInfo.getValue().isClosed());
+        Assert.assertFalse(storeInfo.getValue().getIsClosed());
     }
 
     @Test
@@ -156,6 +156,6 @@ public class CloseStore extends ProjectTest {
         Assert.assertFalse(storeInfo.isError());
 
         Assert.assertEquals(stores0.getValue(), stores1.getValue());
-        Assert.assertFalse(storeInfo.getValue().isClosed());
+        Assert.assertFalse(storeInfo.getValue().getIsClosed());
     }
 }

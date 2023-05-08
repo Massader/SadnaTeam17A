@@ -58,12 +58,12 @@ public class SearchControllerTest {
         item3.addCategory(category2);
         item3.addCategory(category3);
         item4.addCategory(category2);
-
-        store1.addItem(item1);
-        store1.addItem(item2);
-        store2.addItem(item3);
-        store3.addItem(item4);
-
+        try {
+            store1.addItem(item1);
+            store1.addItem(item2);
+            store2.addItem(item3);
+            store3.addItem(item4);
+        } catch (Exception ignored) {}
         storeController.addStore(store1);
         storeController.addStore(store2);
         storeController.addStore(store3);
