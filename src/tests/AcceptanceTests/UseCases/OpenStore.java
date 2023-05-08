@@ -18,7 +18,7 @@ public class OpenStore extends ProjectTest {
     UUID storeFounderId;
     UUID storeId;
     @BeforeAll
-    public void setUp() {
+    public void beforeClass() {
         bridge.resetService();
         bridge.register("founder", "1234");
 
@@ -29,7 +29,7 @@ public class OpenStore extends ProjectTest {
     }
 
     @BeforeEach
-    public void beforeEach()  {
+    public void setUp()  {
         bridge.login(bridge.createClient().getValue(),"founder", "1234").getValue().getId();
     }
 

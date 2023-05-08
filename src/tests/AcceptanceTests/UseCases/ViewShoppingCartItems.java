@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.*;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.Test;
+import org.junit.jupiter.api.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ViewShoppingCartItems extends ProjectTest {
@@ -17,20 +15,25 @@ public class ViewShoppingCartItems extends ProjectTest {
     UUID client;
 
     @BeforeAll
-    public void setUp() {
+    public void beforeClass() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient().getValue();
     }
 
     @BeforeEach
-    public void beforeEach()  {
+    public void setUp()  {
         client = bridge.createClient().getValue();
     }
 
     @AfterEach
     public void tearDown() {
         bridge.closeClient(client);
+    }
+
+    @AfterAll
+    public void afterClass() {
+        
     }
 
     @Test

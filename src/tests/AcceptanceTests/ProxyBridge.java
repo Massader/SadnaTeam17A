@@ -222,5 +222,13 @@ public class ProxyBridge implements Bridge {
     public Response<UUID> getAdminCredentials() {
         return real == null ? null : real.getAdminCredentials();
     }
+
+    public Response<Boolean> shutdownStore(UUID clientCredentials, UUID storeId) {
+        return real == null ? null : real.shutdownStore(clientCredentials, storeId);
+    }
+    public Response<Integer> numOfLoggedInUsers() {
+        return real == null ? null : real.numOfLoggedInUsers();
+    }
+
 }
 

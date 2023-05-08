@@ -61,4 +61,7 @@ public interface Bridge {
     Response<ServiceUser> getUserInfo(UUID clientCredentials);
     Response<Boolean> reopenStore(UUID clientCredentials, UUID storeId);
     Response<UUID> getAdminCredentials();
+    Response<Boolean> shutdownStore(UUID clientCredentials, UUID storeId);
+
+    Response<Integer> numOfLoggedInUsers();
 }

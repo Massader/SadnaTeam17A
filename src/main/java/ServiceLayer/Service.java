@@ -740,10 +740,12 @@ public class Service {
     }
 
     public Response<Boolean> isLoggedIn(UUID userId) {
-        /*-------------------------------*/
-        /* need to implement this method */
-        /*-------------------------------*/
-        return Response.getFailResponse("not implemented yet");
+        Response<Boolean> loggedIn = userController.isLoggedInUser(userId);
+        if (loggedIn.isError()) {
+            errorLogger.log(Level.WARNING, loggedIn.getMessage());
+            return Response.getFailResponse(loggedIn.getMessage());
+        }
+        return Response.getSuccessResponse(loggedIn.getValue());
     }
 
     public Response<List<ServiceItem>> getItemsPage(int number, int page, UUID storeId) {
@@ -937,6 +939,14 @@ public class Service {
             errorLogger.log(Level.WARNING, adminResponse.getMessage());
         }
         return adminResponse;
+    }
+
+    public Response<Integer> numOfLoggedInUsers() {
+        Response<Integer> loggedInUsers = userController.numOfLoggedInUsers();
+        if (loggedInUsers.isError()) {
+            errorLogger.log(Level.WARNING, loggedInUsers.getMessage());
+        }
+        return loggedInUsers;
     }
 }
 

@@ -236,4 +236,12 @@ public class RealBridge implements Bridge {
     public Response<UUID> getAdminCredentials() {
         return service.getAdminCredentials();
     }
+
+    public Response<Boolean> shutdownStore(UUID clientCredentials, UUID storeId) {
+        return service.shutdownStore(clientCredentials, storeId);
+    }
+
+    public Response<Integer> numOfLoggedInUsers() {
+        return service.numOfLoggedInUsers();
+    }
 }

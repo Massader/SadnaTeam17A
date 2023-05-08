@@ -12,8 +12,23 @@ import org.junit.jupiter.api.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ExitSystem extends ProjectTest {
 
+    @BeforeClass
+    public static void beforeClass() {
+
+    }
+
+    @BeforeEach
+    public void setUp() {
+
+    }
+
+    @AfterEach
+    public void tearDown() {
+
+    }
+
     @AfterAll
-    public void afterAll() {
+    public void afterClass() {
         bridge.resetService();
     }
 
