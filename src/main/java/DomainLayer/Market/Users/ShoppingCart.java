@@ -43,13 +43,11 @@ public class ShoppingCart {
     }
 
     public synchronized void clearCart() {
-        for (ShoppingBasket shoppingBasket : shoppingBaskets.values()) {
-            shoppingBasket.clearBasket();
-        }
+        shoppingBaskets.clear();
     }
 
-    public int quantityOf(UUID stroeId, UUID itemId){
-        return shoppingBaskets.get(stroeId).quantityOf(itemId);
+    public int quantityOf(UUID storeId, UUID itemId){
+        return shoppingBaskets.get(storeId).quantityOf(itemId);
     }
 
 }
