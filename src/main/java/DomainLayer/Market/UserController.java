@@ -17,7 +17,7 @@ public class UserController {
     private static UserController singleton = null;
     private ConcurrentHashMap<UUID, User> users;// for registered clients only!
     private ConcurrentHashMap<String, UUID> usernames;    // for registered clients only!
-    private ConcurrentLinkedQueue<String> loggedInUser; // for logged in users only!
+    private ConcurrentLinkedQueue<String> loggedInUser; // for logged-in users only!
     private SecurityController securityController;
     private ConcurrentHashMap<UUID, Client> clients;  // for non-registered clients only!
     private StoreController storeController;
@@ -382,8 +382,16 @@ public class UserController {
     public boolean isRegisteredUser(UUID id){
         return users.containsKey(id);
     }
-    public boolean isLoggedInUser(UUID id){
-        return loggedInUser.contains(id);
+    public Response<Boolean> isLoggedInUser(UUID clientCredentials){
+        try {
+            User user = users.get(clientCredentials);
+            if (user == null) return Response.getFailResponse("User does not exist.");
+            if (!loggedInUser.contains(user.getUsername())) return Response.getFailResponse("User is logged-out.");
+            return Response.getSuccessResponse(true);
+        }
+        catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
     public Response<Boolean> isUser(UUID id){
@@ -540,6 +548,16 @@ public class UserController {
 
     public ConcurrentHashMap<String, UUID> getUsernames() {
         return usernames;
+    }
+
+    public Response<Integer> numOfLoggedInUsers() {
+        try {
+            int loggedInUsers = loggedInUser.size();
+            return Response.getSuccessResponse(loggedInUsers);
+        }
+        catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
 
 //        public Response<Boolean> UnsubscribingUserByAdmin(UUID clientCredentials, UUID userId) {

@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 public class SearchStoreItem extends ProjectTest {
 
@@ -15,8 +19,13 @@ public class SearchStoreItem extends ProjectTest {
     List<ServiceItem> items;
     ServiceItem item;
 
-    @Before
-    public void beforeEach()  {
+    @BeforeAll
+    public void beforeClass() {
+
+    }
+
+    @BeforeEach
+    public void setUp()  {
         bridge.setReal();
         bridge.register("founder", "Password1");
         client = bridge.createClient().getValue();
@@ -30,11 +39,16 @@ public class SearchStoreItem extends ProjectTest {
         client = bridge.createClient().getValue();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         bridge.closeClient(client);
         bridge.closeStore(founder, store.getStoreId());
         bridge.logout(founder);
+    }
+
+    @AfterAll
+    public void afterClass() {
+
     }
 
     @Test

@@ -25,7 +25,7 @@ public class SaveItem extends ProjectTest {
     UUID itemId;
 
     @BeforeAll
-    public void setUp() {
+    public void beforeClass() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient().getValue();
@@ -40,7 +40,7 @@ public class SaveItem extends ProjectTest {
     }
 
     @BeforeEach
-    public void beforeEach()  {
+    public void setUp()  {
         client = bridge.createClient().getValue();
     }
 

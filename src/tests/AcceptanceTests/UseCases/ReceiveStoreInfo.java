@@ -20,7 +20,7 @@ public class ReceiveStoreInfo extends ProjectTest {
     UUID storeId;
 
     @BeforeAll
-    public void setUp() {
+    public void beforeClass() {
         bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient().getValue();
@@ -30,7 +30,7 @@ public class ReceiveStoreInfo extends ProjectTest {
     }
 
     @BeforeEach
-    public void beforeEach()  {
+    public void setUp()  {
         client = bridge.createClient().getValue();
     }
 

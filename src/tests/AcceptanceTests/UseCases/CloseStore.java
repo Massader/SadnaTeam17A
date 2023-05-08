@@ -23,7 +23,7 @@ public class CloseStore extends ProjectTest {
     UUID storeId;
 
     @BeforeAll
-    public void setUp() {
+    public void beforeClass() {
         bridge.register("founder", "1234");
         bridge.register("owner", "1234");
         bridge.register("manager", "1234");
@@ -47,7 +47,7 @@ public class CloseStore extends ProjectTest {
     }
 
     @BeforeEach
-    public void beforeEach()  {
+    public void setUp()  {
         bridge.login(bridge.createClient().getValue(), "founder", "1234");
         bridge.login(bridge.createClient().getValue(), "owner", "1234");
         bridge.login(bridge.createClient().getValue(), "manager", "1234");

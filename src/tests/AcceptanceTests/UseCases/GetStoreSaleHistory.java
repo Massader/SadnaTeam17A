@@ -32,7 +32,7 @@ public class GetStoreSaleHistory extends ProjectTest {
     UUID item4Id;
 
     @BeforeAll
-    public void setUp() {
+    public void beforeClass() {
         bridge.register("founder", "1234");
         bridge.register("owner", "1234");
         bridge.register("managerWithPermission", "1234");
@@ -79,7 +79,7 @@ public class GetStoreSaleHistory extends ProjectTest {
     }
 
     @BeforeEach
-    public void beforeEach()  {
+    public void setUp()  {
         bridge.login(bridge.createClient().getValue(), "founder", "1234");
         bridge.login(bridge.createClient().getValue(), "owner", "1234");
         bridge.login(bridge.createClient().getValue(), "managerWithPermission", "1234");

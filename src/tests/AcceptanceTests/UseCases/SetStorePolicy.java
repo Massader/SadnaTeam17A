@@ -20,7 +20,7 @@ public class SetStorePolicy extends ProjectTest {
     UUID founder;
 
     @BeforeAll
-    public void setUp() {
+    public void beforeClass() {
         bridge.setReal();
         bridge.register("founder", "pass");
         client = bridge.createClient().getValue();
@@ -30,7 +30,7 @@ public class SetStorePolicy extends ProjectTest {
     }
 
     @BeforeEach
-    public void beforeEach()  {
+    public void setUp()  {
         client = bridge.createClient().getValue();
     }
 

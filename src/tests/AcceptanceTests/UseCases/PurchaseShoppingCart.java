@@ -21,8 +21,8 @@ public class PurchaseShoppingCart extends ProjectTest {
     ServiceItem item;
     UUID itemId;
 
-    @Before
-    public void setUp() {
+    @BeforeAll
+    public void beforeClass() {
         bridge.register("founder", "Pass1");
         client = bridge.createClient().getValue();
         founder = bridge.login(client, "founder", "Pass1").getValue().getId();
@@ -33,7 +33,17 @@ public class PurchaseShoppingCart extends ProjectTest {
         itemId = item.getId();
     }
 
-    @After
+    @BeforeEach
+    public void setUp() {
+
+    }
+
+    @AfterEach
+    public void tearDown() {
+
+    }
+
+    @AfterAll
     public void afterClass() {
         bridge.closeStore(founder, storeId);
         bridge.logout(founder);
