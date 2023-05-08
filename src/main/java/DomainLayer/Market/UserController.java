@@ -275,8 +275,7 @@ public class UserController {
             if(!storeController.storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeController.getStore(storeId);
-            if(!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
-                || !users.get(clientCredentials).isAdmin())
+            if(!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("User doesn't have permission.");
             Response<User> response2 = this.getUser(roleToRemove);
             if(response2.isError())
@@ -284,7 +283,7 @@ public class UserController {
             if(store.getRolesMap().containsKey(roleToRemove))
                 return Response.getFailResponse("User does not have role in the shop.");
             if(store.getOwner(clientCredentials).getAppointees().contains(roleToRemove))
-                return Response.getFailResponse("Owner was not appointed by this user.");
+                return Response.getFailResponse("Staff member was not appointed by this owner.");
             response2.getValue().removeStoreRole(storeId);
             for(UUID appointee : store.getOwner(roleToRemove).getAppointees())
                 removeStoreRole(roleToRemove, appointee, storeId);
