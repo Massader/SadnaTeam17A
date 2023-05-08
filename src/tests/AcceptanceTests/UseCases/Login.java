@@ -34,8 +34,9 @@ public class Login extends ProjectTest {
 
     @AfterAll
     public void afterClass() {
-
+        bridge.resetService();
     }
+
 
     @Test
     //tests if the login function works correctly by registering and logging in with valid credentials and asserting that the client's UUID is not null.
@@ -105,7 +106,7 @@ public class Login extends ProjectTest {
         Response<Integer> loggedInUsers0 = bridge.numOfLoggedInUsers();
 
         for (int i = 0; i < 1000; i++) {
-            bridge.register("user" + i, "1234");
+            bridge.register("user_" + i, "1234");
         }
 
         Response<ServiceUser>[] logins = new Response[1000];
@@ -113,7 +114,7 @@ public class Login extends ProjectTest {
         try {
             for (int i = 0; i < 1000; i++) {
                 final int index = i;
-                threads[i] = new Thread(() -> logins[index] = bridge.login(bridge.createClient().getValue(), "user" + index, "1234"));
+                threads[i] = new Thread(() -> logins[index] = bridge.login(bridge.createClient().getValue(), "user_" + index, "1234"));
                 threads[i].start();
             }
             for (Thread t : threads) {

@@ -10,25 +10,22 @@ import org.junit.jupiter.api.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Payment extends ProjectTest {
 
-    UUID clientCredentials;
-
     @BeforeAll
     public void beforeClass() {
-
     }
 
     @BeforeEach
     public void setUp() {
-        clientCredentials = bridge.createClient().getValue();
+
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.closeClient(clientCredentials);
+
     }
 
-    @AfterAll
-    public void afterClass() {
+    @AfterClass
+    public static void afterClass() {
 
     }
 

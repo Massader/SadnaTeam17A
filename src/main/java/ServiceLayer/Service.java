@@ -18,6 +18,7 @@ import ServiceLayer.Loggers.EventLogger;
 import ServiceLayer.ServiceObjects.*;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.logging.Level;
 
@@ -945,6 +946,10 @@ public class Service {
             errorLogger.log(Level.WARNING, loggedInUsers.getMessage());
         }
         return loggedInUsers;
+    }
+
+    public Response<ConcurrentHashMap<String, UUID>> getUserNames() {
+        return Response.getSuccessResponse(userController.getUsernames());
     }
 }
 

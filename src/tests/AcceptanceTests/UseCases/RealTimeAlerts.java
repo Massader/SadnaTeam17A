@@ -10,8 +10,6 @@ import org.junit.jupiter.api.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RealTimeAlerts extends ProjectTest {
 
-    UUID clientCredentials;
-
     @BeforeAll
     public void beforeClass() {
 
@@ -19,12 +17,12 @@ public class RealTimeAlerts extends ProjectTest {
 
     @BeforeEach
     public void setUp() {
-        clientCredentials = bridge.createClient().getValue();
+
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.closeClient(clientCredentials);
+
     }
 
     @AfterAll

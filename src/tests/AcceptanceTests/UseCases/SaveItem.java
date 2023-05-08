@@ -1,11 +1,14 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
-import DomainLayer.Market.Users.Client;
-import ServiceLayer.Service;
+import DomainLayer.Market.Users.ShoppingBasket;
+import DomainLayer.Market.Users.ShoppingCart;
+import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.junit.*;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -17,125 +20,133 @@ import org.junit.jupiter.api.TestInstance;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SaveItem extends ProjectTest {
 
-    UUID founder;
-    UUID client;
-    UUID client2;
-    ServiceStore store;
-    UUID storeId;
-    UUID itemId;
+    UUID storeFounderId;
+    UUID user1Id;
+    UUID user2Id;
+    UUID user3Id;
+    ServiceStore store1;
+    ServiceStore store2;
+    UUID store1Id;
+    UUID store2Id;
+    UUID item11Id;
+    UUID item12Id;
+    UUID item21Id;
+    UUID item22Id;
 
     @BeforeAll
     public void beforeClass() {
-        bridge.setReal();
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
-        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
-        store = bridge.createStore(founder, "test", "test").getValue();
-        storeId = store.getStoreId();
-        ServiceItem item = bridge.addItemToStore(founder, "bannana",5,storeId,100,"yellow fruit").getValue();
-        itemId = item.getId();
+        bridge.register("founder", "1234");
+        bridge.register("user1", "1234");
+        bridge.register("user2", "1234");
+        bridge.register("user3", "1234");
 
-        client2 = bridge.createClient().getValue();
+        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "1234").getValue().getId();
+        user1Id = bridge.login(bridge.createClient().getValue(), "user1", "1234").getValue().getId();
+        user2Id = bridge.login(bridge.createClient().getValue(), "user2", "1234").getValue().getId();
+        user3Id = bridge.login(bridge.createClient().getValue(), "user3", "1234").getValue().getId();
 
+        store1 = bridge.createStore(storeFounderId, "test", "test").getValue();
+        store1Id = store1.getStoreId();
+
+        store2 = bridge.createStore(storeFounderId, "test", "test").getValue();
+        store2Id = store2.getStoreId();
+
+        item11Id = bridge.addItemToStore(storeFounderId, "item11", 10, store1Id, 100, "test").getValue().getId();
+        item12Id = bridge.addItemToStore(storeFounderId, "item12", 20, store1Id, 100, "test").getValue().getId();
+
+        item21Id = bridge.addItemToStore(storeFounderId, "item21", 30, store2Id, 1000, "test").getValue().getId();
+        item22Id = bridge.addItemToStore(storeFounderId, "item22", 40, store2Id, 1000, "test").getValue().getId();
+
+        bridge.logout(storeFounderId);
+        bridge.logout(user1Id);
     }
 
     @BeforeEach
     public void setUp()  {
-        client = bridge.createClient().getValue();
+        bridge.login(bridge.createClient().getValue(), "founder", "1234");
+        bridge.login(bridge.createClient().getValue(), "user1", "1234");
+        bridge.login(bridge.createClient().getValue(), "user2", "1234");
+        bridge.login(bridge.createClient().getValue(), "user3", "1234");
     }
 
     @AfterEach
     public void tearDown() {
-        bridge.closeClient(client);
+        bridge.logout(storeFounderId);
+        bridge.logout(user1Id);
+        bridge.logout(user2Id);
+        bridge.logout(user3Id);
     }
 
     @AfterAll
     public void afterClass() {
-        bridge.closeStore(founder, storeId);
-        bridge.logout(founder);
-        bridge.closeClient(client2);
+        bridge.resetService();
     }
 
     @Test
-    //Tests that a client can successfully add an item to their cart.
-    public void SaveItemrSuccess() {
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
-        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
-        store = bridge.createStore(founder, "test", "test").getValue();
-        storeId = store.getStoreId();
-        ServiceItem item = bridge.addItemToStore(founder, "bannana",5,storeId,100,"yellow fruit").getValue();
-        itemId = item.getId();
+    public void saveItemSuccess() {
+        Response<List<ServiceShoppingBasket>> cart0 = bridge.getCart(user1Id);
+        Response<Boolean> save = bridge.addItemToCart(user1Id, item11Id, 10, store1Id);
+        Response<List<ServiceShoppingBasket>> cart1 = bridge.getCart(user1Id);
 
-        client2 = bridge.createClient().getValue();
-        Boolean save = bridge.addItemToCart(founder,itemId,4,storeId).getValue();
-        Assert.assertTrue(save);
+        Assert.assertFalse(cart0.isError());
+        Assert.assertFalse(save.isError());
+        Assert.assertFalse(cart1.isError());
+
+        Assert.assertTrue(save.getValue());
+        Assert.assertEquals(1, cart1.getValue().size() - cart0.getValue().size());
+        Assert.assertTrue(cart1.getValue().stream().anyMatch(basket -> basket.getStoreId().equals(store1Id) && basket.getItems().get(item11Id) != null && basket.getItems().get(item11Id) == 10));
     }
 
     @Test
-    // Tests that a client cannot add a non-existing item to their cart.
-    public void SaveItemrFail() {
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
-        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
-        store = bridge.createStore(founder, "test", "test").getValue();
-        storeId = store.getStoreId();
-        ServiceItem item = bridge.addItemToStore(founder, "bannana",5,storeId,100,"yellow fruit").getValue();
-        itemId = item.getId();
+    public void saveItemOverQuantityFail() {
+        Response<List<ServiceShoppingBasket>> cart0 = bridge.getCart(user1Id);
+        Response<Boolean> save = bridge.addItemToCart(user1Id, item12Id, 101, store1Id);
+        Response<List<ServiceShoppingBasket>> cart1 = bridge.getCart(user1Id);
 
-        client2 = bridge.createClient().getValue();
-        UUID notItem = UUID.randomUUID();
-        Boolean save = bridge.addItemToCart(founder,notItem,4,storeId).getValue();
-        Assert.assertFalse(save);
+        Assert.assertFalse(cart0.isError());
+        Assert.assertTrue(save.isError());
+        Assert.assertFalse(cart1.isError());
+
+        Assert.assertEquals(cart1.getValue().size(), cart0.getValue().size());
     }
 
     @Test
-    //Tests that two clients can simultaneously add an item to their cart without any synchronization issues.
-    public void addToCartSync(){
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
-        founder = bridge.login(client, "founder", "Pass1").getValue().getId();
-        store = bridge.createStore(founder, "test", "test").getValue();
-        storeId = store.getStoreId();
-        ServiceItem item = bridge.addItemToStore(founder, "bannana",5,storeId,1,"yellow fruit").getValue();
-        itemId = item.getId();
-        ServiceItem itemcheck = bridge.getItemInformation(storeId, itemId).getValue();
-        UUID clientId1 = bridge.createClient().getValue();
-        UUID clientId2 = bridge.createClient().getValue();
+    public void saveItemConcurrently() {
 
-        Thread thread1 = new Thread(()->{
-            bridge.addItemToCart(clientId1, itemId, 1, storeId);
-        });
-        Thread thread2 = new Thread(()->{
-            bridge.addItemToCart(clientId2, itemId, 1, storeId);
-        });
 
-        thread1.start();
-        thread2.start();
-    try{
-        thread1.join();
-        thread2.join();
-    }catch(Exception ignored){
-
-    }
-        List<ServiceShoppingBasket> cart1 = bridge.getCart(clientId1).getValue();
-        List<ServiceShoppingBasket> cart2 = bridge.getCart(clientId2).getValue();
-    int i =0;
-    boolean cohi1 = false;
-    for (ServiceShoppingBasket s : cart1){
-        if (s.getStoreId() == storeId && s.getItems().containsKey(itemId)){
-            cohi1= true;
-            break;
+        UUID[] ids = new UUID[1000];
+        List<ServiceShoppingBasket>[] carts0 = new List[1000];
+        for (int i = 0; i < 1000; i++) {
+            bridge.register("user_" + i, "1234");
+            ids[i] = bridge.login(bridge.createClient().getValue(), "user_" + i, "1234").getValue().getId();
+            carts0[i] = bridge.getCart(ids[i]).getValue();
         }
-    }
 
-    boolean cohi2 = false;
-    for (ServiceShoppingBasket s : cart2){
-        if (s.getStoreId() == storeId && s.getItems().containsKey(itemId)){
-            cohi2 = true;
+        Response<Boolean>[] saves = new Response[1000];
+        Thread[] threads = new Thread[1000];
+        try {
+            for (int i = 0; i < 1000; i++) {
+                final int index = i;
+                threads[i] = new Thread(() -> {
+                    saves[index] = bridge.addItemToCart(ids[index], item22Id, 1, store2Id);
+                });
+                threads[i].start();
+            }
+            for (Thread t : threads) {
+                t.join();
+            }
         }
-    }
-    Assert.assertTrue(cohi1 ^ cohi2);
+        catch (Exception ignore) {}
 
+        List<ServiceShoppingBasket>[] carts1 = new List[1000];
+
+        for (int i = 0; i < 1000; i++) {
+            carts1[i] = bridge.getCart(ids[i]).getValue();
+
+            Assert.assertFalse(saves[i].isError());
+            Assert.assertTrue(saves[i].getValue());
+            Assert.assertEquals(1, carts1[i].size() - carts0[i].size());
+            Assert.assertTrue(carts1[i].stream().anyMatch(basket -> basket.getStoreId().equals(store1Id) && basket.getItems().get(item22Id) != null && basket.getItems().get(item22Id) == 1));
+        }
     }
 }
