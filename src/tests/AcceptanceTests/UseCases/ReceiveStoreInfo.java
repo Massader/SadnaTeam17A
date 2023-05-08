@@ -65,7 +65,6 @@ public class ReceiveStoreInfo extends ProjectTest {
         Assert.assertNotNull(storeInfo.getValue());
         Assert.assertEquals(storeId, storeInfo.getValue().getStoreId());
         Assert.assertEquals("test", storeInfo.getValue().getName());
-        Assert.assertEquals(4, storeInfo.getValue().);
     }
 
     @Test
