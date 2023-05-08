@@ -25,7 +25,7 @@ public interface Bridge {
     Response<Boolean> closeClient(UUID clientCredentials);
     Response<Boolean> register(String username, String password);
     Response<ServiceUser> login(UUID clientCredentials, String username, String password);
-    Response<ServiceStore> getStoreInformation(UUID storeId);
+    Response<ServiceStore> getStoreInformation(UUID clientCredentials, UUID storeId);
     Response<Boolean> searchStore();
     Response<List<ServiceItem>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating);
     Response<Boolean> addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId);

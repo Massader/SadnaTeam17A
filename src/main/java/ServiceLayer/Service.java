@@ -316,8 +316,8 @@ public class Service {
 
 
 
-    public Response<ServiceStore> getStoreInformation(UUID storeId){
-        Response<Store> response = storeController.getStoreInformation(storeId);
+    public Response<ServiceStore> getStoreInformation(UUID clientCredentials, UUID storeId){
+        Response<Store> response = storeController.getStoreInformation(clientCredentials, storeId);
         if(response.isError())
             return Response.getFailResponse(response.getMessage());
         return Response.getSuccessResponse(new ServiceStore(response.getValue()));
