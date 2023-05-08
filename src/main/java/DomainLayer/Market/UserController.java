@@ -325,6 +325,10 @@ public class UserController {
                 return Response.getFailResponse("User does not exist.");
             if(!users.get(clientCredentials).isAdmin())
                 return Response.getFailResponse("Only admins can delete users.");
+            if (clientCredentials.equals(userId))
+                return Response.getFailResponse("Admin can't delete himself.");
+            if (userId.equals(usernames.get("admin")))
+                return Response.getFailResponse("Can't delete default admin.");
             User user = users.get(userId);
             if (loggedInUser.contains(user.getUsername()))
                 logout(userId);
