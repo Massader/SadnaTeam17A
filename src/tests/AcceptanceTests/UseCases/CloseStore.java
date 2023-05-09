@@ -34,7 +34,7 @@ public class CloseStore extends ProjectTest {
         storeManagerId = bridge.login(bridge.createClient().getValue(), "manager", "1234").getValue().getId();
         userId = bridge.login(bridge.createClient().getValue(), "user", "1234").getValue().getId();
 
-        store = bridge.createStore(storeFounderId, "test", "test").getValue();
+        store = bridge.createStore(storeFounderId, "store", "test").getValue();
         storeId = store.getStoreId();
 
         bridge.appointStoreOwner(storeFounderId, storeOwnerId, storeId);

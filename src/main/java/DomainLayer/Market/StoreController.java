@@ -24,6 +24,7 @@ public class StoreController {
     private ConcurrentHashMap<UUID, Store> storeMap;
     private UserController userController;
     private NotificationController notificationController;
+    private ConcurrentHashMap<String, Category> itemCategories;
 
     private StoreController() {
     }
@@ -40,6 +41,7 @@ public class StoreController {
         storeMap = new ConcurrentHashMap<>();
         userController = UserController.getInstance();
         notificationController = NotificationController.getInstance();
+        itemCategories = new ConcurrentHashMap<>();
     }
 
     public List<Store> getStores() {
@@ -476,7 +478,8 @@ public class StoreController {
         Item item = store.getItem(itemId);
         if (item == null)
             return Response.getFailResponse("Item does not exist.");
-        item.addCategory(new Category(category));
+        itemCategories.putIfAbsent(category, new Category(category));
+        item.addCategory(itemCategories.get(category));
         return Response.getSuccessResponse(true);
     }
 

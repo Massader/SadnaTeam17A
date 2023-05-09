@@ -47,7 +47,7 @@ public class AppointStoreOwner extends ProjectTest {
         user1Id = bridge.login(bridge.createClient().getValue(), "user1", "1234").getValue().getId();
         user2Id = bridge.login(bridge.createClient().getValue(), "user2", "1234").getValue().getId();
 
-        store = bridge.createStore(storeFounderId, "test", "test").getValue();
+        store = bridge.createStore(storeFounderId, "store", "test").getValue();
         storeId = store.getStoreId();
 
         bridge.appointStoreOwner(storeFounderId, storeOwner1Id, storeId);

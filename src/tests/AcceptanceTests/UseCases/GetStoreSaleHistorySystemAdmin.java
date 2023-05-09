@@ -39,7 +39,7 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
         user1Id = bridge.login(bridge.createClient().getValue(), "user1", "1234").getValue().getId();
         user2Id = bridge.login(bridge.createClient().getValue(), "user2", "1234").getValue().getId();
 
-        store = bridge.createStore(storeFounderId, "test", "test").getValue();
+        store = bridge.createStore(storeFounderId, "store", "test").getValue();
         storeId = store.getStoreId();
 
         item1Id = bridge.addItemToStore(storeFounderId, "item1", 10, storeId, 100, "test").getValue().getId();
