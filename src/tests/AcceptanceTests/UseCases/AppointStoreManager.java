@@ -194,35 +194,4 @@ public class AppointStoreManager extends ProjectTest {
         Assert.assertEquals(userRoles0.getValue().size(), userRoles1.getValue().size());
         Assert.assertEquals(storeStaff0.getValue().size(), storeStaff1.getValue().size());
     }
-
-    /*
-    @Test
-    //Tests that two store managers cannot simultaneously appoint a third store manager to a store, and that only one appointment is successful.
-    public void AppointStoreManagerBy2ManagerParallel(){
-        Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId).getValue();
-        Assert.assertTrue(AppointStoreManager);
-        bridge.register("toBeManager", "Pass2");
-        UUID newStoreManager = bridge.login(client3, "toBeManager", "Pass2").getValue().getId();
-        List<ServiceUser> staffList = bridge.getStoreStaffList(founder, storeId).getValue();
-        int stafSize= staffList.size();
-
-        Thread thread1 = new Thread(()->{
-            Boolean AppointStoreManager1 = bridge.appointStoreManager(founder,newStoreManager,storeId).getValue();
-        });
-        Thread thread2 = new Thread(()->{
-            Boolean AppointStoreManager2 = bridge.appointStoreManager(storeManager,newStoreManager,storeId).getValue();
-        });
-
-        thread1.start();
-        thread2.start();
-        try{
-            thread1.join();
-            thread2.join();
-        }catch(Exception ignored){
-        }
-
-        Assert.assertEquals(bridge.getStoreStaffList(founder, storeId).getValue().size(), stafSize + 1);
-    }
-     */
 }
-

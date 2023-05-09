@@ -16,7 +16,6 @@ public class ViewShoppingCartItems extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
-        bridge.setReal();
         bridge.register("founder", "Pass1");
         client = bridge.createClient().getValue();
     }

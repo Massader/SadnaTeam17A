@@ -115,24 +115,25 @@ public class RealBridge implements Bridge {
         return service.addItemToStore(clientCredentials, name, price, storeId, quantity, description);
     }
 
-    public Response<Boolean> setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId) {
-        return service.setItemQuantity(clientCredentials, storeId, itemId, 0);
-
+    public Response<Boolean> setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId, int quantity) {
+        return service.setItemQuantity(clientCredentials, storeId, itemId, quantity);
     }
 
-    public Response<Boolean> stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name, String description) {
-        Boolean check = false;
-        if (description != null) {
-            check = service.setItemDescription(clientCredentials, storeId, itemId, description).getValue();
-        }
-        if (name != null) {
-            check = check && service.setItemName(clientCredentials, storeId, itemId, name).getValue();
-        }
-        return Response.getSuccessResponse(check);
+    public Response<Boolean> setItemName(UUID clientCredentials, UUID storeId, UUID itemId, String name) {
+        return service.setItemName(clientCredentials, storeId, itemId, name);
     }
 
-    public Response<Boolean> setStorePolicy() {
-        return null;
+    public Response<Boolean> setItemDescription(UUID clientCredentials, UUID storeId, UUID itemId, String description) {
+        return service.setItemDescription(clientCredentials, storeId, itemId, description);
+    }
+
+
+    public Response<Boolean> setItemPrice(UUID clientCredentials, UUID storeId, UUID itemId, double price) {
+        return service.setItemPrice(clientCredentials, storeId, itemId, price);
+    }
+
+    public Response<Boolean> addPolicyTerm(UUID clientCredentials, UUID storeId, int rule, Boolean atList, int quantity, UUID itemId, String category) {
+        return service.addPolicyTermByStoreOwner(clientCredentials, storeId, rule, atList, quantity, itemId, category);
     }
 
     public Response<Boolean> appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId) {
