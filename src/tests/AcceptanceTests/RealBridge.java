@@ -86,8 +86,8 @@ public class RealBridge implements Bridge {
         return null;
     }
 
-    public Response<List<ServiceItem>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating) {
-        return service.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating);
+    public Response<List<ServiceItem>> searchItem(String keyword, String category, Double minPrice, Double maxPrice, Integer itemRating, Integer storeRating, Integer number, Integer page, UUID storeId) {
+        return service.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating, number, page, storeId);
     }
 
     public Response<Boolean> addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
@@ -252,5 +252,13 @@ public class RealBridge implements Bridge {
 
     public Response<Double> getCartTotal(UUID clientCredentials) {
         return service.getCartTotal(clientCredentials);
+    }
+
+    public Response<Boolean> addStoreRating(UUID clientCredentials, UUID storeId ,int rating) {
+        return service.addStoreRating(clientCredentials, storeId, rating);
+    }
+
+    public Response<Boolean> addItemRating(UUID clientCredentials, UUID itemId, UUID storeId, int rating) {
+        return service.addItemRating(clientCredentials, itemId,storeId, rating);
     }
 }

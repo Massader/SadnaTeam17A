@@ -31,7 +31,7 @@ public class ReceiveStoreInfo extends ProjectTest {
 
         storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "1234").getValue().getId();
 
-        store = bridge.createStore(storeFounderId, "test", "test").getValue();
+        store = bridge.createStore(storeFounderId, "store", "test").getValue();
         storeId = store.getStoreId();
 
         item1Id = bridge.addItemToStore(storeFounderId, "item1", 10, storeId, 100, "test").getValue().getId();

@@ -45,10 +45,10 @@ public class SaveItem extends ProjectTest {
         user2Id = bridge.login(bridge.createClient().getValue(), "user2", "1234").getValue().getId();
         user3Id = bridge.login(bridge.createClient().getValue(), "user3", "1234").getValue().getId();
 
-        store1 = bridge.createStore(storeFounderId, "test", "test").getValue();
+        store1 = bridge.createStore(storeFounderId, "store1", "test").getValue();
         store1Id = store1.getStoreId();
 
-        store2 = bridge.createStore(storeFounderId, "test", "test").getValue();
+        store2 = bridge.createStore(storeFounderId, "store2", "test").getValue();
         store2Id = store2.getStoreId();
 
         item11Id = bridge.addItemToStore(storeFounderId, "item11", 10, store1Id, 100, "test").getValue().getId();

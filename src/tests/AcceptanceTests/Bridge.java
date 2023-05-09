@@ -28,7 +28,7 @@ public interface Bridge {
     Response<ServiceUser> login(UUID clientCredentials, String username, String password);
     Response<ServiceStore> getStoreInformation(UUID clientCredentials, UUID storeId);
     Response<Boolean> searchStore();
-    Response<List<ServiceItem>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating);
+    Response<List<ServiceItem>> searchItem(String keyword, String category, Double minPrice, Double maxPrice, Integer itemRating, Integer storeRating, Integer number, Integer page, UUID storeId);
     Response<Boolean> addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId);
     Response<List<ServiceShoppingBasket>> getCart(UUID clientCredentials);
     Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, String credit);
@@ -63,8 +63,9 @@ public interface Bridge {
     Response<Boolean> reopenStore(UUID clientCredentials, UUID storeId);
     Response<UUID> getAdminCredentials();
     Response<Boolean> shutdownStore(UUID clientCredentials, UUID storeId);
-
     Response<Integer> numOfLoggedInUsers();
     Response<ConcurrentHashMap<String, UUID>> getUserNames();
     Response<Double> getCartTotal(UUID clientCredentials);
+    Response<Boolean> addStoreRating(UUID clientCredentials, UUID storeId ,int rating);
+    Response<Boolean> addItemRating(UUID clientCredentials, UUID itemId, UUID storeId, int rating);
 }
