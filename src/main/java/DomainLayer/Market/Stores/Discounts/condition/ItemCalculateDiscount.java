@@ -9,16 +9,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ItemCalculateDiscount implements CalculateDiscount {
-    private int quantity;
+
     private UUID itemId;
 
-    public ItemCalculateDiscount(int quantity, UUID itemId) {
-        this.quantity = quantity;
+    public ItemCalculateDiscount( UUID itemId) {
         this.itemId = itemId;
-    }
-
-    public int getQuantity() {
-        return quantity;
     }
 
     public UUID getItemId() {

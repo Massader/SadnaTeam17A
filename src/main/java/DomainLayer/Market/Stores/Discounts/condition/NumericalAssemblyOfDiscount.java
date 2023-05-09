@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public abstract class NumericalAssemblyOfDiscount {
     ConcurrentLinkedQueue<Discount> discounts;
 
+
     public NumericalAssemblyOfDiscount(ConcurrentLinkedQueue<Discount> discounts) {
         this.discounts = discounts;
     }

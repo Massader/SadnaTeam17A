@@ -1,7 +1,6 @@
 package DomainLayer.Market.Stores;
 
-import DomainLayer.Market.Stores.Discounts.condition.Discount;
-import DomainLayer.Market.Stores.Discounts.condition.StoreDiscount;
+import DomainLayer.Market.Stores.Discounts.condition.*;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.*;
 import DomainLayer.Market.Users.Client;
 import DomainLayer.Market.Users.Purchase;
@@ -277,12 +276,14 @@ public class Store {
         return true;
     }
 
-    public Boolean addDiscountByStoreOwner(Discount discount) throws Exception {
+    public Boolean addDiscountByStoreOwner(int PurchaseRule,int DiscountRule, Boolean atList, int quantity, UUID itemId, String category,Double discountPercentage,UUID DiscountItemId,String discountCategory) throws Exception {
+        Discount discount = creatingDiscountTerm(PurchaseRule,DiscountRule,atList,quantity,itemId,category,discountPercentage,DiscountItemId,discountCategory);
         this.discounts.addDiscount(discount);
         return true;
     }
 
-    public Boolean removeDiscountByStoreOwner(Discount discount) throws Exception {
+    public Boolean removeDiscountByStoreOwner(int PurchaseRule,int DiscountRule, Boolean atList, int quantity, UUID itemId, String category,Double discountPercentage,UUID DiscountItemId,String discountCategory) throws Exception {
+        Discount discount = creatingDiscountTerm(PurchaseRule,DiscountRule,atList,quantity,itemId,category,discountPercentage,DiscountItemId,discountCategory);
         this.discounts.removeDiscount(discount);
         return true;
     }
@@ -303,7 +304,7 @@ public class Store {
                 purchaseRule = new ShopingBasketPurchaseRule();
                 break;
             case  3://category
-                if(category.length()==0){ throw new Exception("can't Creating Purchase Term of Item Purchase Rule if category is empty");}
+                if(category.length()==0){ throw new Exception("can't Creating Purchase Term of category Purchase Rule if category is empty");}
                 purchaseRule = new CategoryPurchaseRule(new Category(category));
             default:
             { throw new Exception("can't Creating Purchase Term which is not a shopping basket item or category");}
@@ -312,6 +313,29 @@ public class Store {
             return new atListPurchaseRule(purchaseRule,quantity);
         }
         else return new AtMostPurchaseRule(purchaseRule,quantity);
+
+    }
+
+
+    public Discount creatingDiscountTerm(int PurchaseRule,int DiscountRule, Boolean atList, int quantity, UUID itemId, String category,Double discountPercentage,UUID DiscountItemId,String discountCategory) throws Exception {
+        PurchaseTerm purchaseTerm = creatingPurchaseTerm(PurchaseRule,  atList,  quantity,  itemId,  category);
+        CalculateDiscount OptioncalculateDiscount;
+        switch (DiscountRule){
+            case 1://Item
+                if(DiscountItemId==null){ throw new Exception("can't Creating discount Term of Item discount Rule if item id is null");}
+                OptioncalculateDiscount = new ItemCalculateDiscount(itemId);
+                break;
+            case  2://ShopingBasket
+                OptioncalculateDiscount = new ShopingBasketCalculateDiscount();
+                break;
+            case  3://category
+                if(discountCategory.length()==0){ throw new Exception("can't Creating discount Term of category discount Rule if category is empty");}
+                OptioncalculateDiscount = new CategoryCalculateDiscount(new Category(discountCategory));
+            default:
+            { throw new Exception("can't Creating Discount Term which is not a shopping basket item or category");}
+        }
+        Discount discount = new Discount(OptioncalculateDiscount,discountPercentage,purchaseTerm);
+        return discount;
 
     }
 

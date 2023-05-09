@@ -562,28 +562,28 @@ public class StoreController {
     }
 }
 
-    public Response<Boolean> addDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
+    public Response<Boolean> addDiscountByStoreOwner(UUID clientCredentials, UUID storeId, int PurchaseRule,int DiscountRule, Boolean atList, int quantity, UUID itemId, String category,Double discountPercentage,UUID DiscountItemId,String discountCategory) {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            store.addDiscountByStoreOwner(discount);
+            store.addDiscountByStoreOwner(PurchaseRule,DiscountRule,atList,quantity,itemId,category,discountPercentage,DiscountItemId,discountCategory);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
     }
 
-    public Response<Boolean> removeDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
+    public Response<Boolean> removeDiscountByStoreOwner(UUID clientCredentials, UUID storeId, int PurchaseRule,int DiscountRule, Boolean atList, int quantity, UUID itemId, String category,Double discountPercentage ,UUID DiscountItemId,String discountCategory) {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            store.removeDiscountByStoreOwner(discount);
+            store.removeDiscountByStoreOwner(PurchaseRule,DiscountRule,atList,quantity,itemId,category,discountPercentage,DiscountItemId,discountCategory);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
