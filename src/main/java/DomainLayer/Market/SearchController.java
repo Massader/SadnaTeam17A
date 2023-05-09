@@ -63,11 +63,14 @@ public class SearchController {
             Store store = storeController.getStore(storeId);
             if (store == null)
                 return Response.getFailResponse("Store does not exist");
+            if (store.isClosed())
+                return Response.getFailResponse("Store is not open");
             items = store.getItems().values().stream().filter(item -> item.getStoreId().equals(storeId)).toList();
         }
         else {
             for (Store store : storeController.getStores()) {
-                items.addAll(store.getItems().values());
+                if (!store.isClosed())
+                    items.addAll(store.getItems().values());
             }
         }
         if (keyword != null && !keyword.isEmpty()){
