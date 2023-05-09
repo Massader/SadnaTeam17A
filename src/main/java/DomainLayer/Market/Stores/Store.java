@@ -240,7 +240,7 @@ public class Store {
                     Sale sale = new Sale(client.getId(),itemId,quantityToRemove);
                     sales.add(sale);
                     if(client instanceof User){
-                        Purchase purchase = new Purchase(client.getId(),itemId,quantityToRemove);
+                        Purchase purchase = new Purchase(client.getId(),itemId,quantityToRemove, shoppingBasket.getStoreId());
                         ((User) client).addPurchase(purchase);
                     }}
                 else throw new Exception("Quantity of item in store is lower than quantity to purchase.");
@@ -258,7 +258,7 @@ public class Store {
                     Sale sale = new Sale(client.getId(),itemId,quantityToRemove);
                     sales.remove(sale);
                     if(client instanceof User){
-                        Purchase purchase = new Purchase(client.getId(),itemId,quantityToRemove);
+                        Purchase purchase = new Purchase(client.getId(),itemId,quantityToRemove, shoppingBasket.getStoreId());
                         ((User) client).removePurchase(purchase);
                     }}}
     }
