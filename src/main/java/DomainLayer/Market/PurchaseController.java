@@ -95,7 +95,7 @@ public class PurchaseController {
                     store.purchaseBasket(client,basket);
                     for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
                         if (role.getValue().getPermissions().contains(StorePermissions.STORE_OWNER))
-                        notificationController.sendNotification(role.getKey(), "A purchase from "
+                        notificationController.sendNotification(role.getKey(), "A purchase fromc "
                                 + store.getName() + " has been made.");
                     }
                 }

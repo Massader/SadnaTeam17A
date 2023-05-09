@@ -14,7 +14,6 @@ public class ServicePurchase {
     private boolean rated;
     private UUID storeId;
 
-
     public ServicePurchase(Purchase purchase) {
         this.id = purchase.getId();
         this.userId = purchase.getUserId();
@@ -51,5 +50,13 @@ public class ServicePurchase {
 
     public void setRated(boolean rated) {
         this.rated = rated;
+    }
+
+    public UUID getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(UUID storeId) {
+        this.storeId = storeId;
     }
 }
