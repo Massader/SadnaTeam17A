@@ -2,8 +2,7 @@ package DomainLayer.Market.Stores;
 
 import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Discounts.condition.StoreDiscount;
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.StorePurchasePolicies;
+import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.*;
 import DomainLayer.Market.Users.Client;
 import DomainLayer.Market.Users.Purchase;
 import DomainLayer.Market.Users.Roles.Role;
@@ -266,12 +265,14 @@ public class Store {
 
 
 
-    public Boolean addPolicyTermByStoreOwner( PurchaseTerm term) throws Exception {
+    public Boolean addPolicyTermByStoreOwner( int rule, Boolean atList, int quantity, UUID itemId, String category) throws Exception {
+        PurchaseTerm term = creatingPurchaseTerm(rule,  atList,  quantity,  itemId,  category);
         this.policy.addPurchaseTerm(term);
         return true;
     }
 
-    public Boolean removePolicyTermByStoreOwner( PurchaseTerm term) throws Exception {
+    public Boolean removePolicyTermByStoreOwner(  int rule, Boolean atList, int quantity, UUID itemId, String category) throws Exception {
+        PurchaseTerm term = creatingPurchaseTerm(rule,  atList,  quantity,  itemId,  category);
         this.policy.removePurchaseTerm(term);
         return true;
     }
@@ -291,7 +292,30 @@ public class Store {
         return items.size();
     }
 
-}
+    public PurchaseTerm creatingPurchaseTerm(int rule, Boolean atList, int quantity, UUID itemId, String category) throws Exception {
+        PurchaseRule purchaseRule;
+        switch (rule){
+            case 1://Item
+                if(itemId==null){ throw new Exception("can't Creating Purchase Term of Item Purchase Rule if item id is null");}
+                purchaseRule = new ItemPurchaseRule(itemId);
+                break;
+            case  2://ShopingBasket
+                purchaseRule = new ShopingBasketPurchaseRule();
+                break;
+            case  3://category
+                if(category.length()==0){ throw new Exception("can't Creating Purchase Term of Item Purchase Rule if category is empty");}
+                purchaseRule = new CategoryPurchaseRule(new Category(category));
+            default:
+            { throw new Exception("can't Creating Purchase Term which is not a shopping basket item or category");}
+        }
+        if (atList){
+            return new atListPurchaseRule(purchaseRule,quantity);
+        }
+        else return new AtMostPurchaseRule(purchaseRule,quantity);
+
+    }
+
+    }
 
 
 

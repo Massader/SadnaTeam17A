@@ -4,6 +4,7 @@ import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
+import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.StorePurchasePolicies;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
@@ -528,28 +529,28 @@ public class StoreController {
     }
 
 
-    public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
+    public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, int rule, Boolean atList, int quantity, UUID itemId, String category) {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            store.addPolicyTermByStoreOwner(term);
+            store.addPolicyTermByStoreOwner(rule,  atList,  quantity,  itemId,  category);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
     }
 
-    public Response<Boolean> removePolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term)  {
+    public Response<Boolean> removePolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, int rule, Boolean atList, int quantity, UUID itemId, String category)  {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            store.removePolicyTermByStoreOwner(term);
+            store.removePolicyTermByStoreOwner(rule,  atList,  quantity,  itemId,  category);
             return Response.getSuccessResponse(true);
     } catch(
     Exception exception)
@@ -613,4 +614,9 @@ public class StoreController {
             return Response.getFailResponse(exception.getMessage());
         }
     }
-}
+
+
+
+
+
+    }

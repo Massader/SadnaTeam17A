@@ -2,8 +2,11 @@ package DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule;
 
 
 
+import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+
+import java.util.UUID;
 
 public abstract class PurchaseTerm {
 
@@ -46,6 +49,30 @@ public abstract class PurchaseTerm {
             }
             return true;
         }
+
+
+    public PurchaseTerm creatingPurchaseTerm(int rule, Boolean atList, int quantity, UUID itemId, String category) throws Exception {
+        PurchaseRule purchaseRule;
+        switch (rule){
+            case 1://Item
+                if(itemId==null){ throw new Exception("can't Creating Purchase Term of Item Purchase Rule if item id is null");}
+                purchaseRule = new ItemPurchaseRule(itemId);
+                break;
+            case  2://ShopingBasket
+                purchaseRule = new ShopingBasketPurchaseRule();
+                break;
+            case  3://category
+                if(category.length()==0){ throw new Exception("can't Creating Purchase Term of Item Purchase Rule if category is empty");}
+                purchaseRule = new CategoryPurchaseRule(new Category(category));
+            default:
+            { throw new Exception("can't Creating Purchase Term which is not a shopping basket item or category");}
+        }
+        if (atList){
+            return new atListPurchaseRule(purchaseRule,quantity);
+        }
+        else return new AtMostPurchaseRule(purchaseRule,quantity);
+
+    }
     }
 
 

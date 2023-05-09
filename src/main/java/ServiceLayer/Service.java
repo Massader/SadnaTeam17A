@@ -764,8 +764,8 @@ public class Service {
         return storeController.numOfStores();
     }
 
-    public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
-        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, term);
+    public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, int rule, Boolean atList, int quantity, UUID itemId, String category) {
+        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, rule,  atList,  quantity,  itemId,  category);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
@@ -774,8 +774,8 @@ public class Service {
         return response;
     }
 
-    public Response<Boolean> removePolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
-        Response<Boolean> response = storeController.removePolicyTermByStoreOwner(clientCredentials, storeId, term);
+    public Response<Boolean> removePolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, int rule, Boolean atList, int quantity, UUID itemId, String category) {
+        Response<Boolean> response = storeController.removePolicyTermByStoreOwner(clientCredentials, storeId, rule,  atList,  quantity,  itemId,  category);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
