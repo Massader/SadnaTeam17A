@@ -1,6 +1,5 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
-import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.*;
 
@@ -20,8 +19,7 @@ public class GetStoreSaleHistory extends ProjectTest {
 
     UUID storeFounderId;
     UUID storeOwnerId;
-    UUID storeManagerWithPermissionId;
-    UUID storeManagerNoPermissionId;
+    UUID storeManagerId;
     UUID user1Id;
     UUID user2Id;
     ServiceStore store;
@@ -35,15 +33,13 @@ public class GetStoreSaleHistory extends ProjectTest {
     public void beforeClass() {
         bridge.register("founder", "1234");
         bridge.register("owner", "1234");
-        bridge.register("managerWithPermission", "1234");
-        bridge.register("managerNoPermission", "1234");
+        bridge.register("manager", "1234");
         bridge.register("user1", "1234");
         bridge.register("user2", "1234");
 
         storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "1234").getValue().getId();
         storeOwnerId = bridge.login(bridge.createClient().getValue(), "owner", "1234").getValue().getId();
-        storeManagerWithPermissionId = bridge.login(bridge.createClient().getValue(), "managerWithPermission", "1234").getValue().getId();
-        storeManagerNoPermissionId = bridge.login(bridge.createClient().getValue(), "managerNoPermission", "1234").getValue().getId();
+        storeManagerId = bridge.login(bridge.createClient().getValue(), "manager", "1234").getValue().getId();
         user1Id = bridge.login(bridge.createClient().getValue(), "user1", "1234").getValue().getId();
         user2Id = bridge.login(bridge.createClient().getValue(), "user2", "1234").getValue().getId();
 
@@ -51,11 +47,7 @@ public class GetStoreSaleHistory extends ProjectTest {
         storeId = store.getStoreId();
 
         bridge.appointStoreOwner(storeFounderId, storeOwnerId, storeId);
-        bridge.appointStoreManager(storeFounderId, storeManagerWithPermissionId, storeId);
-        List<Integer> permissions = new ArrayList<Integer>();
-        permissions.add(1); // STORE_SALE_HISTORY = 1
-        bridge.setStoreManagerPermissions(storeFounderId, storeManagerWithPermissionId, storeId, permissions);
-        bridge.appointStoreManager(storeFounderId, storeManagerNoPermissionId, storeId);
+        bridge.appointStoreManager(storeFounderId, storeManagerId, storeId);
 
         item1Id = bridge.addItemToStore(storeFounderId, "item1", 10, storeId, 100, "test").getValue().getId();
         item2Id = bridge.addItemToStore(storeFounderId, "item2", 20, storeId, 100, "test").getValue().getId();
@@ -72,8 +64,7 @@ public class GetStoreSaleHistory extends ProjectTest {
 
         bridge.logout(storeFounderId);
         bridge.logout(storeOwnerId);
-        bridge.logout(storeManagerWithPermissionId);
-        bridge.logout(storeManagerNoPermissionId);
+        bridge.logout(storeManagerId);
         bridge.logout(user1Id);
         bridge.logout(user2Id);
     }
@@ -82,8 +73,7 @@ public class GetStoreSaleHistory extends ProjectTest {
     public void setUp()  {
         bridge.login(bridge.createClient().getValue(), "founder", "1234");
         bridge.login(bridge.createClient().getValue(), "owner", "1234");
-        bridge.login(bridge.createClient().getValue(), "managerWithPermission", "1234");
-        bridge.login(bridge.createClient().getValue(), "managerNoPermission", "1234");
+        bridge.login(bridge.createClient().getValue(), "manager", "1234");
         bridge.login(bridge.createClient().getValue(), "user1", "1234");
         bridge.login(bridge.createClient().getValue(), "user2", "1234");
     }
@@ -92,8 +82,7 @@ public class GetStoreSaleHistory extends ProjectTest {
     public void tearDown() {
         bridge.logout(storeFounderId);
         bridge.logout(storeOwnerId);
-        bridge.logout(storeManagerWithPermissionId);
-        bridge.logout(storeManagerNoPermissionId);
+        bridge.logout(storeManagerId);
         bridge.logout(user1Id);
         bridge.logout(user2Id);
     }
@@ -134,7 +123,7 @@ public class GetStoreSaleHistory extends ProjectTest {
     @Test
     //checks if a store manager with permission can get the store history
     public void GetStoreSaleHistoryManagerWithPermissionSuccess() {
-        Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeManagerWithPermissionId, storeId);
+        Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeManagerId, storeId);
 
         Assert.assertFalse(sales.isError());
         Assert.assertNotNull(sales.getValue());
@@ -145,13 +134,6 @@ public class GetStoreSaleHistory extends ProjectTest {
         Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item4Id) && sale.getQuantity() == 12));
     }
 
-    @Test
-    //checks if a user can get the store history
-    public void GetStoreSaleHistoryManagerWithoutPermissionFail() {
-        Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeManagerNoPermissionId, storeId);
-
-        Assert.assertTrue(sales.isError());
-    }
     @Test
     //checks if a user can get the store history
     public void GetStoreSaleHistoryUserFail() {

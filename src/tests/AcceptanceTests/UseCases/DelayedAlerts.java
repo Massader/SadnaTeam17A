@@ -34,4 +34,3 @@ public class DelayedAlerts extends ProjectTest {
         Assert.assertTrue(true);
     }
 }
-

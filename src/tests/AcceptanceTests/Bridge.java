@@ -35,9 +35,11 @@ public interface Bridge {
     Response<UUID> logout(UUID clientCredentials);
     Response<ServiceStore> createStore(UUID clientCredentials , String storeName , String storeDescription);
     Response<ServiceItem> addItemToStore(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description);
-    Response<Boolean> setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId);
-    Response<Boolean> stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name,String description);
-    Response<Boolean> setStorePolicy();
+    Response<Boolean> setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId, int quantity);
+    Response<Boolean> setItemName(UUID clientCredentials, UUID storeId, UUID itemId, String name);
+    Response<Boolean> setItemDescription(UUID clientCredentials, UUID storeId, UUID itemId, String description);
+    Response<Boolean> setItemPrice(UUID clientCredentials, UUID storeId, UUID itemId, double price);
+    Response<Boolean> addPolicyTerm(UUID clientCredentials, UUID storeId, int rule, Boolean atList, int quantity, UUID itemId, String category);
     Response<Boolean> appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId);
     Response<Boolean> appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId);
     Response<Boolean> setStoreManagerPermissions(UUID clientCredentials, UUID manager, UUID storeId, List<Integer> permissions);

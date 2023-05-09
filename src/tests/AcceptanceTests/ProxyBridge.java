@@ -109,16 +109,25 @@ public class ProxyBridge implements Bridge {
         return real == null ? null : real.addItemToStore(clientCredentials, name, price, storeId, quantity, description);
     }
 
-    public Response<Boolean> setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId) {
-        return real == null ? null : real.setItemQuantity(clientCredentials, storeId, itemId);
+    public Response<Boolean> setItemQuantity(UUID clientCredentials, UUID storeId, UUID itemId, int quantity) {
+        return real == null ? null : real.setItemQuantity(clientCredentials, storeId, itemId, quantity);
     }
 
-    public Response<Boolean> stockManagementChangeItemInfo(UUID clientCredentials, UUID storeId, UUID itemId, String name, String description) {
-        return real == null ? null : real.stockManagementChangeItemInfo(clientCredentials, storeId, itemId, name, description);
+    public Response<Boolean> setItemName(UUID clientCredentials, UUID storeId, UUID itemId, String name) {
+        return real == null ? null : real.setItemName(clientCredentials, storeId, itemId, name);
     }
 
-    public Response<Boolean> setStorePolicy() {
-        return real == null ? null : real.setStorePolicy();
+    public Response<Boolean> setItemDescription(UUID clientCredentials, UUID storeId, UUID itemId, String description) {
+        return real == null ? null : real.setItemDescription(clientCredentials, storeId, itemId, description);
+    }
+
+
+    public Response<Boolean> setItemPrice(UUID clientCredentials, UUID storeId, UUID itemId, double price) {
+        return real == null ? null : real.setItemPrice(clientCredentials, storeId, itemId, price);
+    }
+
+    public Response<Boolean> addPolicyTerm(UUID clientCredentials, UUID storeId, int rule, Boolean atList, int quantity, UUID itemId, String category) {
+        return real == null ? null : real.addPolicyTerm(clientCredentials, storeId, rule, atList, quantity, itemId, category);
     }
 
     public Response<Boolean> appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId) {

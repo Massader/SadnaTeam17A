@@ -203,5 +203,3 @@ public class AppointStoreOwner extends ProjectTest {
         Assert.assertEquals(storeStaff0.getValue().size(), storeStaff1.getValue().size());
     }
 }
-
-

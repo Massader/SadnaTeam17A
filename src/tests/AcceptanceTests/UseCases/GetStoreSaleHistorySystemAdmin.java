@@ -104,4 +104,3 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
         Assert.assertTrue(sales.isError());
     }
 }
-
