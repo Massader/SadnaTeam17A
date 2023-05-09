@@ -12,6 +12,7 @@ public class ServicePurchase {
     private Date date;
     private int quantity;
     private boolean rated;
+    private UUID storeId;
 
 
     public ServicePurchase(Purchase purchase) {
@@ -21,6 +22,7 @@ public class ServicePurchase {
         this.date = purchase.getDate();
         this.quantity = purchase.getQuantity();
         this.rated = purchase.isRated();
+        this.storeId = purchase.getStoreId();
     }
 
     public UUID getId() {

@@ -11,14 +11,16 @@ public class Purchase {
     private Date date;
     private int quantity;
     private boolean rated;
+    private UUID storeId;
 
 
-    public Purchase(UUID userId, UUID itemId, int quantity) {
+    public Purchase(UUID userId, UUID itemId, int quantity, UUID storeId) {
         this.id = UUID.randomUUID();
         this.date = Date.from(Instant.now());
         this.itemId = itemId;
         this.userId = userId;
         this.quantity = quantity;
+        this.storeId = storeId;
         rated = false;
     }
 
@@ -48,5 +50,14 @@ public class Purchase {
 
     public void setRated(boolean rated) {
         this.rated = rated;
+    }
+
+
+    public UUID getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(UUID storeId) {
+        this.storeId = storeId;
     }
 }
