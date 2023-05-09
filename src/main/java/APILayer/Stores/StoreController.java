@@ -214,4 +214,10 @@ public class StoreController {
         return service.addItemRating(request.getClientCredentials(), request.getItemId(), request.getStoreId(),
                 request.getRating());
     }
+
+    @PostMapping(path = "/add-policy-term")
+    public Response<Boolean> addPolicyTermByStoreOwner(@RequestBody AddPolicyRequest request) {
+        return service.addPolicyTermByStoreOwner(request.getClientCredentials(), request.getStoreId(), request.getRule(), request.getAtList(),
+                request.getQuantity(), request.getItemId(), request.getCategory());
+    }
 }
