@@ -10,7 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CategoryPurchaseRule implements PurchaseRule {
-    Category category;
+    Category category;//
 
     public CategoryPurchaseRule(Category category) {
         this.category = category;

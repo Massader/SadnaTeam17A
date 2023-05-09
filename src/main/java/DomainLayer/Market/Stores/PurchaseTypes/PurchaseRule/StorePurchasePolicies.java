@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class StorePurchasePolicies {
     /**
      * managePurchasePolicies is a class that manages the purchase policies of a shop.
-     * It stores PurchaseTerm and provides methods for adding and removing them.
+     * It stores PurchaseTerm and provides methods for adding and removing them.//
      */
     private ConcurrentLinkedQueue<PurchaseTerm> purchasePolicies;
 

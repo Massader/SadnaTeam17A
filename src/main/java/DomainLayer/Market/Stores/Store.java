@@ -263,7 +263,7 @@ public class Store {
                         ((User) client).removePurchase(purchase);
                     }}}
     }
-
+//
 
 
     public Boolean addPolicyTermByStoreOwner( PurchaseTerm term) throws Exception {
