@@ -27,9 +27,9 @@ public class ReceiveStoreInfo extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
-        bridge.register("founder", "1234");
+        bridge.register("founder", "Aa1234");
 
-        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "1234").getValue().getId();
+        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234").getValue().getId();
 
         store = bridge.createStore(storeFounderId, "store", "test").getValue();
         storeId = store.getStoreId();
@@ -44,7 +44,7 @@ public class ReceiveStoreInfo extends ProjectTest {
 
     @BeforeEach
     public void setUp()  {
-        bridge.login(bridge.createClient().getValue(), "founder", "1234");
+        bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
     }
 
     @AfterEach

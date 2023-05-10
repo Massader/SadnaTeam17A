@@ -39,7 +39,7 @@ public class Register extends ProjectTest {
     public void registerSuccess() {
         Response<Integer> users0 = bridge.numOfUsers();
         Response<ConcurrentHashMap<String, UUID>> userNames0 = bridge.getUserNames();
-        Response<Boolean> register = bridge.register("user1", "1234");
+        Response<Boolean> register = bridge.register("user1", "Aa1234");
         Response<Integer> users1 = bridge.numOfUsers();
         Response<ConcurrentHashMap<String, UUID>> userNames1 = bridge.getUserNames();
 
@@ -60,7 +60,7 @@ public class Register extends ProjectTest {
     @Test
     //Tests whether the registration of a user with already existing username fails.
     public void registerExistingUserFail() {
-        bridge.register("user2", "1234");
+        bridge.register("user2", "Aa1234");
 
         Response<Integer> users0 = bridge.numOfUsers();
         Response<ConcurrentHashMap<String, UUID>> userNames0 = bridge.getUserNames();
@@ -122,7 +122,7 @@ public class Register extends ProjectTest {
         try {
             for (int i = 0; i < 1000; i++) {
                 final int index = i;
-                threads[i] = new Thread(() -> registrations[index] = bridge.register("user_" + index, "1234"));
+                threads[i] = new Thread(() -> registrations[index] = bridge.register("user_" + index, "Aa1234"));
                 threads[i].start();
             }
             for (Thread t : threads) {

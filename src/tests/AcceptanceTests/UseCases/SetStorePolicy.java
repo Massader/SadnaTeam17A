@@ -30,19 +30,19 @@ public class SetStorePolicy extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
-        bridge.register("founder", "1234");
-        bridge.register("owner", "1234");
-        bridge.register("managerWithPermission", "1234");
-        bridge.register("managerNoPermission", "1234");
-        bridge.register("user1", "1234");
-        bridge.register("user2", "1234");
+        bridge.register("founder", "Aa1234");
+        bridge.register("owner", "Aa1234");
+        bridge.register("managerWithPermission", "Aa1234");
+        bridge.register("managerNoPermission", "Aa1234");
+        bridge.register("user1", "Aa1234");
+        bridge.register("user2", "Aa1234");
 
-        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "1234").getValue().getId();
-        storeOwnerId = bridge.login(bridge.createClient().getValue(), "owner", "1234").getValue().getId();
-        storeManagerWithPermissionId = bridge.login(bridge.createClient().getValue(), "managerWithPermission", "1234").getValue().getId();
-        storeManagerNoPermissionId = bridge.login(bridge.createClient().getValue(), "managerNoPermission", "1234").getValue().getId();
-        user1Id = bridge.login(bridge.createClient().getValue(), "user1", "1234").getValue().getId();
-        user2Id = bridge.login(bridge.createClient().getValue(), "user2", "1234").getValue().getId();
+        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234").getValue().getId();
+        storeOwnerId = bridge.login(bridge.createClient().getValue(), "owner", "Aa1234").getValue().getId();
+        storeManagerWithPermissionId = bridge.login(bridge.createClient().getValue(), "managerWithPermission", "Aa1234").getValue().getId();
+        storeManagerNoPermissionId = bridge.login(bridge.createClient().getValue(), "managerNoPermission", "Aa1234").getValue().getId();
+        user1Id = bridge.login(bridge.createClient().getValue(), "user1", "Aa1234").getValue().getId();
+        user2Id = bridge.login(bridge.createClient().getValue(), "user2", "Aa1234").getValue().getId();
 
         store = bridge.createStore(storeFounderId, "store", "test").getValue();
         storeId = store.getStoreId();
@@ -65,12 +65,12 @@ public class SetStorePolicy extends ProjectTest {
 
     @BeforeEach
     public void setUp()  {
-        bridge.login(bridge.createClient().getValue(), "founder", "1234");
-        bridge.login(bridge.createClient().getValue(), "owner", "1234");
-        bridge.login(bridge.createClient().getValue(), "managerWithPermission", "1234");
-        bridge.login(bridge.createClient().getValue(), "managerNoPermission", "1234");
-        bridge.login(bridge.createClient().getValue(), "user1", "1234");
-        bridge.login(bridge.createClient().getValue(), "user2", "1234");
+        bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "owner", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "managerWithPermission", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "managerNoPermission", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "user1", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "user2", "Aa1234");
     }
 
     @AfterEach

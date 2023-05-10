@@ -20,9 +20,9 @@ public class OpenStore extends ProjectTest {
     @BeforeAll
     public void beforeClass() {
         bridge.resetService();
-        bridge.register("founder", "1234");
+        bridge.register("founder", "Aa1234");
 
-        storeFounderId = bridge.login(bridge.createClient().getValue(),"founder", "1234").getValue().getId();
+        storeFounderId = bridge.login(bridge.createClient().getValue(),"founder", "Aa1234").getValue().getId();
         bridge.logout(storeFounderId);
 
         storeId = null;
@@ -30,7 +30,7 @@ public class OpenStore extends ProjectTest {
 
     @BeforeEach
     public void setUp()  {
-        bridge.login(bridge.createClient().getValue(),"founder", "1234").getValue().getId();
+        bridge.login(bridge.createClient().getValue(),"founder", "Aa1234").getValue().getId();
     }
 
     @AfterEach
@@ -66,7 +66,7 @@ public class OpenStore extends ProjectTest {
         Response<Integer> stores0 = bridge.numOfStores();
         Response<UUID> logout = bridge.logout(storeFounderId);
         Response<Boolean> open = bridge.closeStore(storeFounderId, storeId);
-        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "founder", "1234");
+        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         Response<Integer> stores1 = bridge.numOfStores();
 
         Assert.assertFalse(stores0.isError());

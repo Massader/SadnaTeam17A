@@ -33,15 +33,15 @@ public class PurchaseShoppingCart extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
-        bridge.register("founder", "1234");
-        bridge.register("user1", "1234");
-        bridge.register("user2", "1234");
-        bridge.register("user3", "1234");
+        bridge.register("founder", "Aa1234");
+        bridge.register("user1", "Aa1234");
+        bridge.register("user2", "Aa1234");
+        bridge.register("user3", "Aa1234");
 
-        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "1234").getValue().getId();
-        user1Id = bridge.login(bridge.createClient().getValue(), "user1", "1234").getValue().getId();
-        user2Id = bridge.login(bridge.createClient().getValue(), "user2", "1234").getValue().getId();
-        user3Id = bridge.login(bridge.createClient().getValue(), "user3", "1234").getValue().getId();
+        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234").getValue().getId();
+        user1Id = bridge.login(bridge.createClient().getValue(), "user1", "Aa1234").getValue().getId();
+        user2Id = bridge.login(bridge.createClient().getValue(), "user2", "Aa1234").getValue().getId();
+        user3Id = bridge.login(bridge.createClient().getValue(), "user3", "Aa1234").getValue().getId();
 
         store1 = bridge.createStore(storeFounderId, "store1", "test").getValue();
         store1Id = store1.getStoreId();
@@ -62,10 +62,10 @@ public class PurchaseShoppingCart extends ProjectTest {
 
     @BeforeEach
     public void setUp()  {
-        bridge.login(bridge.createClient().getValue(), "founder", "1234");
-        bridge.login(bridge.createClient().getValue(), "user1", "1234");
-        bridge.login(bridge.createClient().getValue(), "user2", "1234");
-        bridge.login(bridge.createClient().getValue(), "user3", "1234");
+        bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "user1", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "user2", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "user3", "Aa1234");
     }
 
     @AfterEach
@@ -86,7 +86,7 @@ public class PurchaseShoppingCart extends ProjectTest {
         bridge.addItemToCart(user1Id, item11Id, 2, store1Id);
         bridge.addItemToCart(user1Id, item12Id, 4, store1Id);
 
-        Response<Boolean> purchase = bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "1234000012340000");
+        Response<Boolean> purchase = bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "Aa12340000Aa12340000");
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeFounderId, store1Id);
         Response<ServiceItem> item1 = bridge.getItemInformation(store1Id, item11Id);
         Response<ServiceItem> item2 = bridge.getItemInformation(store1Id, item12Id);
@@ -109,7 +109,7 @@ public class PurchaseShoppingCart extends ProjectTest {
     public void purchaseOverQuantityFail() {
         bridge.addItemToCart(user1Id, item21Id, 200, store2Id);
 
-        Response<Boolean> purchase = bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "1234000012340000");
+        Response<Boolean> purchase = bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "Aa12340000Aa12340000");
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeFounderId, store2Id);
 
         Assert.assertTrue(purchase.isError());
@@ -123,7 +123,7 @@ public class PurchaseShoppingCart extends ProjectTest {
     public void purchaseInvalidCreditFail() {
         bridge.addItemToCart(user2Id, item21Id, 1, store2Id);
 
-        Response<Boolean> purchase = bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue(), "address", "123400001234FAIL");
+        Response<Boolean> purchase = bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue(), "address", "Aa12340000Aa1234FAIL");
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeFounderId, store2Id);
 
         Assert.assertTrue(purchase.isError());
@@ -137,7 +137,7 @@ public class PurchaseShoppingCart extends ProjectTest {
     public void purchaseWrongPriceFail() {
         bridge.addItemToCart(user3Id, item21Id, 1, store2Id);
 
-        Response<Boolean> purchase = bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue() - 1, "address", "1234000012340000");
+        Response<Boolean> purchase = bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue() - 1, "address", "Aa12340000Aa12340000");
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeFounderId, store2Id);
 
         Assert.assertTrue(purchase.isError());
@@ -152,8 +152,8 @@ public class PurchaseShoppingCart extends ProjectTest {
 
         UUID[] ids = new UUID[1000];
         for (int i = 0; i < 1000; i++) {
-            bridge.register("user_" + i, "1234");
-            ids[i] = bridge.login(bridge.createClient().getValue(), "user_" + i, "1234").getValue().getId();
+            bridge.register("user_" + i, "Aa1234");
+            ids[i] = bridge.login(bridge.createClient().getValue(), "user_" + i, "Aa1234").getValue().getId();
         }
 
         Response<Boolean>[] purchases = new Response[1000];
@@ -163,7 +163,7 @@ public class PurchaseShoppingCart extends ProjectTest {
                 final int index = i;
                 threads[i] = new Thread(() -> {
                     bridge.addItemToCart(ids[index], item22Id, 1, store2Id);
-                    purchases[index] = bridge.purchaseCart(ids[index], bridge.getCartTotal(ids[index]).getValue(), "address", "1234000012340000");
+                    purchases[index] = bridge.purchaseCart(ids[index], bridge.getCartTotal(ids[index]).getValue(), "address", "Aa12340000Aa12340000");
                 });
                 threads[i].start();
             }
@@ -194,8 +194,8 @@ public class PurchaseShoppingCart extends ProjectTest {
 
         UUID[] ids = new UUID[1000];
         for (int i = 0; i < 1000; i++) {
-            bridge.register("user_" + i, "1234");
-            ids[i] = bridge.login(bridge.createClient().getValue(), "user__" + i, "1234").getValue().getId();
+            bridge.register("user_" + i, "Aa1234");
+            ids[i] = bridge.login(bridge.createClient().getValue(), "user__" + i, "Aa1234").getValue().getId();
         }
 
         Response<Boolean>[] purchases = new Response[1000];
@@ -206,7 +206,7 @@ public class PurchaseShoppingCart extends ProjectTest {
                 threads[i] = new Thread(() -> {
                     int amount = (int)(Math.random() * 5);
                     bridge.addItemToCart(ids[index], item22Id, amount, store2Id);
-                    purchases[index] = bridge.purchaseCart(ids[index], bridge.getCartTotal(ids[index]).getValue(), "address", "1234000012340000");
+                    purchases[index] = bridge.purchaseCart(ids[index], bridge.getCartTotal(ids[index]).getValue(), "address", "Aa12340000Aa12340000");
                 });
                 threads[i].start();
             }

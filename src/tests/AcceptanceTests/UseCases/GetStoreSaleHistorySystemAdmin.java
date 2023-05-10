@@ -30,14 +30,14 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
-        bridge.register("founder", "1234");
-        bridge.register("user1", "1234");
-        bridge.register("user2", "1234");
+        bridge.register("founder", "Aa1234");
+        bridge.register("user1", "Aa1234");
+        bridge.register("user2", "Aa1234");
 
-        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "1234").getValue().getId();
+        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234").getValue().getId();
         adminId = bridge.getAdminCredentials().getValue();
-        user1Id = bridge.login(bridge.createClient().getValue(), "user1", "1234").getValue().getId();
-        user2Id = bridge.login(bridge.createClient().getValue(), "user2", "1234").getValue().getId();
+        user1Id = bridge.login(bridge.createClient().getValue(), "user1", "Aa1234").getValue().getId();
+        user2Id = bridge.login(bridge.createClient().getValue(), "user2", "Aa1234").getValue().getId();
 
         store = bridge.createStore(storeFounderId, "store", "test").getValue();
         storeId = store.getStoreId();
@@ -49,11 +49,11 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
 
         bridge.addItemToCart(user1Id, item1Id, 3, storeId);
         bridge.addItemToCart(user1Id, item2Id, 6, storeId);
-        bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "1234000012340000");
+        bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "Aa12340000Aa12340000");
 
         bridge.addItemToCart(user2Id, item3Id, 9, storeId);
         bridge.addItemToCart(user2Id, item4Id, 12, storeId);
-        bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue(), "address", "1234000012340000");
+        bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue(), "address", "Aa12340000Aa12340000");
 
         bridge.logout(storeFounderId);
         bridge.logout(user1Id);
@@ -62,9 +62,9 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
 
     @BeforeEach
     public void setUp()  {
-        bridge.login(bridge.createClient().getValue(), "founder", "1234");
-        bridge.login(bridge.createClient().getValue(), "user1", "1234");
-        bridge.login(bridge.createClient().getValue(), "user2", "1234");
+        bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "user1", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "user2", "Aa1234");
     }
 
     @AfterEach

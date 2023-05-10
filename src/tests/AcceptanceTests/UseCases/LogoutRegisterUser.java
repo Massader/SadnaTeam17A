@@ -18,14 +18,14 @@ public class LogoutRegisterUser extends ProjectTest {
 
     @BeforeAll
     public void beforeClass()  {
-        bridge.register("user", "1234");
-        userId = bridge.login(bridge.createClient().getValue(), "user", "1234").getValue().getId();
+        bridge.register("user", "Aa1234");
+        userId = bridge.login(bridge.createClient().getValue(), "user", "Aa1234").getValue().getId();
         bridge.logout(userId);
     }
 
     @BeforeEach
     public void setUp() {
-        bridge.login(bridge.createClient().getValue(), "user", "1234");
+        bridge.login(bridge.createClient().getValue(), "user", "Aa1234");
     }
 
     @AfterEach
@@ -75,8 +75,8 @@ public class LogoutRegisterUser extends ProjectTest {
     public void logoutConcurrently() {
         UUID[] ids = new UUID[1000];
         for (int i = 0; i < 1000; i++) {
-            bridge.register("user_" + i, "1234");
-            ids[i] = bridge.login(bridge.createClient().getValue(), "user_" + i, "1234").getValue().getId();
+            bridge.register("user_" + i, "Aa1234");
+            ids[i] = bridge.login(bridge.createClient().getValue(), "user_" + i, "Aa1234").getValue().getId();
         }
 
         Response<Integer> loggedInUsers0 = bridge.numOfLoggedInUsers();

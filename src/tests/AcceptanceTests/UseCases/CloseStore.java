@@ -24,15 +24,15 @@ public class CloseStore extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
-        bridge.register("founder", "1234");
-        bridge.register("owner", "1234");
-        bridge.register("manager", "1234");
-        bridge.register("user", "1234");
+        bridge.register("founder", "Aa1234");
+        bridge.register("owner", "Aa1234");
+        bridge.register("manager", "Aa1234");
+        bridge.register("user", "Aa1234");
 
-        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "1234").getValue().getId();
-        storeOwnerId = bridge.login(bridge.createClient().getValue(), "owner", "1234").getValue().getId();
-        storeManagerId = bridge.login(bridge.createClient().getValue(), "manager", "1234").getValue().getId();
-        userId = bridge.login(bridge.createClient().getValue(), "user", "1234").getValue().getId();
+        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234").getValue().getId();
+        storeOwnerId = bridge.login(bridge.createClient().getValue(), "owner", "Aa1234").getValue().getId();
+        storeManagerId = bridge.login(bridge.createClient().getValue(), "manager", "Aa1234").getValue().getId();
+        userId = bridge.login(bridge.createClient().getValue(), "user", "Aa1234").getValue().getId();
 
         store = bridge.createStore(storeFounderId, "store", "test").getValue();
         storeId = store.getStoreId();
@@ -48,10 +48,10 @@ public class CloseStore extends ProjectTest {
 
     @BeforeEach
     public void setUp()  {
-        bridge.login(bridge.createClient().getValue(), "founder", "1234");
-        bridge.login(bridge.createClient().getValue(), "owner", "1234");
-        bridge.login(bridge.createClient().getValue(), "manager", "1234");
-        bridge.login(bridge.createClient().getValue(), "user", "1234");
+        bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "owner", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "manager", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "user", "Aa1234");
         bridge.reopenStore(storeFounderId, storeId);
     }
 
@@ -145,7 +145,7 @@ public class CloseStore extends ProjectTest {
         Response<Integer> stores0 = bridge.numOfOpenStores();
         Response<UUID> logout = bridge.logout(storeFounderId);
         Response<Boolean> close = bridge.closeStore(storeFounderId, storeId);
-        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "founder", "1234");
+        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         Response<Integer> stores1 = bridge.numOfOpenStores();
         Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, storeId);
 
