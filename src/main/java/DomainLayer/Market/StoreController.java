@@ -268,6 +268,7 @@ public class StoreController {
                     if (purchase.isRated())
                         return Response.getFailResponse("Item has already been rated by user.");
                     item.addRating(rating);
+                    purchase.setRated(true);
                     return Response.getSuccessResponse(true);
                 }
             }
