@@ -119,8 +119,10 @@ public class Item {
         return review.getId();
     }
 
-    // make avarage of the old ratings with the new one
+    // make average of the old ratings with the new one
     public void addRating(int newRating) {
+        if (newRating < 0 || newRating > 5)
+            throw new RuntimeException("Rating can only be between 0 and 5.");
         double x = rating * ratesCount;
         x += newRating;
         ratesCount++;

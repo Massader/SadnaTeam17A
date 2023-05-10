@@ -29,8 +29,6 @@ public class Store {
     private final ConcurrentHashMap<UUID, Role> rolesMap;
 
 
-
-
     public Store(String name, String description) {
         this.name = name;
         this.storeId = UUID.randomUUID();
@@ -75,6 +73,8 @@ public class Store {
     }
 
     public void addRating(int newRating) {
+        if (newRating < 0 || newRating > 5)
+            throw new RuntimeException("Rating can only be between 0 and 5.");
         double x = rating * ratingCounter;
         x += newRating;
         ratingCounter++;
