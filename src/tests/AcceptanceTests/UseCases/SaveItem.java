@@ -35,15 +35,15 @@ public class SaveItem extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
-        bridge.register("founder", "1234");
-        bridge.register("user1", "1234");
-        bridge.register("user2", "1234");
-        bridge.register("user3", "1234");
+        bridge.register("founder", "Aa1234");
+        bridge.register("user1", "Aa1234");
+        bridge.register("user2", "Aa1234");
+        bridge.register("user3", "Aa1234");
 
-        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "1234").getValue().getId();
-        user1Id = bridge.login(bridge.createClient().getValue(), "user1", "1234").getValue().getId();
-        user2Id = bridge.login(bridge.createClient().getValue(), "user2", "1234").getValue().getId();
-        user3Id = bridge.login(bridge.createClient().getValue(), "user3", "1234").getValue().getId();
+        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234").getValue().getId();
+        user1Id = bridge.login(bridge.createClient().getValue(), "user1", "Aa1234").getValue().getId();
+        user2Id = bridge.login(bridge.createClient().getValue(), "user2", "Aa1234").getValue().getId();
+        user3Id = bridge.login(bridge.createClient().getValue(), "user3", "Aa1234").getValue().getId();
 
         store1 = bridge.createStore(storeFounderId, "store1", "test").getValue();
         store1Id = store1.getStoreId();
@@ -63,10 +63,10 @@ public class SaveItem extends ProjectTest {
 
     @BeforeEach
     public void setUp()  {
-        bridge.login(bridge.createClient().getValue(), "founder", "1234");
-        bridge.login(bridge.createClient().getValue(), "user1", "1234");
-        bridge.login(bridge.createClient().getValue(), "user2", "1234");
-        bridge.login(bridge.createClient().getValue(), "user3", "1234");
+        bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "user1", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "user2", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "user3", "Aa1234");
     }
 
     @AfterEach
@@ -117,8 +117,8 @@ public class SaveItem extends ProjectTest {
         UUID[] ids = new UUID[1000];
         List<ServiceShoppingBasket>[] carts0 = new List[1000];
         for (int i = 0; i < 1000; i++) {
-            bridge.register("user_" + i, "1234");
-            ids[i] = bridge.login(bridge.createClient().getValue(), "user_" + i, "1234").getValue().getId();
+            bridge.register("user_" + i, "Aa1234");
+            ids[i] = bridge.login(bridge.createClient().getValue(), "user_" + i, "Aa1234").getValue().getId();
             carts0[i] = bridge.getCart(ids[i]).getValue();
         }
 

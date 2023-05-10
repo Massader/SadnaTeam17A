@@ -17,7 +17,7 @@ public class Login extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
-        bridge.register("user", "1234");
+        bridge.register("user", "Aa1234");
         userId = bridge.login(bridge.createClient().getValue(), "test1","Test1").getValue().getId();
         bridge.logout(userId);
     }
@@ -42,7 +42,7 @@ public class Login extends ProjectTest {
     //tests if the login function works correctly by registering and logging in with valid credentials and asserting that the client's UUID is not null.
     public void loginSuccess() {
         Response<Integer> loggedInUsers0 = bridge.numOfLoggedInUsers();
-        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "user","1234");
+        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "user","Aa1234");
         Response<Boolean> loggedIn = bridge.isLoggedIn(login.getValue().getId());
         Response<Integer> loggedInUsers1 = bridge.numOfLoggedInUsers();
 
@@ -61,8 +61,8 @@ public class Login extends ProjectTest {
     //checks if a logged-in user can login again
     public void loginAlreadyLoggedInFail() {
         Response<Integer> loggedInUsers0 = bridge.numOfLoggedInUsers();
-        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "user","1234");
-        Response<ServiceUser> loginAgain = bridge.login(bridge.createClient().getValue(), "user","1234");
+        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "user","Aa1234");
+        Response<ServiceUser> loginAgain = bridge.login(bridge.createClient().getValue(), "user","Aa1234");
         Response<Boolean> loggedIn = bridge.isLoggedIn(login.getValue().getId());
         Response<Integer> loggedInUsers1 = bridge.numOfLoggedInUsers();
 
@@ -80,7 +80,7 @@ public class Login extends ProjectTest {
     @Test
     //tests if the login function handles the scenario where the username is incorrect by asserting that the returned UUID is null.
     public void loginWrongUsernameFail() {
-        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "wrong","1234");
+        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "wrong","Aa1234");
 
         Assert.assertTrue(login.isError());
         Assert.assertEquals("User is not registered in the system.", login.getMessage());
@@ -106,7 +106,7 @@ public class Login extends ProjectTest {
         Response<Integer> loggedInUsers0 = bridge.numOfLoggedInUsers();
 
         for (int i = 0; i < 1000; i++) {
-            bridge.register("user_" + i, "1234");
+            bridge.register("user_" + i, "Aa1234");
         }
 
         Response<ServiceUser>[] logins = new Response[1000];
@@ -114,7 +114,7 @@ public class Login extends ProjectTest {
         try {
             for (int i = 0; i < 1000; i++) {
                 final int index = i;
-                threads[i] = new Thread(() -> logins[index] = bridge.login(bridge.createClient().getValue(), "user_" + index, "1234"));
+                threads[i] = new Thread(() -> logins[index] = bridge.login(bridge.createClient().getValue(), "user_" + index, "Aa1234"));
                 threads[i].start();
             }
             for (Thread t : threads) {

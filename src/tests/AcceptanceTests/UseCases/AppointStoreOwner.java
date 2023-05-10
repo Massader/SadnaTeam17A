@@ -31,21 +31,21 @@ public class AppointStoreOwner extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
-        bridge.register("founder", "1234");
-        bridge.register("owner1", "1234");
-        bridge.register("owner2", "1234");
-        bridge.register("manager1", "1234");
-        bridge.register("manager2", "1234");
-        bridge.register("user1", "1234");
-        bridge.register("user2", "1234");
+        bridge.register("founder", "Aa1234");
+        bridge.register("owner1", "Aa1234");
+        bridge.register("owner2", "Aa1234");
+        bridge.register("manager1", "Aa1234");
+        bridge.register("manager2", "Aa1234");
+        bridge.register("user1", "Aa1234");
+        bridge.register("user2", "Aa1234");
 
-        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "1234").getValue().getId();
-        storeOwner1Id = bridge.login(bridge.createClient().getValue(), "owner1", "1234").getValue().getId();
-        storeOwner2Id = bridge.login(bridge.createClient().getValue(), "owner2", "1234").getValue().getId();
-        storeManager1Id = bridge.login(bridge.createClient().getValue(), "manager1", "1234").getValue().getId();
-        storeManager2Id = bridge.login(bridge.createClient().getValue(), "manager2", "1234").getValue().getId();
-        user1Id = bridge.login(bridge.createClient().getValue(), "user1", "1234").getValue().getId();
-        user2Id = bridge.login(bridge.createClient().getValue(), "user2", "1234").getValue().getId();
+        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234").getValue().getId();
+        storeOwner1Id = bridge.login(bridge.createClient().getValue(), "owner1", "Aa1234").getValue().getId();
+        storeOwner2Id = bridge.login(bridge.createClient().getValue(), "owner2", "Aa1234").getValue().getId();
+        storeManager1Id = bridge.login(bridge.createClient().getValue(), "manager1", "Aa1234").getValue().getId();
+        storeManager2Id = bridge.login(bridge.createClient().getValue(), "manager2", "Aa1234").getValue().getId();
+        user1Id = bridge.login(bridge.createClient().getValue(), "user1", "Aa1234").getValue().getId();
+        user2Id = bridge.login(bridge.createClient().getValue(), "user2", "Aa1234").getValue().getId();
 
         store = bridge.createStore(storeFounderId, "store", "test").getValue();
         storeId = store.getStoreId();
@@ -65,13 +65,13 @@ public class AppointStoreOwner extends ProjectTest {
 
     @BeforeEach
     public void setUp()  {
-        bridge.login(bridge.createClient().getValue(), "founder", "1234");
-        bridge.login(bridge.createClient().getValue(), "owner1", "1234");
-        bridge.login(bridge.createClient().getValue(), "owner2", "1234");
-        bridge.login(bridge.createClient().getValue(), "manager1", "1234");
-        bridge.login(bridge.createClient().getValue(), "manager2", "1234");
-        bridge.login(bridge.createClient().getValue(), "user1", "1234");
-        bridge.login(bridge.createClient().getValue(), "user2", "1234");
+        bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "owner1", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "owner2", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "manager1", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "manager2", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "user1", "Aa1234");
+        bridge.login(bridge.createClient().getValue(), "user2", "Aa1234");
     }
 
     @AfterEach
@@ -185,7 +185,7 @@ public class AppointStoreOwner extends ProjectTest {
         Response<List<Role>> userRoles0 = bridge.getUserRoles(user1Id);
         Response<UUID> logout = bridge.logout(storeFounderId);
         Response<Boolean> appointFail = bridge.appointStoreOwner(storeFounderId, user1Id, storeId);
-        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "founder", "1234");
+        Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         Response<List<ServiceUser>> storeStaff1 = bridge.getStoreStaffList(storeFounderId, storeId);
         Response<List<Role>> userRoles1 = bridge.getUserRoles(user1Id);
 

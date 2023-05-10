@@ -118,9 +118,9 @@ public class SearchStoreItem extends ProjectTest {
     */
     @BeforeAll
     public void beforeClass() {
-        bridge.register("founder", "1234");
+        bridge.register("founder", "Aa1234");
 
-        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "1234").getValue().getId();
+        storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234").getValue().getId();
 
         fruitStore = bridge.createStore(storeFounderId, "Fruit Store", "fruits and vegetables").getValue();
         fruitStoreId = fruitStore.getStoreId();
@@ -185,7 +185,7 @@ public class SearchStoreItem extends ProjectTest {
 
     @BeforeEach
     public void setUp()  {
-        bridge.login(bridge.createClient().getValue(), "founder", "1234");
+        bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         bridge.reopenStore(storeFounderId, fruitStoreId);
         bridge.reopenStore(storeFounderId, carStoreId);
     }
