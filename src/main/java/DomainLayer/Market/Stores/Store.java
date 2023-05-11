@@ -236,7 +236,7 @@ public class Store {
                 if (quantityToRemove <= oldQuantity){
                 //update Store, history Sale Store, User purchase
                     items.get(itemId).setQuantity(oldQuantity - quantityToRemove);
-                    Sale sale = new Sale(client.getId(),itemId,quantityToRemove);
+                    Sale sale = new Sale(client.getId(),shoppingBasket.getStoreId(), itemId,quantityToRemove);
                     sales.add(sale);
                     if(client instanceof User){
                         Purchase purchase = new Purchase(client.getId(),itemId,quantityToRemove, shoppingBasket.getStoreId());
@@ -254,7 +254,7 @@ public class Store {
                 int oldQuantity = items.get(itemId).getQuantity();
                     //update Store, history Sale Store, User purchase
                     items.get(itemId).setQuantity(oldQuantity + quantityToRemove);
-                    Sale sale = new Sale(client.getId(),itemId,quantityToRemove);
+                    Sale sale = new Sale(client.getId(), shoppingBasket.getStoreId(), itemId,quantityToRemove); //TODO: This will not work
                     sales.remove(sale);
                     if(client instanceof User){
                         Purchase purchase = new Purchase(client.getId(),itemId,quantityToRemove, shoppingBasket.getStoreId());

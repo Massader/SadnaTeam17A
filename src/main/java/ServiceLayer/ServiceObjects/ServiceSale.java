@@ -7,6 +7,7 @@ import java.util.UUID;
 public class ServiceSale {
     private UUID id;
     private UUID userId;
+    private UUID storeId;
     private UUID itemId;
     private Date date;
     private int quantity;
@@ -15,6 +16,7 @@ public class ServiceSale {
     public ServiceSale(Sale sale) {
         this.id = sale.getId();
         this.userId = sale.getUserId();
+        this.storeId = sale.getStoreId();
         this.itemId = sale.getItemId();
         this.date = sale.getDate();
         this.quantity = sale.getQuantity();
@@ -38,5 +40,9 @@ public class ServiceSale {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public UUID getStoreId() {
+        return storeId;
     }
 }
