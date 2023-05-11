@@ -246,21 +246,48 @@ public class Store {
             }
         }
     }
+
     public void unPurchaseBasket(Client client, ShoppingBasket shoppingBasket) throws Exception {
-        ConcurrentHashMap<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
         synchronized (items) {
-            for (UUID itemId : shoppingBasketItems.keySet()) {
-                int quantityToRemove = shoppingBasketItems.get(itemId);
-                int oldQuantity = items.get(itemId).getQuantity();
-                    //update Store, history Sale Store, User purchase
-                    items.get(itemId).setQuantity(oldQuantity + quantityToRemove);
-                    Sale sale = new Sale(client.getId(), shoppingBasket.getStoreId(), itemId,quantityToRemove); //TODO: This will not work
-                    sales.remove(sale);
-                    if(client instanceof User){
-                        Purchase purchase = new Purchase(client.getId(),itemId,quantityToRemove, shoppingBasket.getStoreId());
-                        ((User) client).removePurchase(purchase);
-                    }}}
+            for (UUID itemId : shoppingBasket.getItems().keySet()) {
+                int quantityToRestore = shoppingBasket.getItems().get(itemId);
+                int oldQuantity = items.get(itemId).getQuantity() + quantityToRestore;
+                items.get(itemId).setQuantity(oldQuantity);
+
+                // Remove the sale from the sales history
+                Sale saleToRemove = null;
+                for (Sale sale : sales) {
+                    if (sale.getUserId().equals(client.getId()) && sale.getStoreId().equals(shoppingBasket.getStoreId())
+                            && sale.getItemId().equals(itemId) && sale.getQuantity() == quantityToRestore) {
+                        saleToRemove = sale;
+                        break;
+                    }
+                }
+                if (saleToRemove != null) {
+                    sales.remove(saleToRemove);
+                }
+
+                // Remove the purchase from the user's purchase history
+                if (client instanceof User) {
+                    User user = (User) client;
+                    Purchase purchaseToRemove = null;
+                    for (Purchase purchase : user.getPurchases()) {
+                        if (purchase.getItemId().equals(itemId) && purchase.getQuantity() == quantityToRestore
+                                && purchase.getStoreId().equals(shoppingBasket.getStoreId())) {
+                            purchaseToRemove = purchase;
+                            break;
+                        }
+                    }
+                    if (purchaseToRemove != null) {
+                        user.getPurchases().remove(purchaseToRemove);
+                    }
+                }
+            }
+        }
     }
+
+
+
 
 
 
@@ -300,7 +327,7 @@ public class Store {
                 if(itemId==null){ throw new Exception("can't Creating Purchase Term of Item Purchase Rule if item id is null");}
                 purchaseRule = new ItemPurchaseRule(itemId);
                 break;
-            case  2://ShopingBasket
+            case  2://ShoppingBasket
                 purchaseRule = new ShopingBasketPurchaseRule();
                 break;
             case  3://category
@@ -325,7 +352,7 @@ public class Store {
                 if(DiscountItemId==null){ throw new Exception("can't Creating discount Term of Item discount Rule if item id is null");}
                 OptioncalculateDiscount = new ItemCalculateDiscount(itemId);
                 break;
-            case  2://ShopingBasket
+            case  2://ShoppingBasket
                 OptioncalculateDiscount = new ShopingBasketCalculateDiscount();
                 break;
             case  3://category
