@@ -220,4 +220,5 @@ public class StoreController {
         return service.addPolicyTermByStoreOwner(request.getClientCredentials(), request.getStoreId(), request.getRule(), request.getAtList(),
                 request.getQuantity(), request.getItemId(), request.getCategory());
     }
+
 }

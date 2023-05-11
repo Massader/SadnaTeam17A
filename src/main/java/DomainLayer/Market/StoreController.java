@@ -357,6 +357,8 @@ public class StoreController {
                 return Response.getFailResponse("User doesn't have permission.");
             if (!getStore(storeId).getItems().containsKey(itemId))
                 return Response.getFailResponse("Item does not exist");
+            if (name == "")
+                return Response.getFailResponse("illegal name!");
             getStore(storeId).getItems().get(itemId).setName(name);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
@@ -389,6 +391,8 @@ public class StoreController {
                 return Response.getFailResponse("User doesn't have permission.");
             if (!getStore(storeId).getItems().containsKey(itemId))
                 return Response.getFailResponse("Item does not exist");
+            if (price <=0)
+                return Response.getFailResponse("illegal price");
             getStore(storeId).getItems().get(itemId).setPrice(price);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
