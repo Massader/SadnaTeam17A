@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ShopingBasketPurchaseRule implements PurchaseRule {
     @Override
-    public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity, Boolean atList) {
+    public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity, Boolean atLeast) {
             int price = 0;
             ConcurrentHashMap<UUID,Item> storeItems = store.getItems();
             ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
@@ -18,7 +18,7 @@ public class ShopingBasketPurchaseRule implements PurchaseRule {
                  price+=storeItems.get(itemID).getPrice();}//TODO: check to option that we dont have item in store?
             }
             boolean moreThenQuantity = price >= quantity;
-            return (quantity == price || atList && moreThenQuantity || (!atList && !moreThenQuantity));
+            return (quantity == price || atLeast && moreThenQuantity || (!atLeast && !moreThenQuantity));
         }
 
     public boolean equals(Object obj) {

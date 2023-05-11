@@ -51,7 +51,7 @@ public abstract class PurchaseTerm {
         }
 
 
-    public PurchaseTerm creatingPurchaseTerm(int rule, Boolean atList, int quantity, UUID itemId, String category) throws Exception {
+    public PurchaseTerm creatingPurchaseTerm(int rule, Boolean atLeast, int quantity, UUID itemId, String category) throws Exception {
         PurchaseRule purchaseRule;
         switch (rule){
             case 1://Item
@@ -67,8 +67,8 @@ public abstract class PurchaseTerm {
             default:
             { throw new Exception("can't Creating Purchase Term which is not a shopping basket item or category");}
         }
-        if (atList){
-            return new atListPurchaseRule(purchaseRule,quantity);
+        if (atLeast){
+            return new atLeastPurchaseRule(purchaseRule,quantity);
         }
         else return new AtMostPurchaseRule(purchaseRule,quantity);
 

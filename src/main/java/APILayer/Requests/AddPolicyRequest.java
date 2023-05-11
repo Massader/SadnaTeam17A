@@ -5,16 +5,16 @@ import java.util.UUID;
 public class AddPolicyRequest extends Request{
     private UUID storeId;
     private int rule;
-    private Boolean atList;
+    private Boolean atLeast;
     private int quantity;
     private UUID itemId;
     private String category;
 
-    public AddPolicyRequest(UUID clientCredentials, UUID storeId, int rule, Boolean atList, int quantity, UUID itemId, String category) {
+    public AddPolicyRequest(UUID clientCredentials, UUID storeId, int rule, Boolean atLeast, int quantity, UUID itemId, String category) {
         super(clientCredentials);
         this.storeId = storeId;
         this.rule = rule;
-        this.atList = atList;
+        this.atLeast = atLeast;
         this.quantity = quantity;
         this.itemId = itemId;
         this.category = category;
@@ -36,12 +36,13 @@ public class AddPolicyRequest extends Request{
         this.rule = rule;
     }
 
-    public Boolean getAtList() {
-        return atList;
+    public Boolean getatLeast() {
+        return atLeas
+        t;
     }
 
-    public void setAtList(Boolean atList) {
-        this.atList = atList;
+    public void setatLeast(Boolean atLeast) {
+        this.atLeast = atLeast;
     }
 
     public int getQuantity() {

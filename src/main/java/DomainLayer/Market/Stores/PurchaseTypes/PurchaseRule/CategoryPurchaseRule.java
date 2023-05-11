@@ -21,7 +21,7 @@ public class CategoryPurchaseRule implements PurchaseRule {
     }
 
     @Override
-    public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity, Boolean atList) {
+    public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity, Boolean atLeast) {
         int categoryQuantity = 0;
         ConcurrentHashMap<UUID,Item> storeItems = store.getItems();
          ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
@@ -32,7 +32,7 @@ public class CategoryPurchaseRule implements PurchaseRule {
             }
         }
         boolean moreThenQuantity = categoryQuantity >= quantity;
-        return (quantity == categoryQuantity || atList && moreThenQuantity || (!atList && !moreThenQuantity));
+        return (quantity == categoryQuantity || atLeast && moreThenQuantity || (!atLeast && !moreThenQuantity));
     }
 
     @Override
