@@ -39,7 +39,7 @@ public interface Bridge {
     Response<Boolean> setItemName(UUID clientCredentials, UUID storeId, UUID itemId, String name);
     Response<Boolean> setItemDescription(UUID clientCredentials, UUID storeId, UUID itemId, String description);
     Response<Boolean> setItemPrice(UUID clientCredentials, UUID storeId, UUID itemId, double price);
-    Response<Boolean> addPolicyTerm(UUID clientCredentials, UUID storeId, int rule, Boolean atList, int quantity, UUID itemId, String category);
+    Response<Boolean> addPolicyTerm(UUID clientCredentials, UUID storeId, int rule, Boolean atLeast, int quantity, UUID itemId, String category);
     Response<Boolean> appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId);
     Response<Boolean> appointStoreManager(UUID clientCredentials, UUID appointee, UUID storeId);
     Response<Boolean> setStoreManagerPermissions(UUID clientCredentials, UUID manager, UUID storeId, List<Integer> permissions);
