@@ -126,8 +126,8 @@ public class ProxyBridge implements Bridge {
         return real == null ? null : real.setItemPrice(clientCredentials, storeId, itemId, price);
     }
 
-    public Response<Boolean> addPolicyTerm(UUID clientCredentials, UUID storeId, int rule, Boolean atList, int quantity, UUID itemId, String category) {
-        return real == null ? null : real.addPolicyTerm(clientCredentials, storeId, rule, atList, quantity, itemId, category);
+    public Response<Boolean> addPolicyTerm(UUID clientCredentials, UUID storeId, int rule, Boolean atLeast, int quantity, UUID itemId, String category) {
+        return real == null ? null : real.addPolicyTerm(clientCredentials, storeId, rule, atLeast, quantity, itemId, category);
     }
 
     public Response<Boolean> appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId) {
