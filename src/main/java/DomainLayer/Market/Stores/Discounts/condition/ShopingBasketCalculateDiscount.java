@@ -12,6 +12,7 @@ public class ShopingBasketCalculateDiscount implements CalculateDiscount {
 
     @Override
     public Double CalculateDiscount(ShoppingBasket shoppingBasket, Store store, Double discountPercentage) {
+        if (discountPercentage>1||discountPercentage<=0){return 0.0;}
        // ConcurrentLinkedQueue<Double> DiscountOption= new ConcurrentLinkedQueue<>();
         Double price =store.calculatePriceOfBasket(shoppingBasket.getItems());
        // DiscountOption.add(price*discountPercentage);
