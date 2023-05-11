@@ -3,12 +3,12 @@ package DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 
-public class atListPurchaseRule extends PurchaseTerm {
+public class atLeastPurchaseRule extends PurchaseTerm {
 
 
     private int quantity;
 
-    public atListPurchaseRule(PurchaseRule purchaseRule, int quantity) {
+    public atLeastPurchaseRule(PurchaseRule purchaseRule, int quantity) {
         super(purchaseRule);
         this.quantity = quantity;
     }

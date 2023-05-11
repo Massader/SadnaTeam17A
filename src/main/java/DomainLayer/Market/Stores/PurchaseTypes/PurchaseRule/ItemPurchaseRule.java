@@ -19,13 +19,13 @@ public class ItemPurchaseRule implements PurchaseRule {
     }
 
     @Override
-    public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity,Boolean atList) {
+    public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity,Boolean atLeast) {
         ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
         int basketQuantity=0;
         if(items.containsKey(getItemId())){
             basketQuantity= items.get(getItemId());}
         boolean moreThenQuantity = basketQuantity>=quantity;
-        return  (quantity==basketQuantity||atList&&moreThenQuantity||(!atList&&!moreThenQuantity));
+        return  (quantity==basketQuantity||atLeast&&moreThenQuantity||(!atLeast&&!moreThenQuantity));
     }
 
     @Override
