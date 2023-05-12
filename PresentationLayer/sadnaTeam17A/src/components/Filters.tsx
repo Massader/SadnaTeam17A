@@ -8,20 +8,30 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { AiOutlineStar, AiFillStar } from "react-icons/ai";
 
 interface Props {
   setMinPrice: React.Dispatch<React.SetStateAction<number>>;
   setMaxPrice: React.Dispatch<React.SetStateAction<number>>;
+  setItemRating: React.Dispatch<React.SetStateAction<number>>;
+  itemRating: number;
 }
 
-const Filters = ({ setMinPrice, setMaxPrice }: Props) => {
-  const [itemRating, setItemRating] = useState(0);
+const Filters = ({
+  setMinPrice,
+  setMaxPrice,
+  itemRating,
+  setItemRating,
+}: Props) => {
   const [submittedItem, setSubmittedItem] = useState(0);
   const [storeRating, setStoreRating] = useState(0);
   const [submittedStore, setSubmittedStore] = useState(0);
+
+  useEffect(() => {
+    setItemRating(0);
+  }, []);
 
   const handleMouseEnterItem = (index: number) => {
     setItemRating(index + 1);
@@ -32,7 +42,11 @@ const Filters = ({ setMinPrice, setMaxPrice }: Props) => {
   };
 
   const handleClickitemRating = (index: number) => {
-    setSubmittedItem(index + 1);
+    if (submittedItem === index + 1) {
+      setSubmittedItem(0);
+    } else {
+      setSubmittedItem(index + 1);
+    }
   };
 
   const handleMouseEnterStore = (index: number) => {
@@ -106,7 +120,7 @@ const Filters = ({ setMinPrice, setMaxPrice }: Props) => {
             </span>
           ))}
         </Flex>
-        <Text>Category:</Text>
+        {/* <Text>Category:</Text>
         <Select placeholder="Select Category">
           <option value="option1">Option 1</option>
           <option value="option2">Option 2</option>
@@ -128,7 +142,7 @@ const Filters = ({ setMinPrice, setMaxPrice }: Props) => {
               )}
             </span>
           ))}
-        </Flex>
+        </Flex> */}
       </Stack>
     </>
   );

@@ -8,9 +8,19 @@ interface Props {
   onMyStores: () => void;
   setPage: React.Dispatch<React.SetStateAction<string>>;
   pages: string[];
+  setLeftPage: React.Dispatch<React.SetStateAction<string>>;
+  leftPages: string[];
 }
 
-const NavBar = ({ onHome, isLogged, onMyStores, pages, setPage }: Props) => {
+const NavBar = ({
+  onHome,
+  isLogged,
+  onMyStores,
+  pages,
+  setPage,
+  setLeftPage,
+  leftPages,
+}: Props) => {
   const { isAdmin } = useContext(ClientCredentialsContext);
   return (
     <HStack padding={1}>
@@ -25,7 +35,10 @@ const NavBar = ({ onHome, isLogged, onMyStores, pages, setPage }: Props) => {
         Home
       </Button>
       <Button
-        onClick={() => setPage(pages[5])}
+        onClick={() => {
+          setPage(pages[5]);
+          setLeftPage(leftPages[0]);
+        }}
         variant="ghost"
         color="white"
         _hover={{ borderColor: "white", color: "white" }}
@@ -34,7 +47,7 @@ const NavBar = ({ onHome, isLogged, onMyStores, pages, setPage }: Props) => {
       >
         Stores
       </Button>
-      <Button
+      {/* <Button
         variant="ghost"
         color="white"
         _hover={{ borderColor: "white", color: "white" }}
@@ -42,10 +55,13 @@ const NavBar = ({ onHome, isLogged, onMyStores, pages, setPage }: Props) => {
         borderColor="transparent"
       >
         Categories
-      </Button>
+      </Button> */}
       {isLogged && (
         <Button
-          onClick={() => setPage(pages[4])}
+          onClick={() => {
+            setPage(pages[4]);
+            setLeftPage(leftPages[0]);
+          }}
           variant="ghost"
           color="white"
           _hover={{ borderColor: "white", color: "white" }}
@@ -69,7 +85,10 @@ const NavBar = ({ onHome, isLogged, onMyStores, pages, setPage }: Props) => {
       )}
       {isAdmin && (
         <Button
-          onClick={() => setPage(pages[8])}
+          onClick={() => {
+            setPage(pages[8]);
+            setLeftPage(leftPages[0]);
+          }}
           variant="ghost"
           color="white"
           _hover={{ borderColor: "white", color: "white" }}

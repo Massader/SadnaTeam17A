@@ -72,7 +72,11 @@ const SignIn = ({ onLogin, newClientCredentials, setPage, pages }: Props) => {
           >
             REGISTER
           </Button>
-          <Button fontSize="sm" fontWeight="bold">
+          <Button
+            onClick={() => setPage(pages[9])}
+            fontSize="sm"
+            fontWeight="bold"
+          >
             FORGOT?
           </Button>
         </Flex>

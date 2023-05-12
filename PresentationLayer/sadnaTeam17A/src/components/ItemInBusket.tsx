@@ -122,7 +122,7 @@ const ItemInBusket = ({ itemId, quantity, storeId }: Props) => {
       </CardBody>
       <Divider />
       <CardFooter>
-        <Stack>
+        <Stack width="100%">
           <Button
             onClick={() => handleRemoveFromCart(quantity)}
             variant="solid"

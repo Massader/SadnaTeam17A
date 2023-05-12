@@ -10,6 +10,7 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import ItemCard from "./ItemCard";
 import { Item } from "../types";
+import { ClientCredentialsContext } from "../App";
 
 interface Props {
   keyword: string;
@@ -17,11 +18,19 @@ interface Props {
   category?: string;
   minPrice: number;
   maxPrice: number;
-  itemRating?: number;
+  itemRating: number;
   storeRating?: number;
 }
 
-const ItemGrid = ({ storeId, minPrice, maxPrice, keyword }: Props) => {
+const ItemGrid = ({
+  storeId,
+  minPrice,
+  maxPrice,
+  keyword,
+  itemRating,
+}: Props) => {
+  const { clientCredentials } = useContext(ClientCredentialsContext);
+
   const [page, setPage] = useState(1);
   const [pagesNum, setPagesNum] = useState(0);
   const [items, setItems] = useState<Item[]>([]);
@@ -34,41 +43,63 @@ const ItemGrid = ({ storeId, minPrice, maxPrice, keyword }: Props) => {
       lg: 6,
       xl: 6,
       "2xl": 8,
-    }) || 2;
+    }) || 6;
 
   const fetchItems = async () => {
-    const response = await axios.get(
-      `http://localhost:8080/api/v1/stores/search-item/keyword=${keyword}&category=&minPrice=${minPrice}&maxPrice=${maxPrice}&itemRating=&storeRating=&storeId=${storeId}&number=${number}&page=${page}`
-    );
-    if (!response.data.error) {
-      setItems(response.data.value);
-    } else {
-      setPage(page - 1);
+    if (clientCredentials !== "") {
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/stores/search-item/keyword=${keyword}&category=&minPrice=${minPrice}&maxPrice=${maxPrice}&itemRating=${itemRating}&storeRating=&storeId=${storeId}&number=${number}&page=${page}`
+      );
+      if (!response.data.error) {
+        setItems(response.data.value);
+      } else {
+        setPage(page - 1);
+      }
     }
   };
 
   const getItemsNumber = async () => {
-    const response = await axios.get(
-      `http://localhost:8080/api/v1/stores/search-item-num/keyword=${keyword}&category=&minPrice=${minPrice}&maxPrice=${maxPrice}&itemRating=&storeRating=&storeId=${storeId}&number=&page=`
-    );
-    if (!response.data.error) {
-      setPagesNum(response.data.value / number);
-    } else {
-      console.log(response.data.error);
+    if (clientCredentials !== "") {
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/stores/search-item-num/keyword=${keyword}&category=&minPrice=${minPrice}&maxPrice=${maxPrice}&itemRating=${itemRating}&storeRating=&storeId=${storeId}&number=&page=`
+      );
+      if (!response.data.error) {
+        setPagesNum(response.data.value / number);
+      } else {
+        console.log(response.data.error);
+      }
     }
   };
 
   useEffect(() => {
     setPage(1);
-  }, [keyword, minPrice, maxPrice]);
+  }, [clientCredentials, keyword, minPrice, maxPrice, itemRating]);
 
   useEffect(() => {
     fetchItems();
-  }, [page, number, storeId, keyword, minPrice, maxPrice]);
+  }, [
+    clientCredentials,
+    page,
+    number,
+    storeId,
+    keyword,
+    minPrice,
+    maxPrice,
+    itemRating,
+  ]);
 
   useEffect(() => {
     getItemsNumber();
-  }, [page, number, storeId, keyword, minPrice, maxPrice]);
+  }, [
+    clientCredentials,
+    page,
+    number,
+    storeId,
+    keyword,
+    minPrice,
+    maxPrice,
+    itemRating,
+  ]);
 
   return (
     <>

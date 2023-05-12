@@ -12,6 +12,8 @@ interface Props {
   setKeyword: React.Dispatch<React.SetStateAction<string>>;
   setPage: React.Dispatch<React.SetStateAction<string>>;
   pages: string[];
+  setLeftPage: React.Dispatch<React.SetStateAction<string>>;
+  leftPages: string[];
 }
 
 const SearchBar = ({
@@ -21,6 +23,8 @@ const SearchBar = ({
   setKeyword,
   setPage,
   pages,
+  setLeftPage,
+  leftPages,
 }: Props) => {
   const { clientCredentials, username, setUsername, setAdmin } = useContext(
     ClientCredentialsContext
@@ -50,7 +54,14 @@ const SearchBar = ({
       <Flex>
         <Box marginRight={3}>
           {!isLogged && (
-            <Button onClick={() => setPage(pages[1])}>Sign In</Button>
+            <Button
+              onClick={() => {
+                setPage(pages[1]);
+                setLeftPage(leftPages[0]);
+              }}
+            >
+              Sign In
+            </Button>
           )}
           {isLogged && (
             <Flex>
@@ -64,7 +75,10 @@ const SearchBar = ({
           )}
         </Box>
         <AiOutlineShoppingCart
-          onClick={() => setPage(pages[7])}
+          onClick={() => {
+            setPage(pages[7]);
+            setLeftPage(leftPages[0]);
+          }}
           size={40}
           color="white"
         />
