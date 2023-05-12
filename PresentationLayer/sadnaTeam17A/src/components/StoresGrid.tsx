@@ -28,7 +28,7 @@ const StoresGrid = ({ onShop }: Props) => {
       lg: 6,
       xl: 6,
       "2xl": 8,
-    }) || 2;
+    }) || 6;
 
   const fetchStores = async () => {
     const response = await axios.get(

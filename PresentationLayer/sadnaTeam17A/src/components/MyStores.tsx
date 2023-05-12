@@ -31,7 +31,7 @@ const MyStores = ({ onManageStore, onCreateStore }: Props) => {
     const tempStores = [];
     for (const role of roles) {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/stores/store-info/storeId=${role.storeId}`
+        `http://localhost:8080/api/v1/stores/store-info/id=${clientCredentials}&storeId=${role.storeId}`
       );
       if (!response.data.error) {
         tempStores.push(response.data.value);

@@ -43,7 +43,7 @@ const ItemCard = ({
 
   const getStoreName = async () => {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/stores/store-info/storeId=${storeId}`
+      `http://localhost:8080/api/v1/stores/store-info/id=${clientCredentials}&storeId=${storeId}`
     );
     if (!response.data.error) {
       setStoreName(response.data.value.name);
@@ -93,14 +93,14 @@ const ItemCard = ({
               ${price}
             </Text>
             <Text color="blue.600" fontSize={22}>
-              Rating: {rating}
+              Rating: {rating.toFixed(1)}
             </Text>
           </Flex>
         </Stack>
       </CardBody>
       <Divider />
       <CardFooter>
-        <Stack>
+        <Stack width="100%">
           <Button
             onClick={() => handleAddToCart()}
             variant="solid"

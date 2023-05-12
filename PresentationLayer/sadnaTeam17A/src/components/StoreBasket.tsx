@@ -1,19 +1,21 @@
 import { SimpleGrid, Text } from "@chakra-ui/react";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Basket } from "../types";
 import ItemInBusket from "./ItemInBusket";
+import { ClientCredentialsContext } from "../App";
 
 interface Props {
   basket: Basket;
 }
 
 const StoreBasket = ({ basket }: Props) => {
+  const { clientCredentials } = useContext(ClientCredentialsContext);
   const [storeName, setStoreName] = useState("");
 
   const getStoreName = async () => {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/stores/store-info/storeId=${basket.storeId}`
+      `http://localhost:8080/api/v1/stores/store-info/id=${clientCredentials}&storeId=${basket.storeId}`
     );
     if (!response.data.error) {
       setStoreName(response.data.value.name);
