@@ -65,7 +65,9 @@ public class Item {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws Exception {
+        if (name == null || name.length() <= 0)
+            throw new RuntimeException("Item name cannot be empty.");
         this.name = name;
     }
 
@@ -74,6 +76,8 @@ public class Item {
     }
 
     public void setPrice(double price) {
+        if (price <= 0)
+            throw new RuntimeException("Item price must be positive.");
         this.price = price;
     }
 
@@ -94,6 +98,8 @@ public class Item {
     }
 
     public void setQuantity(int quantity) {
+        if (quantity < 0)
+            throw new RuntimeException("Item quantity cannot be negative.");
         this.quantity = quantity;
     }
 
