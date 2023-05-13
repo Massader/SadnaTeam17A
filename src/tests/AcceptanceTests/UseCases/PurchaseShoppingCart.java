@@ -102,7 +102,7 @@ public class PurchaseShoppingCart extends ProjectTest {
         Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item11Id) && sale.getQuantity() == 2));
         Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item12Id) && sale.getQuantity() == 4));
         Assert.assertEquals(100 - 2, item1.getValue().getQuantity());
-        Assert.assertEquals(100 - 4, item1.getValue().getQuantity());
+        Assert.assertEquals(100 - 4, item1.getValue().getQuantity());   //TODO: Add check for empty cart after purchase
     }
 
     @Test
@@ -116,7 +116,7 @@ public class PurchaseShoppingCart extends ProjectTest {
         Assert.assertFalse(sales.isError());
 
         Assert.assertNotNull(sales.getValue());
-        Assert.assertEquals(0, sales.getValue().size());
+        Assert.assertEquals(0, sales.getValue().size());    //TODO: Check store item quantity hasn't changed
     }
 
     @Test
@@ -130,7 +130,7 @@ public class PurchaseShoppingCart extends ProjectTest {
         Assert.assertFalse(sales.isError());
 
         Assert.assertNotNull(sales.getValue());
-        Assert.assertEquals(0, sales.getValue().size());
+        Assert.assertEquals(0, sales.getValue().size());//TODO: Check store item quantity hasn't changed
     }
 
     @Test
@@ -144,7 +144,7 @@ public class PurchaseShoppingCart extends ProjectTest {
         Assert.assertFalse(sales.isError());
 
         Assert.assertNotNull(sales.getValue());
-        Assert.assertEquals(0, sales.getValue().size());
+        Assert.assertEquals(0, sales.getValue().size());//TODO: Check store item quantity hasn't changed
     }
 
     @Test void purchaseConcurrently() {
