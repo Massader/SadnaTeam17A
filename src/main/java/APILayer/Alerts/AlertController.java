@@ -5,10 +5,7 @@ import ServiceLayer.Loggers.ErrorLogger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.UUID;
@@ -45,6 +42,7 @@ public class AlertController {
     }
 
     @GetMapping(path = "/get-notifier/id={id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @ResponseBody
     public SseEmitter getNotifier(@PathVariable(name = "id") UUID clientCredentials) {
         return emitters.get(clientCredentials);
     }

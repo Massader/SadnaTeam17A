@@ -42,7 +42,7 @@ public class UserController {
         Response<ServiceUser> response = service.login(request.getClientCredentials(), request.getUsername(),
                 request.getPassword(), alertController::sendNotification);
         if (!response.isError())
-            alertController.createNotifier(request.getClientCredentials());
+            alertController.createNotifier(response.getValue().getId());
         return response;
     }
 
