@@ -37,8 +37,7 @@ public class AddPolicyRequest extends Request{
     }
 
     public Boolean getatLeast() {
-        return atLeas
-        t;
+        return atLeast;
     }
 
     public void setatLeast(Boolean atLeast) {
