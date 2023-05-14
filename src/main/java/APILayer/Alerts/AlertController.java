@@ -3,6 +3,7 @@ package APILayer.Alerts;
 import DomainLayer.Market.Notification;
 import ServiceLayer.Loggers.ErrorLogger;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,7 +44,7 @@ public class AlertController {
         emitters.remove(clientCredentials);
     }
 
-    @GetMapping(path = "/get-notifier/id={id}")
+    @GetMapping(path = "/get-notifier/id={id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter getNotifier(@PathVariable(name = "id") UUID clientCredentials) {
         return emitters.get(clientCredentials);
     }
