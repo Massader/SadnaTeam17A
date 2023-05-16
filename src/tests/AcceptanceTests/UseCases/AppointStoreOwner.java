@@ -100,20 +100,20 @@ public class AppointStoreOwner extends ProjectTest {
         Response<List<Role>> userRoles1 = bridge.getUserRoles(storeOwner2Id);
         Response<ServiceUser> storeOwner2 = bridge.getUserInfo(storeOwner2Id);
 
-        Assert.assertFalse(storeStaff0.isError());
-        Assert.assertFalse(userRoles0.isError());
-        Assert.assertFalse(appointStoreOwner.isError());
-        Assert.assertFalse(storeStaff1.isError());
-        Assert.assertFalse(userRoles1.isError());
-        Assert.assertFalse(storeOwner2.isError());
+        Assert.assertFalse("bridge.getStoreStaffList(storeFounderId, storeId) failed",storeStaff0.isError());
+        Assert.assertFalse("bridge.getUserRoles(storeOwner2Id) failed", userRoles0.isError());
+        Assert.assertFalse("bridge.appointStoreOwner(storeFounderId, storeOwner2Id, storeId) failed", appointStoreOwner.isError());
+        Assert.assertFalse("bridge.getStoreStaffList(storeOwner2Id, storeId) failed ", storeStaff1.isError());
+        Assert.assertFalse("bridge.getUserRoles(storeOwner2Id) failed", userRoles1.isError());
+        Assert.assertFalse("bridge.getUserInfo(storeOwner2Id) failed", storeOwner2.isError());
         //assert that the user didn't have a role in the store before appointment
-        Assert.assertFalse(storeStaff0.getValue().contains(storeOwner2.getValue()));
-        Assert.assertTrue(userRoles0.getValue().stream().filter(role -> role.getStoreId() == storeId).toList().isEmpty());
+        Assert.assertFalse(String.format("store staff list contained %s before the appointment", storeOwner2.getValue().getUsername()), storeStaff0.getValue().contains(storeOwner2.getValue()));
+        Assert.assertTrue(String.format("%s had a role in the store before the appointment", storeOwner2.getValue().getUsername()), userRoles0.getValue().stream().filter(role -> role.getStoreId() == storeId).toList().isEmpty());
         //assert that appointment was successful
-        Assert.assertTrue(appointStoreOwner.getValue());
+        Assert.assertTrue("bridge.appointStoreOwner(storeFounderId, storeOwner2Id, storeId) failed", appointStoreOwner.getValue());
         //assert that the user has a role in the store after appointment
-        Assert.assertTrue(storeStaff1.getValue().contains(storeOwner2.getValue()));
-        Assert.assertFalse(userRoles1.getValue().stream().filter(role -> role.getStoreId() == storeId && role instanceof StoreOwner).toList().isEmpty());
+        Assert.assertTrue(String.format("%s has not been added to the store staff", storeOwner2.getValue().getUsername()), storeStaff1.getValue().contains(storeOwner2.getValue()));
+        Assert.assertFalse(String.format("%s has not been given a role in the store", storeOwner2.getValue().getUsername()), userRoles1.getValue().stream().filter(role -> role.getStoreId() == storeId && role instanceof StoreOwner).toList().isEmpty());
     }
     @Test
     //Tests that a store owner cannot be appointed by someone other than the store founder.
@@ -123,17 +123,19 @@ public class AppointStoreOwner extends ProjectTest {
         Response<Boolean> appointFail = bridge.appointStoreOwner(storeOwner1Id, user1Id, storeId);
         Response<List<ServiceUser>> storeStaff1 = bridge.getStoreStaffList(storeFounderId, storeId);
         Response<List<Role>> userRoles1 = bridge.getUserRoles(user1Id);
+        Response<ServiceUser> user1 = bridge.getUserInfo(user1Id);
 
-        Assert.assertFalse(storeStaff0.isError());
-        Assert.assertFalse(userRoles0.isError());
+        Assert.assertFalse("bridge.getStoreStaffList(storeFounderId, storeId) failed",storeStaff0.isError());
+        Assert.assertFalse("bridge.getUserRoles(storeOwner2Id) failed", userRoles0.isError());
         //assert failure
-        Assert.assertTrue(appointFail.isError());
-        Assert.assertFalse(storeStaff1.isError());
-        Assert.assertFalse(userRoles1.isError());
+        Assert.assertTrue("bridge.appointStoreOwner(storeOwner1Id, user1Id, storeId) should have failed", appointFail.isError());
+        Assert.assertFalse("bridge.getStoreStaffList(storeOwner2Id, storeId) failed ", storeStaff1.isError());
+        Assert.assertFalse("bridge.getUserRoles(storeOwner2Id) failed", userRoles1.isError());
+        Assert.assertFalse("bridge.getUserInfo(storeOwner2Id) failed", user1.isError());
 
         //assert no roles has been added
-        Assert.assertEquals(userRoles0.getValue().size(), userRoles1.getValue().size());
-        Assert.assertEquals(storeStaff0.getValue().size(), storeStaff1.getValue().size());
+        Assert.assertEquals(String.format("%s roles list has been changed although the appointment failed", user1.getValue().getUsername()), userRoles0.getValue().size(), userRoles1.getValue().size());
+        Assert.assertEquals("the store staff list has been changed although the appointment failed", storeStaff0.getValue().size(), storeStaff1.getValue().size());
     }
 
     @Test
@@ -144,17 +146,18 @@ public class AppointStoreOwner extends ProjectTest {
         Response<Boolean> appointFail = bridge.appointStoreOwner(storeManager1Id, user1Id, storeId);
         Response<List<ServiceUser>> storeStaff1 = bridge.getStoreStaffList(storeFounderId, storeId);
         Response<List<Role>> userRoles1 = bridge.getUserRoles(user1Id);
+        Response<ServiceUser> user1 = bridge.getUserInfo(user1Id);
 
-        Assert.assertFalse(storeStaff0.isError());
-        Assert.assertFalse(userRoles0.isError());
+        Assert.assertFalse("bridge.getStoreStaffList(storeFounderId, storeId) failed",storeStaff0.isError());
+        Assert.assertFalse("bridge.getUserRoles(storeOwner2Id) failed", userRoles0.isError());
         //assert failure
-        Assert.assertTrue(appointFail.isError());
-        Assert.assertFalse(storeStaff1.isError());
-        Assert.assertFalse(userRoles1.isError());
-
+        Assert.assertTrue("bridge.appointStoreOwner(storeManager1Id, user1Id, storeId) should have failed", appointFail.isError());
+        Assert.assertFalse("bridge.getStoreStaffList(storeOwner2Id, storeId) failed ", storeStaff1.isError());
+        Assert.assertFalse("bridge.getUserRoles(storeOwner2Id) failed", userRoles1.isError());
+        Assert.assertFalse("bridge.getUserInfo(storeOwner2Id) failed", user1.isError());
         //assert no roles has been added
-        Assert.assertEquals(userRoles0.getValue().size(), userRoles1.getValue().size());
-        Assert.assertEquals(storeStaff0.getValue().size(), storeStaff1.getValue().size());
+        Assert.assertEquals(String.format("%s roles list has been changed although the appointment failed", user1.getValue().getUsername()), userRoles0.getValue().size(), userRoles1.getValue().size());
+        Assert.assertEquals("the store staff list has been changed although the appointment failed", storeStaff0.getValue().size(), storeStaff1.getValue().size());
     }
 
     @Test
@@ -165,17 +168,18 @@ public class AppointStoreOwner extends ProjectTest {
         Response<Boolean> appointFail = bridge.appointStoreOwner(user2Id, user1Id, storeId);
         Response<List<ServiceUser>> storeStaff1 = bridge.getStoreStaffList(storeFounderId, storeId);
         Response<List<Role>> userRoles1 = bridge.getUserRoles(user1Id);
+        Response<ServiceUser> user1 = bridge.getUserInfo(user1Id);
 
-        Assert.assertFalse(storeStaff0.isError());
-        Assert.assertFalse(userRoles0.isError());
+        Assert.assertFalse("bridge.getStoreStaffList(storeFounderId, storeId) failed",storeStaff0.isError());
+        Assert.assertFalse("bridge.getUserRoles(storeOwner2Id) failed", userRoles0.isError());
         //assert failure
-        Assert.assertTrue(appointFail.isError());
-        Assert.assertFalse(storeStaff1.isError());
-        Assert.assertFalse(userRoles1.isError());
-
+        Assert.assertTrue("bridge.appointStoreOwner(user2Id, user1Id, storeId) should have failed", appointFail.isError());
+        Assert.assertFalse("bridge.getStoreStaffList(storeOwner2Id, storeId) failed ", storeStaff1.isError());
+        Assert.assertFalse("bridge.getUserRoles(storeOwner2Id) failed", userRoles1.isError());
+        Assert.assertFalse("bridge.getUserInfo(storeOwner2Id) failed", user1.isError());
         //assert no roles has been added
-        Assert.assertEquals(userRoles0.getValue().size(), userRoles1.getValue().size());
-        Assert.assertEquals(storeStaff0.getValue().size(), storeStaff1.getValue().size());
+        Assert.assertEquals(String.format("%s roles list has been changed although the appointment failed", user1.getValue().getUsername()), userRoles0.getValue().size(), userRoles1.getValue().size());
+        Assert.assertEquals("the store staff list has been changed although the appointment failed", storeStaff0.getValue().size(), storeStaff1.getValue().size());
     }
 
     @Test
@@ -188,18 +192,20 @@ public class AppointStoreOwner extends ProjectTest {
         Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         Response<List<ServiceUser>> storeStaff1 = bridge.getStoreStaffList(storeFounderId, storeId);
         Response<List<Role>> userRoles1 = bridge.getUserRoles(user1Id);
+        Response<ServiceUser> user1 = bridge.getUserInfo(user1Id);
 
-        Assert.assertFalse(logout.isError());
-        Assert.assertFalse(storeStaff0.isError());
-        Assert.assertFalse(userRoles0.isError());
+        Assert.assertFalse("bridge.logout(storeFounderId) failed", logout.isError());
+        Assert.assertFalse("bridge.getStoreStaffList(storeFounderId, storeId) failed",storeStaff0.isError());
+        Assert.assertFalse("bridge.getUserRoles(storeOwner2Id) failed", userRoles0.isError());
         //assert failure
-        Assert.assertTrue(appointFail.isError());
-        Assert.assertFalse(login.isError());
-        Assert.assertFalse(storeStaff1.isError());
-        Assert.assertFalse(userRoles1.isError());
+        Assert.assertTrue("bridge.appointStoreOwner(storeFounderId, user1Id, storeId) should have failed", appointFail.isError());
+        Assert.assertFalse("bridge.login(bridge.createClient().getValue(), \"founder\", \"Aa1234\") failed", login.isError());
+        Assert.assertFalse("bridge.getStoreStaffList(storeOwner2Id, storeId) failed ", storeStaff1.isError());
+        Assert.assertFalse("bridge.getUserRoles(storeOwner2Id) failed", userRoles1.isError());
+        Assert.assertFalse("bridge.getUserInfo(storeOwner2Id) failed", user1.isError());
 
         //assert no roles has been added
-        Assert.assertEquals(userRoles0.getValue().size(), userRoles1.getValue().size());
-        Assert.assertEquals(storeStaff0.getValue().size(), storeStaff1.getValue().size());
+        Assert.assertEquals(String.format("%s roles list has been changed although the appointment failed", user1.getValue().getUsername()), userRoles0.getValue().size(), userRoles1.getValue().size());
+        Assert.assertEquals("the store staff list has been changed although the appointment failed", storeStaff0.getValue().size(), storeStaff1.getValue().size());
     }
 }

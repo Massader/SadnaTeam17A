@@ -1,6 +1,8 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.junit.*;
 
