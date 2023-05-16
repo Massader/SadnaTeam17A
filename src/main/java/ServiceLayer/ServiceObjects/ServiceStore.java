@@ -1,15 +1,30 @@
 package ServiceLayer.ServiceObjects;
 
 import DomainLayer.Market.Stores.Store;
+import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Component
+@Entity
+@Table
 public class ServiceStore {
-    private String name;
+    @Id @GeneratedValue
+    @Column(name ="storeId")
+//    @SequenceGenerator(
+//            name = "store_sequence",
+//            sequenceName = "store_sequence",
+//            allocationSize = 1
+//    )
+//    @GeneratedValue(
+//            strategy = GenerationType.SEQUENCE,
+//            generator = "store_sequence"
+//    )
+//    private long id;
     private UUID storeId;
+    private String name;
     private String description;
     private double rating;
     private boolean isShutdown;

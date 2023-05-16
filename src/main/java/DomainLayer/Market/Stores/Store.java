@@ -9,14 +9,19 @@ import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.ShoppingBasket;
 import DomainLayer.Market.Users.User;
+import javax.persistence.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Entity
+@Table(name = "Stores")
 public class Store {
-    private String name;
+    @Id
+//    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID storeId;
+    private String name;
     private String description;
     private double rating;
     private boolean closed;

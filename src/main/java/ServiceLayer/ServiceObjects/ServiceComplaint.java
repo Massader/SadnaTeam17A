@@ -4,6 +4,7 @@ import DomainLayer.Market.Complaint;
 
 import java.util.UUID;
 
+
 public class ServiceComplaint {
     private UUID id;
     private String body;

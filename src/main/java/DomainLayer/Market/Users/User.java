@@ -2,9 +2,12 @@ package DomainLayer.Market.Users;
 
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StorePermissions;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 
 public class User extends Client{
     private final String username;

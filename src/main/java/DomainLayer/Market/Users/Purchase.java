@@ -1,10 +1,17 @@
 package DomainLayer.Market.Users;
 
+import javax.persistence.*;
+
+
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
+@Entity
+@Table(name = "Purchases")
 public class Purchase {
+    @Id
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private UUID id;
     private UUID userId;
     private UUID itemId;
