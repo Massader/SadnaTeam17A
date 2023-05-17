@@ -40,12 +40,12 @@ public class EnterSystem extends ProjectTest {
         Response<UUID> client = bridge.createClient();
         Response<Integer> clients1 = bridge.numOfClients();
 
-        Assert.assertFalse(clients0.isError());
-        Assert.assertFalse(client.isError());
-        Assert.assertFalse(clients1.isError());
+        Assert.assertFalse("bridge.numOfClients() failed", clients0.isError());
+        Assert.assertFalse("bridge.createClient() failed", client.isError());
+        Assert.assertFalse("bridge.numOfClients() failed", clients1.isError());
 
-        Assert.assertNotNull(client.getValue());
-        Assert.assertEquals(1, clients1.getValue() - clients0.getValue());
+        Assert.assertNotNull("bridge.createClient() failed", client.getValue());
+        Assert.assertEquals("number of clients did not increased by 1", 1, clients1.getValue() - clients0.getValue());
     }
 
     @Test
@@ -69,12 +69,12 @@ public class EnterSystem extends ProjectTest {
 
         Response<Integer> clients1 = bridge.numOfClients();
 
-        Assert.assertFalse(clients0.isError());
-        Assert.assertFalse(clients1.isError());
+        Assert.assertFalse("bridge.numOfClients() failed", clients0.isError());
+        Assert.assertFalse("bridge.numOfClients() failed", clients1.isError());
         for (Response<UUID> e : enters) {
-            Assert.assertFalse(e.isError());
-            Assert.assertNotNull(e.getValue());
+            Assert.assertFalse("one of the bridge.createClient() calls failed", e.isError());
+            Assert.assertNotNull("one of the bridge.createClient() calls failed", e.getValue());
         }
-        Assert.assertEquals(1000, clients1.getValue() - clients0.getValue());
+        Assert.assertEquals("number of clients did not increased by 1000", 1000, clients1.getValue() - clients0.getValue());
     }
 }
