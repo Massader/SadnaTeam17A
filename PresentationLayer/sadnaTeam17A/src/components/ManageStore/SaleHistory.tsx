@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ClientCredentialsContext } from "../../App";
 import axios from "axios";
-import { Box, Button, SimpleGrid } from "@chakra-ui/react";
+import { Box, Button, Heading, SimpleGrid } from "@chakra-ui/react";
 import { SoldItemType } from "../../types";
 import SoldItem from "./SoldItem";
 
@@ -41,6 +41,9 @@ const SaleHistory = ({ storeId, setPage, pages }: Props) => {
           Back
         </Button>
       </Box>
+      <Heading padding={5} textAlign="center">
+        Sale history
+      </Heading>
       <SimpleGrid
         columns={{ sm: 1, md: 2, lg: 3, xl: 3, "2xl": 4 }}
         padding="10px"

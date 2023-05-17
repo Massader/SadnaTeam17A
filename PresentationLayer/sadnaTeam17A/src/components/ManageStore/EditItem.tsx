@@ -24,14 +24,22 @@ interface Props {
 const EditItem = ({ editItem }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
 
-  const handleEdit = async () => {
-    handleEditName();
-    handleEditDescription();
-    if (quantity !== "") handleEditQuantity();
-    if (price !== "") handleEditPrice();
-    if (!errorMsg) {
+  const handleEdit = () => {
+    if (
+      !errorMsgName &&
+      !errorMsgPrice &&
+      !errorMsgDescription &&
+      !errorMsgQuantity
+    ) {
+      setErrorMsg(false);
       setInEdit(false);
       setMessage("Edit saved");
+      setMessageName("");
+      setMessageDescription("");
+      setMessageQuantity("");
+      setMessagePrice("");
+    } else {
+      setErrorMsg(true);
     }
   };
 
@@ -46,10 +54,11 @@ const EditItem = ({ editItem }: Props) => {
       }
     );
     if (!response.data.error) {
-      return true;
+      setErrorMsgName(false);
+      setMessageName("Name saved");
     } else {
-      setErrorMsg(true);
-      setMessage(response.data.message);
+      setErrorMsgName(true);
+      setMessageName(response.data.message);
     }
   };
 
@@ -64,10 +73,11 @@ const EditItem = ({ editItem }: Props) => {
       }
     );
     if (!response.data.error) {
-      return true;
+      setErrorMsgQuantity(false);
+      setMessageQuantity("Quantity saved");
     } else {
-      setErrorMsg(true);
-      setMessage(response.data.message);
+      setErrorMsgQuantity(true);
+      setMessageQuantity(response.data.message);
     }
   };
 
@@ -82,10 +92,11 @@ const EditItem = ({ editItem }: Props) => {
       }
     );
     if (!response.data.error) {
-      return true;
+      setErrorMsgPrice(false);
+      setMessagePrice("Price saved");
     } else {
-      setErrorMsg(true);
-      setMessage(response.data.message);
+      setErrorMsgPrice(true);
+      setMessagePrice(response.data.message);
     }
   };
 
@@ -100,10 +111,11 @@ const EditItem = ({ editItem }: Props) => {
       }
     );
     if (!response.data.error) {
-      return true;
+      setErrorMsgDescription(false);
+      setMessageDescription("Description saved");
     } else {
-      setErrorMsg(true);
-      setMessage(response.data.message);
+      setErrorMsgDescription(true);
+      setMessageDescription(response.data.message);
     }
   };
 
@@ -135,7 +147,28 @@ const EditItem = ({ editItem }: Props) => {
   const [inEdit, setInEdit] = useState(false);
   const [sureDelete, setSureDelete] = useState(false);
   const [errorMsg, setErrorMsg] = useState(false);
+  const [errorMsgName, setErrorMsgName] = useState(false);
+  const [messageName, setMessageName] = useState("");
+  const [errorMsgDescription, setErrorMsgDescription] = useState(false);
+  const [messageDescription, setMessageDescription] = useState("");
+  const [errorMsgQuantity, setErrorMsgQuantity] = useState(false);
+  const [messageQuantity, setMessageQuantity] = useState("");
+  const [errorMsgPrice, setErrorMsgPrice] = useState(false);
+  const [messagePrice, setMessagePrice] = useState("");
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (!errorMsgName) setMessageName("");
+  }, [name]);
+  useEffect(() => {
+    if (!errorMsgDescription) setMessageDescription("");
+  }, [description]);
+  useEffect(() => {
+    if (!errorMsgQuantity) setMessageQuantity("");
+  }, [quantity]);
+  useEffect(() => {
+    if (!errorMsgPrice) setMessagePrice("");
+  }, [price]);
 
   return (
     <Card maxW="sm">
@@ -155,31 +188,76 @@ const EditItem = ({ editItem }: Props) => {
           {inEdit && (
             <>
               <Text>name:</Text>
-              <Input
-                bg="white"
-                defaultValue={editItem.name}
-                onChange={(name) => setName(name.target.value)}
-              />
+              <Flex>
+                <Input
+                  w="90%"
+                  bg="white"
+                  defaultValue={editItem.name}
+                  onChange={(name) => setName(name.target.value)}
+                />
+                <Button onClick={handleEditName}>V</Button>
+              </Flex>
+              {errorMsgName ? (
+                <Text color="red">{messageName}</Text>
+              ) : (
+                <Text>{messageName}</Text>
+              )}
               <Text>description:</Text>
-              <Input
-                bg="white"
-                defaultValue={editItem.description}
-                onChange={(description) =>
-                  setDescription(description.target.value)
-                }
-              />
+              <Flex>
+                <Input
+                  bg="white"
+                  defaultValue={editItem.description}
+                  onChange={(description) =>
+                    setDescription(description.target.value)
+                  }
+                />
+                <Button onClick={handleEditDescription}>V</Button>
+              </Flex>
+              {errorMsgDescription ? (
+                <Text color="red">{messageDescription}</Text>
+              ) : (
+                <Text>{messageDescription}</Text>
+              )}
               <Text>quantity:</Text>
-              <Input
-                bg="white"
-                defaultValue={editItem.quantity}
-                onChange={(quantity) => setQuantity(quantity.target.value)}
-              />
+              <Flex>
+                <Input
+                  bg="white"
+                  defaultValue={editItem.quantity}
+                  onChange={(quantity) => setQuantity(quantity.target.value)}
+                />
+                <Button
+                  onClick={() => {
+                    if (quantity !== "") handleEditQuantity();
+                  }}
+                >
+                  V
+                </Button>
+              </Flex>
+              {errorMsgQuantity ? (
+                <Text color="red">{messageQuantity}</Text>
+              ) : (
+                <Text>{messageQuantity}</Text>
+              )}
               <Text>price:</Text>
-              <Input
-                bg="white"
-                defaultValue={editItem.price}
-                onChange={(price) => setPrice(price.target.value)}
-              />
+              <Flex>
+                <Input
+                  bg="white"
+                  defaultValue={editItem.price}
+                  onChange={(price) => setPrice(price.target.value)}
+                />
+                <Button
+                  onClick={() => {
+                    if (price !== "") handleEditPrice();
+                  }}
+                >
+                  V
+                </Button>
+              </Flex>
+              {errorMsgPrice ? (
+                <Text color="red">{messagePrice}</Text>
+              ) : (
+                <Text>{messagePrice}</Text>
+              )}
             </>
           )}
         </Stack>
@@ -209,7 +287,7 @@ const EditItem = ({ editItem }: Props) => {
                 colorScheme="blue"
                 width="100%"
               >
-                Save
+                Done
               </Button>
             )}
           </Flex>
