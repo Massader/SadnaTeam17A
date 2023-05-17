@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { ClientCredentialsContext } from "../../App";
 import axios from "axios";
 import { PurchasedItemType } from "../../types";
-import { Button, Flex, SimpleGrid, Stack } from "@chakra-ui/react";
+import { Button, Flex, Heading, SimpleGrid, Stack } from "@chakra-ui/react";
 import PurchasedItem from "./PurchasedItem";
 
 interface Props {
@@ -34,6 +34,9 @@ const PurchaseHistory = ({ setPage, pages }: Props) => {
 
   return (
     <>
+      <Heading padding={2} textAlign="center">
+        Purchase history
+      </Heading>
       <SimpleGrid
         columns={{ sm: 1, md: 2, lg: 3, xl: 3, "2xl": 4 }}
         padding="10px"

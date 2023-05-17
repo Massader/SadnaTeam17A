@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Item } from "../../types";
-import { Box, Button, SimpleGrid } from "@chakra-ui/react";
+import { Box, Button, Heading, SimpleGrid } from "@chakra-ui/react";
 import EditItem from "./EditItem";
 
 interface Props {
@@ -17,7 +17,6 @@ const InventoryManagement = ({ storeId, setPage, pages }: Props) => {
     );
     if (!response.data.error) {
       setItems(response.data.value);
-      console.log(response.data.value);
     } else {
       console.log(response.data.error);
     }
@@ -41,6 +40,9 @@ const InventoryManagement = ({ storeId, setPage, pages }: Props) => {
           Back
         </Button>
       </Box>
+      <Heading padding={5} textAlign="center">
+        Inventory management
+      </Heading>
       <SimpleGrid
         columns={{ sm: 1, md: 2, lg: 3, xl: 3, "2xl": 4 }}
         padding="10px"

@@ -13,7 +13,6 @@ interface Props {
 const MyStores = ({ onManageStore, onCreateStore }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
 
-  const [stores, setStores] = useState<Store[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
 
   const fetchRoles = async () => {
@@ -21,34 +20,16 @@ const MyStores = ({ onManageStore, onCreateStore }: Props) => {
       `http://localhost:8080/api/v1/users/get-user-roles/id=${clientCredentials}`
     );
     if (!response.data.error) {
+      console.log(response.data.value);
       setRoles(response.data.value);
     } else {
       console.log(response.data.error);
     }
   };
 
-  const fetchStores = async () => {
-    const tempStores = [];
-    for (const role of roles) {
-      const response = await axios.get(
-        `http://localhost:8080/api/v1/stores/store-info/id=${clientCredentials}&storeId=${role.storeId}`
-      );
-      if (!response.data.error) {
-        tempStores.push(response.data.value);
-      } else {
-        console.log(response.data.error);
-      }
-    }
-    setStores(tempStores);
-  };
-
   useEffect(() => {
     fetchRoles();
   }, []);
-
-  useEffect(() => {
-    fetchStores();
-  }, [roles]);
 
   return (
     <>
@@ -60,13 +41,11 @@ const MyStores = ({ onManageStore, onCreateStore }: Props) => {
         <Button onClick={onCreateStore} colorScheme="blackAlpha">
           Open new store
         </Button>
-        {stores.map((store) => (
+        {roles.map((role) => (
           <MyStoreCard
-            key={store.storeId}
-            name={store.name}
-            id={store.storeId}
-            rating={store.rating}
-            onManageStore={() => onManageStore(store.storeId)}
+            key={role.storeId}
+            role={role}
+            onManageStore={() => onManageStore(role.storeId)}
           />
         ))}
       </SimpleGrid>

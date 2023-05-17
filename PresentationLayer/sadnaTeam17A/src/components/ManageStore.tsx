@@ -119,7 +119,9 @@ const ManageStore = ({ storeId, setPage, pages }: Props) => {
             <Button onClick={() => setPage(pages[11])} whiteSpace="normal">
               Inventory management
             </Button>
-            <Button whiteSpace="normal">Purchase and discount policy</Button>
+            <Button onClick={() => setPage(pages[14])} whiteSpace="normal">
+              Purchase and discount policy
+            </Button>
             <Button whiteSpace="normal">Traceability constraints</Button>
             <Button
               onClick={() => setLeftPage(leftPages[2])}
@@ -139,7 +141,9 @@ const ManageStore = ({ storeId, setPage, pages }: Props) => {
             >
               Removing a store role appointment
             </Button>
-            <Button whiteSpace="normal">Change store manager privileges</Button>
+            <Button onClick={() => setPage(pages[12])} whiteSpace="normal">
+              Set store manager permissions
+            </Button>
             {!store?.isClosed && (
               <Button
                 onClick={() => setCloseStoreSure(!closeStoreSure)}
@@ -166,7 +170,9 @@ const ManageStore = ({ storeId, setPage, pages }: Props) => {
                 </Button>
               </Flex>
             )}
-            <Button whiteSpace="normal">Information on store positions</Button>
+            <Button onClick={() => setPage(pages[13])} whiteSpace="normal">
+              Information on store positions
+            </Button>
             <Button whiteSpace="normal">
               Receiving information and response
             </Button>

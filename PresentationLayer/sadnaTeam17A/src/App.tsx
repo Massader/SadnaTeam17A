@@ -16,6 +16,14 @@ import React from "react";
 import { Role } from "./types";
 import MyCart from "./components/MyCart";
 import AdminPage from "./components/AdminPage";
+import ForgotPassword from "./components/ForgotPassword";
+import SaleHistory from "./components/ManageStore/SaleHistory";
+import InventoryManagement from "./components/ManageStore/InventoryManagement";
+import Notifications from "./components/Notifications";
+import SetManagerPermissions from "./components/ManageStore/SetManagerPermissions";
+import PositionsInfo from "./components/ManageStore/PositionsInfo";
+import PurchaseAndDiscountPolicy from "./components/ManageStore/PurchaseAndDiscountPolicy";
+import AddPurchaseRules from "./components/ManageStore/AddPurchaseRules";
 
 type ClientCredentialsContextValue = {
   clientCredentials: string;
@@ -51,7 +59,17 @@ function App() {
     "createStore",
     "myCart",
     "adminPage",
+    "forgot",
+    "saleHistory",
+    "inventoryManagement",
+    "setManagerPermissions",
+    "positionInfo",
+    "purchaseAndDiscountPolicy",
   ];
+
+  const leftPages = ["empty", "filters", "manageStore"];
+
+  const rightPages = ["notifications"];
 
   const createClient = async () => {
     try {
@@ -74,6 +92,8 @@ function App() {
     console.log(clientCredentials);
   }, [clientCredentials]);
 
+  const [source, setSource] = useState<EventSource | null>(null);
+
   const [username, setUsername] = useState("");
 
   const [isAdmin, setAdmin] = useState(false);
@@ -82,50 +102,89 @@ function App() {
 
   const [storeManage, setStoreManage] = useState("");
 
-  const [manageStoreOn, setmanageStoreOn] = useState(false);
-
   const [page, setPage] = useState(pages[0]);
+
+  const [leftPage, setLeftPage] = useState(leftPages[1]);
+
+  const [rightPage, setRightPage] = useState(rightPages[0]);
 
   const [logged, setLogged] = useState(false);
 
   const [keyword, setKeyword] = useState("");
+  const [itemRating, setItemRating] = useState(0);
   const [storeRating, setStoreRating] = useState(0);
-  const [submittedStore, setSubmittedStore] = useState(0);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000000);
   const [category, setCategory] = useState("");
 
   const onHome = () => {
     setPage(pages[0]);
+    setLeftPage(leftPages[1]);
+    setRightPage(rightPages[0]);
     setStoreManage("");
   };
 
   const onSpecStore = (storeId: string) => {
     setStoreManage(storeId);
+    setLeftPage(leftPages[1]);
     setPage(pages[0]);
   };
 
   const onMyStores = () => {
-    setmanageStoreOn(false);
+    setLeftPage(leftPages[0]);
     setPage(pages[2]);
   };
 
   const onSignOut = () => {
     setLogged(false);
+    setStoreManage("");
+    setLeftPage(leftPages[1]);
     setPage(pages[0]);
+    setNotifications([]);
+    source?.close;
   };
 
-  const onLogin = () => {
+  const onLogin = (clientCredentials: string) => {
+    setLeftPage(leftPages[1]);
     setPage(pages[0]);
     setLogged(true);
+    getNotifier(clientCredentials);
   };
 
+  const getNotifier = async (id: string) => {
+    const source = new EventSource(
+      `http://localhost:8080/api/v1/alerts/get-notifier/id=${id}`
+    );
+    console.log(source);
+    source.addEventListener("message", (event) => {
+      console.log(event.data);
+    });
+    source.onerror = (event) => {
+      console.error("SSE error:", event);
+    };
+    source.onmessage = (event) => {
+      const eventData = JSON.parse(event.data);
+      const message = eventData.message;
+      notifications.push(message);
+      setNotificationAlert(true);
+      // console.log(notifications);
+    };
+    setSource(source);
+    return source;
+  };
+
+  const [notifications, setNotifications] = useState<string[]>([]);
+  const [notificationAlert, setNotificationAlert] = useState(false);
+
   const onManageStore = (id: string) => {
-    setmanageStoreOn(true);
+    setLeftPage(leftPages[2]);
     setStoreManage(id);
   };
 
-  const onCreateStore = () => setPage(pages[6]);
+  const onCreateStore = () => {
+    setPage(pages[6]);
+    setLeftPage(leftPages[0]);
+  };
 
   const onShop = (storeId: string) => {
     onSpecStore(storeId);
@@ -180,6 +239,8 @@ function App() {
             setKeyword={setKeyword}
             setPage={setPage}
             pages={pages}
+            setLeftPage={setLeftPage}
+            leftPages={leftPages}
           />
         </GridItem>
         <GridItem height="70px" area="searchBar3" bg="blackAlpha.900" />
@@ -191,17 +252,28 @@ function App() {
             isLogged={logged}
             setPage={setPage}
             pages={pages}
+            setLeftPage={setLeftPage}
+            leftPages={leftPages}
           ></NavBar>
         </GridItem>
         <GridItem height="50px" area="nav3" bg="blackAlpha.700" />
 
         <GridItem area="left" bg="white">
           {/* left */}
-          {page === "myStores" && manageStoreOn && (
-            <ManageStore storeId={storeManage} />
+          {leftPage === "manageStore" && (
+            <ManageStore
+              storeId={storeManage}
+              pages={pages}
+              setPage={setPage}
+            />
           )}
-          {page === "home" && (
-            <Filters setMinPrice={setMinPrice} setMaxPrice={setMaxPrice} />
+          {leftPage === "filters" && (
+            <Filters
+              setItemRating={setItemRating}
+              itemRating={itemRating}
+              setMinPrice={setMinPrice}
+              setMaxPrice={setMaxPrice}
+            />
           )}
         </GridItem>
 
@@ -212,6 +284,7 @@ function App() {
               category=""
               minPrice={minPrice}
               maxPrice={maxPrice}
+              itemRating={itemRating}
               storeId={storeManage}
             />
           )}
@@ -230,7 +303,17 @@ function App() {
               onLogin={onLogin}
             ></SignIn>
           )}
-          {page === "register" && <Register />}
+          {page === "forgot" && (
+            <ForgotPassword
+              setPage={setPage}
+              pages={pages}
+              newClientCredentials={(newClientCredentials) =>
+                setClientCredentials(newClientCredentials)
+              }
+              onLogin={onLogin}
+            />
+          )}
+          {page === "register" && <Register setPage={setPage} pages={pages} />}
           {page === "createStore" && <CreateStore />}
           {page === "customerService" && <CustomerService />}
           {page === "myStores" && (
@@ -239,12 +322,55 @@ function App() {
               onManageStore={(id: string) => onManageStore(id)}
             />
           )}
+          {page === "saleHistory" && (
+            <SaleHistory
+              storeId={storeManage}
+              setPage={setPage}
+              pages={pages}
+            />
+          )}
+          {page === "inventoryManagement" && (
+            <InventoryManagement
+              storeId={storeManage}
+              setPage={setPage}
+              pages={pages}
+            />
+          )}
+          {page === "setManagerPermissions" && (
+            <SetManagerPermissions
+              storeId={storeManage}
+              setPage={setPage}
+              pages={pages}
+            />
+          )}
+          {page === "positionInfo" && (
+            <PositionsInfo
+              storeId={storeManage}
+              setPage={setPage}
+              pages={pages}
+            />
+          )}
+          {page === "purchaseAndDiscountPolicy" && (
+            <PurchaseAndDiscountPolicy
+              storeId={storeManage}
+              setPage={setPage}
+              pages={pages}
+            />
+          )}
           {page === "myCart" && <MyCart />}
           {page === "adminPage" && <AdminPage />}
         </GridItem>
 
         <GridItem area="right" bg="white">
-          {/* Right */}
+          {/* right */}
+          {rightPage === "notifications" && logged && (
+            <Notifications
+              notifications={notifications}
+              notificationAlert={notificationAlert}
+              setNotificationAlert={setNotificationAlert}
+              isLogged={logged}
+            />
+          )}
         </GridItem>
       </Grid>
     </ClientCredentialsContext.Provider>

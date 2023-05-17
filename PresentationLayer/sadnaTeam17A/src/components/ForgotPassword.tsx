@@ -4,7 +4,7 @@ import axios from "axios";
 import { ClientCredentialsContext } from "../App";
 
 interface Props {
-  onLogin: () => void;
+  onLogin: (clientCredentials: string) => void;
   newClientCredentials: (id: string) => void;
   setPage: React.Dispatch<React.SetStateAction<string>>;
   pages: string[];
@@ -77,7 +77,7 @@ const ForgotPassword = ({
         getUserInfo();
         setErrorMsg2(false);
         setMessage2(username + " logged in successfully!");
-        onLogin();
+        onLogin(userId);
       } else {
         setErrorMsg2(true);
         setMessage2("Wrong answer.");

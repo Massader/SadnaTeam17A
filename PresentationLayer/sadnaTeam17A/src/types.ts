@@ -3,8 +3,8 @@ export interface Store {
   storeId: string;
   rating: number;
   description: string;
-  //   closed: boolean;
-  //   shutdown: boolean;
+  isClosed: boolean;
+  isShutdown: boolean;
   //   rolesMap: Map<number, Role>;
 }
 
@@ -20,6 +20,25 @@ export interface Item {
   // purchaseType
 }
 
+export interface PurchasedItemType {
+  date: Date;
+  id: string;
+  itemId: string;
+  quantity: number;
+  rated: boolean;
+  userId: string;
+  storeId: string;
+}
+
+export interface SoldItemType {
+  date: Date;
+  id: string;
+  itemId: string;
+  quantity: number;
+  userId: string;
+  storeId: string;
+}
+
 export interface Category {
   categoryName: string;
 }
@@ -27,7 +46,7 @@ export interface Category {
 export interface User {
   username: string;
   id: string;
-  roles: Role[];
+  roles: Map<string, Role[]>;
   // purchases: Purchase[];
   isAdmin: boolean;
 }
@@ -37,10 +56,13 @@ export interface Basket {
   storeId: string;
 }
 
-export abstract class Role {
-  storeId: number | undefined;
+export interface Role {
+  permissions: string[];
+  storeId: string;
 }
 
-export class StoreOwner extends Role {}
-
-export class StoreFounder extends StoreOwner {}
+export interface NotificationType {
+  message: string;
+  id: string;
+  timestamp: Date;
+}

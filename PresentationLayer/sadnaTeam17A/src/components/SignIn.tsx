@@ -4,7 +4,7 @@ import axios from "axios";
 import { ClientCredentialsContext } from "../App";
 
 interface Props {
-  onLogin: () => void;
+  onLogin: (clientCredentials: string) => void;
   newClientCredentials: (id: string) => void;
   setPage: React.Dispatch<React.SetStateAction<string>>;
   pages: string[];
@@ -31,7 +31,8 @@ const SignIn = ({ onLogin, newClientCredentials, setPage, pages }: Props) => {
       setRoles(response.data.value.roles);
       setErrorMsg(false);
       setMessage(username + " logged in successfully!");
-      onLogin();
+      // getNotifier(response.data.value.id);
+      onLogin(response.data.value.id);
     } else {
       setErrorMsg(true);
       setMessage(response.data.message);
