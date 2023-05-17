@@ -1,4 +1,6 @@
+
 package DomainLayer.Market.Stores;
+import java.util.*;
 
 import DomainLayer.Market.Stores.Discounts.condition.*;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.*;
@@ -9,17 +11,22 @@ import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.ShoppingBasket;
 import DomainLayer.Market.Users.User;
-import javax.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 
-import java.util.*;
+import javax.persistence.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Entity
 @Table(name = "Stores")
 public class Store {
-    @Id
+    //@Id
 //    @GeneratedValue(strategy = GenerationType.UUID)
+    // @Id
+    // @GenericGenerator(name = "uuid", strategy = "uuid2")
+    // @GeneratedValue(generator = "uuid")
+    // @Column(name = "storeId", unique = true, nullable = false)
+    // @Type(type="pg-uuid")
     private UUID storeId;
     private String name;
     private String description;

@@ -6,6 +6,7 @@ import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
+import DomainLayer.Market.Stores.dummy1;
 import DomainLayer.Market.Users.*;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Payment.PaymentController;
@@ -172,6 +173,7 @@ public class Service {
         storeController.addItemToStore(userCredentials,"Harry Kane", 10.0, storeResponse.getValue().getStoreId(), 10, "");
         userController.logout(userCredentials);
         eventLogger.log(Level.INFO, "Created objects.");
+//        dummy1 d = new dummy1();
     }
 
     public Response<UUID> createClient(){
