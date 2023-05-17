@@ -49,7 +49,9 @@ public class NotificationController {
         if (userNotifications == null) {
             return Response.getFailResponse("NotificationController getNotification - recipient does not exist.");
         }
-        return Response.getSuccessResponse(new ArrayList<>(userNotifications.values()));
+        List<Notification> outputList = new ArrayList<>(userNotifications.values());
+        notifications.get(recipient).clear();
+        return Response.getSuccessResponse(outputList);
     }
 
     public void resetController() {

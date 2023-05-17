@@ -25,4 +25,20 @@ public class StoreManager extends Role{
         if(!permissionsList.contains(permission))
             permissionsList.add(permission);
     }
+    
+    @Override
+    public void setPermissions(List<Integer> permissions) {
+        for (int i = 0; i < StorePermissions.values().length; i++) {
+            StorePermissions permission = StorePermissions.values()[i];
+            if (permission != StorePermissions.STORE_FOUNDER
+                    && permission != StorePermissions.STORE_OWNER) {
+                if (permissions.contains(i) && !permissionsList.contains(permission)) {
+                    permissionsList.add(permission);
+                }
+                else if (!permissions.contains(i) && permissionsList.contains(permission)) {
+                    permissionsList.remove(permission);
+                }
+            }
+        }
+    }
 }

@@ -23,7 +23,12 @@ public class StoreOwner extends Role {
     @Override
     public void addPermission(StorePermissions permission) {
     }
-
+    
+    @Override
+    public void setPermissions(List<Integer> permissions) {
+    
+    }
+    
     public List<UUID> getAppointees() {
         return appointees;
     }

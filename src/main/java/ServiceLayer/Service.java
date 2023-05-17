@@ -70,7 +70,7 @@ public class Service {
         securityController = SecurityController.getInstance();
         //securityController.init();
         messageController = MessageController.getInstance();
-        //messageController.init();
+        messageController.init();
         supplyController = SupplyController.getInstance();
         //supplyController.init();
         paymentController = PaymentController.getInstance();
@@ -373,7 +373,7 @@ public class Service {
         return reviewResponse;
     }
 
-
+    // Sets manager's permissions to the list, i.e adds and removes.
     public Response<Boolean> setManagerPermissions(UUID clientCredentials, UUID manager,
                                                    UUID storeId, List<Integer> permissions){
         Response<Boolean> response = userController.setManagerPermissions(clientCredentials, manager, storeId, permissions);
