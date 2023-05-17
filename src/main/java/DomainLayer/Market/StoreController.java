@@ -649,7 +649,8 @@ public class StoreController {
         if (loggedInUserResponse.isError())
             return Response.getFailResponse("Passed user is not logged in.");
         Store store = getStore(storeId);
-        if (!store.checkPermission(clientCredentials, StorePermissions.STORE_MANAGEMENT_INFORMATION))  {
+        if (!store.checkPermission(clientCredentials, StorePermissions.STORE_MANAGEMENT_INFORMATION)
+            && !store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER))  {
             return Response.getFailResponse("User does not have permission to get store managers list.");
         }
         List<User> managers = new ArrayList<>();
