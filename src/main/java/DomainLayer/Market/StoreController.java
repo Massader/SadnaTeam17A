@@ -1,22 +1,17 @@
 package DomainLayer.Market;
 
 import DomainLayer.Market.Stores.Category;
-import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Item;
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.StorePurchasePolicies;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreFounder;
-import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class StoreController {

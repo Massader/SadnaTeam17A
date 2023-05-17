@@ -6,8 +6,8 @@ public abstract class CompositePurchaseTerm extends PurchaseTerm {
 
     private ConcurrentLinkedQueue<PurchaseTerm> purchaseTerm;
 
-    public CompositePurchaseTerm(PurchaseRule PurchaseTerm) {
-        super(PurchaseTerm);
+    public CompositePurchaseTerm(PurchaseRule purchaseRule) {
+        super(purchaseRule);
     }
 
     public ConcurrentLinkedQueue<PurchaseTerm> getPurchaseTerm() {
