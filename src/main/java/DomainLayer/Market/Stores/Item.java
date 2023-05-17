@@ -1,10 +1,10 @@
 package DomainLayer.Market.Stores;
 
 import DomainLayer.Market.Stores.PurchaseTypes.DirectPurchase;
+import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseRule;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -20,7 +20,7 @@ public class Item {
     private String description;
     private PurchaseType purchaseType;
     private ConcurrentLinkedQueue<Category> categories;
-    private PolicyRules policyRules;
+    private PurchaseRule purchaseRule;
     private ConcurrentHashMap<UUID, Review> reviews;
 
     public Item(UUID id, String name, double price, UUID storeId, double rating, int quantity, String description) {
@@ -33,7 +33,7 @@ public class Item {
         this.description = description;
         purchaseType = new DirectPurchase();
         categories = new ConcurrentLinkedQueue<>();
-        policyRules = null;
+        purchaseRule = null;
         reviews = new ConcurrentHashMap<>();
     }
 
