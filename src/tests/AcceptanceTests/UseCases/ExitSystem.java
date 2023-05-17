@@ -40,12 +40,12 @@ public class ExitSystem extends ProjectTest {
         Response<Boolean> exit = bridge.closeClient(client);
         Response<Integer> clients1 = bridge.numOfClients();
 
-        Assert.assertFalse(clients0.isError());
-        Assert.assertFalse(exit.isError());
-        Assert.assertFalse(clients1.isError());
+        Assert.assertFalse("bridge.numOfClients() failed", clients0.isError());
+        Assert.assertFalse("bridge.closeClient(client) failed", exit.isError());
+        Assert.assertFalse("bridge.numOfClients() failed", clients1.isError());
 
-        Assert.assertTrue(exit.getValue());
-        Assert.assertEquals(1, clients0.getValue() - clients1.getValue());
+        Assert.assertTrue("bridge.closeClient(client) failed", exit.getValue());
+        Assert.assertEquals("number of clients did not decreased by 1", 1, clients0.getValue() - clients1.getValue());
     }
 
     @Test
@@ -72,12 +72,12 @@ public class ExitSystem extends ProjectTest {
         catch (Exception ignore) {}
         Response<Integer> clients1 = bridge.numOfClients();
 
-        Assert.assertFalse(clients0.isError());
-        Assert.assertFalse(clients1.isError());
+        Assert.assertFalse("bridge.numOfClients() failed", clients0.isError());
+        Assert.assertFalse("bridge.numOfClients() failed", clients1.isError());
         for (Response<Boolean> e : exits) {
-            Assert.assertFalse(e.isError());
-            Assert.assertTrue(e.getValue());
+            Assert.assertFalse("one of the bridge.closeClient(clients[index]) calls failed", e.isError());
+            Assert.assertTrue("one of the bridge.closeClient(clients[index])) calls failed", e.getValue());
         }
-        Assert.assertEquals(1000, clients0.getValue() - clients1.getValue());
+        Assert.assertEquals("number of clients did not decreased by 1000", 1000, clients0.getValue() - clients1.getValue());
     }
 }

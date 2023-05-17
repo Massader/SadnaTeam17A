@@ -97,13 +97,13 @@ public class GetStoreSaleHistory extends ProjectTest {
     public void GetStoreSaleHistoryFounderSuccess() {
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeFounderId, storeId);
 
-        Assert.assertFalse(sales.isError());
-        Assert.assertNotNull(sales.getValue());
-        Assert.assertEquals(4, sales.getValue().size());
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item1Id) && sale.getQuantity() == 3));
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item2Id) && sale.getQuantity() == 6));
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item3Id) && sale.getQuantity() == 9));
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item4Id) && sale.getQuantity() == 12));
+        Assert.assertFalse("bridge.getStoreSaleHistory(storeFounderId, storeId) failed", sales.isError());
+        Assert.assertNotNull("bridge.getStoreSaleHistory(storeFounderId, storeId) failed", sales.getValue());
+        Assert.assertEquals("list size is not equal 4", 4, sales.getValue().size());
+        Assert.assertTrue("list does not contain item1", sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item1Id) && sale.getQuantity() == 3));
+        Assert.assertTrue("list does not contain item2", sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item2Id) && sale.getQuantity() == 6));
+        Assert.assertTrue("list does not contain item3", sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item3Id) && sale.getQuantity() == 9));
+        Assert.assertTrue("list does not contain item4", sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item4Id) && sale.getQuantity() == 12));
     }
 
     @Test
@@ -111,13 +111,13 @@ public class GetStoreSaleHistory extends ProjectTest {
     public void GetStoreSaleHistoryOwnerSuccess() {
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeOwnerId, storeId);
 
-        Assert.assertFalse(sales.isError());
-        Assert.assertNotNull(sales.getValue());
-        Assert.assertEquals(4, sales.getValue().size());
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item1Id) && sale.getQuantity() == 3));
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item2Id) && sale.getQuantity() == 6));
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item3Id) && sale.getQuantity() == 9));
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item4Id) && sale.getQuantity() == 12));
+        Assert.assertFalse("bridge.getStoreSaleHistory(storeOwnerId, storeId) failed", sales.isError());
+        Assert.assertNotNull("bridge.getStoreSaleHistory(storeOwnerId, storeId) failed", sales.getValue());
+        Assert.assertEquals("list size is not equal 4", 4, sales.getValue().size());
+        Assert.assertTrue("list does not contain item1", sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item1Id) && sale.getQuantity() == 3));
+        Assert.assertTrue("list does not contain item2", sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item2Id) && sale.getQuantity() == 6));
+        Assert.assertTrue("list does not contain item3", sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item3Id) && sale.getQuantity() == 9));
+        Assert.assertTrue("list does not contain item4", sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item4Id) && sale.getQuantity() == 12));
     }
 
     @Test
@@ -125,13 +125,13 @@ public class GetStoreSaleHistory extends ProjectTest {
     public void GetStoreSaleHistoryManagerWithPermissionSuccess() {
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeManagerId, storeId);
 
-        Assert.assertFalse(sales.isError());
-        Assert.assertNotNull(sales.getValue());
-        Assert.assertEquals(4, sales.getValue().size());
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item1Id) && sale.getQuantity() == 3));
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item2Id) && sale.getQuantity() == 6));
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item3Id) && sale.getQuantity() == 9));
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item4Id) && sale.getQuantity() == 12));
+        Assert.assertFalse("bridge.getStoreSaleHistory(storeManagerId, storeId) failed", sales.isError());
+        Assert.assertNotNull("bridge.getStoreSaleHistory(storeManagerId, storeId) failed", sales.getValue());
+        Assert.assertEquals("list size is not equal 4", 4, sales.getValue().size());
+        Assert.assertTrue("list does not contain item1", sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item1Id) && sale.getQuantity() == 3));
+        Assert.assertTrue("list does not contain item2", sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item2Id) && sale.getQuantity() == 6));
+        Assert.assertTrue("list does not contain item3", sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item3Id) && sale.getQuantity() == 9));
+        Assert.assertTrue("list does not contain item4", sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item4Id) && sale.getQuantity() == 12));
     }
 
     @Test
@@ -139,7 +139,7 @@ public class GetStoreSaleHistory extends ProjectTest {
     public void GetStoreSaleHistoryUserFail() {
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(user1Id, storeId);
 
-        Assert.assertTrue(sales.isError());
+        Assert.assertTrue("bridge.getStoreSaleHistory(user1Id, storeId) should have failed", sales.isError());
     }
 
     @Test
@@ -150,7 +150,7 @@ public class GetStoreSaleHistory extends ProjectTest {
         Response<List<ServiceSale>> sales1 = bridge.getStoreSaleHistory(storeFounderId, storeId);
         Response<List<ServiceSale>> sales2 = bridge.getStoreSaleHistory(storeOwnerId, storeId);
 
-        Assert.assertTrue(sales1.isError());
-        Assert.assertTrue(sales2.isError());
+        Assert.assertTrue("bridge.getStoreSaleHistory(storeFounderId, storeId) should have failed", sales1.isError());
+        Assert.assertTrue("bridge.getStoreSaleHistory(storeOwnerId, storeId) should have failed", sales2.isError());
     }
 }

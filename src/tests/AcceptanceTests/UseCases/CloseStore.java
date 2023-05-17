@@ -77,14 +77,14 @@ public class CloseStore extends ProjectTest {
         Response<Integer> stores1 = bridge.numOfOpenStores();
         Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, storeId);
 
-        Assert.assertFalse(stores0.isError());
-        Assert.assertFalse(close.isError());
-        Assert.assertFalse(stores1.isError());
-        Assert.assertTrue(storeInfo.isError());
+        Assert.assertFalse("bridge.numOfOpenStores() failed", stores0.isError());
+        Assert.assertFalse("bridge.closeStore(storeFounderId, storeId) failed", close.isError());
+        Assert.assertFalse("bridge.numOfOpenStores()", stores1.isError());
+        Assert.assertTrue("bridge.getStoreInformation(storeFounderId, storeId) should have failed", storeInfo.isError());
 
-        Assert.assertTrue(close.getValue());
-        Assert.assertEquals(1, stores0.getValue() - stores1.getValue());
-        Assert.assertEquals("Store is closed.", storeInfo.getMessage());
+        Assert.assertTrue("bridge.closeStore(storeFounderId, storeId) failed", close.getValue());
+        Assert.assertEquals("number of open stores has not decreased by 1", 1, stores0.getValue() - stores1.getValue());
+        Assert.assertEquals("bridge.getStoreInformation(storeFounderId, storeId) should have failed", "Store is closed.", storeInfo.getMessage());
     }
 
     @Test
@@ -95,14 +95,14 @@ public class CloseStore extends ProjectTest {
         Response<Integer> stores1 = bridge.numOfOpenStores();
         Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeOwnerId, storeId);
 
-        Assert.assertFalse(stores0.isError());
-        Assert.assertFalse(close.isError());
-        Assert.assertFalse(stores1.isError());
-        Assert.assertTrue(storeInfo.isError());
+        Assert.assertFalse("bridge.numOfOpenStores() failed", stores0.isError());
+        Assert.assertFalse("bridge.closeStore(storeOwnerId, storeId) failed", close.isError());
+        Assert.assertFalse("bridge.numOfOpenStores() failed", stores1.isError());
+        Assert.assertTrue("bridge.getStoreInformation(storeOwnerId, storeId) should have failed", storeInfo.isError());
 
-        Assert.assertTrue(close.getValue());
-        Assert.assertEquals(1, stores0.getValue() - stores1.getValue());
-        Assert.assertEquals("Store is closed.", storeInfo.getMessage());
+        Assert.assertTrue("bridge.closeStore(storeOwnerId, storeId) failed", close.getValue());
+        Assert.assertEquals("number of open stores did not decreased by 1", 1, stores0.getValue() - stores1.getValue());
+        Assert.assertEquals("bridge.getStoreInformation(storeOwnerId, storeId) should have failed", "Store is closed.", storeInfo.getMessage());
     }
 
     @Test
@@ -113,13 +113,13 @@ public class CloseStore extends ProjectTest {
         Response<Integer> stores1 = bridge.numOfOpenStores();
         Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeManagerId, storeId);
 
-        Assert.assertFalse(stores0.isError());
-        Assert.assertTrue(close.isError());
-        Assert.assertFalse(stores1.isError());
-        Assert.assertFalse(storeInfo.isError());
+        Assert.assertFalse("bridge.numOfOpenStores() failed", stores0.isError());
+        Assert.assertTrue("bridge.closeStore(storeManagerId, storeId) should have failed", close.isError());
+        Assert.assertFalse("bridge.numOfOpenStores() failed", stores1.isError());
+        Assert.assertFalse("bridge.getStoreInformation(storeManagerId, storeId) failed", storeInfo.isError());
 
-        Assert.assertEquals(stores0.getValue(), stores1.getValue());
-        Assert.assertFalse(storeInfo.getValue().getIsClosed());
+        Assert.assertEquals("number of open stores has changed", stores0.getValue(), stores1.getValue());
+        Assert.assertFalse("the store is closed", storeInfo.getValue().getIsClosed());
     }
 
     @Test
@@ -130,13 +130,13 @@ public class CloseStore extends ProjectTest {
         Response<Integer> stores1 = bridge.numOfOpenStores();
         Response<ServiceStore> storeInfo = bridge.getStoreInformation(userId, storeId);
 
-        Assert.assertFalse(stores0.isError());
-        Assert.assertTrue(close.isError());
-        Assert.assertFalse(stores1.isError());
-        Assert.assertFalse(storeInfo.isError());
+        Assert.assertFalse("bridge.numOfOpenStores() failed", stores0.isError());
+        Assert.assertTrue("bridge.closeStore(userId, storeId) should have failed", close.isError());
+        Assert.assertFalse("bridge.numOfOpenStores() failed", stores1.isError());
+        Assert.assertFalse("bridge.getStoreInformation(userId, storeId) failed", storeInfo.isError());
 
-        Assert.assertEquals(stores0.getValue(), stores1.getValue());
-        Assert.assertFalse(storeInfo.getValue().getIsClosed());
+        Assert.assertEquals("number of open stores has changed", stores0.getValue(), stores1.getValue());
+        Assert.assertFalse("the store is closed", storeInfo.getValue().getIsClosed());
     }
 
     @Test
@@ -149,14 +149,14 @@ public class CloseStore extends ProjectTest {
         Response<Integer> stores1 = bridge.numOfOpenStores();
         Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, storeId);
 
-        Assert.assertFalse(stores0.isError());
-        Assert.assertFalse(logout.isError());
-        Assert.assertTrue(close.isError());
-        Assert.assertFalse(login.isError());
-        Assert.assertFalse(stores1.isError());
-        Assert.assertFalse(storeInfo.isError());
+        Assert.assertFalse("bridge.numOfOpenStores() failed", stores0.isError());
+        Assert.assertFalse("bridge.logout(storeFounderId) failed", logout.isError());
+        Assert.assertTrue("bridge.closeStore(storeFounderId, storeId) should have failed", close.isError());
+        Assert.assertFalse("bridge.login(bridge.createClient().getValue(), \"founder\", \"Aa1234\") failed", login.isError());
+        Assert.assertFalse("bridge.numOfOpenStores() failed", stores1.isError());
+        Assert.assertFalse("bridge.getStoreInformation(storeFounderId, storeId) failed", storeInfo.isError());
 
-        Assert.assertEquals(stores0.getValue(), stores1.getValue());
-        Assert.assertFalse(storeInfo.getValue().getIsClosed());
+        Assert.assertEquals("number of open stores has changed", stores0.getValue(), stores1.getValue());
+        Assert.assertFalse("the store is closed", storeInfo.getValue().getIsClosed());
     }
 }
