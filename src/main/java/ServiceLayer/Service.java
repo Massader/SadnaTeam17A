@@ -951,5 +951,20 @@ public class Service {
     public Response<ConcurrentHashMap<String, UUID>> getUserNames() {
         return Response.getSuccessResponse(userController.getUsernames());
     }
+    
+    public Response<List<ServiceUser>> getStoreManagers(UUID clientCredentials, UUID storeId) {
+        Response<List<User>> response = storeController.getStoreManagers(clientCredentials, storeId);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+        }
+        else {
+            eventLogger.log(Level.INFO, "Returned store " + storeId + " managers to " + clientCredentials);
+        }
+        List<ServiceUser> users = new ArrayList<>();
+        for (User user : response.getValue()) {
+            users.add(new ServiceUser(user));
+        }
+        return Response.getSuccessResponse(users);
+    }
 }
 
