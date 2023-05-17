@@ -19,4 +19,6 @@ public abstract class Role {
     public UUID getStoreId() {
         return storeId;
     }
+    
+    public abstract void setPermissions(List<Integer> permissions);
 }

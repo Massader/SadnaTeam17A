@@ -310,7 +310,7 @@ public class UserController {
             if(!storeController.getStore(storeId).getRolesMap().containsKey(manager))
                 return Response.getFailResponse("User is not store manager.");
             for(int i : permissions)
-                storeController.getStore(storeId).getRolesMap().get(manager).addPermission(StorePermissions.values()[i]);
+                storeController.getStore(storeId).getRolesMap().get(manager).setPermissions(permissions);
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception){
@@ -565,5 +565,13 @@ public class UserController {
     
     public void loginFromSecurityQuestion(UUID id) {    //For use from security controller only
         loggedInUsers.add(users.get(id).getUsername());
+    }
+    
+    public List<UUID> getAdminIds() {
+        List<UUID> admins = new ArrayList<>();
+        for (User user : users.values()) {
+            if (user.isAdmin()) admins.add(user.getId());
+        }
+        return admins;
     }
 }

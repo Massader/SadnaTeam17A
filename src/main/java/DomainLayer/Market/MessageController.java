@@ -18,14 +18,20 @@ public class MessageController {
 
     private static MessageController instance = null;
     private static final Object instanceLock = new Object();
-    private final ConcurrentHashMap<UUID, ConcurrentHashMap<UUID, Message>> messages;
-    private final ConcurrentHashMap<UUID, Complaint> complaints;
+    private NotificationController notificationController;
+    private StoreController storeController;
+    private ConcurrentHashMap<UUID, ConcurrentHashMap<UUID, Message>> messages;
+    private ConcurrentHashMap<UUID, Complaint> complaints;
 
-    private MessageController() {
+    private MessageController() { }
+    
+    public void init() {
         messages = new ConcurrentHashMap<>();
         complaints = new ConcurrentHashMap<>();
+        notificationController = NotificationController.getInstance();
+        storeController = StoreController.getInstance();
     }
-
+    
     public static MessageController getInstance() {
         synchronized (instanceLock) {
             if (instance == null)
@@ -33,18 +39,18 @@ public class MessageController {
         }
         return instance;
     }
-
-
+    
     public Response<UUID> sendMessage(UUID clientCredentials, UUID sender, UUID recipient, String body){
         Message message = new Message(body, sender, recipient);
         if (clientCredentials != sender) {
-            Store store = StoreController.getInstance().getStore(sender);
+            Store store = storeController.getStore(sender);
             if (store == null) return Response.getFailResponse("Message sender credentials do not match logged in user.");
             if (!store.checkPermission(clientCredentials, StorePermissions.STORE_COMMUNICATION))
                 return Response.getFailResponse("Logged in user does not have the correct permissions to send a message for store " + sender);
         }
         if (!messages.containsKey(recipient)) messages.put(recipient, new ConcurrentHashMap<>());
         messages.get(recipient).put(message.getId(), message);
+        notificationController.sendNotification(recipient, "New message received!");
         return Response.getSuccessResponse(message.getId());
     }
 
@@ -98,6 +104,10 @@ public class MessageController {
     public Response<UUID> sendComplaint(UUID clientCredentials, UUID purchaseId, String body) {
         Complaint complaint = new Complaint(body, clientCredentials, purchaseId);
         complaints.put(complaint.getId(), complaint);
+        List<UUID> adminIds = UserController.getInstance().getAdminIds();
+        for (UUID id : adminIds) {
+            notificationController.sendNotification(id, "New complaint received!");
+        }
         return Response.getSuccessResponse(complaint.getId());
     }
 

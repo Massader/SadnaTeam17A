@@ -21,7 +21,7 @@ public class AlertController {
     private final ConcurrentHashMap<UUID, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter createNotifier(UUID clientCredentials) {
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(-1L);
         emitters.put(clientCredentials, emitter);
         return emitter;
     }
@@ -38,6 +38,7 @@ public class AlertController {
     }
 
     public void closeEmitter(UUID clientCredentials) {
+        emitters.get(clientCredentials).complete();
         emitters.remove(clientCredentials);
     }
 

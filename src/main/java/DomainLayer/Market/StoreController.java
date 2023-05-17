@@ -103,7 +103,7 @@ public class StoreController {
                     if (rolePermissions.contains(StorePermissions.STORE_OWNER)
                             && !rolePermissions.contains(StorePermissions.STORE_FOUNDER)) {
                         User user = userController.getUserById(role.getKey());
-                        if (user != null) notificationController.sendNotification(clientCredentials,
+                        if (user != null) notificationController.sendNotification(user.getId(),
                                 "Owned store " + store.getName() + " has been closed by founder.");
                     }
                 }
@@ -128,7 +128,7 @@ public class StoreController {
                     if (rolePermissions.contains(StorePermissions.STORE_OWNER)
                             && !rolePermissions.contains(StorePermissions.STORE_FOUNDER)) {
                         User user = userController.getUserById(role.getKey());
-                        if (user != null) notificationController.sendNotification(clientCredentials,
+                        if (user != null) notificationController.sendNotification(user.getId(),
                                 "Owned store " + store.getName() + " has been reopened by founder.");
                     }
                 }
@@ -157,7 +157,7 @@ public class StoreController {
                             && !rolePermissions.contains(StorePermissions.STORE_FOUNDER)) {
                         user = userController.getUserById(role.getKey());
                         if (user != null) {
-                            notificationController.sendNotification(clientCredentials,
+                            notificationController.sendNotification(user.getId(),
                                     "Owned store " + store.getName() + " has been shut down by admin.");
                             user.removeStoreRole(storeId);
                             // TODO: Remove role from store as well? --Nitzan
