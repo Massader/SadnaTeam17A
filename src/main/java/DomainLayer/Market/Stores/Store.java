@@ -24,7 +24,7 @@ public class Store {
     private int ratingCounter;
     private final ConcurrentHashMap<UUID, Item> items;
     private final StoreDiscount discounts; // Map of Item ID -> Discount
-    private final StorePurchasePolicies policy;
+    private final StorePurchasePolicy policy;
     private final ConcurrentLinkedQueue<Sale> sales;
     private final ConcurrentHashMap<UUID, Role> rolesMap;
 
@@ -39,7 +39,7 @@ public class Store {
         this.ratingCounter = 0;
         items = new ConcurrentHashMap<>();
         discounts = new StoreDiscount(true);// always max until change
-        policy = new StorePurchasePolicies();
+        policy = new StorePurchasePolicy();
         sales = new ConcurrentLinkedQueue<>();
         rolesMap = new ConcurrentHashMap<>();
     }
@@ -48,7 +48,7 @@ public class Store {
         return discounts;
     }
 
-    public StorePurchasePolicies getPolicy() {
+    public StorePurchasePolicy getPolicy() {
         return policy;
     }
     public ConcurrentHashMap<UUID, Role> getRolesMap() {
@@ -336,7 +336,7 @@ public class Store {
             { throw new Exception("can't Creating Purchase Term which is not a shopping basket item or category");}
         }
         if (atLeast){
-            return new atLeastPurchaseRule(purchaseRule,quantity);
+            return new AtLeastPurchaseRule(purchaseRule,quantity);
         }
         else return new AtMostPurchaseRule(purchaseRule,quantity);
 

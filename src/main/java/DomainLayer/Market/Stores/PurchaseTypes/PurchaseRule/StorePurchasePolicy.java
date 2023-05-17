@@ -5,17 +5,17 @@ import DomainLayer.Market.Users.ShoppingBasket;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class StorePurchasePolicies {
+public class StorePurchasePolicy {
     /**
      * managePurchasePolicies is a class that manages the purchase policies of a shop.
      * It stores PurchaseTerm and provides methods for adding and removing them.
      */
     private ConcurrentLinkedQueue<PurchaseTerm> purchasePolicies;
 
-    public StorePurchasePolicies(ConcurrentLinkedQueue<PurchaseTerm> purchasePolicies) {
+    public StorePurchasePolicy(ConcurrentLinkedQueue<PurchaseTerm> purchasePolicies) {
         this.purchasePolicies = purchasePolicies;
     }
-    public StorePurchasePolicies() {
+    public StorePurchasePolicy() {
         this.purchasePolicies = new ConcurrentLinkedQueue<>();
     }
 
@@ -41,9 +41,9 @@ public class StorePurchasePolicies {
             CompositePurchaseTerm compositeTerm = (CompositePurchaseTerm) term;
             purchasePolicies.removeIf(p -> p.equals(term));
             }
-            // If the new term is not a CompositePurchaseTerm, simply add it to purchasePolicies
-            purchasePolicies.add(term);
-        }
+        // If the new term is not a CompositePurchaseTerm, simply add it to purchasePolicies
+        purchasePolicies.add(term);
+    }
 
 
 
