@@ -220,5 +220,10 @@ public class StoreController {
         return service.addPolicyTermByStoreOwner(request.getClientCredentials(), request.getStoreId(), request.getRule(), request.getatLeast(),
                 request.getQuantity(), request.getItemId(), request.getCategory());
     }
-
+    
+    @GetMapping(path = "/get-store-managers/id={id}&storeId={storeId}")
+    public Response<List<ServiceUser>> getStoreManagers(@PathVariable(name = "id") UUID clientCredentials,
+                                                        @PathVariable(name = "storeId") UUID storeId) {
+        return service.getStoreManagers(clientCredentials, storeId);
+    }
 }

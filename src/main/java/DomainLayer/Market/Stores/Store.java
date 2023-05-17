@@ -363,8 +363,17 @@ public class Store {
         return discount;
 
     }
-
+    
+    public List<UUID> getStoreManagers() {
+        List<UUID> managersIds = new ArrayList<>();
+        for (Map.Entry<UUID, Role> entry : rolesMap.entrySet()) {
+            if (!entry.getValue().getPermissions().contains(StorePermissions.STORE_OWNER)) {
+                managersIds.add(entry.getKey());
+            }
+        }
+        return managersIds;
     }
+}
 
 
 

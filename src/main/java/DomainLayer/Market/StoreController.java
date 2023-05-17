@@ -638,13 +638,25 @@ public class StoreController {
         }
         return category;
     }
-
-
-
-
-
-
-
-
-
+    
+    
+    public Response<List<User>> getStoreManagers(UUID clientCredentials, UUID storeId) {
+        if (!storeExist(storeId))
+            return Response.getFailResponse("Store does not exist.");
+        if (userController.getUserById(clientCredentials) == null)
+            return Response.getFailResponse("Only registered users may get store manager list.");
+        Response<Boolean> loggedInUserResponse = userController.isLoggedInUser(clientCredentials);
+        if (loggedInUserResponse.isError())
+            return Response.getFailResponse("Passed user is not logged in.");
+        Store store = getStore(storeId);
+        if (!store.checkPermission(clientCredentials, StorePermissions.STORE_MANAGEMENT_INFORMATION))  {
+            return Response.getFailResponse("User does not have permission to get store managers list.");
+        }
+        List<User> managers = new ArrayList<>();
+        List<UUID> managersIds = store.getStoreManagers();
+        for (UUID id : managersIds) {
+            managers.add(userController.getUserById(id));
+        }
+        return Response.getSuccessResponse(managers);
+    }
 }
