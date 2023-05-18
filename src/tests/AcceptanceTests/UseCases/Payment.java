@@ -2,14 +2,14 @@ package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
 
 import java.util.UUID;
-import org.junit.*;
 
-import org.junit.Test;
+
+
 import org.junit.jupiter.api.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Payment extends ProjectTest {
-
+/*
     @BeforeAll
     public void beforeClass() {
     }
@@ -33,4 +33,6 @@ public class Payment extends ProjectTest {
     public void paymentSuccess() {
         Assert.assertTrue(true);
     }
+
+ */
 }

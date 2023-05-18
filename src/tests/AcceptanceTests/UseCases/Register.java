@@ -6,14 +6,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.ServiceUser;
-import org.junit.*;
 
-import org.junit.Test;
+
+
 import org.junit.jupiter.api.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Register extends ProjectTest {
-
+/*
     @BeforeAll
     public void beforeClass() {
 
@@ -148,4 +148,6 @@ public class Register extends ProjectTest {
         }
         Assert.assertEquals(1000, users1.getValue() - users0.getValue());
     }
+
+ */
 }

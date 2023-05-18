@@ -6,13 +6,9 @@ import ServiceLayer.ServiceObjects.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.junit.*;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
@@ -85,13 +81,13 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
     public void GetStoreSaleHistoryAdminSuccess() {
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistorySystemAdmin(adminId, storeId);
 
-        Assert.assertFalse(sales.isError());
-        Assert.assertNotNull(sales.getValue());
-        Assert.assertEquals(4, sales.getValue().size());
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item1Id) && sale.getQuantity() == 3));
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item2Id) && sale.getQuantity() == 6));
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item3Id) && sale.getQuantity() == 9));
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item4Id) && sale.getQuantity() == 12));
+        assertFalse(sales.isError(), String.format("bridge.getStoreSaleHistorySystemAdmin(adminId, storeId) => %s", sales.getMessage()));
+        assertNotNull(sales.getValue(), "bridge.getStoreSaleHistorySystemAdmin(adminId, storeId) failed");
+        assertEquals(4, sales.getValue().size(), "list size is not equal 4");
+        assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item1Id) && sale.getQuantity() == 3), "list does not contain item1");
+        assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item2Id) && sale.getQuantity() == 6), "list does not contain item2");
+        assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item3Id) && sale.getQuantity() == 9), "list does not contain item3");
+        assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user2Id) && sale.getItemId().equals(item4Id) && sale.getQuantity() == 12),"list does not contain item4");
     }
 
     @Test
@@ -101,6 +97,6 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(adminId, storeId);
         bridge.login(bridge.createClient().getValue(), "admin", "Admin1");
 
-        Assert.assertTrue(sales.isError());
+        assertTrue(sales.isError(), "bridge.getStoreSaleHistory(adminId, storeId) should have failed");
     }
 }

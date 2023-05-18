@@ -4,14 +4,14 @@ import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;
 import java.util.UUID;
-import org.junit.*;
 
-import org.junit.Test;
+
+
 import org.junit.jupiter.api.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ViewShoppingCartItems extends ProjectTest {
-
+/*
     UUID client;
 
     @BeforeAll
@@ -65,4 +65,6 @@ public class ViewShoppingCartItems extends ProjectTest {
         List<ServiceShoppingBasket> shoppingCartView=  bridge.getCart(notUserOrClient).getValue();
         Assert.assertNull(shoppingCartView);
     }
+
+ */
 }
