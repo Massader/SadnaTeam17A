@@ -301,6 +301,8 @@ public class UserController {
     public Response<Boolean> setManagerPermissions(UUID clientCredentials, UUID manager,
                                                    UUID storeId, List<Integer> permissions) {
         try {
+            if (permissions == null)
+                return Response.getFailResponse("Passed permissions list is null.");
             if(!storeController.storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
             if(!storeController.getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
@@ -309,8 +311,7 @@ public class UserController {
                 return Response.getFailResponse("Manager does not exist.");
             if(!storeController.getStore(storeId).getRolesMap().containsKey(manager))
                 return Response.getFailResponse("User is not store manager.");
-            for(int i : permissions)
-                storeController.getStore(storeId).getRolesMap().get(manager).setPermissions(permissions);
+            storeController.getStore(storeId).getRolesMap().get(manager).setPermissions(permissions);
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception){

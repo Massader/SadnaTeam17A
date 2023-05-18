@@ -7,12 +7,12 @@ import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class CompositePolicy extends Request{
+public class CompositePolicyRequest extends Request{
     private Boolean and;
-    private ConcurrentLinkedQueue<SimplePolicy> policies;
+    private ConcurrentLinkedQueue<SimplePolicyRequest> policies;
 
 
-    public CompositePolicy(UUID clientCredentials, Boolean and, ConcurrentLinkedQueue<SimplePolicy> policys) {
+    public CompositePolicyRequest(UUID clientCredentials, Boolean and, ConcurrentLinkedQueue<SimplePolicyRequest> policys) {
         super(clientCredentials);
         this.and = and;
         this.policies = policys;
@@ -22,13 +22,13 @@ public class CompositePolicy extends Request{
         return and;
     }
 
-    public ConcurrentLinkedQueue<SimplePolicy> getPolicies() {
+    public ConcurrentLinkedQueue<SimplePolicyRequest> getPolicies() {
         return policies;
     }
 
     public PurchaseTerm getPurchaseTerm(){
         ConcurrentLinkedQueue<PurchaseTerm> purchaseTerms = new ConcurrentLinkedQueue<>();
-        for (SimplePolicy policy:getPolicies()) {
+        for (SimplePolicyRequest policy:getPolicies()) {
             purchaseTerms.add(policy.getPurchaseTerm());
         }
         if(getAnd()){return new CompositePurchaseTermAnd(purchaseTerms.poll().getPurchaseRule(),purchaseTerms);
