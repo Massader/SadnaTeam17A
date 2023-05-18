@@ -3,9 +3,8 @@ import AcceptanceTests.*;
 
 import java.util.UUID;
 
-
-
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RealTimeAlerts extends ProjectTest {
@@ -32,7 +31,7 @@ public class RealTimeAlerts extends ProjectTest {
 
     @Test
     public void realTimeAlertsSuccess() {
-        Assert.assertTrue(true);
+        assertTrue(true);
     }
 
  */

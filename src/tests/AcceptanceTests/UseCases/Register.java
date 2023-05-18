@@ -7,13 +7,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.ServiceUser;
 
-
-
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Register extends ProjectTest {
-/*
+
     @BeforeAll
     public void beforeClass() {
 
@@ -43,18 +42,18 @@ public class Register extends ProjectTest {
         Response<Integer> users1 = bridge.numOfUsers();
         Response<ConcurrentHashMap<String, UUID>> userNames1 = bridge.getUserNames();
 
-        Assert.assertFalse(users0.isError());
-        Assert.assertFalse(userNames0.isError());
-        Assert.assertFalse(register.isError());
-        Assert.assertFalse(users1.isError());
-        Assert.assertFalse(userNames1.isError());
+        assertFalse(users0.isError(), String.format("bridge.numOfUsers() => %s", users0.getMessage()));
+        assertFalse(userNames0.isError(), String.format("bridge.getUserNames() => %s", userNames0.getMessage()));
+        assertFalse(register.isError(), String.format("bridge.register(\"user1\", \"Aa1234\") => %s", register.getMessage()));
+        assertFalse(users1.isError(), String.format("bridge.numOfUsers() => %s", users1.getMessage()));
+        assertFalse(userNames1.isError(), String.format("bridge.getUserNames() => %s", userNames1.getMessage()));
 
-        Assert.assertTrue(register.getValue());     //register success
-        Assert.assertEquals(1, users1.getValue() - users0.getValue());    //one more user is registered
-        Assert.assertNotNull(userNames0.getValue());
-        Assert.assertFalse(userNames1.getValue().containsKey("user1"));     //no username "user1" before registration
-        Assert.assertNotNull(userNames1.getValue());
-        Assert.assertTrue(userNames1.getValue().containsKey("user1"));      //there is "user1" username after registration
+        assertTrue(register.getValue(), "bridge.register(\"user1\", \"Aa1234\") failed");     //register success
+        assertEquals(1, users1.getValue() - users0.getValue(), "number of registered users did not increased by 1");    //one more user is registered
+        assertNotNull(userNames0.getValue(), "bridge.getUserNames() failed");
+        assertFalse(userNames0.getValue().containsKey("user1"), "user names list contain \"user1\" before registration");     //no username "user1" before registration
+        assertNotNull(userNames1.getValue(), "bridge.getUserNames() failed");
+        assertTrue(userNames1.getValue().containsKey("user1"), "user names list does not contain \"user1\" after registration");      //there is "user1" username after registration
     }
 
     @Test
@@ -68,18 +67,18 @@ public class Register extends ProjectTest {
         Response<Integer> users1 = bridge.numOfUsers();
         Response<ConcurrentHashMap<String, UUID>> userNames1 = bridge.getUserNames();
 
-        Assert.assertFalse(users0.isError());
-        Assert.assertFalse(userNames0.isError());
-        Assert.assertTrue(register.isError());
-        Assert.assertFalse(users1.isError());
-        Assert.assertFalse(userNames1.isError());
+        assertFalse(users0.isError(), String.format("bridge.numOfUsers() => %s", users0.getMessage()));
+        assertFalse(userNames0.isError(), String.format("bridge.getUserNames() => %s", userNames0.getMessage()));
+        assertTrue(register.isError(), "bridge.register(\"user2\", \"4321\") should have failed");
+        assertFalse(users1.isError(), String.format("bridge.numOfUsers() => %s", users1.getMessage()));
+        assertFalse(userNames1.isError(), String.format("bridge.getUserNames() => %s", userNames1.getMessage()));
 
-        Assert.assertEquals("This username is already in use.", register.getMessage());     //register failed
-        Assert.assertEquals(users1.getValue(), users0.getValue());    //users amount remain the same
-        Assert.assertNotNull(userNames0.getValue());
-        Assert.assertTrue(userNames1.getValue().containsKey("user2"));     //there is "user2" username before registration
-        Assert.assertNotNull(userNames1.getValue());
-        Assert.assertTrue(userNames1.getValue().containsKey("user2"));      //there is "user2" username after registration
+        assertEquals("This username is already in use.", register.getMessage(), register.getMessage());     //register failed
+        assertEquals(users1.getValue(), users0.getValue(), "number of users has changed");    //users amount remain the same
+        assertNotNull(userNames0.getValue(), "bridge.getUserNames() failed");
+        assertTrue(userNames0.getValue().containsKey("user2"), "user names list contain \"user2\" before registration");     //there is "user2" username before registration
+        assertNotNull(userNames1.getValue(), "bridge.getUserNames() failed");
+        assertTrue(userNames1.getValue().containsKey("user2"), "user names list does not contain \"user1\" after registration");      //there is "user2" username after registration
     }
 
     @Test
@@ -89,12 +88,12 @@ public class Register extends ProjectTest {
         Response<Boolean> register = bridge.register(null, "4321");
         Response<Integer> users1 = bridge.numOfUsers();
 
-        Assert.assertFalse(users0.isError());
-        Assert.assertTrue(register.isError());
-        Assert.assertFalse(users1.isError());
+        assertFalse(users0.isError(), String.format("bridge.numOfUsers() => %s", users0.getMessage()));
+        assertTrue(register.isError(), "bridge.register(null, \"4321\") should have failed");
+        assertFalse(users1.isError(), String.format("bridge.numOfUsers() => %s", users1.getMessage()));
 
-        Assert.assertEquals("No username input.", register.getMessage());     //register failed
-        Assert.assertEquals(users1.getValue(), users0.getValue());    //users amount remain the same
+        assertEquals("No username input.", register.getMessage(), register.getMessage());     //register failed
+        assertEquals(users1.getValue(), users0.getValue(), "number of users has changed");    //users amount remain the same
     }
 
     @Test
@@ -104,12 +103,12 @@ public class Register extends ProjectTest {
         Response<Boolean> register = bridge.register("user3", null);
         Response<Integer> users1 = bridge.numOfUsers();
 
-        Assert.assertFalse(users0.isError());
-        Assert.assertTrue(register.isError());
-        Assert.assertFalse(users1.isError());
+        assertFalse(users0.isError(), String.format("bridge.numOfUsers() => %s", users0.getMessage()));
+        assertTrue(register.isError(), "bridge.register(\"user3\", null) should have failed");
+        assertFalse(users1.isError(), String.format("bridge.numOfUsers() => %s", users1.getMessage()));
 
-        Assert.assertEquals("No password input.", register.getMessage());     //register failed
-        Assert.assertEquals(users1.getValue(), users0.getValue());    //users amount remain the same
+        assertEquals("No username input.", register.getMessage(), register.getMessage());    //register failed
+        assertEquals(users1.getValue(), users0.getValue(), "number of users has changed");    //users amount remain the same
     }
 
     @Test
@@ -134,20 +133,18 @@ public class Register extends ProjectTest {
         Response<Integer> users1 = bridge.numOfUsers();
         Response<ConcurrentHashMap<String, UUID>> userNames1 = bridge.getUserNames();
 
-        Assert.assertFalse(users0.isError());
-        Assert.assertFalse(userNames0.isError());
-        Assert.assertFalse(users1.isError());
-        Assert.assertFalse(userNames0.isError());
+        assertFalse(users0.isError(), String.format("bridge.numOfUsers() => %s", users0.getMessage()));
+        assertFalse(userNames0.isError(), String.format("bridge.getUserNames() => %s", userNames0.getMessage()));
+        assertFalse(users1.isError(), String.format("bridge.numOfUsers() => %s", users1.getMessage()));
+        assertFalse(userNames1.isError(), String.format("bridge.getUserNames() => %s", userNames1.getMessage()));
         for (Response<Boolean> r : registrations) {
-            Assert.assertFalse(r.isError());
-            Assert.assertTrue(r.getValue());
+            assertFalse(r.isError(), String.format("bridge.register(\"user_\" + index, \"Aa1234\") => %s", r.getMessage()));
+            assertTrue(r.getValue(), "bridge.register(\"user_\" + index, \"Aa1234\") failed");
         }
         for (int i = 0; i < 1000; i++) {
-            Assert.assertFalse(userNames0.getValue().containsKey("user_" + i));
-            Assert.assertTrue(userNames1.getValue().containsKey("user_" + i));
+            assertFalse(userNames0.getValue().containsKey("user_" + i), "user names list contain \"user_" + i + "\" before registration");
+            assertTrue(userNames1.getValue().containsKey("user_" + i), "user names list does not contain \"user_" + i + "\" after registration");
         }
-        Assert.assertEquals(1000, users1.getValue() - users0.getValue());
+        assertEquals(1000, users1.getValue() - users0.getValue(), "number of users did not increased by 1000");
     }
-
- */
 }

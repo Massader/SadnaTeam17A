@@ -7,13 +7,12 @@ import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.ServiceUser;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-
-
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class LogoutRegisterUser extends ProjectTest {
-/*
+
     UUID userId;
 
     @BeforeAll
@@ -46,13 +45,13 @@ public class LogoutRegisterUser extends ProjectTest {
         Response<UUID> logout = bridge.logout(userId);
         Response<Integer> loggedInUsers1 = bridge.numOfLoggedInUsers();
 
-        Assert.assertFalse(loggedInUsers0.isError());
-        Assert.assertFalse(logout.isError());
-        Assert.assertFalse(loggedInUsers1.isError());
+        assertFalse(loggedInUsers0.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers0.getMessage()));
+        assertFalse(logout.isError(), String.format("bridge.logout(userId) => %s", logout.getMessage()));
+        assertFalse(loggedInUsers1.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers1.getMessage()));
 
-        Assert.assertNotNull(logout.getValue());
-        Assert.assertNotEquals(userId, logout.getValue());
-        Assert.assertEquals(1, loggedInUsers0.getValue() - loggedInUsers1.getValue());
+        assertNotNull(logout.getValue(), "bridge.logout(userId) failed");
+        assertNotEquals(userId, logout.getValue(), "logout returned wrong UUID");
+        assertEquals(1, loggedInUsers0.getValue() - loggedInUsers1.getValue(), "number of logged-in users did not decreased by 1");
     }
 
     @Test
@@ -63,12 +62,12 @@ public class LogoutRegisterUser extends ProjectTest {
         Response<UUID> logoutAgain = bridge.logout(userId);
         Response<Integer> loggedInUsers1 = bridge.numOfLoggedInUsers();
 
-        Assert.assertFalse(loggedInUsers0.isError());
-        Assert.assertTrue(logoutAgain.isError());
-        Assert.assertFalse(loggedInUsers1.isError());
+        assertFalse(loggedInUsers0.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers0.getMessage()));
+        assertTrue(logoutAgain.isError(), "bridge.logout(userId) should have failed");
+        assertFalse(loggedInUsers1.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers1.getMessage()));
 
-        Assert.assertEquals("this user is already logged out", logoutAgain.getMessage());
-        Assert.assertEquals(loggedInUsers0.getValue(), loggedInUsers1.getValue());
+        assertEquals("this user is already logged out", logoutAgain.getMessage(), logoutAgain.getMessage());
+        assertEquals(loggedInUsers0.getValue(), loggedInUsers1.getValue(), "number of logged-in users has changed");
     }
 
     @Test
@@ -96,14 +95,12 @@ public class LogoutRegisterUser extends ProjectTest {
 
         Response<Integer> loggedInUsers1 = bridge.numOfLoggedInUsers();
 
-        Assert.assertFalse(loggedInUsers0.isError());
-        Assert.assertFalse(loggedInUsers1.isError());
+        assertFalse(loggedInUsers0.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers0.getMessage()));
+        assertFalse(loggedInUsers1.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers1.getMessage()));
         for (Response<UUID> l : logouts) {
-            Assert.assertFalse(l.isError());
-            Assert.assertNotNull(l.getValue());
+            assertFalse(l.isError(), String.format("bridge.login(bridge.createClient().getValue(), \"user_\" + index, \"Aa1234\") => %s", l.getMessage()));
+            assertNotNull(l.getValue(), "bridge.login(bridge.createClient().getValue(), \"user_\" + index, \"Aa1234\") failed");
         }
-        Assert.assertEquals(1000, loggedInUsers0.getValue() - loggedInUsers1.getValue());
+        assertEquals(1000, loggedInUsers1.getValue() - loggedInUsers0.getValue(), "number of logged-in users did not decreased by 1000");
     }
-
- */
 }

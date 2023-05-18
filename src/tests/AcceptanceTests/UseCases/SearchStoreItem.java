@@ -6,13 +6,11 @@ import ServiceLayer.ServiceObjects.*;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SearchStoreItem extends ProjectTest {
-/*
+
     UUID storeFounderId;
     ServiceStore fruitStore;
     ServiceStore carStore;
@@ -33,8 +31,6 @@ public class SearchStoreItem extends ProjectTest {
     UUID milkId;
     UUID cheeseId;
 
-
- */
     /*
     -----fruit store-----
     store rating: 2
@@ -118,7 +114,7 @@ public class SearchStoreItem extends ProjectTest {
             desc: "price per 100g"
 
     */
-    /*
+
     @BeforeAll
     public void beforeClass() {
         bridge.register("founder", "Aa1234");
@@ -209,24 +205,24 @@ public class SearchStoreItem extends ProjectTest {
     public void searchEmptySuccess() {
         Response<List<ServiceItem>> all = bridge.searchItem(null, null, null, null, null, null, null, null, null);
 
-        Assert.assertFalse(all.isError());
+        assertFalse(all.isError(), String.format("bridge.searchItem(null, null, null, null, null, null, null, null, null) => %s", all.getMessage()));
 
-        Assert.assertNotNull(all.getValue());
+        assertNotNull(all.getValue(), "bridge.searchItem(null, null, null, null, null, null, null, null, null) failed");
 
-        Assert.assertEquals(12, all.getValue().size());
+        assertEquals(12, all.getValue().size(), "item list size is not 12");
 
-        Assert.assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(lemonId)));
-        Assert.assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(appleId)));
-        Assert.assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(tomatoId)));
-        Assert.assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(watermelonId)));
-        Assert.assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(teslaId)));
-        Assert.assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)));
-        Assert.assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaHybridId)));
-        Assert.assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(toyotaYarisId)));
-        Assert.assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)));
-        Assert.assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)));
-        Assert.assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(milkId)));
-        Assert.assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(cheeseId)));
+        assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(lemonId)), "list does not contain lemon");
+        assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(appleId)), "list does not contain apple");
+        assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(tomatoId)), "list does not contain tomato");
+        assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(watermelonId)), "list does not contain watermelon");
+        assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(teslaId)), "list does not contain tesla");
+        assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)), "list does not contain toyota corolla");
+        assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaHybridId)), "list does not contain toyota corolla hybrid");
+        assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(toyotaYarisId)), "list does not contain toyota yaris");
+        assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)), "list does not contain pineapple");
+        assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)), "list does not contain strawberry");
+        assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(milkId)), "list does not contain milk");
+        assertTrue(all.getValue().stream().anyMatch(item -> item.getId().equals(cheeseId)), "list does not contain cheese");
     }
     @Test
     public void searchOnlyByNameSuccess() {
@@ -234,24 +230,24 @@ public class SearchStoreItem extends ProjectTest {
         Response<List<ServiceItem>> toyota = bridge.searchItem("toyota", null, null, null, null, null, null, null, null);
         Response<List<ServiceItem>> apple = bridge.searchItem("apple", null, null, null, null, null, null, null, null);
 
-        Assert.assertFalse(lemon.isError());
-        Assert.assertFalse(toyota.isError());
-        Assert.assertFalse(apple.isError());
+        assertFalse(lemon.isError(), String.format("bridge.searchItem(\"lemon\", null, null, null, null, null, null, null, null) => %s", lemon.getMessage()));
+        assertFalse(toyota.isError(), String.format("bridge.searchItem(\"toyota\", null, null, null, null, null, null, null, null) => %s", toyota.getMessage()));
+        assertFalse(apple.isError(), String.format("bridge.searchItem(\"apple\", null, null, null, null, null, null, null, null) => %s", apple.getMessage()));
 
-        Assert.assertNotNull(lemon.getValue());
-        Assert.assertNotNull(toyota.getValue());
-        Assert.assertNotNull(apple.getValue());
+        assertNotNull(lemon.getValue(), "bridge.searchItem(\"lemon\", null, null, null, null, null, null, null, null) failed");
+        assertNotNull(toyota.getValue(), "bridge.searchItem(\"toyota\", null, null, null, null, null, null, null, null) failed");
+        assertNotNull(apple.getValue(), "bridge.searchItem(\"apple\", null, null, null, null, null, null, null, null) failed");
 
-        Assert.assertEquals(1, lemon.getValue().size());
-        Assert.assertEquals(3, toyota.getValue().size());
-        Assert.assertEquals(2, apple.getValue().size());
+        assertEquals(1, lemon.getValue().size(), "list size is not 1");
+        assertEquals(3, toyota.getValue().size(), "list size is not 3");
+        assertEquals(2, apple.getValue().size(), "list size is not 2");
 
-        Assert.assertTrue(lemon.getValue().stream().anyMatch(item -> item.getId().equals(lemonId)));
-        Assert.assertTrue(toyota.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)));
-        Assert.assertTrue(toyota.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaHybridId)));
-        Assert.assertTrue(toyota.getValue().stream().anyMatch(item -> item.getId().equals(toyotaYarisId)));
-        Assert.assertTrue(apple.getValue().stream().anyMatch(item -> item.getId().equals(appleId)));
-        Assert.assertTrue(apple.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)));
+        assertTrue(lemon.getValue().stream().anyMatch(item -> item.getId().equals(lemonId)), "the list does not contain lemon");
+        assertTrue(toyota.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)), "the list does not contain toyota corolla");
+        assertTrue(toyota.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaHybridId)), "the list does not contain toyota corolla hybrid");
+        assertTrue(toyota.getValue().stream().anyMatch(item -> item.getId().equals(toyotaYarisId)), "the list does not contain toyota yaris");
+        assertTrue(apple.getValue().stream().anyMatch(item -> item.getId().equals(appleId)), "the list does not contain apple");
+        assertTrue(apple.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)), "the list does not contain pineapple");
     }
 
     @Test
@@ -260,33 +256,33 @@ public class SearchStoreItem extends ProjectTest {
         Response<List<ServiceItem>> cars = bridge.searchItem(null, "cars", null, null, null, null, null, null, null);
         Response<List<ServiceItem>> dairy = bridge.searchItem(null, "dairy", null, null, null, null, null, null, null);
 
-        Assert.assertFalse(fruits.isError());
-        Assert.assertFalse(cars.isError());
-        Assert.assertFalse(dairy.isError());
+        assertFalse(fruits.isError(), String.format("bridge.searchItem(null, \"fruits\", null, null, null, null, null, null, null) => %s", fruits.getMessage()));
+        assertFalse(cars.isError(), String.format("bridge.searchItem(null, \"cars\", null, null, null, null, null, null, null) => %s", cars.getMessage()));
+        assertFalse(dairy.isError(), String.format("bridge.searchItem(null, \"dairy\", null, null, null, null, null, null, null) => %s", dairy.getMessage()));
 
-        Assert.assertNotNull(fruits.getValue());
-        Assert.assertNotNull(cars.getValue());
-        Assert.assertNotNull(dairy.getValue());
+        assertNotNull(fruits.getValue(), "bridge.searchItem(null, \"fruits\", null, null, null, null, null, null, null) failed");
+        assertNotNull(cars.getValue(), "bridge.searchItem(null, \"cars\", null, null, null, null, null, null, null) failed");
+        assertNotNull(dairy.getValue(), "bridge.searchItem(null, \"dairy\", null, null, null, null, null, null, null) failed");
 
-        Assert.assertEquals(5, fruits.getValue().size());
-        Assert.assertEquals(4, cars.getValue().size());
-        Assert.assertEquals(2, dairy.getValue().size());
+        assertEquals(5, fruits.getValue().size(), "list size is not 5");
+        assertEquals(4, cars.getValue().size(), "list size is not 4");
+        assertEquals(2, dairy.getValue().size(), "list size is not 2");
 
-        Assert.assertTrue(fruits.getValue().stream().anyMatch(item -> item.getId().equals(lemonId)));
-        Assert.assertTrue(fruits.getValue().stream().anyMatch(item -> item.getId().equals(appleId)));
-        Assert.assertTrue(fruits.getValue().stream().anyMatch(item -> item.getId().equals(watermelonId)));
-        Assert.assertTrue(fruits.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)));
-        Assert.assertTrue(fruits.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)));
-        Assert.assertTrue(cars.getValue().stream().anyMatch(item -> item.getId().equals(teslaId)));
-        Assert.assertTrue(cars.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)));
-        Assert.assertTrue(cars.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaHybridId)));
-        Assert.assertTrue(cars.getValue().stream().anyMatch(item -> item.getId().equals(toyotaYarisId)));
-        Assert.assertTrue(dairy.getValue().stream().anyMatch(item -> item.getId().equals(milkId)));
-        Assert.assertTrue(dairy.getValue().stream().anyMatch(item -> item.getId().equals(cheeseId)));
+        assertTrue(fruits.getValue().stream().anyMatch(item -> item.getId().equals(lemonId)), "list does not contain lemon");
+        assertTrue(fruits.getValue().stream().anyMatch(item -> item.getId().equals(appleId)), "list does not contain apple");
+        assertTrue(fruits.getValue().stream().anyMatch(item -> item.getId().equals(watermelonId)), "list does not contain watermelon");
+        assertTrue(fruits.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)), "list does not contain pineapple");
+        assertTrue(fruits.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)), "list does not contain strawberry");
+        assertTrue(cars.getValue().stream().anyMatch(item -> item.getId().equals(teslaId)), "list does not contain tesla");
+        assertTrue(cars.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)), "list does not contain toyota corolla");
+        assertTrue(cars.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaHybridId)), "list does not contain toyota corolla hybrid");
+        assertTrue(cars.getValue().stream().anyMatch(item -> item.getId().equals(toyotaYarisId)), "list does not contain toyota yaris");
+        assertTrue(dairy.getValue().stream().anyMatch(item -> item.getId().equals(milkId)), "list does not contain milk");
+        assertTrue(dairy.getValue().stream().anyMatch(item -> item.getId().equals(cheeseId)), "list does not contain cheese");
 
-        Assert.assertTrue(fruits.getValue().stream().allMatch(item -> item.getCategories().contains("fruits")));
-        Assert.assertTrue(cars.getValue().stream().allMatch(item -> item.getCategories().contains("cars")));
-        Assert.assertTrue(dairy.getValue().stream().allMatch(item -> item.getCategories().contains("dairy")));
+        assertTrue(fruits.getValue().stream().allMatch(item -> item.getCategories().contains("fruits")), "list does not contain item from category \"fruits\"");
+        assertTrue(cars.getValue().stream().allMatch(item -> item.getCategories().contains("cars")), "list does not contain item from category \"cars\"");
+        assertTrue(dairy.getValue().stream().allMatch(item -> item.getCategories().contains("dairy")), "list does not contain item from category \"dairy\"");
     }
 
     @Test
@@ -295,42 +291,42 @@ public class SearchStoreItem extends ProjectTest {
         Response<List<ServiceItem>> min10 = bridge.searchItem(null, null, 10.0, null, null, null, null, null, null);
         Response<List<ServiceItem>> min10max100 = bridge.searchItem(null, null, 10.0, 100.0, null, null, null, null, null);
 
-        Assert.assertFalse(max10.isError());
-        Assert.assertFalse(min10.isError());
-        Assert.assertFalse(min10max100.isError());
+        assertFalse(max10.isError(), String.format("bridge.searchItem(null, null, null, 10.0, null, null, null, null, null) => %s", max10.getMessage()));
+        assertFalse(min10.isError(), String.format("bridge.searchItem(null, null, 10.0, null, null, null, null, null, null) => %s", min10.getMessage()));
+        assertFalse(min10max100.isError(), String.format("bridge.searchItem(null, null, 10.0, 100.0, null, null, null, null, null) => %s", min10max100.getMessage()));
 
-        Assert.assertNotNull(max10.getValue());
-        Assert.assertNotNull(min10.getValue());
-        Assert.assertNotNull(min10max100.getValue());
+        assertNotNull(max10.getValue(), "bridge.searchItem(null, null, null, 10.0, null, null, null, null, null) failed");
+        assertNotNull(min10.getValue(), "bridge.searchItem(null, null, 10.0, null, null, null, null, null, null) failed");
+        assertNotNull(min10max100.getValue(), "bridge.searchItem(null, null, 10.0, 100.0, null, null, null, null, null) failed");
 
-        Assert.assertEquals(4, max10.getValue().size());
-        Assert.assertEquals(9, min10.getValue().size());
-        Assert.assertEquals(5, min10max100.getValue().size());
+        assertEquals(4, max10.getValue().size(), "list size is not 4");
+        assertEquals(9, min10.getValue().size(), "list size is not 9");
+        assertEquals(5, min10max100.getValue().size(), "list size is not 5");
 
-        Assert.assertTrue(max10.getValue().stream().anyMatch(item -> item.getId().equals(lemonId)));
-        Assert.assertTrue(max10.getValue().stream().anyMatch(item -> item.getId().equals(appleId)));
-        Assert.assertTrue(max10.getValue().stream().anyMatch(item -> item.getId().equals(tomatoId)));
-        Assert.assertTrue(max10.getValue().stream().anyMatch(item -> item.getId().equals(milkId)));
+        assertTrue(max10.getValue().stream().anyMatch(item -> item.getId().equals(lemonId)), "list does not contain lemon");
+        assertTrue(max10.getValue().stream().anyMatch(item -> item.getId().equals(appleId)), "list does not contain apple");
+        assertTrue(max10.getValue().stream().anyMatch(item -> item.getId().equals(tomatoId)), "list does not contain tomato");
+        assertTrue(max10.getValue().stream().anyMatch(item -> item.getId().equals(milkId)), "list does not contain milk");
 
-        Assert.assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(appleId)));
-        Assert.assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(watermelonId)));
-        Assert.assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(teslaId)));
-        Assert.assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)));
-        Assert.assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaHybridId)));
-        Assert.assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(toyotaYarisId)));
-        Assert.assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)));
-        Assert.assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)));
-        Assert.assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(cheeseId)));
+        assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(appleId)), "list does not contain apple");
+        assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(watermelonId)), "list does not contain watermelon");
+        assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(teslaId)), "list does not contain tesla");
+        assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)), "list does not contain toyota corolla");
+        assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaHybridId)), "list does not contain toyota corolla hybrid");
+        assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(toyotaYarisId)), "list does not contain toyota yaris");
+        assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)), "list does not contain pineapple");
+        assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)), "list does not contain strawberry");
+        assertTrue(min10.getValue().stream().anyMatch(item -> item.getId().equals(cheeseId)), "list does not contain cheese");
 
-        Assert.assertTrue(min10max100.getValue().stream().anyMatch(item -> item.getId().equals(appleId)));
-        Assert.assertTrue(min10max100.getValue().stream().anyMatch(item -> item.getId().equals(watermelonId)));
-        Assert.assertTrue(min10max100.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)));
-        Assert.assertTrue(min10max100.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)));
-        Assert.assertTrue(min10max100.getValue().stream().anyMatch(item -> item.getId().equals(cheeseId)));
+        assertTrue(min10max100.getValue().stream().anyMatch(item -> item.getId().equals(appleId)), "list does not contain apple");
+        assertTrue(min10max100.getValue().stream().anyMatch(item -> item.getId().equals(watermelonId)), "list does not contain watermelon");
+        assertTrue(min10max100.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)), "list does not contain pineapple");
+        assertTrue(min10max100.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)), "list does not contain strawberry");
+        assertTrue(min10max100.getValue().stream().anyMatch(item -> item.getId().equals(cheeseId)), "list does not contain cheese");
 
-        Assert.assertTrue(max10.getValue().stream().allMatch(item -> item.getPrice() <= 10));
-        Assert.assertTrue(min10.getValue().stream().allMatch(item -> item.getPrice() >= 10));
-        Assert.assertTrue(min10max100.getValue().stream().allMatch(item -> item.getPrice() >= 10 && item.getPrice() <= 100));
+        assertTrue(max10.getValue().stream().allMatch(item -> item.getPrice() <= 10), "list does not contain items that cost under 10");
+        assertTrue(min10.getValue().stream().allMatch(item -> item.getPrice() >= 10), "list does not contain items that cost over 10");
+        assertTrue(min10max100.getValue().stream().allMatch(item -> item.getPrice() >= 10 && item.getPrice() <= 100), "list does not contain items that cost over 10 and under 100");
     }
 
     @Test
@@ -338,31 +334,31 @@ public class SearchStoreItem extends ProjectTest {
         Response<List<ServiceItem>> min3 = bridge.searchItem(null, null, null, null, 3, null, null, null, null);
         Response<List<ServiceItem>> min5 = bridge.searchItem(null, null, null, null, 5, null, null, null, null);
 
-        Assert.assertFalse(min3.isError());
-        Assert.assertFalse(min5.isError());
+        assertFalse(min3.isError(), String.format("bridge.searchItem(null, null, null, null, 3, null, null, null, null) => %s", min3.getMessage()));
+        assertFalse(min5.isError(), String.format("bridge.searchItem(null, null, null, null, 5, null, null, null, null) => %s", min5.getMessage()));
 
-        Assert.assertNotNull(min3.getValue());
-        Assert.assertNotNull(min5.getValue());
+        assertNotNull(min3.getValue(), "bridge.searchItem(null, null, null, null, 3, null, null, null, null) failed");
+        assertNotNull(min5.getValue(), "bridge.searchItem(null, null, null, null, 5, null, null, null, null) failed");
 
-        Assert.assertEquals(9, min3.getValue().size());
-        Assert.assertEquals(3, min5.getValue().size());
+        assertEquals(9, min3.getValue().size(), "list size is not 9");
+        assertEquals(3, min5.getValue().size(), "list size is not 3");
 
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(lemonId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(appleId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(tomatoId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(teslaId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaHybridId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(milkId)));
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(lemonId)), "list does not contain lemon");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(appleId)), "list does not contain apple");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(tomatoId)), "list does not contain tomato");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(teslaId)), "list does not contain tesla");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)), "list does not contain toyota corolla");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaHybridId)), "list does not contain toyota corolla hybrid");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)), "list does not contain pineapple");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)), "list does not contain strawberry");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(milkId)), "list does not contain milk");
 
-        Assert.assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(lemonId)));
-        Assert.assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(teslaId)));
-        Assert.assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)));
+        assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(lemonId)), "list does not contain lemon");
+        assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(teslaId)), "list does not contain tesla");
+        assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)), "list does not contain pineapple");
 
-        Assert.assertTrue(min3.getValue().stream().allMatch(item -> item.getRating() >= 3));
-        Assert.assertTrue(min5.getValue().stream().allMatch(item -> item.getRating() >= 5));
+        assertTrue(min3.getValue().stream().allMatch(item -> item.getRating() >= 3), "list does not contain items with rating 3 and above");
+        assertTrue(min5.getValue().stream().allMatch(item -> item.getRating() >= 5), "list does not contain items with rating 5 and above");
     }
 
     @Test
@@ -370,28 +366,28 @@ public class SearchStoreItem extends ProjectTest {
         Response<List<ServiceItem>> min3 = bridge.searchItem(null, null, null, null, null, 3, null, null, null);
         Response<List<ServiceItem>> min5 = bridge.searchItem(null, null, null, null, null, 5, null, null, null);
 
-        Assert.assertFalse(min3.isError());
-        Assert.assertFalse(min5.isError());
+        assertFalse(min3.isError(), String.format("bridge.searchItem(null, null, null, null, null, 3, null, null, null) => %s", min3.getMessage()));
+        assertFalse(min5.isError(), String.format("bridge.searchItem(null, null, null, null, null, 5, null, null, null) => %s", min5.getMessage()));
 
-        Assert.assertNotNull(min3.getValue());
-        Assert.assertNotNull(min5.getValue());
+        assertNotNull(min3.getValue(), "bridge.searchItem(null, null, null, null, null, 3, null, null, null) failed");
+        assertNotNull(min5.getValue(), "bridge.searchItem(null, null, null, null, null, 5, null, null, null) failed");
 
-        Assert.assertEquals(8, min3.getValue().size());
-        Assert.assertEquals(4, min5.getValue().size());
+        assertEquals(8, min3.getValue().size(), "list size is not 8");
+        assertEquals(4, min5.getValue().size(), "list size is not 4");
 
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(teslaId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaHybridId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(toyotaYarisId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(milkId)));
-        Assert.assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(cheeseId)));
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(teslaId)), "list does not contain tesla");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)), "list does not contain toyota corolla");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaHybridId)), "list does not contain toyota corolla hybrid");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(toyotaYarisId)), "list does not contain toyota yaris");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)), "list does not contain pineapple");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)), "list does not contain strawberry");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(milkId)), "list does not contain milk");
+        assertTrue(min3.getValue().stream().anyMatch(item -> item.getId().equals(cheeseId)), "list does not contain cheese");
 
-        Assert.assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)));
-        Assert.assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)));
-        Assert.assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(milkId)));
-        Assert.assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(cheeseId)));
+        assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)), "list does not contain pineapple");
+        assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(strawberryId)), "list does not contain strawberry");
+        assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(milkId)), "list does not contain milk");
+        assertTrue(min5.getValue().stream().anyMatch(item -> item.getId().equals(cheeseId)), "list does not contain cheese");
     }
 
     @Test
@@ -400,32 +396,32 @@ public class SearchStoreItem extends ProjectTest {
         Response<List<ServiceItem>> fruits = bridge.searchItem(null, "fruits", 5.0, 25.0, 4, 3, null, null, null);
         Response<List<ServiceItem>> cheapCars = bridge.searchItem(null, "cars", null, 120000.0, null, null, null, null, carStoreId);
 
-        Assert.assertFalse(topRatingItems.isError());
-        Assert.assertFalse(fruits.isError());
-        Assert.assertFalse(cheapCars.isError());
+        assertFalse(topRatingItems.isError(), String.format("bridge.searchItem(null, null, null, null, 5, 5, null, null, null) => %s", topRatingItems.getMessage()));
+        assertFalse(fruits.isError(), String.format("bridge.searchItem(null, \"fruits\", 5.0, 25.0, 4, 3, null, null, null) => %s", fruits.getMessage()));
+        assertFalse(cheapCars.isError(), String.format("bridge.searchItem(null, \"cars\", null, 120000.0, null, null, null, null, carStoreId) => %s", cheapCars.getMessage()));
 
-        Assert.assertNotNull(topRatingItems.getValue());
-        Assert.assertNotNull(fruits.getValue());
-        Assert.assertNotNull(cheapCars.getValue());
+        assertNotNull(topRatingItems.getValue(), "bridge.searchItem(null, null, null, null, 5, 5, null, null, null) failed");
+        assertNotNull(fruits.getValue(), "bridge.searchItem(null, \"fruits\", 5.0, 25.0, 4, 3, null, null, null) failed");
+        assertNotNull(cheapCars.getValue(), "bridge.searchItem(null, \"cars\", null, 120000.0, null, null, null, null, carStoreId) failed");
 
-        Assert.assertEquals(1, topRatingItems.getValue().size());
-        Assert.assertEquals(1, fruits.getValue().size());
-        Assert.assertEquals(2, cheapCars.getValue().size());
+        assertEquals(1, topRatingItems.getValue().size(), "list size is not 1");
+        assertEquals(1, fruits.getValue().size(), "list size is not 1");
+        assertEquals(2, cheapCars.getValue().size(), "list size is not 2");
 
-        Assert.assertTrue(topRatingItems.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)));
+        assertTrue(topRatingItems.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)), "list does not contain pineapple");
 
-        Assert.assertTrue(fruits.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)));
+        assertTrue(fruits.getValue().stream().anyMatch(item -> item.getId().equals(pineappleId)), "list does not contain pineapple");
 
-        Assert.assertTrue(cheapCars.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)));
-        Assert.assertTrue(cheapCars.getValue().stream().anyMatch(item -> item.getId().equals(toyotaYarisId)));
+        assertTrue(cheapCars.getValue().stream().anyMatch(item -> item.getId().equals(toyotaCorollaId)), "list does not contain toyota corolla");
+        assertTrue(cheapCars.getValue().stream().anyMatch(item -> item.getId().equals(toyotaYarisId)), "list does not contain toyota yaris");
     }
 
     @Test
     public void searchNotExistingStoreFail() {
         Response<List<ServiceItem>> fail = bridge.searchItem(null, "cars", null, 120000.0, null, null, null, null, UUID.randomUUID());
 
-        Assert.assertTrue(fail.isError());
-        Assert.assertEquals("Store does not exist", fail.getMessage());
+        assertTrue(fail.isError(), "bridge.searchItem(null, \"cars\", null, 120000.0, null, null, null, null, UUID.randomUUID()) should have failed");
+        assertEquals("Store does not exist", fail.getMessage(), fail.getMessage());
     }
 
     @Test
@@ -433,8 +429,7 @@ public class SearchStoreItem extends ProjectTest {
         bridge.closeStore(storeFounderId, carStoreId);
         Response<List<ServiceItem>> fail = bridge.searchItem(null, "cars", null, 120000.0, null, null, null, null, carStoreId);
 
-        Assert.assertTrue(fail.isError());
-        Assert.assertEquals("Store is not open", fail.getMessage());
+        assertTrue(fail.isError(), "bridge.searchItem(null, \"cars\", null, 120000.0, null, null, null, null, carStoreId) should have failed");
+        assertEquals("Store is not open", fail.getMessage(), fail.getMessage());
     }
-    */
 }
