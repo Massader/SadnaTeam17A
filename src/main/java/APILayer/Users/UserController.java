@@ -7,6 +7,7 @@ import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.User;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
+import ServiceLayer.ServiceObjects.ServiceMessage;
 import ServiceLayer.ServiceObjects.ServicePurchase;
 import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
 import ServiceLayer.ServiceObjects.ServiceUser;
@@ -122,7 +123,7 @@ public class UserController {
                 request.getStoreId());
     }
 
-    @PostMapping(path = "/send-message")
+    @PostMapping(path = "/messages/send-message")
     public Response<UUID> sendMessage(@RequestBody MessageRequest request){
         return service.sendMessage(request.getClientCredentials(), request.getSender(), request.getRecipient(), request.getBody());
     }
@@ -145,5 +146,10 @@ public class UserController {
     @GetMapping(path = "/search-user/username={username}")
     public Response<List<ServiceUser>> searchUser(@PathVariable(name = "username") String username) {
         return service.searchUser(username);
+    }
+    
+    @GetMapping(path = "/messages/get-messages/id={id}")
+    public Response<List<ServiceMessage>> getMessages(@PathVariable(name = "id") UUID clientCredentials) {
+        return service.getMessages(clientCredentials, clientCredentials);
     }
 }
