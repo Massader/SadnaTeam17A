@@ -7,8 +7,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CompositePurchaseTermXor extends CompositePurchaseTerm {
 
-    public CompositePurchaseTermXor(PurchaseRule PurchaseTerm) {
-        super(PurchaseTerm);
+    public CompositePurchaseTermXor(PurchaseRule purchaseRule) {
+        super(purchaseRule, new ConcurrentLinkedQueue<>());
     }
 
 

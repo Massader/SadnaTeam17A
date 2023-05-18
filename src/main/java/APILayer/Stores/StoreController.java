@@ -226,4 +226,15 @@ public class StoreController {
                                                         @PathVariable(name = "storeId") UUID storeId) {
         return service.getStoreManagers(clientCredentials, storeId);
     }
+
+    @PostMapping(path = "/messages/send-message")
+    public Response<UUID> sendMessage(@RequestBody MessageRequest request){
+        return service.sendMessage(request.getClientCredentials(), request.getSender(), request.getRecipient(), request.getBody());
+    }
+
+    @GetMapping(path = "/messages/get-messages/id={id}&storeId={storeId}")
+    public Response<List<ServiceMessage>> getMessages(@PathVariable(name = "id") UUID clientCredentials,
+                                                      @PathVariable(name = "storeId") UUID storeId) {
+        return service.getMessages(clientCredentials, storeId);
+    }
 }
