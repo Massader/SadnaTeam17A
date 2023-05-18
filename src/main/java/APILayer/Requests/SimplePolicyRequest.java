@@ -5,56 +5,56 @@ import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.*;
 
 import java.util.UUID;
 
-public class SimplePolicy extends Request{
+public class SimplePolicyRequest extends Request{
 
     enum policyType{
         ItemPurchaseRule,
         ShoppingBasketPurchaseRule,
         CategoryPurchaseRule
-
     }
     private policyType policyType;
     private UUID itemId;
     private Category category;
     private int quantity;
     private  Boolean atLeast;
-    private UUID StoreId;
+    private UUID storeId;
 
 
 
 //item
-    public SimplePolicy(UUID clientCredentials, SimplePolicy.policyType policyType, UUID itemId, int quantity, Boolean atLeast,UUID storeId) {
+    public SimplePolicyRequest(UUID clientCredentials, SimplePolicyRequest.policyType policyType, UUID itemId, int quantity, Boolean atLeast, UUID storeId) {
         super(clientCredentials);
         this.policyType = policyType;
         this.itemId = itemId;
         this.quantity = quantity;
         this.atLeast = atLeast;
-        this.StoreId=storeId;
+        this.storeId =storeId;
     }
 
 //category
-    public SimplePolicy(UUID clientCredentials, SimplePolicy.policyType policyType, Category category, int quantity, Boolean atLeast,UUID storeId) {
+    public SimplePolicyRequest(UUID clientCredentials, SimplePolicyRequest.policyType policyType, Category category, int quantity, Boolean atLeast, UUID storeId) {
         super(clientCredentials);
         this.policyType = policyType;
         this.category = category;
         this.quantity = quantity;
         this.atLeast = atLeast;
-        this.StoreId=storeId;
+        this.storeId = storeId;
     }
 
     //basket
-    public SimplePolicy(UUID clientCredentials, SimplePolicy.policyType policyType, int quantity, Boolean atLeast,UUID storeId) {
+    public SimplePolicyRequest(UUID clientCredentials, SimplePolicyRequest.policyType policyType, int quantity, Boolean atLeast, UUID storeId) {
         super(clientCredentials);
         this.policyType = policyType;
         this.quantity = quantity;
         this.atLeast = atLeast;
-        this.StoreId=storeId;
+        this.storeId = storeId;
     }
 
     public Category getCategory() {
         return category;
     }
-    public SimplePolicy.policyType getPolicyType() {
+    
+    public SimplePolicyRequest.policyType getPolicyType() {
         return policyType;
     }
 
@@ -63,7 +63,7 @@ public class SimplePolicy extends Request{
     }
 
     public UUID getStoreId() {
-        return StoreId;
+        return storeId;
     }
 
     public int getQuantity() {
