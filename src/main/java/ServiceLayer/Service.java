@@ -764,8 +764,8 @@ public class Service {
         return storeController.numOfStores();
     }
 
-    public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, int rule, Boolean atLeast, int quantity, UUID itemId, String category) {
-        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, rule,  atLeast,  quantity,  itemId,  category);
+    public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
+        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, term);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
@@ -774,8 +774,8 @@ public class Service {
         return response;
     }
 
-    public Response<Boolean> removePolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, int rule, Boolean atLeast, int quantity, UUID itemId, String category) {
-        Response<Boolean> response = storeController.removePolicyTermByStoreOwner(clientCredentials, storeId, rule,  atLeast,  quantity,  itemId,  category);
+    public Response<Boolean> removePolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
+        Response<Boolean> response = storeController.removePolicyTermByStoreOwner(clientCredentials, storeId, term);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
@@ -784,8 +784,8 @@ public class Service {
         return response;
     }
 
-    public Response<Boolean> addDiscountByStoreOwner(UUID clientCredentials, UUID storeId, int PurchaseRule,int DiscountRule, Boolean atLeast, int quantity, UUID itemId, String category,Double discountPercentage,UUID DiscountItemId,String discountCategory) {
-        Response<Boolean> response = storeController.addDiscountByStoreOwner(clientCredentials, storeId,PurchaseRule,DiscountRule,atLeast,quantity,itemId,category,discountPercentage,DiscountItemId,discountCategory);
+    public Response<Boolean> addDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
+        Response<Boolean> response = storeController.addDiscountByStoreOwner(clientCredentials, storeId, discount);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
@@ -794,8 +794,8 @@ public class Service {
         return response;
     }
 
-    public Response<Boolean> removeDiscountByStoreOwner(UUID clientCredentials, UUID storeId, int PurchaseRule,int DiscountRule, Boolean atLeast, int quantity, UUID itemId, String category,Double discountPercentage,UUID DiscountItemId,String discountCategory) {
-        Response<Boolean> response = storeController.removeDiscountByStoreOwner(clientCredentials, storeId,PurchaseRule,DiscountRule,atLeast,quantity,itemId,category,discountPercentage,DiscountItemId,discountCategory);
+    public Response<Boolean> removeDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
+        Response<Boolean> response = storeController.removeDiscountByStoreOwner(clientCredentials, storeId, discount);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;

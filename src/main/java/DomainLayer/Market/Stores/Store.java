@@ -290,27 +290,22 @@ public class Store {
 
 
 
-
-    public Boolean addPolicyTermByStoreOwner( int rule, Boolean atLeast, int quantity, UUID itemId, Category category) throws Exception {
-        PurchaseTerm term = creatingPurchaseTerm(rule,  atLeast,  quantity,  itemId,  category);
+    public Boolean addPolicyTermByStoreOwner( PurchaseTerm term) throws Exception {
         this.policy.addPurchaseTerm(term);
         return true;
     }
 
-    public Boolean removePolicyTermByStoreOwner(  int rule, Boolean atLeast, int quantity, UUID itemId, Category category) throws Exception {
-        PurchaseTerm term = creatingPurchaseTerm(rule,  atLeast,  quantity,  itemId,  category);
+    public Boolean removePolicyTermByStoreOwner( PurchaseTerm term) throws Exception {
         this.policy.removePurchaseTerm(term);
         return true;
     }
 
-    public Boolean addDiscountByStoreOwner(int PurchaseRule,int DiscountRule, Boolean atLeast, int quantity, UUID itemId, Category category,Double discountPercentage,UUID DiscountItemId,Category discountCategory) throws Exception {
-        Discount discount = creatingDiscountTerm(PurchaseRule,DiscountRule,atLeast,quantity,itemId,category,discountPercentage,DiscountItemId,discountCategory);
+    public Boolean addDiscountByStoreOwner(Discount discount) throws Exception {
         this.discounts.addDiscount(discount);
         return true;
     }
 
-    public Boolean removeDiscountByStoreOwner(int PurchaseRule,int DiscountRule, Boolean atLeast, int quantity, UUID itemId, Category category,Double discountPercentage,UUID DiscountItemId,Category discountCategory) throws Exception {
-        Discount discount = creatingDiscountTerm(PurchaseRule,DiscountRule,atLeast,quantity,itemId,category,discountPercentage,DiscountItemId,discountCategory);
+    public Boolean removeDiscountByStoreOwner(Discount discount) throws Exception {
         this.discounts.removeDiscount(discount);
         return true;
     }

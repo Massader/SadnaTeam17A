@@ -1,7 +1,9 @@
 package DomainLayer.Market;
 
 import DomainLayer.Market.Stores.Category;
+import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Item;
+import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
@@ -532,30 +534,28 @@ public class StoreController {
     }
 
 
-    public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, int rule, Boolean atLeast, int quantity, UUID itemId, String category) {
+    public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            Category realPolicyPercentage = getCategory(category);
-            store.addPolicyTermByStoreOwner(rule,  atLeast,  quantity,  itemId,  realPolicyPercentage);
+            store.addPolicyTermByStoreOwner(term);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
     }
 
-    public Response<Boolean> removePolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, int rule, Boolean atLeast, int quantity, UUID itemId, String category)  {
+    public Response<Boolean> removePolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term)  {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            Category realPolicyPercentage = getCategory(category);
-            store.removePolicyTermByStoreOwner(rule,  atLeast,  quantity,  itemId,  realPolicyPercentage);
+            store.removePolicyTermByStoreOwner(term);
             return Response.getSuccessResponse(true);
     } catch(
     Exception exception)
@@ -564,32 +564,28 @@ public class StoreController {
     }
 }
 
-    public Response<Boolean> addDiscountByStoreOwner(UUID clientCredentials, UUID storeId, int PurchaseRule,int DiscountRule, Boolean atLeast, int quantity, UUID itemId, String category,Double discountPercentage,UUID DiscountItemId,String discountCategory) {
+    public Response<Boolean> addDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            Category realPolicyPercentage = getCategory(category);
-            Category realDiscountPercentage = getCategory(discountCategory);
-            store.addDiscountByStoreOwner(PurchaseRule,DiscountRule,atLeast,quantity,itemId,realPolicyPercentage,discountPercentage,DiscountItemId,realDiscountPercentage);
+            store.addDiscountByStoreOwner(discount);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
     }
 
-    public Response<Boolean> removeDiscountByStoreOwner(UUID clientCredentials, UUID storeId, int PurchaseRule,int DiscountRule, Boolean atLeast, int quantity, UUID itemId, String category,Double discountPercentage ,UUID DiscountItemId,String discountCategory) {
+    public Response<Boolean> removeDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            Category realPolicyPercentage = getCategory(category);
-            Category realDiscountPercentage = getCategory(discountCategory);
-            store.removeDiscountByStoreOwner(PurchaseRule,DiscountRule,atLeast,quantity,itemId,realPolicyPercentage,discountPercentage,DiscountItemId,realDiscountPercentage);
+            store.removeDiscountByStoreOwner(discount);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
