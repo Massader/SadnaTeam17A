@@ -8,11 +8,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class CompositePurchaseTermOr extends CompositePurchaseTerm {
 
 
-    public CompositePurchaseTermOr(PurchaseRule PurchaseTerm) {
-        super(PurchaseTerm);
+    public CompositePurchaseTermOr(PurchaseRule purchaseRule, ConcurrentLinkedQueue<PurchaseTerm> purchaseTerm) {
+        super(purchaseRule, purchaseTerm);
     }
-
-
 
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store) {

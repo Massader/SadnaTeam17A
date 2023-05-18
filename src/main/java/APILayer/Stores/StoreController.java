@@ -216,9 +216,9 @@ public class StoreController {
     }
 
     @PostMapping(path = "/add-policy-term")
-    public Response<Boolean> addPolicyTermByStoreOwner(@RequestBody AddPolicyRequest request) {
-        return service.addPolicyTermByStoreOwner(request.getClientCredentials(), request.getStoreId(), request.getRule(), request.getatLeast(),
-                request.getQuantity(), request.getItemId(), request.getCategory());
+    public Response<Boolean> addPolicyTermByStoreOwner(@RequestBody SimplePolicy request) {
+        return service.addPolicyTermByStoreOwner(request.getClientCredentials(), request.getStoreId(),
+                request.getPurchaseTerm());
     }
     
     @GetMapping(path = "/get-store-managers/id={id}&storeId={storeId}")
