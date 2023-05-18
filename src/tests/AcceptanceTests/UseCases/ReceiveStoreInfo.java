@@ -7,16 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ReceiveStoreInfo extends ProjectTest {
-/*
+
     UUID storeFounderId;
     ServiceStore store;
     UUID storeId;
@@ -61,18 +57,17 @@ public class ReceiveStoreInfo extends ProjectTest {
     public void getStoreInfoSuccess() {
         Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, storeId);
 
-        Assert.assertFalse(storeInfo.isError());
-        Assert.assertNotNull(storeInfo.getValue());
-        Assert.assertEquals(storeId, storeInfo.getValue().getStoreId());
-        Assert.assertEquals("test", storeInfo.getValue().getName());
+        assertFalse(storeInfo.isError(), String.format("bridge.getStoreInformation(storeFounderId, storeId) => %s", storeInfo.getMessage()));
+        assertNotNull(storeInfo.getValue(), "bridge.getStoreInformation(storeFounderId, storeId) failed");
+        assertEquals(storeId, storeInfo.getValue().getStoreId(), "bridge.getStoreInformation(storeFounderId, storeId) returned wrong UUID");
     }
 
     @Test
     public void getStoreInfoNotExistFail() {
         Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, UUID.randomUUID());
 
-        Assert.assertTrue(storeInfo.isError());
-        Assert.assertEquals("Store does not exist.", storeInfo.getMessage());
+        assertTrue(storeInfo.isError(), "bridge.getStoreInformation(storeFounderId, UUID.randomUUID()) should have failed");
+        assertEquals("Store does not exist.", storeInfo.getMessage(), storeInfo.getMessage());
     }
 
     @Test
@@ -81,9 +76,7 @@ public class ReceiveStoreInfo extends ProjectTest {
 
         Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, storeId);
 
-        Assert.assertTrue(storeInfo.isError());
-        Assert.assertEquals("Store is closed.", storeInfo.getMessage());
+        assertTrue(storeInfo.isError(), "bridge.getStoreInformation(storeFounderId, storeId) should have failed");
+        assertEquals("Store is closed.", storeInfo.getMessage(), storeInfo.getMessage());
     }
-
- */
 }

@@ -3,9 +3,8 @@ import AcceptanceTests.*;
 
 import java.util.UUID;
 
-
-
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Payment extends ProjectTest {
@@ -24,15 +23,16 @@ public class Payment extends ProjectTest {
 
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
 
     }
 
     @Test
     public void paymentSuccess() {
-        Assert.assertTrue(true);
+        assertTrue(true);
     }
+
 
  */
 }

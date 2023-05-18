@@ -5,18 +5,13 @@ import ServiceLayer.ServiceObjects.*;
 
 import java.util.UUID;
 
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OpenStore extends ProjectTest {
-/*
+
     UUID storeFounderId;
-    UUID storeId;
     @BeforeAll
     public void beforeClass() {
         bridge.resetService();
@@ -24,13 +19,11 @@ public class OpenStore extends ProjectTest {
 
         storeFounderId = bridge.login(bridge.createClient().getValue(),"founder", "Aa1234").getValue().getId();
         bridge.logout(storeFounderId);
-
-        storeId = null;
     }
 
     @BeforeEach
     public void setUp()  {
-        bridge.login(bridge.createClient().getValue(),"founder", "Aa1234").getValue().getId();
+        bridge.login(bridge.createClient().getValue(),"founder", "Aa1234");
     }
 
     @AfterEach
@@ -50,14 +43,12 @@ public class OpenStore extends ProjectTest {
         Response<ServiceStore> open = bridge.createStore(storeFounderId, "store", "desc");
         Response<Integer> stores1 = bridge.numOfStores();
 
-        Assert.assertFalse(stores0.isError());
-        Assert.assertFalse(open.isError());
-        Assert.assertNotNull(open.getValue());
-        Assert.assertFalse(stores1.isError());
+        assertFalse(stores0.isError(), String.format("bridge.numOfStores() => %s", stores0.getMessage()));
+        assertFalse(open.isError(), String.format("bridge.createStore(storeFounderId, \"store\", \"desc\") => %s", open.getMessage()));
+        assertNotNull(open.getValue(), "bridge.createStore(storeFounderId, \"store\", \"desc\") failed");
+        assertFalse(stores1.isError(), String.format("bridge.numOfStores() => %s", stores1.getMessage()));
 
-        storeId = open.getValue().getStoreId();
-
-        Assert.assertEquals(1, stores1.getValue() - stores0.getValue());
+        assertEquals(1, stores1.getValue() - stores0.getValue());
     }
 
     @Test
@@ -65,32 +56,30 @@ public class OpenStore extends ProjectTest {
     public void openStoreLoggedOutUserFail() {
         Response<Integer> stores0 = bridge.numOfStores();
         Response<UUID> logout = bridge.logout(storeFounderId);
-        Response<Boolean> open = bridge.closeStore(storeFounderId, storeId);
+        Response<ServiceStore> open = bridge.createStore(storeFounderId, "store", "desc");
         Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         Response<Integer> stores1 = bridge.numOfStores();
 
-        Assert.assertFalse(stores0.isError());
-        Assert.assertFalse(logout.isError());
-        Assert.assertTrue(open.isError());
-        Assert.assertFalse(login.isError());
-        Assert.assertFalse(stores1.isError());
+        assertFalse(stores0.isError(), String.format("bridge.numOfStores() => %s", stores0.getMessage()));
+        assertFalse(logout.isError(), String.format("bridge.logout(storeFounderId) => %s", logout.getMessage()));
+        assertTrue(open.isError(), "bridge.createStore(storeFounderId, \"store\", \"desc\") should have failed");
+        assertFalse(login.isError(), String.format("bridge.login(bridge.createClient().getValue(), \"founder\", \"Aa1234\") => %s", login.getMessage()));
+        assertFalse(stores1.isError(), String.format("bridge.numOfStores() => %s", stores1.getMessage()));
 
-        Assert.assertEquals(stores0.getValue(), stores1.getValue());
+        assertEquals(stores0.getValue(), stores1.getValue(), "number of stores has changed");
     }
 
     @Test
     //tests if the createStore function handles the scenario where the founder is not logged in by attempting to create a store with invalid credentials and asserting that the returned store object is null.
     public void openStoreNotRegisteredUserFail() {
         Response<Integer> stores0 = bridge.numOfStores();
-        Response<Boolean> open = bridge.closeStore(bridge.createClient().getValue(), storeId);
+        Response<ServiceStore> open = bridge.createStore(bridge.createClient().getValue(), "store", "desc");
         Response<Integer> stores1 = bridge.numOfStores();
 
-        Assert.assertFalse(stores0.isError());
-        Assert.assertTrue(open.isError());
-        Assert.assertFalse(stores1.isError());
+        assertFalse(stores0.isError(), String.format("bridge.numOfStores() => %s", stores0.getMessage()));
+        assertTrue(open.isError(), "bridge.createStore(bridge.createClient().getValue(), \"store\", \"desc\") should have failed");
+        assertFalse(stores1.isError(), String.format("bridge.numOfStores() => %s", stores1.getMessage()));
 
-        Assert.assertEquals(stores0.getValue(), stores1.getValue());
+        assertEquals(stores0.getValue(), stores1.getValue(), "number of stores has changed");
     }
-
- */
 }

@@ -7,16 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PurchaseShoppingCart extends ProjectTest {
-/*
+
     UUID storeFounderId;
     UUID user1Id;
     UUID user2Id;
@@ -91,18 +87,18 @@ public class PurchaseShoppingCart extends ProjectTest {
         Response<ServiceItem> item1 = bridge.getItemInformation(store1Id, item11Id);
         Response<ServiceItem> item2 = bridge.getItemInformation(store1Id, item12Id);
 
-        Assert.assertFalse(purchase.isError());
-        Assert.assertFalse(sales.isError());
-        Assert.assertFalse(item1.isError());
-        Assert.assertFalse(item2.isError());
+        assertFalse(purchase.isError(), String.format("bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), \"address\", \"Aa12340000Aa12340000\") => %s", purchase.getMessage()));
+        assertFalse(sales.isError(), String.format("bridge.getStoreSaleHistory(storeFounderId, store1Id) => %s", sales.getMessage()));
+        assertFalse(item1.isError(), String.format("bridge.getItemInformation(store1Id, item11Id) => %s", item1.getMessage()));
+        assertFalse(item2.isError(), String.format("bridge.getItemInformation(store1Id, item12Id) => %s", item2.getMessage()));
 
-        Assert.assertTrue(purchase.getValue());
-        Assert.assertNotNull(sales.getValue());
-        Assert.assertEquals(2, sales.getValue().size());
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item11Id) && sale.getQuantity() == 2));
-        Assert.assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item12Id) && sale.getQuantity() == 4));
-        Assert.assertEquals(100 - 2, item1.getValue().getQuantity());
-        Assert.assertEquals(100 - 4, item1.getValue().getQuantity());   //TODO: Add check for empty cart after purchase
+        assertTrue(purchase.getValue(), "bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), \"address\", \"Aa12340000Aa12340000\") failed");
+        assertNotNull(sales.getValue(), "bridge.getStoreSaleHistory(storeFounderId, store1Id) failed");
+        assertEquals(2, sales.getValue().size(), "sales list size is not 2");
+        assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item11Id) && sale.getQuantity() == 2), "sales list does not contain item11");
+        assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item12Id) && sale.getQuantity() == 4), "sales list does not contain item12");
+        assertEquals(100 - 2, item1.getValue().getQuantity(), "item11 quantity did not decreased by 2");
+        assertEquals(100 - 4, item1.getValue().getQuantity(), "item12 quantity did not decreased by 4");   //TODO: Add check for empty cart after purchase
     }
 
     @Test
@@ -112,11 +108,11 @@ public class PurchaseShoppingCart extends ProjectTest {
         Response<Boolean> purchase = bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "Aa12340000Aa12340000");
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeFounderId, store2Id);
 
-        Assert.assertTrue(purchase.isError());
-        Assert.assertFalse(sales.isError());
+        assertTrue(purchase.isError(), "bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), \"address\", \"Aa12340000Aa12340000\") should have failed");
+        assertFalse(sales.isError(), String.format("bridge.getStoreSaleHistory(storeFounderId, store2Id) => %s", sales.getMessage()));
 
-        Assert.assertNotNull(sales.getValue());
-        Assert.assertEquals(0, sales.getValue().size());    //TODO: Check store item quantity hasn't changed
+        assertNotNull(sales.getValue(), "bridge.getStoreSaleHistory(storeFounderId, store2Id) failed");
+        assertTrue(sales.getValue().isEmpty(), "sales list is not empty");    //TODO: Check store item quantity hasn't changed
     }
 
     @Test
@@ -126,11 +122,11 @@ public class PurchaseShoppingCart extends ProjectTest {
         Response<Boolean> purchase = bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue(), "address", "Aa12340000Aa1234FAIL");
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeFounderId, store2Id);
 
-        Assert.assertTrue(purchase.isError());
-        Assert.assertFalse(sales.isError());
+        assertTrue(purchase.isError(), "bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue(), \"address\", \"Aa12340000Aa1234FAIL\") should have failed");
+        assertFalse(sales.isError(), String.format("bridge.getStoreSaleHistory(storeFounderId, store2Id) => %s", sales.getMessage()));
 
-        Assert.assertNotNull(sales.getValue());
-        Assert.assertEquals(0, sales.getValue().size());//TODO: Check store item quantity hasn't changed
+        assertNotNull(sales.getValue(), "bridge.getStoreSaleHistory(storeFounderId, store2Id) failed");
+        assertTrue(sales.getValue().isEmpty(), "sales list is not empty");      //TODO: Check store item quantity hasn't changed
     }
 
     @Test
@@ -140,11 +136,11 @@ public class PurchaseShoppingCart extends ProjectTest {
         Response<Boolean> purchase = bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue() - 1, "address", "Aa12340000Aa12340000");
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeFounderId, store2Id);
 
-        Assert.assertTrue(purchase.isError());
-        Assert.assertFalse(sales.isError());
+        assertTrue(purchase.isError(), "bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue() - 1, \"address\", \"Aa12340000Aa12340000\") should have failed");
+        assertFalse(sales.isError(), String.format("bridge.getStoreSaleHistory(storeFounderId, store2Id) => %s", sales.getMessage()));
 
-        Assert.assertNotNull(sales.getValue());
-        Assert.assertEquals(0, sales.getValue().size());//TODO: Check store item quantity hasn't changed
+        assertNotNull(sales.getValue(), "bridge.getStoreSaleHistory(storeFounderId, store2Id) failed");
+        assertTrue(sales.getValue().isEmpty(), "sales list is not empty");      //TODO: Check store item quantity hasn't changed
     }
 
     @Test void purchaseConcurrently() {
@@ -181,12 +177,12 @@ public class PurchaseShoppingCart extends ProjectTest {
                 successPurchases++;
         }
 
-        Assert.assertFalse(item22_0.isError());
-        Assert.assertFalse(item22_1.isError());
+        assertFalse(item22_0.isError(), String.format("bridge.getItemInformation(store2Id, item22Id) => %s", item22_0.getMessage()));
+        assertFalse(item22_1.isError(), String.format("bridge.getItemInformation(store2Id, item22Id) => %s", item22_1.getMessage()));
 
-        Assert.assertEquals(100, item22_0.getValue().getQuantity());
-        Assert.assertEquals(0, item22_1.getValue().getQuantity());
-        Assert.assertEquals(100, successPurchases);
+        assertEquals(100, item22_0.getValue().getQuantity(), "item22 quantity is not equal 100 before purchases");
+        assertEquals(0, item22_1.getValue().getQuantity(), "item22 quantity is not equal 0 after purchases");
+        assertEquals(100, successPurchases, "there was not 100 successful purchases");
     }
 
     @Test void purchaseConcurrently2() {
@@ -224,13 +220,11 @@ public class PurchaseShoppingCart extends ProjectTest {
                 successPurchases++;
         }
 
-        Assert.assertFalse(item23_0.isError());
-        Assert.assertFalse(item23_1.isError());
+        assertFalse(item23_0.isError(), String.format("bridge.getItemInformation(store2Id, item22Id) => %s", item23_0.getMessage()));
+        assertFalse(item23_1.isError(), String.format("bridge.getItemInformation(store2Id, item22Id) => %s", item23_1.getMessage()));
 
-        Assert.assertEquals(100, item23_0.getValue().getQuantity());
-        Assert.assertTrue(item23_1.getValue().getQuantity() >= 0 && item23_1.getValue().getQuantity() <= 4);
-        Assert.assertTrue(successPurchases >= 20 && successPurchases <= 100);
+        assertEquals(100, item23_0.getValue().getQuantity(), "item23 quantity is not equal 100 before purchases");
+        assertTrue(item23_1.getValue().getQuantity() >= 0 && item23_1.getValue().getQuantity() <= 4, "item23 quantity is not between 0 to 4 after purchases");
+        assertTrue(successPurchases >= 20 && successPurchases <= 100, "there was not between 20 to 100 successful purchases");
     }
-
- */
 }
