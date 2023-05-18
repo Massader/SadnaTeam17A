@@ -7,13 +7,9 @@ import ServiceLayer.ServiceObjects.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.junit.*;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class GetStoreStaffList extends ProjectTest {
@@ -96,69 +92,69 @@ public class GetStoreStaffList extends ProjectTest {
     public void getStoreStaffListFounderSuccess() {
         Response<List<ServiceUser>> staff = bridge.getStoreStaffList(storeFounderId, storeId);
 
-        Assert.assertFalse(staff.isError());
-        Assert.assertNotNull(staff);
-        Assert.assertEquals(4, staff.getValue().size());
-        Assert.assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeFounderId)));
-        Assert.assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeOwnerId)));
-        Assert.assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeManagerWithPermissionId)));
-        Assert.assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeManagerNoPermissionId)));
+        assertFalse(staff.isError(), String.format("bridge.getStoreStaffList(storeFounderId, storeId) => %s", staff.getValue()));
+        assertNotNull(staff, "bridge.getStoreStaffList(storeFounderId, storeId) failed");
+        assertEquals(4, staff.getValue().size(), "store staff list does not contain 4 members");
+        assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeFounderId)), "store staff list does not contain founder");
+        assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeOwnerId)), "store staff list does not contain owner");
+        assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeManagerWithPermissionId)), "store staff list does not contain manager with permissions");
+        assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeManagerNoPermissionId)), "store staff list does not contain manager without permissions");
     }
 
     @Test
     public void getStoreStaffListOwnerSuccess() {
         Response<List<ServiceUser>> staff = bridge.getStoreStaffList(storeOwnerId, storeId);
 
-        Assert.assertFalse(staff.isError());
-        Assert.assertNotNull(staff);
-        Assert.assertEquals(4, staff.getValue().size());
-        Assert.assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeFounderId)));
-        Assert.assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeOwnerId)));
-        Assert.assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeManagerWithPermissionId)));
-        Assert.assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeManagerNoPermissionId)));
+        assertFalse(staff.isError(), String.format("bridge.getStoreStaffList(storeOwnerId, storeId) => %s", staff.getValue()));
+        assertNotNull(staff, "bridge.getStoreStaffList(storeOwnerId, storeId) failed");
+        assertEquals(4, staff.getValue().size(), "store staff list does not contain 4 members");
+        assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeFounderId)), "store staff list does not contain founder");
+        assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeOwnerId)), "store staff list does not contain owner");
+        assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeManagerWithPermissionId)), "store staff list does not contain manager with permissions");
+        assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeManagerNoPermissionId)), "store staff list does not contain manager without permissions");
     }
 
     @Test
     public void getStoreStaffListManagerWithPermissionSuccess() {
         Response<List<ServiceUser>> staff = bridge.getStoreStaffList(storeManagerWithPermissionId, storeId);
 
-        Assert.assertFalse(staff.isError());
-        Assert.assertNotNull(staff);
-        Assert.assertEquals(4, staff.getValue().size());
-        Assert.assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeFounderId)));
-        Assert.assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeOwnerId)));
-        Assert.assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeManagerWithPermissionId)));
-        Assert.assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeManagerNoPermissionId)));
+        assertFalse(staff.isError(), String.format("bridge.getStoreStaffList(storeManagerWithPermissionId, storeId) => %s", staff.getMessage()));
+        assertNotNull(staff, "bridge.getStoreStaffList(storeManagerWithPermissionId, storeId) failed");
+        assertEquals(4, staff.getValue().size(), "store staff list does not contain 4 members");
+        assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeFounderId)), "store staff list does not contain founder");
+        assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeOwnerId)), "store staff list does not contain owner");
+        assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeManagerWithPermissionId)), "store staff list does not contain manager with permissions");
+        assertTrue(staff.getValue().stream().anyMatch(user -> user.getId().equals(storeManagerNoPermissionId)), "store staff list does not contain manager without permissions");
     }
 
     @Test
     public void getStoreStaffListManagerNoPermissionFail() {
         Response<List<ServiceUser>> staff = bridge.getStoreStaffList(storeManagerNoPermissionId, storeId);
 
-        Assert.assertTrue(staff.isError());
-        Assert.assertEquals("User doesn't have permission.", staff.getMessage());
+        assertTrue(staff.isError(), "bridge.getStoreStaffList(storeManagerNoPermissionId, storeId) should have failed");
+        assertEquals("User doesn't have permission.", staff.getMessage());
     }
 
     @Test
     public void getStoreStaffListUserFail() {
         Response<List<ServiceUser>> staff = bridge.getStoreStaffList(user1Id, storeId);
 
-        Assert.assertTrue(staff.isError());
-        Assert.assertEquals("User doesn't have permission.", staff.getMessage());
+        assertTrue(staff.isError(), "bridge.getStoreStaffList(storeManagerNoPermissionId, storeId) should have failed");
+        assertEquals("User doesn't have permission.", staff.getMessage(), "bridge.getStoreStaffList(user1Id, storeId) failed");
     }
 
     @Test
     public void getStoreStaffListStoreDoesntExistFail() {
         Response<UUID> admin = bridge.getAdminCredentials();
-        Assert.assertFalse(admin.isError());
+        assertFalse(admin.isError(), String.format("bridge.getAdminCredentials() => %s", admin.getMessage()));
 
         Response<Boolean> shutdown = bridge.shutdownStore(admin.getValue(), storeId);
-        Assert.assertFalse(shutdown.isError());
-        Assert.assertTrue(shutdown.getValue());
+        assertFalse(shutdown.isError(), String.format("bridge.shutdownStore(admin.getValue(), storeId) => %s", shutdown.getMessage()));
+        assertTrue(shutdown.getValue(), "bridge.shutdownStore(admin.getValue(), storeId) failed");
 
-        Response<List<ServiceUser>> staff = bridge.getStoreStaffList(user1Id, storeId);
+        Response<List<ServiceUser>> staff = bridge.getStoreStaffList(storeFounderId, storeId);
 
-        Assert.assertTrue(staff.isError());
-        Assert.assertEquals("Store does not exist", staff.getMessage());
+        assertTrue(staff.isError(), "bridge.getStoreStaffList(user1Id, storeId) should have failed");
+        assertEquals("Store does not exist", staff.getMessage(), "bridge.getStoreStaffList(user1Id, storeId) failed");
     }
 }

@@ -2,17 +2,15 @@ package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
 
 import java.util.UUID;
-
 import ServiceLayer.Response;
-import org.junit.*;
 
-import org.junit.Test;
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class EnterSystem extends ProjectTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
 
     }
@@ -40,12 +38,12 @@ public class EnterSystem extends ProjectTest {
         Response<UUID> client = bridge.createClient();
         Response<Integer> clients1 = bridge.numOfClients();
 
-        Assert.assertFalse("bridge.numOfClients() failed", clients0.isError());
-        Assert.assertFalse("bridge.createClient() failed", client.isError());
-        Assert.assertFalse("bridge.numOfClients() failed", clients1.isError());
+        assertFalse(clients0.isError(), "bridge.numOfClients() failed");
+        assertFalse(client.isError(), "bridge.createClient() failed");
+        assertFalse(clients1.isError(), "bridge.numOfClients() failed");
 
-        Assert.assertNotNull("bridge.createClient() failed", client.getValue());
-        Assert.assertEquals("number of clients did not increased by 1", 1, clients1.getValue() - clients0.getValue());
+        assertNotNull(client.getValue(), "bridge.createClient() failed");
+        assertEquals(1, clients1.getValue() - clients0.getValue(), "number of clients did not increased by 1");
     }
 
     @Test
@@ -69,12 +67,12 @@ public class EnterSystem extends ProjectTest {
 
         Response<Integer> clients1 = bridge.numOfClients();
 
-        Assert.assertFalse("bridge.numOfClients() failed", clients0.isError());
-        Assert.assertFalse("bridge.numOfClients() failed", clients1.isError());
+        assertFalse(clients0.isError(), "bridge.numOfClients() failed");
+        assertFalse(clients1.isError(), "bridge.numOfClients() failed");
         for (Response<UUID> e : enters) {
-            Assert.assertFalse("one of the bridge.createClient() calls failed", e.isError());
-            Assert.assertNotNull("one of the bridge.createClient() calls failed", e.getValue());
+            assertFalse(e.isError(), "one of the bridge.createClient() calls failed");
+            assertNotNull(e.getValue(), "one of the bridge.createClient() calls failed");
         }
-        Assert.assertEquals("number of clients did not increased by 1000", 1000, clients1.getValue() - clients0.getValue());
+        assertEquals(1000, clients1.getValue() - clients0.getValue(), "number of clients did not increased by 1000");
     }
 }

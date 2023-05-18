@@ -2,17 +2,15 @@ package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
 
 import java.util.UUID;
-
 import ServiceLayer.Response;
-import org.junit.*;
 
-import org.junit.Test;
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ExitSystem extends ProjectTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
 
     }
@@ -40,12 +38,12 @@ public class ExitSystem extends ProjectTest {
         Response<Boolean> exit = bridge.closeClient(client);
         Response<Integer> clients1 = bridge.numOfClients();
 
-        Assert.assertFalse("bridge.numOfClients() failed", clients0.isError());
-        Assert.assertFalse("bridge.closeClient(client) failed", exit.isError());
-        Assert.assertFalse("bridge.numOfClients() failed", clients1.isError());
+        assertFalse(clients0.isError(), "bridge.numOfClients() failed");
+        assertFalse(exit.isError(), "bridge.closeClient(client) failed");
+        assertFalse(clients1.isError(), "bridge.numOfClients() failed");
 
-        Assert.assertTrue("bridge.closeClient(client) failed", exit.getValue());
-        Assert.assertEquals("number of clients did not decreased by 1", 1, clients0.getValue() - clients1.getValue());
+        assertTrue(exit.getValue(), "bridge.closeClient(client) failed");
+        assertEquals(1, clients0.getValue() - clients1.getValue(), "number of clients did not decreased by 1");
     }
 
     @Test
@@ -72,12 +70,12 @@ public class ExitSystem extends ProjectTest {
         catch (Exception ignore) {}
         Response<Integer> clients1 = bridge.numOfClients();
 
-        Assert.assertFalse("bridge.numOfClients() failed", clients0.isError());
-        Assert.assertFalse("bridge.numOfClients() failed", clients1.isError());
+        assertFalse(clients0.isError(), "bridge.numOfClients() failed");
+        assertFalse(clients1.isError(), "bridge.numOfClients() failed");
         for (Response<Boolean> e : exits) {
-            Assert.assertFalse("one of the bridge.closeClient(clients[index]) calls failed", e.isError());
-            Assert.assertTrue("one of the bridge.closeClient(clients[index])) calls failed", e.getValue());
+            assertFalse(e.isError(), "one of the bridge.closeClient(clients[index]) calls failed");
+            assertTrue(e.getValue(), "one of the bridge.closeClient(clients[index])) calls failed");
         }
-        Assert.assertEquals("number of clients did not decreased by 1000", 1000, clients0.getValue() - clients1.getValue());
+        assertEquals(1000, clients0.getValue() - clients1.getValue(), "number of clients did not decreased by 1000");
     }
 }

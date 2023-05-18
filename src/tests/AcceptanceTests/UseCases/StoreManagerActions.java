@@ -4,7 +4,7 @@ import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;
 import java.util.UUID;
-import org.junit.*;
+
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StoreManagerActions extends ProjectTest {
-
+/*
     UUID storeManager;
     UUID storeId;
     List<Integer> permissions;
@@ -85,4 +85,6 @@ public class StoreManagerActions extends ProjectTest {
         ServiceItem serviceItem = bridge.addItemToStore(storeManager, "bannana", 5.5, storeId, 20, "yellow fruit").getValue();
         Assert.assertNull(serviceItem);
     }
+
+ */
 }

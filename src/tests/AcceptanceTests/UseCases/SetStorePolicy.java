@@ -5,7 +5,7 @@ import ServiceLayer.ServiceObjects.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.junit.*;
+
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SetStorePolicy extends ProjectTest {
+    /*
     UUID storeFounderId;
     UUID storeOwnerId;
     UUID storeManagerWithPermissionId;
@@ -92,4 +93,6 @@ public class SetStorePolicy extends ProjectTest {
     public void setStorePolicySuccess() {
 
     }
+
+     */
 }

@@ -5,10 +5,9 @@ import java.util.UUID;
 
 import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.ServiceUser;
-import org.junit.*;
 
-import org.junit.Test;
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Login extends ProjectTest {
@@ -46,15 +45,15 @@ public class Login extends ProjectTest {
         Response<Boolean> loggedIn = bridge.isLoggedIn(login.getValue().getId());
         Response<Integer> loggedInUsers1 = bridge.numOfLoggedInUsers();
 
-        Assert.assertFalse(loggedInUsers0.isError());
-        Assert.assertFalse(login.isError());
-        Assert.assertFalse(loggedIn.isError());
-        Assert.assertFalse(loggedInUsers1.isError());
+        assertFalse(loggedInUsers0.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers0.getMessage()));
+        assertFalse(login.isError(), String.format("bridge.login(bridge.createClient().getValue(), \"user\",\"Aa1234\") => %s", login.getMessage()));
+        assertFalse(loggedIn.isError(), String.format("bridge.isLoggedIn(login.getValue().getId()) => %s", loggedIn.getMessage()));
+        assertFalse(loggedInUsers1.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers1.getMessage()));
 
-        Assert.assertNotNull(login.getValue());
-        Assert.assertEquals(userId, login.getValue().getId());
-        Assert.assertTrue(loggedIn.getValue());
-        Assert.assertEquals(1, loggedInUsers1.getValue() - loggedInUsers0.getValue());
+        assertNotNull(login.getValue(), "bridge.login(bridge.createClient().getValue(), \"user\",\"Aa1234\") failed");
+        assertEquals(userId, login.getValue().getId(), "login returns wrong UUID");
+        assertTrue(loggedIn.getValue(), "user is not logged-in");
+        assertEquals(1, loggedInUsers1.getValue() - loggedInUsers0.getValue(), "number of logged-in users did not increased by 1");
     }
 
     @Test
@@ -66,15 +65,15 @@ public class Login extends ProjectTest {
         Response<Boolean> loggedIn = bridge.isLoggedIn(login.getValue().getId());
         Response<Integer> loggedInUsers1 = bridge.numOfLoggedInUsers();
 
-        Assert.assertFalse(loggedInUsers0.isError());
-        Assert.assertFalse(login.isError());
-        Assert.assertTrue(loginAgain.isError());
-        Assert.assertFalse(loggedIn.isError());
-        Assert.assertFalse(loggedInUsers1.isError());
+        assertFalse(loggedInUsers0.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers0.getMessage()));
+        assertFalse(login.isError(), String.format("bridge.login(bridge.createClient().getValue(), \"user\",\"Aa1234\") => %s", login.getMessage()));
+        assertTrue(loginAgain.isError(), "bridge.login(bridge.createClient().getValue(), \"user\",\"Aa1234\") should have failed");
+        assertFalse(loggedIn.isError(), String.format("bridge.isLoggedIn(login.getValue().getId()) => %s", loggedIn.getMessage()));
+        assertFalse(loggedInUsers1.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers1.getMessage()));
 
-        Assert.assertEquals("User is already logged in, please log out first.", login.getMessage());
-        Assert.assertTrue(loggedIn.getValue());
-        Assert.assertEquals(loggedInUsers0, loggedInUsers1);
+        assertEquals("User is already logged in, please log out first.", login.getMessage(), "bridge.login(bridge.createClient().getValue(), \"user\",\"Aa1234\") should have failed");
+        assertTrue(loggedIn.getValue(), "user is not logged-in");
+        assertEquals(loggedInUsers0, loggedInUsers1, "number of logged-in users has changed");
     }
 
     @Test
@@ -82,8 +81,8 @@ public class Login extends ProjectTest {
     public void loginWrongUsernameFail() {
         Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "wrong","Aa1234");
 
-        Assert.assertTrue(login.isError());
-        Assert.assertEquals("User is not registered in the system.", login.getMessage());
+        assertTrue(login.isError(), "bridge.login(bridge.createClient().getValue(), \"wrong\",\"Aa1234\") should have failed");
+        assertEquals("User is not registered in the system.", login.getMessage(), "client should not be registered");
     }
 
     @Test
@@ -93,12 +92,12 @@ public class Login extends ProjectTest {
         Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "user","wrong");
         Response<Integer> loggedInUsers1 = bridge.numOfLoggedInUsers();
 
-        Assert.assertFalse(loggedInUsers0.isError());
-        Assert.assertTrue(login.isError());
-        Assert.assertFalse(loggedInUsers1.isError());
+        assertFalse(loggedInUsers0.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers0.getMessage()));
+        assertTrue(login.isError(), "bridge.login(bridge.createClient().getValue(), \"user\",\"wrong\") should have failed");
+        assertFalse(loggedInUsers1.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers1.getMessage()));
 
-        Assert.assertEquals("Wrong password.", login.getMessage());
-        Assert.assertEquals(loggedInUsers0, loggedInUsers1);
+        assertEquals("Wrong password.", login.getMessage(), login.getMessage());
+        assertEquals(loggedInUsers0, loggedInUsers1, "number of logged-in users has changed");
     }
 
     @Test
@@ -125,12 +124,12 @@ public class Login extends ProjectTest {
 
         Response<Integer> loggedInUsers1 = bridge.numOfLoggedInUsers();
 
-        Assert.assertFalse(loggedInUsers0.isError());
-        Assert.assertFalse(loggedInUsers1.isError());
+        assertFalse(loggedInUsers0.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers0.getMessage()));
+        assertFalse(loggedInUsers1.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers1.getMessage()));
         for (Response<ServiceUser> l : logins) {
-            Assert.assertFalse(l.isError());
-            Assert.assertNotNull(l.getValue());
+            assertFalse(l.isError(), String.format("bridge.login(bridge.createClient().getValue(), \"user_\" + index, \"Aa1234\") => %s", l.getMessage()));
+            assertNotNull(l.getValue(), "bridge.login(bridge.createClient().getValue(), \"user_\" + index, \"Aa1234\") failed");
         }
-        Assert.assertEquals(1000, loggedInUsers1.getValue() - loggedInUsers0.getValue());
+        assertEquals(1000, loggedInUsers1.getValue() - loggedInUsers0.getValue(), "number of logged-in users did not increased by 1000");
     }
 }
