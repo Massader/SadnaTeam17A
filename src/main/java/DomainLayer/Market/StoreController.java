@@ -1,11 +1,8 @@
 package DomainLayer.Market;
 
-import DomainLayer.Market.Stores.Category;
+import DomainLayer.Market.Stores.*;
 import DomainLayer.Market.Stores.Discounts.condition.Discount;
-import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
-import DomainLayer.Market.Stores.Sale;
-import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreFounder;
@@ -239,6 +236,19 @@ public class StoreController {
             return Response.getSuccessResponse(reviewId);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
+        }
+    }
+    
+    public Response<List<Review>> getReviews(UUID storeId, UUID itemId) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Item item = getStore(storeId).getItem(itemId);
+            if (item == null)
+                return Response.getFailResponse("Item does not exist.");
+            return Response.getSuccessResponse(item.getReviews());
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
         }
     }
 
@@ -651,4 +661,6 @@ public class StoreController {
         }
         return Response.getSuccessResponse(managers);
     }
+    
+    
 }
