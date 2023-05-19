@@ -1,16 +1,17 @@
 package AcceptanceTests.UseCases;
-import AcceptanceTests.*;
+
+import AcceptanceTests.ProjectTest;
 import DomainLayer.Market.Users.Roles.Role;
-import DomainLayer.Market.Users.Roles.StoreManager;
 import DomainLayer.Market.Users.Roles.StoreOwner;
 import ServiceLayer.Response;
-import ServiceLayer.ServiceObjects.*;
+import ServiceLayer.ServiceObjects.ServiceStore;
+import ServiceLayer.ServiceObjects.ServiceUser;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 import java.util.List;
 import java.util.UUID;
-
-import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AppointStoreOwner extends ProjectTest {

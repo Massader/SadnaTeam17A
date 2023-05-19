@@ -72,10 +72,9 @@ public class Service {
         messageController = MessageController.getInstance();
         messageController.init();
         supplyController = SupplyController.getInstance();
-        //supplyController.init();
+        supplyController.init();
         paymentController = PaymentController.getInstance();
-//        supplyProxy.setReal();;
-//        paymentProxy.setReal();
+        paymentController.init();
 
         //paymentController.init();
         notificationController = NotificationController.getInstance();

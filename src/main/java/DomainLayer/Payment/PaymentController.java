@@ -17,6 +17,11 @@ public class PaymentController {
         }
         return instance;
     }
+    
+    public void init() {
+        paymentProxy = new PaymentProxy();
+        paymentProxy.setReal();
+    }
 
     public Response<Boolean> validatePaymentDetails(/*args*/) {
         return Response.getSuccessResponse(paymentProxy.validatePaymentDetails());
