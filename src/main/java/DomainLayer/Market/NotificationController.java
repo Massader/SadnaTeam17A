@@ -3,6 +3,7 @@ package DomainLayer.Market;
 import ServiceLayer.Response;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,6 +51,7 @@ public class NotificationController {
             return Response.getFailResponse("NotificationController getNotification - recipient does not exist.");
         }
         List<Notification> outputList = new ArrayList<>(userNotifications.values());
+        outputList.sort(Comparator.comparing(Notification::getTimestamp));
         notifications.get(recipient).clear();
         return Response.getSuccessResponse(outputList);
     }
