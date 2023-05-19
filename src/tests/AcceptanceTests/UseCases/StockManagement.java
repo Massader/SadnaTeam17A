@@ -8,12 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StockManagement extends ProjectTest {
@@ -70,7 +66,7 @@ public class StockManagement extends ProjectTest {
     -------------------------------------
 
     */
-    /*
+
     @BeforeAll
     public void beforeClass() {
         bridge.register("founder", "Aa1234");
@@ -141,34 +137,34 @@ public class StockManagement extends ProjectTest {
         Response<ServiceItem> tomato0 = bridge.getItemInformation(fruitStoreId, tomatoId);
 
         Response<Boolean> byFounder = bridge.setItemQuantity(storeFounderId, fruitStoreId, lemonId, 111);
-        Response<Boolean> byOwner = bridge.setItemQuantity(storeFounderId, fruitStoreId, appleId, 222);
-        Response<Boolean> byManager = bridge.setItemQuantity(storeFounderId, fruitStoreId, tomatoId, 333);
+        Response<Boolean> byOwner = bridge.setItemQuantity(storeOwnerId, fruitStoreId, appleId, 222);
+        Response<Boolean> byManager = bridge.setItemQuantity(managerId, fruitStoreId, tomatoId, 333);
 
         Response<ServiceItem> lemon1 = bridge.getItemInformation(fruitStoreId, lemonId);
         Response<ServiceItem> apple1 = bridge.getItemInformation(fruitStoreId, appleId);
         Response<ServiceItem> tomato1 = bridge.getItemInformation(fruitStoreId, tomatoId);
 
-        Assert.assertFalse(lemon0.isError());
-        Assert.assertFalse(apple0.isError());
-        Assert.assertFalse(tomato0.isError());
-        Assert.assertFalse(byFounder.isError());
-        Assert.assertFalse(byOwner.isError());
-        Assert.assertFalse(byManager.isError());
-        Assert.assertFalse(lemon1.isError());
-        Assert.assertFalse(apple1.isError());
-        Assert.assertFalse(tomato1.isError());
+        assertFalse(lemon0.isError(), String.format("bridge.getItemInformation(fruitStoreId, lemonId) => %s", lemon0.getMessage()));
+        assertFalse(apple0.isError(), String.format("bridge.getItemInformation(fruitStoreId, appleId) => %s", apple0.getMessage()));
+        assertFalse(tomato0.isError(), String.format("bridge.getItemInformation(fruitStoreId, tomatoId) => %s", tomato0.getMessage()));
+        assertFalse(byFounder.isError(), String.format("bridge.setItemQuantity(storeFounderId, fruitStoreId, lemonId, 111) => %s", byFounder.getMessage()));
+        assertFalse(byOwner.isError(), String.format("bridge.setItemQuantity(storeOwnerId, fruitStoreId, appleId, 222) -> %s", byOwner.getMessage()));
+        assertFalse(byManager.isError(), String.format("bridge.setItemQuantity(managerId, fruitStoreId, tomatoId, 333) => %s", byManager.getMessage()));
+        assertFalse(lemon1.isError(), String.format("bridge.getItemInformation(fruitStoreId, lemonId) => %s", lemon1.getMessage()));
+        assertFalse(apple1.isError(), String.format("bridge.getItemInformation(fruitStoreId, appleId) => %s", apple1.getMessage()));
+        assertFalse(tomato1.isError(), String.format("bridge.getItemInformation(fruitStoreId, tomatoId) => %s", tomato1.getMessage()));
 
-        Assert.assertTrue(byFounder.getValue());
-        Assert.assertTrue(byOwner.getValue());
-        Assert.assertTrue(byManager.getValue());
+        assertTrue(byFounder.getValue(), "bridge.setItemQuantity(storeFounderId, fruitStoreId, lemonId, 111) failed");
+        assertTrue(byOwner.getValue(), "bridge.setItemQuantity(storeOwnerId, fruitStoreId, appleId, 222) failed");
+        assertTrue(byManager.getValue(), "bridge.setItemQuantity(managerId, fruitStoreId, tomatoId, 333) failed");
 
-        Assert.assertNotEquals(lemon0.getValue().getQuantity(), lemon1.getValue().getQuantity());
-        Assert.assertNotEquals(apple0.getValue().getQuantity(), apple1.getValue().getQuantity());
-        Assert.assertNotEquals(tomato0.getValue().getQuantity(), tomato1.getValue().getQuantity());
+        assertNotEquals(lemon0.getValue().getQuantity(), lemon1.getValue().getQuantity(), "lemon quantity did not changed");
+        assertNotEquals(apple0.getValue().getQuantity(), apple1.getValue().getQuantity(), "apple quantity did not changed");
+        assertNotEquals(tomato0.getValue().getQuantity(), tomato1.getValue().getQuantity(), "tomato quantity did not changed");
 
-        Assert.assertEquals(111, lemon1.getValue().getQuantity());
-        Assert.assertEquals(222, apple1.getValue().getQuantity());
-        Assert.assertEquals(333, tomato1.getValue().getQuantity());
+        assertEquals(111, lemon1.getValue().getQuantity(), "lemon quantity is not 111");
+        assertEquals(222, apple1.getValue().getQuantity(), "apple quantity is not 222");
+        assertEquals(333, tomato1.getValue().getQuantity(), "tomato quantity is not 333");
     }
 
     @Test
@@ -178,30 +174,30 @@ public class StockManagement extends ProjectTest {
         Response<ServiceItem> tomato0 = bridge.getItemInformation(fruitStoreId, tomatoId);
 
         Response<Boolean> byFounder = bridge.setItemName(storeFounderId, fruitStoreId, lemonId, "$lemon$");
-        Response<Boolean> byOwner = bridge.setItemName(storeFounderId, fruitStoreId, appleId, "$apple$");
-        Response<Boolean> byManager = bridge.setItemName(storeFounderId, fruitStoreId, tomatoId, "$tomato$");
+        Response<Boolean> byOwner = bridge.setItemName(storeOwnerId, fruitStoreId, appleId, "$apple$");
+        Response<Boolean> byManager = bridge.setItemName(managerId, fruitStoreId, tomatoId, "$tomato$");
 
         Response<ServiceItem> lemon1 = bridge.getItemInformation(fruitStoreId, lemonId);
         Response<ServiceItem> apple1 = bridge.getItemInformation(fruitStoreId, appleId);
         Response<ServiceItem> tomato1 = bridge.getItemInformation(fruitStoreId, tomatoId);
 
-        Assert.assertFalse(lemon0.isError());
-        Assert.assertFalse(apple0.isError());
-        Assert.assertFalse(tomato0.isError());
-        Assert.assertFalse(byFounder.isError());
-        Assert.assertFalse(byOwner.isError());
-        Assert.assertFalse(byManager.isError());
-        Assert.assertFalse(lemon1.isError());
-        Assert.assertFalse(apple1.isError());
-        Assert.assertFalse(tomato1.isError());
+        assertFalse(lemon0.isError(), String.format("bridge.getItemInformation(fruitStoreId, lemonId) => %s", lemon0.getMessage()));
+        assertFalse(apple0.isError(), String.format("bridge.getItemInformation(fruitStoreId, appleId) => %s", apple0.getMessage()));
+        assertFalse(tomato0.isError(), String.format("bridge.getItemInformation(fruitStoreId, tomatoId) => %s", tomato0.getMessage()));
+        assertFalse(byFounder.isError(), String.format("bridge.setItemName(storeFounderId, fruitStoreId, lemonId, \"$lemon$\") => %s", byFounder.getMessage()));
+        assertFalse(byOwner.isError(), String.format("bridge.setItemName(storeOwnerId, fruitStoreId, appleId, \"$apple$\") => %s", byOwner.getMessage()));
+        assertFalse(byManager.isError(), String.format("bridge.setItemName(managerId, fruitStoreId, tomatoId, \"$tomato$\") => %s", byManager.getMessage()));
+        assertFalse(lemon1.isError(), String.format("bridge.getItemInformation(fruitStoreId, lemonId) => %s", lemon1.getMessage()));
+        assertFalse(apple1.isError(), String.format("bridge.getItemInformation(fruitStoreId, appleId) => %s", apple1.getMessage()));
+        assertFalse(tomato1.isError(), String.format("bridge.getItemInformation(fruitStoreId, tomatoId) => %s", tomato1.getMessage()));
 
-        Assert.assertTrue(byFounder.getValue());
-        Assert.assertTrue(byOwner.getValue());
-        Assert.assertTrue(byManager.getValue());
+        assertTrue(byFounder.getValue(), "bridge.setItemName(storeFounderId, fruitStoreId, lemonId, \"$lemon$\") failed");
+        assertTrue(byOwner.getValue(), "bridge.setItemName(storeOwnerId, fruitStoreId, appleId, \"$apple$\") failed");
+        assertTrue(byManager.getValue(), "bridge.setItemName(managerId, fruitStoreId, tomatoId, \"$tomato$\") failed");
 
-        Assert.assertEquals("$" + lemon0.getValue().getName() + "$", lemon1.getValue().getName());
-        Assert.assertEquals("$" + apple0.getValue().getName() + "$", apple1.getValue().getName());
-        Assert.assertEquals("$" + tomato0.getValue().getName() + "$", tomato1.getValue().getName());
+        assertEquals("$" + lemon0.getValue().getName() + "$", lemon1.getValue().getName(), "lemon name did not changed");
+        assertEquals("$" + apple0.getValue().getName() + "$", apple1.getValue().getName(), "apple name did not changed");
+        assertEquals("$" + tomato0.getValue().getName() + "$", tomato1.getValue().getName(), "tomato name did not changed");
     }
 
     @Test
@@ -211,30 +207,30 @@ public class StockManagement extends ProjectTest {
         Response<ServiceItem> tomato0 = bridge.getItemInformation(fruitStoreId, tomatoId);
 
         Response<Boolean> byFounder = bridge.setItemDescription(storeFounderId, fruitStoreId, lemonId, "$price per 1kg$");
-        Response<Boolean> byOwner = bridge.setItemDescription(storeFounderId, fruitStoreId, appleId, "$price per 1kg$");
-        Response<Boolean> byManager = bridge.setItemDescription(storeFounderId, fruitStoreId, tomatoId, "$price per 1kg$");
+        Response<Boolean> byOwner = bridge.setItemDescription(storeOwnerId, fruitStoreId, appleId, "$price per 1kg$");
+        Response<Boolean> byManager = bridge.setItemDescription(managerId, fruitStoreId, tomatoId, "$price per 1kg$");
 
         Response<ServiceItem> lemon1 = bridge.getItemInformation(fruitStoreId, lemonId);
         Response<ServiceItem> apple1 = bridge.getItemInformation(fruitStoreId, appleId);
         Response<ServiceItem> tomato1 = bridge.getItemInformation(fruitStoreId, tomatoId);
 
-        Assert.assertFalse(lemon0.isError());
-        Assert.assertFalse(apple0.isError());
-        Assert.assertFalse(tomato0.isError());
-        Assert.assertFalse(byFounder.isError());
-        Assert.assertFalse(byOwner.isError());
-        Assert.assertFalse(byManager.isError());
-        Assert.assertFalse(lemon1.isError());
-        Assert.assertFalse(apple1.isError());
-        Assert.assertFalse(tomato1.isError());
+        assertFalse(lemon0.isError(), String.format("bridge.getItemInformation(fruitStoreId, lemonId) => %s", lemon0.getMessage()));
+        assertFalse(apple0.isError(), String.format("bridge.getItemInformation(fruitStoreId, appleId) => %s", apple0.getMessage()));
+        assertFalse(tomato0.isError(), String.format("bridge.getItemInformation(fruitStoreId, tomatoId) => %s", tomato0.getMessage()));
+        assertFalse(byFounder.isError(), String.format("bridge.setItemDescription(storeFounderId, fruitStoreId, lemonId, \"$price per 1kg$\") => %s", byFounder.getMessage()));
+        assertFalse(byOwner.isError(), String.format("bridge.setItemDescription(storeOwnerId, fruitStoreId, appleId, \"$price per 1kg$\") => %s", byOwner.getMessage()));
+        assertFalse(byManager.isError(), String.format("bridge.setItemDescription(managerId, fruitStoreId, tomatoId, \"$price per 1kg$\") => %s", byManager.getMessage()));
+        assertFalse(lemon1.isError(), String.format("bridge.getItemInformation(fruitStoreId, lemonId) => %s", lemon1.getMessage()));
+        assertFalse(apple1.isError(), String.format("bridge.getItemInformation(fruitStoreId, appleId) => %s", apple1.getMessage()));
+        assertFalse(tomato1.isError(), String.format("bridge.getItemInformation(fruitStoreId, tomatoId) => %s", tomato1.getMessage()));
 
-        Assert.assertTrue(byFounder.getValue());
-        Assert.assertTrue(byOwner.getValue());
-        Assert.assertTrue(byManager.getValue());
+        assertTrue(byFounder.getValue(), "bridge.setItemDescription(storeFounderId, fruitStoreId, lemonId, \"$price per 1kg$\") failed");
+        assertTrue(byOwner.getValue(), "bridge.setItemDescription(storeOwnerId, fruitStoreId, appleId, \"$price per 1kg$\") failed");
+        assertTrue(byManager.getValue(), "bridge.setItemDescription(managerId, fruitStoreId, tomatoId, \"$price per 1kg$\") failed");
 
-        Assert.assertEquals("$" + lemon0.getValue().getDescription() + "$", lemon1.getValue().getDescription());
-        Assert.assertEquals("$" + apple0.getValue().getDescription() + "$", apple1.getValue().getDescription());
-        Assert.assertEquals("$" + tomato0.getValue().getDescription() + "$", tomato1.getValue().getDescription());
+        assertEquals("$" + lemon0.getValue().getDescription() + "$", lemon1.getValue().getDescription(), "lemon description did not changed");
+        assertEquals("$" + apple0.getValue().getDescription() + "$", apple1.getValue().getDescription(), "apple description did not changed");
+        assertEquals("$" + tomato0.getValue().getDescription() + "$", tomato1.getValue().getDescription(), "tomato description did not changed");
     }
 
     @Test
@@ -244,54 +240,53 @@ public class StockManagement extends ProjectTest {
         Response<ServiceItem> tomato0 = bridge.getItemInformation(fruitStoreId, tomatoId);
 
         Response<Boolean> byFounder = bridge.setItemPrice(storeFounderId, fruitStoreId, lemonId, 10);
-        Response<Boolean> byOwner = bridge.setItemPrice(storeFounderId, fruitStoreId, appleId, 15);
-        Response<Boolean> byManager = bridge.setItemPrice(storeFounderId, fruitStoreId, tomatoId, 20);
+        Response<Boolean> byOwner = bridge.setItemPrice(storeOwnerId, fruitStoreId, appleId, 15);
+        Response<Boolean> byManager = bridge.setItemPrice(managerId, fruitStoreId, tomatoId, 20);
 
         Response<ServiceItem> lemon1 = bridge.getItemInformation(fruitStoreId, lemonId);
         Response<ServiceItem> apple1 = bridge.getItemInformation(fruitStoreId, appleId);
         Response<ServiceItem> tomato1 = bridge.getItemInformation(fruitStoreId, tomatoId);
 
-        Assert.assertFalse(lemon0.isError());
-        Assert.assertFalse(apple0.isError());
-        Assert.assertFalse(tomato0.isError());
-        Assert.assertFalse(byFounder.isError());
-        Assert.assertFalse(byOwner.isError());
-        Assert.assertFalse(byManager.isError());
-        Assert.assertFalse(lemon1.isError());
-        Assert.assertFalse(apple1.isError());
-        Assert.assertFalse(tomato1.isError());
+        assertFalse(lemon0.isError(), String.format("bridge.getItemInformation(fruitStoreId, lemonId) => %s", lemon0.getMessage()));
+        assertFalse(apple0.isError(), String.format("bridge.getItemInformation(fruitStoreId, appleId) => %s", apple0.getMessage()));
+        assertFalse(tomato0.isError(), String.format("bridge.getItemInformation(fruitStoreId, tomatoId) => %s", tomato0.getMessage()));
+        assertFalse(byFounder.isError(), String.format("bridge.setItemPrice(storeFounderId, fruitStoreId, lemonId, 10) => %s", byFounder.getMessage()));
+        assertFalse(byOwner.isError(), String.format("bridge.setItemPrice(storeOwnerId, fruitStoreId, appleId, 15) => %s", byOwner.getMessage()));
+        assertFalse(byManager.isError(), String.format("bridge.setItemPrice(managerId, fruitStoreId, tomatoId, 20) => %s", byManager.getMessage()));
+        assertFalse(lemon1.isError(), String.format("bridge.getItemInformation(fruitStoreId, lemonId) => %s", lemon1.getMessage()));
+        assertFalse(apple1.isError(), String.format("bridge.getItemInformation(fruitStoreId, appleId) => %s", apple1.getMessage()));
+        assertFalse(tomato1.isError(), String.format("bridge.getItemInformation(fruitStoreId, tomatoId) => %s", tomato1.getMessage()));
 
-        Assert.assertTrue(byFounder.getValue());
-        Assert.assertTrue(byOwner.getValue());
-        Assert.assertTrue(byManager.getValue());
+        assertTrue(byFounder.getValue(), "bridge.setItemPrice(storeFounderId, fruitStoreId, lemonId, 10) failed");
+        assertTrue(byOwner.getValue(), "bridge.setItemPrice(storeOwnerId, fruitStoreId, appleId, 15) failed");
+        assertTrue(byManager.getValue(), "bridge.setItemPrice(managerId, fruitStoreId, tomatoId, 20) failed");
 
-        Assert.assertEquals(10 * lemon0.getValue().getPrice(), lemon1.getValue().getPrice(), 0.0);
-        Assert.assertEquals(10 * apple0.getValue().getPrice(), apple1.getValue().getPrice(), 0.0);
-        Assert.assertEquals(10 * tomato0.getValue().getPrice(), tomato1.getValue().getPrice(), 0.0);
+        assertEquals(10 * lemon0.getValue().getPrice(), lemon1.getValue().getPrice(), 0.0, "lemon price did not changed");
+        assertEquals(10 * apple0.getValue().getPrice(), apple1.getValue().getPrice(), 0.0, "apple price did not changed");
+        assertEquals(10 * tomato0.getValue().getPrice(), tomato1.getValue().getPrice(), 0.0, "tomato price did not changed");
     }
 
     @Test
     public void stockManagementUserFail() {
         Response<ServiceItem> watermelon0 = bridge.getItemInformation(fruitStoreId, watermelonId);
 
-        Response<Boolean> quantity = bridge.setItemQuantity(storeFounderId, fruitStoreId, lemonId, 1000000);
-        Response<Boolean> name = bridge.setItemName(storeFounderId, fruitStoreId, appleId, "aaaaaaaaaaaaaaaaaaa");
-        Response<Boolean> description = bridge.setItemDescription(storeFounderId, fruitStoreId, tomatoId, "bbbbbbbbbbbbbbbbbbb");
-        Response<Boolean> price = bridge.setItemPrice(storeFounderId, fruitStoreId, tomatoId, 10000000000.0);
+        Response<Boolean> quantity = bridge.setItemQuantity(userId, fruitStoreId, lemonId, 1000000);
+        Response<Boolean> name = bridge.setItemName(userId, fruitStoreId, appleId, "aaaaaaaaaaaaaaaaaaa");
+        Response<Boolean> description = bridge.setItemDescription(userId, fruitStoreId, tomatoId, "bbbbbbbbbbbbbbbbbbb");
+        Response<Boolean> price = bridge.setItemPrice(userId, fruitStoreId, tomatoId, 10000000000.0);
 
         Response<ServiceItem> watermelon1 = bridge.getItemInformation(fruitStoreId, watermelonId);
 
-        Assert.assertFalse(watermelon0.isError());
-        Assert.assertTrue(quantity.isError());
-        Assert.assertTrue(name.isError());
-        Assert.assertTrue(description.isError());
-        Assert.assertTrue(price.isError());
-        Assert.assertFalse(watermelon1.isError());
+        assertFalse(watermelon0.isError(), String.format("bridge.getItemInformation(fruitStoreId, watermelonId) => %s", watermelon0.getMessage()));
+        assertTrue(quantity.isError(), "bridge.setItemQuantity(userId, fruitStoreId, lemonId, 1000000) should have failed");
+        assertTrue(name.isError(), "bridge.setItemName(userId, fruitStoreId, appleId, \"aaaaaaaaaaaaaaaaaaa\") should have failed");
+        assertTrue(description.isError(), "bridge.setItemDescription(userId, fruitStoreId, tomatoId, \"bbbbbbbbbbbbbbbbbbb\") should have failed");
+        assertTrue(price.isError(), "bridge.setItemPrice(userId, fruitStoreId, tomatoId, 10000000000.0) should have failed");
+        assertFalse(watermelon1.isError(), String.format("bridge.getItemInformation(fruitStoreId, watermelonId) => %s", watermelon1.getMessage()));
 
-        Assert.assertEquals(watermelon0.getValue().getQuantity(), watermelon1.getValue().getQuantity());
-        Assert.assertEquals(watermelon0.getValue().getName(), watermelon1.getValue().getName());
-        Assert.assertEquals(watermelon0.getValue().getDescription(), watermelon1.getValue().getDescription());
-        Assert.assertEquals(watermelon0.getValue().getPrice(), watermelon1.getValue().getPrice(), 0.0);
+        assertEquals(watermelon0.getValue().getQuantity(), watermelon1.getValue().getQuantity(), "watermelon quantity changed");
+        assertEquals(watermelon0.getValue().getName(), watermelon1.getValue().getName(), "watermelon name changed");
+        assertEquals(watermelon0.getValue().getDescription(), watermelon1.getValue().getDescription(), "watermelon description changed");
+        assertEquals(watermelon0.getValue().getPrice(), watermelon1.getValue().getPrice(), 0.0, "watermelon price changed");
     }
-    */
 }

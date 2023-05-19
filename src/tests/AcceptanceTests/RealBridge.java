@@ -132,7 +132,8 @@ public class RealBridge implements Bridge {
     }
 
     public Response<Boolean> addPolicyTerm(UUID clientCredentials, UUID storeId, int rule, Boolean atLeast, int quantity, UUID itemId, String category) {
-        return service.addPolicyTermByStoreOwner(clientCredentials, storeId, rule, atLeast, quantity, itemId, category);
+        //return service.addPolicyTermByStoreOwner(clientCredentials, storeId, rule, atLeast, quantity, itemId, category);
+        return null;
     }
 
     public Response<Boolean> appointStoreOwner(UUID clientCredentials, UUID appointee, UUID storeId) {

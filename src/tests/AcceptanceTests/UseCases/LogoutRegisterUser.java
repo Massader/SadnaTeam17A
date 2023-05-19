@@ -101,6 +101,6 @@ public class LogoutRegisterUser extends ProjectTest {
             assertFalse(l.isError(), String.format("bridge.login(bridge.createClient().getValue(), \"user_\" + index, \"Aa1234\") => %s", l.getMessage()));
             assertNotNull(l.getValue(), "bridge.login(bridge.createClient().getValue(), \"user_\" + index, \"Aa1234\") failed");
         }
-        assertEquals(1000, loggedInUsers1.getValue() - loggedInUsers0.getValue(), "number of logged-in users did not decreased by 1000");
+        assertEquals(1000, loggedInUsers0.getValue() - loggedInUsers1.getValue(), "number of logged-in users did not decreased by 1000");
     }
 }

@@ -9,16 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SetStoreManagerPermissions extends ProjectTest {
-/*
+
     UUID storeFounderId;
     UUID storeOwnerId;
     UUID storeManager1Id;
@@ -44,7 +40,7 @@ public class SetStoreManagerPermissions extends ProjectTest {
     8   STORE_FOUNDER
     -------------------------------------
     */
-/*
+
     @BeforeAll
     public void beforeClass() {
         bridge.register("founder", "Aa1234");
@@ -114,28 +110,28 @@ public class SetStoreManagerPermissions extends ProjectTest {
         Response<Boolean> byOwner = bridge.setStoreManagerPermissions(storeFounderId, storeManager1Id, storeId, permissionsByOwner);
         Response<ServiceUser> manager1_2 = bridge.getUserInfo(storeManager1Id);
 
-        Assert.assertFalse(manager1_0.isError());
-        Assert.assertFalse(byFounder.isError());
-        Assert.assertFalse(manager1_1.isError());
-        Assert.assertFalse(byOwner.isError());
-        Assert.assertFalse(manager1_2.isError());
+        assertFalse(manager1_0.isError(), String.format("bridge.getUserInfo(storeManager1Id) => %s", manager1_0.getMessage()));
+        assertFalse(byFounder.isError(), String.format("bridge.setStoreManagerPermissions(storeFounderId, storeManager1Id, storeId, permissionsByFounder) => %s", byFounder.getMessage()));
+        assertFalse(manager1_1.isError(), String.format("bridge.getUserInfo(storeManager1Id) => %s", manager1_1.getMessage()));
+        assertFalse(byOwner.isError(), String.format("bridge.setStoreManagerPermissions(storeFounderId, storeManager1Id, storeId, permissionsByOwner) => %s", byOwner.getMessage()));
+        assertFalse(manager1_2.isError(), String.format("bridge.getUserInfo(storeManager1Id) => %s", manager1_2.getMessage()));
 
         List<StorePermissions> permissions0 = manager1_0.getValue().getRoles().get(storeId);
         List<StorePermissions> permissions1 = manager1_1.getValue().getRoles().get(storeId);
         List<StorePermissions> permissions2 = manager1_2.getValue().getRoles().get(storeId);
 
-        Assert.assertEquals(3, permissions0.size());
-        Assert.assertEquals(4, permissions0.size());
-        Assert.assertEquals(5, permissions0.size());
+        assertEquals(3, permissions0.size(), "list size is not 3");
+        assertEquals(4, permissions0.size(), "list size is not 4");
+        assertEquals(5, permissions0.size(), "list size is not 5");
 
-        Assert.assertFalse(permissions0.stream().anyMatch(permission -> permission == StorePermissions.STORE_ITEM_MANAGEMENT));
-        Assert.assertFalse(permissions0.stream().anyMatch(permission -> permission == StorePermissions.STORE_POLICY_MANAGEMENT));
+        assertFalse(permissions0.stream().anyMatch(permission -> permission == StorePermissions.STORE_ITEM_MANAGEMENT), "list should not contain STORE_ITEM_MANAGEMENT");
+        assertFalse(permissions0.stream().anyMatch(permission -> permission == StorePermissions.STORE_POLICY_MANAGEMENT), "list should not contain STORE_POLICY_MANAGEMENT");
 
-        Assert.assertTrue(permissions1.containsAll(permissions0));
-        Assert.assertTrue(permissions1.stream().anyMatch(permission -> permission == StorePermissions.STORE_ITEM_MANAGEMENT));
+        assertTrue(permissions1.containsAll(permissions0), "list does not contain all elements from the other list");
+        assertTrue(permissions1.stream().anyMatch(permission -> permission == StorePermissions.STORE_ITEM_MANAGEMENT), "list does not contain STORE_ITEM_MANAGEMENT");
 
-        Assert.assertTrue(permissions2.containsAll(permissions1));
-        Assert.assertTrue(permissions2.stream().anyMatch(permission -> permission == StorePermissions.STORE_POLICY_MANAGEMENT));
+        assertTrue(permissions2.containsAll(permissions1), "list does not contain all elements from the other list");
+        assertTrue(permissions2.stream().anyMatch(permission -> permission == StorePermissions.STORE_POLICY_MANAGEMENT), "list does not contain STORE_POLICY_MANAGEMENT");
     }
 
     @Test
@@ -143,24 +139,24 @@ public class SetStoreManagerPermissions extends ProjectTest {
         List<Integer> permissions = new ArrayList<>();
         permissions.add(3);
 
-        Response<ServiceUser> manager1_0 = bridge.getUserInfo(storeManager2Id);
+        Response<ServiceUser> manager2_0 = bridge.getUserInfo(storeManager2Id);
         Response<Boolean> byManager = bridge.setStoreManagerPermissions(storeManager1Id, storeManager2Id, storeId, permissions);
-        Response<ServiceUser> manager1_1 = bridge.getUserInfo(storeManager2Id);
+        Response<ServiceUser> manager2_1 = bridge.getUserInfo(storeManager2Id);
 
-        Assert.assertFalse(manager1_0.isError());
-        Assert.assertTrue(byManager.isError());
-        Assert.assertFalse(manager1_1.isError());
+        assertFalse(manager2_0.isError(), String.format("bridge.getUserInfo(storeManager2Id) => %s", manager2_0.getMessage()));
+        assertTrue(byManager.isError(), "bridge.setStoreManagerPermissions(storeManager1Id, storeManager2Id, storeId, permissions) should have failed");
+        assertFalse(manager2_1.isError(), String.format("bridge.getUserInfo(storeManager2Id) => %s", manager2_1.getMessage()));
 
-        List<StorePermissions> permissions0 = manager1_0.getValue().getRoles().get(storeId);
-        List<StorePermissions> permissions1 = manager1_1.getValue().getRoles().get(storeId);
+        List<StorePermissions> permissions0 = manager2_0.getValue().getRoles().get(storeId);
+        List<StorePermissions> permissions1 = manager2_1.getValue().getRoles().get(storeId);
 
-        Assert.assertEquals(3, permissions0.size());
-        Assert.assertEquals(3, permissions0.size());
+        assertEquals(3, permissions0.size(), "list size is not 3");
+        assertEquals(3, permissions1.size(), "list size is not 3");
 
-        Assert.assertFalse(permissions0.stream().anyMatch(permission -> permission == StorePermissions.STORE_ITEM_MANAGEMENT));
+        assertFalse(permissions0.stream().anyMatch(permission -> permission == StorePermissions.STORE_ITEM_MANAGEMENT), "list should not contain STORE_ITEM_MANAGEMENT");
 
-        Assert.assertTrue(permissions1.containsAll(permissions0));
-        Assert.assertTrue(permissions0.containsAll(permissions1));
+        assertTrue(permissions1.containsAll(permissions0), "list does not contain all elements in the other list");
+        assertTrue(permissions0.containsAll(permissions1), "list does not contain all elements in the other list");
     }
 
     @Test
@@ -168,24 +164,23 @@ public class SetStoreManagerPermissions extends ProjectTest {
         List<Integer> permissions = new ArrayList<>();
         permissions.add(3);
 
-        Response<ServiceUser> manager1_0 = bridge.getUserInfo(storeManager2Id);
+        Response<ServiceUser> manager2_0 = bridge.getUserInfo(storeManager2Id);
         Response<Boolean> byManager = bridge.setStoreManagerPermissions(userId, storeManager2Id, storeId, permissions);
-        Response<ServiceUser> manager1_1 = bridge.getUserInfo(storeManager2Id);
+        Response<ServiceUser> manager2_1 = bridge.getUserInfo(storeManager2Id);
 
-        Assert.assertFalse(manager1_0.isError());
-        Assert.assertTrue(byManager.isError());
-        Assert.assertFalse(manager1_1.isError());
+        assertFalse(manager2_0.isError(), String.format("bridge.getUserInfo(storeManager2Id) => %s", manager2_0.getMessage()));
+        assertTrue(byManager.isError(), "bridge.setStoreManagerPermissions(userId, storeManager2Id, storeId, permissions) should have failed");
+        assertFalse(manager2_1.isError(), String.format("bridge.getUserInfo(storeManager2Id) => %s", manager2_1.getMessage()));
 
-        List<StorePermissions> permissions0 = manager1_0.getValue().getRoles().get(storeId);
-        List<StorePermissions> permissions1 = manager1_1.getValue().getRoles().get(storeId);
+        List<StorePermissions> permissions0 = manager2_0.getValue().getRoles().get(storeId);
+        List<StorePermissions> permissions1 = manager2_1.getValue().getRoles().get(storeId);
 
-        Assert.assertEquals(3, permissions0.size());
-        Assert.assertEquals(3, permissions0.size());
+        assertEquals(3, permissions0.size(), "list size is not 3");
+        assertEquals(3, permissions1.size(), "list size is not 3");
 
-        Assert.assertFalse(permissions0.stream().anyMatch(permission -> permission == StorePermissions.STORE_ITEM_MANAGEMENT));
+        assertFalse(permissions0.stream().anyMatch(permission -> permission == StorePermissions.STORE_ITEM_MANAGEMENT), "list should not contain STORE_ITEM_MANAGEMENT");
 
-        Assert.assertTrue(permissions1.containsAll(permissions0));
-        Assert.assertTrue(permissions0.containsAll(permissions1));
+        assertTrue(permissions1.containsAll(permissions0), "list does not contain all elements in the other list");
+        assertTrue(permissions0.containsAll(permissions1), "list does not contain all elements in the other list");
     }
-    */
 }
