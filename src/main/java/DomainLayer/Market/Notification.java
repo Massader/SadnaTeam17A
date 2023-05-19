@@ -22,4 +22,8 @@ public class Notification {
     public UUID getId() {
         return id;
     }
+    
+    public Date getTimestamp() {
+        return timestamp;
+    }
 }

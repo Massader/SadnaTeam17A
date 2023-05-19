@@ -1,7 +1,5 @@
 package DomainLayer.Market;
 
-import DomainLayer.Market.Users.Message;
-
 import java.util.UUID;
 
 public class Complaint extends Message {

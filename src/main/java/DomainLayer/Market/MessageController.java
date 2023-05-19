@@ -1,18 +1,15 @@
 package DomainLayer.Market;
 
 import DomainLayer.Market.Stores.Store;
-import DomainLayer.Market.Users.Client;
-import DomainLayer.Market.Users.Message;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.User;
 import ServiceLayer.Response;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.logging.Level;
 
 public class MessageController {
 
@@ -77,7 +74,9 @@ public class MessageController {
             }
             else return Response.getFailResponse("Messages not found.");
         }
-        return Response.getSuccessResponse(new ArrayList<>(messages.get(clientCredentials).values()));
+        List<Message> output = new ArrayList<>(messages.get(clientCredentials).values());
+        output.sort(Comparator.comparing(Message::getTimestamp));
+        return Response.getSuccessResponse(output);
     }
 
     public Response<Message> getMessage(UUID clientCredentials, UUID recipient, UUID messageId) {
@@ -108,7 +107,9 @@ public class MessageController {
             return Response.getFailResponse("Client credentials passed do not match existing user.");
         if (!userResponse.getValue().isAdmin())
             return Response.getFailResponse("Client credentials passed do not match to an admin.");
-        return Response.getSuccessResponse(new ArrayList<>(complaints.values()));
+        List<Complaint> output = new ArrayList<>(complaints.values());
+        output.sort(Comparator.comparing(Complaint::getTimestamp));
+        return Response.getSuccessResponse(output);
     }
 
     public Response<UUID> sendComplaint(UUID clientCredentials, UUID purchaseId, String body) {
