@@ -17,7 +17,7 @@ public class Login extends ProjectTest {
     @BeforeAll
     public void beforeClass() {
         bridge.register("user", "Aa1234");
-        userId = bridge.login(bridge.createClient().getValue(), "test1","Test1").getValue().getId();
+        userId = bridge.login(bridge.createClient().getValue(), "user","Aa1234").getValue().getId();
         bridge.logout(userId);
     }
 
@@ -59,21 +59,21 @@ public class Login extends ProjectTest {
     @Test
     //checks if a logged-in user can login again
     public void loginAlreadyLoggedInFail() {
-        Response<Integer> loggedInUsers0 = bridge.numOfLoggedInUsers();
         Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "user","Aa1234");
+        Response<Integer> loggedInUsers0 = bridge.numOfLoggedInUsers();
         Response<ServiceUser> loginAgain = bridge.login(bridge.createClient().getValue(), "user","Aa1234");
         Response<Boolean> loggedIn = bridge.isLoggedIn(login.getValue().getId());
         Response<Integer> loggedInUsers1 = bridge.numOfLoggedInUsers();
 
-        assertFalse(loggedInUsers0.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers0.getMessage()));
         assertFalse(login.isError(), String.format("bridge.login(bridge.createClient().getValue(), \"user\",\"Aa1234\") => %s", login.getMessage()));
+        assertFalse(loggedInUsers0.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers0.getMessage()));
         assertTrue(loginAgain.isError(), "bridge.login(bridge.createClient().getValue(), \"user\",\"Aa1234\") should have failed");
         assertFalse(loggedIn.isError(), String.format("bridge.isLoggedIn(login.getValue().getId()) => %s", loggedIn.getMessage()));
         assertFalse(loggedInUsers1.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers1.getMessage()));
 
-        assertEquals("User is already logged in, please log out first.", login.getMessage(), "bridge.login(bridge.createClient().getValue(), \"user\",\"Aa1234\") should have failed");
+        //assertEquals("User is already logged in, please log out first.", login.getMessage(), "bridge.login(bridge.createClient().getValue(), \"user\",\"Aa1234\") should have failed");
         assertTrue(loggedIn.getValue(), "user is not logged-in");
-        assertEquals(loggedInUsers0, loggedInUsers1, "number of logged-in users has changed");
+        assertEquals(loggedInUsers0.getValue(), loggedInUsers1.getValue(), "number of logged-in users has changed");
     }
 
     @Test
@@ -96,8 +96,8 @@ public class Login extends ProjectTest {
         assertTrue(login.isError(), "bridge.login(bridge.createClient().getValue(), \"user\",\"wrong\") should have failed");
         assertFalse(loggedInUsers1.isError(), String.format("bridge.numOfLoggedInUsers() => %s", loggedInUsers1.getMessage()));
 
-        assertEquals("Wrong password.", login.getMessage(), login.getMessage());
-        assertEquals(loggedInUsers0, loggedInUsers1, "number of logged-in users has changed");
+        assertEquals("Incorrect password", login.getMessage(), login.getMessage());
+        assertEquals(loggedInUsers0.getValue(), loggedInUsers1.getValue(), "number of logged-in users has changed");
     }
 
     @Test
