@@ -16,6 +16,12 @@ public class SupplyController {
         }
         return instance;
     }
+    
+    public void init() {
+        supplyProxy = new SupplyProxy();
+        supplyProxy.setReal();
+    }
+    
     public Response<Boolean> validateOrder(/*args*/){
         return Response.getSuccessResponse(supplyProxy.validateOrder(" address"));
     }
