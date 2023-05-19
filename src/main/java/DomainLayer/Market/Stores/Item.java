@@ -4,8 +4,7 @@ import DomainLayer.Market.Stores.PurchaseTypes.DirectPurchase;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseRule;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
 
-import java.util.Collection;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -115,12 +114,14 @@ public class Item {
         return purchaseType;
     }
 
-    public ConcurrentHashMap<UUID, Review> getReviews() {
-        return reviews;
+    public List<Review> getReviews() {
+        List<Review> output = new ArrayList<>(reviews.values());
+        output.sort(Comparator.comparing(Review::getTimestamp));
+        return output;
     }
 
     public UUID addReview(UUID clientCredentials, String body) {
-        Review review = new Review(body, clientCredentials);
+        Review review = new Review(id, body, clientCredentials);
         reviews.put(review.getId(), review);
         return review.getId();
     }

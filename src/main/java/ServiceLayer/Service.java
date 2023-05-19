@@ -4,6 +4,7 @@ import DomainLayer.Market.*;
 import DomainLayer.Market.Stores.Discounts.condition.Discount;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
+import DomainLayer.Market.Stores.Review;
 import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
@@ -370,6 +371,19 @@ public class Service {
         eventLogger.log(Level.INFO, "Successfully posted review by " + userResponse.getValue().getUsername() + " for item "
                 + itemId);
         return reviewResponse;
+    }
+    
+    public Response<List<ServiceReview>> getReviews(UUID storeId, UUID itemId) {
+        Response<List<Review>> reviewsResponse = storeController.getReviews(storeId, itemId);
+        if (reviewsResponse.isError()) {
+            errorLogger.log(Level.WARNING, reviewsResponse.getMessage());
+            return Response.getFailResponse(reviewsResponse.getMessage());
+        }
+        List<ServiceReview> output = new ArrayList<>();
+        for (Review review : reviewsResponse.getValue()) {
+            output.add(new ServiceReview(review));
+        }
+        return Response.getSuccessResponse(output);
     }
 
     // Sets manager's permissions to the list, i.e adds and removes.

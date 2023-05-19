@@ -191,16 +191,14 @@ public class Store {
             price += basePrice;
         }
         return price;
-
     }
 
     public  double calculatePriceOfBasketWithPolicyAndDiscount(ShoppingBasket shoppingBasket) throws Exception { // Map of Item ID -> Quantity)
-        if(policy.purchaseRuleOccurs(shoppingBasket,this)){
-            return discounts.CalculateShoppingBasket(shoppingBasket,this);
+        if (policy.purchaseRuleOccurs(shoppingBasket, this)) {
+            return discounts.CalculateShoppingBasket(shoppingBasket, this);
         }
         throw new Exception("The shopping Basket is not accepted by Store Policy");
     }
-    
 
     public int getRatingCounter() {
         return ratingCounter;
@@ -286,10 +284,6 @@ public class Store {
         }
     }
 
-
-
-
-
     public Boolean addPolicyTermByStoreOwner( PurchaseTerm term) throws Exception {
         this.policy.addPurchaseTerm(term);
         return true;
@@ -309,8 +303,7 @@ public class Store {
         this.discounts.removeDiscount(discount);
         return true;
     }
-
-
+    
     public int numOfItems() {
         return items.size();
     }
@@ -334,9 +327,7 @@ public class Store {
             return new AtLeastPurchaseRule(purchaseRule,quantity);
         }
         else return new AtMostPurchaseRule(purchaseRule,quantity);
-
     }
-
 
     public Discount creatingDiscountTerm(int PurchaseRule,int DiscountRule, Boolean atLeast, int quantity, UUID itemId, Category category,Double discountPercentage,UUID DiscountItemId,Category discountCategory) throws Exception {
         PurchaseTerm purchaseTerm = creatingPurchaseTerm(PurchaseRule,  atLeast,  quantity,  itemId,  category);
@@ -356,7 +347,6 @@ public class Store {
         }
         Discount discount = new Discount(OptioncalculateDiscount,discountPercentage,purchaseTerm);
         return discount;
-
     }
     
     public List<UUID> getStoreManagers() {

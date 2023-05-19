@@ -1,16 +1,22 @@
 package DomainLayer.Market.Stores;
 
+import java.util.Date;
+import java.time.Instant;
 import java.util.UUID;
 
 public class Review {
     private UUID id;
+    private UUID itemId;
     private String text;
     private UUID reviewer;
+    private Date timestamp;
 
-    public Review(String text, UUID reviewer) {
+    public Review(UUID itemId, String text, UUID reviewer) {
         this.id = UUID.randomUUID();
+        this.itemId = itemId;
         this.text = text;
         this.reviewer = reviewer;
+        this.timestamp = Date.from(Instant.now());
     }
 
     public UUID getId() {
@@ -35,5 +41,13 @@ public class Review {
 
     public void setReviewer(UUID reviewer) {
         this.reviewer = reviewer;
+    }
+    
+    public UUID getItemId() {
+        return itemId;
+    }
+    
+    public Date getTimestamp() {
+        return timestamp;
     }
 }

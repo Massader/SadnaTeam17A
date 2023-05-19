@@ -50,13 +50,19 @@ public class StoreController {
 
     @GetMapping(path = "/item-info/storeId={storeId}&itemId={itemId}")
     public Response<ServiceItem> getItemInfo(@PathVariable(name = "storeId") UUID storeId,
-                                                @PathVariable(name = "itemId") UUID itemId) {
+                                             @PathVariable(name = "itemId") UUID itemId) {
         return service.getItemInformation(storeId, itemId);
     }
 
     @PostMapping(path = "/post-review")
     public Response<UUID> postReview(@RequestBody ReviewRequest request) {
         return service.postReview(request.getClientCredentials(), request.getItemId(), request.getBody());
+    }
+    
+    @GetMapping(path = "/get-reviews/storeId={storeId}&itemId={itemId}")
+    public Response<List<ServiceReview>> getReviews(@PathVariable(name = "storeId") UUID storeId,
+                                                    @PathVariable(name = "itemId") UUID itemId) {
+        return service.getReviews(storeId, itemId);
     }
 
     @PutMapping(path = "/role/set-manager-permissions")
