@@ -814,7 +814,7 @@ public class Service {
     }
 
     public Response<List<ServiceUser>> getNotLoginUser(UUID clientCredentials){
-        Response<List<User>> response =userController.getNotLoginUser(clientCredentials);
+        Response<List<User>> response =userController.getNotLoggedInUsers(clientCredentials);
         if(response.isError()){
             errorLogger.log(Level.SEVERE, response.getMessage());
             return Response.getFailResponse(response.getMessage());}
@@ -826,7 +826,7 @@ public class Service {
     }
 
     public Response<List<ServiceUser>> getLoginUser(UUID clientCredentials){
-        Response<List<User>> response =userController.getAllLoginUsers(clientCredentials);
+        Response<List<User>> response =userController.getAllLoggedInUsers(clientCredentials);
         if(response.isError()){
             errorLogger.log(Level.SEVERE, response.getMessage());
             return Response.getFailResponse(response.getMessage());}
