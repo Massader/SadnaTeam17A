@@ -17,7 +17,7 @@ public class UserController {
     private static UserController singleton = null;
     private ConcurrentHashMap<UUID, User> users;// for registered clients only!
     private ConcurrentHashMap<String, UUID> usernames;    // for registered clients only!
-    private ConcurrentLinkedQueue<String> loggedInUsers; // for logged-in users only!
+    private ConcurrentHashMap<UUID, User> loggedInUsers; // for logged-in users only!
     private SecurityController securityController;
     private ConcurrentHashMap<UUID, Client> clients;  // for non-registered clients only!
     private StoreController storeController;
@@ -30,7 +30,7 @@ public class UserController {
     public void init() {
         users = new ConcurrentHashMap<>();
         usernames = new ConcurrentHashMap<>();
-        loggedInUsers = new ConcurrentLinkedQueue<>();
+        loggedInUsers = new ConcurrentHashMap<>();
         securityController = SecurityController.getInstance();
         clients = new ConcurrentHashMap<>();
         storeController = StoreController.getInstance();
@@ -76,7 +76,8 @@ public class UserController {
             if (securityResponse.isError()) return Response.getFailResponse(securityResponse.getMessage());
             if (securityResponse.getValue()) {
                 //transfer the client to the logged in users, and delete it from the non registered clients list
-                loggedInUsers.add(username);
+                User user = users.get(getId(username));
+                loggedInUsers.put(user.getId(), user);
                 closeClient(clientCredentials);
                 return Response.getSuccessResponse(users.get(usernames.get(username)));
             }
@@ -330,7 +331,7 @@ public class UserController {
             if (userId.equals(usernames.get("admin")))
                 return Response.getFailResponse("Can't delete default admin.");
             User user = users.get(userId);
-            if (loggedInUsers.contains(user.getUsername()))
+            if (loggedInUsers.containsKey(user.getId()))
                 logout(userId);
             //remove from both HashMaps
             user = users.remove(userId);
@@ -352,9 +353,9 @@ public class UserController {
             if (!users.containsKey(userId))
                 return Response.getFailResponse("this user ID does not exist");
             User user = users.get(userId);
-            if (!loggedInUsers.contains(user.getUsername()))
+            if (!loggedInUsers.containsKey(user.getId()))
                 return Response.getFailResponse("this user is already logged out");
-            loggedInUsers.remove(user.getUsername());
+            loggedInUsers.remove(user.getId());
             return createClient();
         }
         catch (Exception exception){
@@ -390,14 +391,18 @@ public class UserController {
         try {
             User user = users.get(clientCredentials);
             if (user == null) return Response.getFailResponse("User does not exist.");
-            if (!loggedInUsers.contains(user.getUsername())) return Response.getFailResponse("User is logged-out.");
+            if (!loggedInUsers.containsKey(user.getId())) return Response.getFailResponse("User is logged-out.");
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
     }
-
+    
+    public boolean isUserLoggedIn(UUID clientCredentials) {
+        return loggedInUsers.containsKey(clientCredentials);
+    }
+    
     public Response<Boolean> isUser(UUID id){
         if(!users.containsKey(id)){
             return Response.getFailResponse("The client does not have user permission  ");
@@ -466,17 +471,13 @@ public class UserController {
     }
 
 
-    public Response<List<User>> getAllLoginUsers(UUID clientCredentials) {
+    public Response<List<User>> getAllLoggedInUsers(UUID clientCredentials) {
         try {
             if (!users.containsKey(clientCredentials))
                 return Response.getFailResponse("User does not exist.");
             if(!users.get(clientCredentials).isAdmin())
                 return Response.getFailResponse("Only admins can delete users.");
-            List<User> loginUser = new ArrayList<>();
-            for (String loginUserName: loggedInUsers) {
-                loginUser.add(users.get(getId(loginUserName)));
-            }
-            return Response.getSuccessResponse(loginUser);
+            return Response.getSuccessResponse(loggedInUsers.values().stream().toList());
         }
         catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -484,18 +485,14 @@ public class UserController {
 
     }
 
-    public Response<List<User>> getNotLoginUser(UUID clientCredentials) {
+    public Response<List<User>> getNotLoggedInUsers(UUID clientCredentials) {
         try {
             if (!users.containsKey(clientCredentials))
                 return Response.getFailResponse("User does not exist.");
             if(!users.get(clientCredentials).isAdmin())
                 return Response.getFailResponse("Only admins can delete users.");
-            List<User> notLoginUser = new ArrayList<>();
-            for (String notLoginUserName:usernames.keySet()) {
-                if (!loggedInUsers.contains(notLoginUserName)) {
-                    notLoginUser.add(users.get(getId(notLoginUserName)));
-                }}
-            return Response.getSuccessResponse(notLoginUser);
+            return Response.getSuccessResponse(users.values().stream()
+                    .filter((user) -> !loggedInUsers.containsKey(user.getId())).toList());
         }
         catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -565,7 +562,7 @@ public class UserController {
     }
     
     public void loginFromSecurityQuestion(UUID id) {    //For use from security controller only
-        loggedInUsers.add(users.get(id).getUsername());
+        loggedInUsers.put(id, users.get(id));
     }
     
     public List<UUID> getAdminIds() {

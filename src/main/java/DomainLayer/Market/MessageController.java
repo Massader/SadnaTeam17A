@@ -20,6 +20,7 @@ public class MessageController {
     private static final Object instanceLock = new Object();
     private NotificationController notificationController;
     private StoreController storeController;
+    private UserController userController;
     private ConcurrentHashMap<UUID, ConcurrentHashMap<UUID, Message>> messages;
     private ConcurrentHashMap<UUID, Complaint> complaints;
 
@@ -30,6 +31,7 @@ public class MessageController {
         complaints = new ConcurrentHashMap<>();
         notificationController = NotificationController.getInstance();
         storeController = StoreController.getInstance();
+        userController = UserController.getInstance();
     }
     
     public static MessageController getInstance() {
@@ -42,11 +44,19 @@ public class MessageController {
     
     public Response<UUID> sendMessage(UUID clientCredentials, UUID sender, UUID recipient, String body){
         Message message = new Message(body, sender, recipient);
-        if (clientCredentials != sender) {
+        if (!clientCredentials.equals(sender)) {
             Store store = storeController.getStore(sender);
-            if (store == null) return Response.getFailResponse("Message sender credentials do not match logged in user.");
+            if (store == null) return Response.getFailResponse("Message sender credentials do not match an existing store.");
             if (!store.checkPermission(clientCredentials, StorePermissions.STORE_COMMUNICATION))
                 return Response.getFailResponse("Logged in user does not have the correct permissions to send a message for store " + sender);
+        }
+        else {
+            if (!userController.isRegisteredUser(sender))
+                return Response.getFailResponse("Message sender is not a registered user.");
+            if (!userController.isRegisteredUser(recipient) && !storeController.storeExist(recipient))
+                return Response.getFailResponse("Message recipient is not a registered user or existing store.");
+            if (!userController.isUserLoggedIn(sender))
+                return Response.getFailResponse("Only logged in users can send messages.");
         }
         if (!messages.containsKey(recipient)) messages.put(recipient, new ConcurrentHashMap<>());
         messages.get(recipient).put(message.getId(), message);
