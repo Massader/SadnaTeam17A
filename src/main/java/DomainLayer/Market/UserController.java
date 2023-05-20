@@ -283,7 +283,7 @@ public class UserController {
                 return Response.getFailResponse("User does not exist.");
             if(!store.getRolesMap().containsKey(roleToRemove))
                 return Response.getFailResponse("User does not have role in the shop.");
-            if(store.getOwner(clientCredentials).getAppointees().contains(roleToRemove))
+            if(!store.getOwner(clientCredentials).getAppointees().contains(roleToRemove))
                 return Response.getFailResponse("Staff member was not appointed by this owner.");
             response2.getValue().removeStoreRole(storeId);
             for(UUID appointee : store.getOwner(roleToRemove).getAppointees())
