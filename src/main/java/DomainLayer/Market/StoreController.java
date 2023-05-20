@@ -227,10 +227,12 @@ public class StoreController {
         return storeMap.get(storeId);
     }
 
-    public Response<UUID> postReview(UUID clientCredentials, UUID itemId, String reviewBody) {
+    public Response<UUID> postReview(UUID clientCredentials, UUID itemId, String reviewBody, int rating) {
         try {
             if (!itemExist(itemId))
                 return Response.getFailResponse("Item doesn't exist");
+            if (rating > 5 || rating < 0)
+                return Response.getFailResponse("Rating must be between 0 and 5.");
             Item item = getItem(itemId).getValue();
             synchronized (item.getReviews()) {
                 if (item.getReviews()
@@ -238,7 +240,7 @@ public class StoreController {
                         .toList()
                         .isEmpty()
                         && userController.hasUserPurchasedItem(clientCredentials, itemId)) {
-                    UUID reviewId = item.addReview(clientCredentials, reviewBody);
+                    UUID reviewId = item.addReview(clientCredentials, reviewBody, rating);
                     return Response.getSuccessResponse(reviewId);
                 }
             }

@@ -6,11 +6,13 @@ public class ReviewRequest extends Request {
 
     private UUID itemId;
     private String body;
+    private int rating;
 
-    public ReviewRequest(UUID clientCredentials, UUID itemId, String body) {
+    public ReviewRequest(UUID clientCredentials, UUID itemId, String body, int rating) {
         super(clientCredentials);
         this.itemId = itemId;
         this.body = body;
+        this.rating = rating;
     }
 
     public UUID getItemId() {
@@ -27,5 +29,13 @@ public class ReviewRequest extends Request {
 
     public void setBody(String body) {
         this.body = body;
+    }
+    
+    public int getRating() {
+        return rating;
+    }
+    
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }

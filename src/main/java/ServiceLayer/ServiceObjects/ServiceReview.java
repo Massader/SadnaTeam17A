@@ -11,6 +11,7 @@ public class ServiceReview {
     private String text;
     private UUID reviewer;
     private Date timestamp;
+    private int rating;
     
     public ServiceReview(Review review) {
         this.id = review.getId();
@@ -18,6 +19,7 @@ public class ServiceReview {
         this.text = review.getText();
         this.reviewer = review.getReviewer();
         this.timestamp = review.getTimestamp();
+        this.rating = review.getRating();
     }
     
     public UUID getId() {

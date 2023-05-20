@@ -10,13 +10,15 @@ public class Review {
     private String text;
     private UUID reviewer;
     private Date timestamp;
+    private int rating;
 
-    public Review(UUID itemId, String text, UUID reviewer) {
+    public Review(UUID itemId, String text, UUID reviewer, int rating) {
         this.id = UUID.randomUUID();
         this.itemId = itemId;
         this.text = text;
         this.reviewer = reviewer;
         this.timestamp = Date.from(Instant.now());
+        this.rating = rating;
     }
 
     public UUID getId() {
@@ -49,5 +51,13 @@ public class Review {
     
     public Date getTimestamp() {
         return timestamp;
+    }
+    
+    public int getRating() {
+        return rating;
+    }
+    
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }

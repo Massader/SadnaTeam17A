@@ -120,9 +120,10 @@ public class Item {
         return output;
     }
 
-    public UUID addReview(UUID clientCredentials, String body) {
-        Review review = new Review(id, body, clientCredentials);
+    public UUID addReview(UUID clientCredentials, String body, int rating) {
+        Review review = new Review(id, body, clientCredentials, rating);
         reviews.put(review.getId(), review);
+        addRating(rating);
         return review.getId();
     }
 
