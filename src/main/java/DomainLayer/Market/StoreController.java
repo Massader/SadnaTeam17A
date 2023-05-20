@@ -232,8 +232,17 @@ public class StoreController {
             if (!itemExist(itemId))
                 return Response.getFailResponse("Item doesn't exist");
             Item item = getItem(itemId).getValue();
-            UUID reviewId = item.addReview(clientCredentials, reviewBody);
-            return Response.getSuccessResponse(reviewId);
+            synchronized (item.getReviews()) {
+                if (item.getReviews()
+                        .stream().filter((review) -> review.getReviewer().equals(clientCredentials))
+                        .toList()
+                        .isEmpty()
+                        && userController.hasUserPurchasedItem(clientCredentials, itemId)) {
+                    UUID reviewId = item.addReview(clientCredentials, reviewBody);
+                    return Response.getSuccessResponse(reviewId);
+                }
+            }
+            return Response.getFailResponse("An item can only be reviewed once.");
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
@@ -247,6 +256,25 @@ public class StoreController {
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
             return Response.getSuccessResponse(item.getReviews());
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
+    
+    public Response<Boolean> isReviewableByUser(UUID clientCredentials, UUID storeId, UUID itemId) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            if (!itemExist(itemId))
+                return Response.getFailResponse("Item does not exist");
+            Item item = getItem(itemId).getValue();
+            if (item.getReviews()
+                    .stream().filter((review) -> review.getReviewer().equals(clientCredentials))
+                    .toList()
+                    .isEmpty()
+                && userController.hasUserPurchasedItem(clientCredentials, itemId)) {
+                return Response.getSuccessResponse(true);
+            } else return Response.getSuccessResponse(false);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }

@@ -385,6 +385,14 @@ public class Service {
         }
         return Response.getSuccessResponse(output);
     }
+    
+    public Response<Boolean> isReviewableByUser(UUID clientCredentials, UUID storeId, UUID itemId) {
+        Response<Boolean> response = storeController.isReviewableByUser(clientCredentials, storeId, itemId);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+        }
+        return response;
+    }
 
     // Sets manager's permissions to the list, i.e adds and removes.
     public Response<Boolean> setManagerPermissions(UUID clientCredentials, UUID manager,

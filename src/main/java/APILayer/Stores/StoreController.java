@@ -64,6 +64,13 @@ public class StoreController {
                                                     @PathVariable(name = "itemId") UUID itemId) {
         return service.getReviews(storeId, itemId);
     }
+    
+    @GetMapping(path = "/is-reviewable-by-user")
+    public Response<Boolean> isReviewableByUser(@PathVariable(name = "id") UUID clientCredentials,
+                                                @PathVariable(name = "storeId") UUID storeId,
+                                                @PathVariable(name = "itemId") UUID itemId) {
+        return service.isReviewableByUser(clientCredentials, storeId, itemId);
+    }
 
     @PutMapping(path = "/role/set-manager-permissions")
     public Response<Boolean> setManagerPermissions(@RequestBody SetManagerPermissionsRequest request) {
