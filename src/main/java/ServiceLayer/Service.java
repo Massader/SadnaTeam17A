@@ -357,13 +357,13 @@ public class Service {
         return Response.getSuccessResponse(cart);
     }
 
-    public Response<UUID> postReview(UUID clientCredentials, UUID itemId, String reviewBody){
+    public Response<UUID> postReview(UUID clientCredentials, UUID itemId, String reviewBody, int rating){
         Response<User> userResponse = userController.getUser(clientCredentials);
         if(userResponse.isError()) {
             errorLogger.log(Level.SEVERE, userResponse.getMessage());
             return Response.getFailResponse(userResponse.getMessage());
         }
-        Response<UUID> reviewResponse = storeController.postReview(clientCredentials, itemId, reviewBody);
+        Response<UUID> reviewResponse = storeController.postReview(clientCredentials, itemId, reviewBody, rating);
         if(reviewResponse.isError()) {
             errorLogger.log(Level.SEVERE, reviewResponse.getMessage());
             return Response.getFailResponse(reviewResponse.getMessage());

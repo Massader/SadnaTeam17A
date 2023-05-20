@@ -56,7 +56,7 @@ public class StoreController {
 
     @PostMapping(path = "/post-review")
     public Response<UUID> postReview(@RequestBody ReviewRequest request) {
-        return service.postReview(request.getClientCredentials(), request.getItemId(), request.getBody());
+        return service.postReview(request.getClientCredentials(), request.getItemId(), request.getBody(), request.getRating());
     }
     
     @GetMapping(path = "/get-reviews/storeId={storeId}&itemId={itemId}")
