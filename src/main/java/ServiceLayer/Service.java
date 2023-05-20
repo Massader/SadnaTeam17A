@@ -987,5 +987,14 @@ public class Service {
         }
         return Response.getSuccessResponse(users);
     }
+    
+    public Response<ServiceUser> getUserByUsername(String username) {
+        Response<User> response = userController.getUserByUsername(username);
+        if (response.isError()){
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        return Response.getSuccessResponse(new ServiceUser(response.getValue()));
+    }
 }
 
