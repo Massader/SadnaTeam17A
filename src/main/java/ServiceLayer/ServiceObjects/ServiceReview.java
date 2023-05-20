@@ -41,4 +41,8 @@ public class ServiceReview {
     public Date getTimestamp() {
         return timestamp;
     }
+    
+    public int getRating() {
+        return rating;
+    }
 }
