@@ -153,7 +153,7 @@ public class UserController {
         return service.getMessages(clientCredentials, clientCredentials);
     }
     
-    @GetMapping(path = "/get-user-by-username/usernme={username}")
+    @GetMapping(path = "/get-user-by-username/username={username}")
     public Response<ServiceUser> getUserByUsername(@PathVariable(name = "username") String username) {
         return service.getUserByUsername(username);
     }
