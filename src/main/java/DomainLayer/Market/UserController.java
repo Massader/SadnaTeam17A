@@ -281,7 +281,7 @@ public class UserController {
             Response<User> response2 = this.getUser(roleToRemove);
             if(response2.isError())
                 return Response.getFailResponse("User does not exist.");
-            if(store.getRolesMap().containsKey(roleToRemove))
+            if(!store.getRolesMap().containsKey(roleToRemove))
                 return Response.getFailResponse("User does not have role in the shop.");
             if(store.getOwner(clientCredentials).getAppointees().contains(roleToRemove))
                 return Response.getFailResponse("Staff member was not appointed by this owner.");
