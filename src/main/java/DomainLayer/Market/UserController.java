@@ -572,4 +572,15 @@ public class UserController {
         }
         return admins;
     }
+    
+    public boolean hasUserPurchasedItem(UUID clientCredentials, UUID itemId) throws Exception {
+        if (!users.containsKey(clientCredentials))
+            throw new Exception("User does not exist");
+        User user = users.get(clientCredentials);
+        List<Purchase> purchases = user.getPurchases().stream().toList();
+        return !purchases.stream()
+                .filter(purchase -> purchase.getItemId().equals(itemId))
+                .toList()
+                .isEmpty();
+    }
 }
