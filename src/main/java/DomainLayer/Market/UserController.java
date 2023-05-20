@@ -286,8 +286,10 @@ public class UserController {
             if(!store.getOwner(clientCredentials).getAppointees().contains(roleToRemove))
                 return Response.getFailResponse("Staff member was not appointed by this owner.");
             response2.getValue().removeStoreRole(storeId);
-            for(UUID appointee : store.getOwner(roleToRemove).getAppointees())
-                removeStoreRole(roleToRemove, appointee, storeId);
+            if (store.getOwner(roleToRemove) != null) {
+                for (UUID appointee : store.getOwner(roleToRemove).getAppointees())
+                    removeStoreRole(roleToRemove, appointee, storeId);
+            }
             store.removeRole(roleToRemove);
             store.getOwner(clientCredentials).removeAppointee(roleToRemove);
             notificationController.sendNotification(roleToRemove, "Your role has been removed from "
