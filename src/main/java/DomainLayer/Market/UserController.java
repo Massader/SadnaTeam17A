@@ -583,4 +583,17 @@ public class UserController {
                 .toList()
                 .isEmpty();
     }
+    
+    public Response<User> getUserByUsername(String username) {
+        try {
+            if (usernames.containsKey(username)) {
+                User user = users.get(usernames.get(username));
+                if (user != null)
+                    return Response.getSuccessResponse(user);
+            }
+            return Response.getFailResponse("User not found.");
+        } catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
 }
