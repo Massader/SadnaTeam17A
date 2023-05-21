@@ -15,7 +15,7 @@ public class ShopingBasketPurchaseRule implements PurchaseRule {
             ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
             for (UUID itemID : items.keySet()) {
                 if(storeItems.containsKey(itemID)){
-                 price+=storeItems.get(itemID).getPrice();}//TODO: check to option that we dont have item in store?
+                 price+=storeItems.get(itemID).getPrice()*items.get(itemID);}
             }
             boolean moreThenQuantity = price >= quantity;
             return (quantity == price || atLeast && moreThenQuantity || (!atLeast && !moreThenQuantity));
