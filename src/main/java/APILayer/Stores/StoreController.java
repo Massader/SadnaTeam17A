@@ -227,12 +227,6 @@ public class StoreController {
         return service.addItemRating(request.getClientCredentials(), request.getItemId(), request.getStoreId(),
                 request.getRating());
     }
-
-    @PostMapping(path = "/add-policy-term")
-    public Response<Boolean> addPolicyTermByStoreOwner(@RequestBody SimplePolicyRequest request) {
-        return service.addPolicyTermByStoreOwner(request.getClientCredentials(), request.getStoreId(),
-                request.getPurchaseTerm());
-    }
     
     @GetMapping(path = "/get-store-managers/id={id}&storeId={storeId}")
     public Response<List<ServiceUser>> getStoreManagers(@PathVariable(name = "id") UUID clientCredentials,
@@ -249,5 +243,23 @@ public class StoreController {
     public Response<List<ServiceMessage>> getMessages(@PathVariable(name = "id") UUID clientCredentials,
                                                       @PathVariable(name = "storeId") UUID storeId) {
         return service.getMessages(clientCredentials, storeId);
+    }
+    
+    @PostMapping(path = "/add-item-policy-term")
+    public Response<Boolean> addItemPolicyTerm(@RequestBody ItemPolicyTermRequest request) {
+        return service.addItemPolicyTerm(request.getClientCredentials(), request.getStoreId(),
+                request.getItemId(), request.getQuantity(), request.getAtLeast());
+    }
+    
+    @PostMapping(path = "/add-category-policy-term")
+    public Response<Boolean> addCategoryPolicyTerm(@RequestBody CategoryPolicyTermRequest request) {
+        return service.addCategoryPolicyTerm(request.getClientCredentials(), request.getStoreId(),
+                request.getCategory(), request.getQuantity(), request.getAtLeast());
+    }
+    
+    @PostMapping(path = "/add-basket-policy-term")
+    public Response<Boolean> addBasketPolicyTerm(@RequestBody BasketPolicyTermRequest request) {
+        return service.addBasketPolicyTerm(request.getClientCredentials(), request.getStoreId(),
+                request.getQuantity(), request.getAtLeast());
     }
 }

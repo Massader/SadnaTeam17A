@@ -1,12 +1,9 @@
 package ServiceLayer;
 
 import DomainLayer.Market.*;
+import DomainLayer.Market.Stores.*;
 import DomainLayer.Market.Stores.Discounts.condition.Discount;
-import DomainLayer.Market.Stores.Item;
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
-import DomainLayer.Market.Stores.Review;
-import DomainLayer.Market.Stores.Sale;
-import DomainLayer.Market.Stores.Store;
+import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.*;
 import DomainLayer.Market.Users.*;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Payment.PaymentController;
@@ -785,7 +782,7 @@ public class Service {
         return storeController.numOfStores();
     }
 
-    public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
+    public Response<Boolean> addItemPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
         Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, term);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
@@ -995,6 +992,42 @@ public class Service {
             return Response.getFailResponse(response.getMessage());
         }
         return Response.getSuccessResponse(new ServiceUser(response.getValue()));
+    }
+    
+    public Response<Boolean> addItemPolicyTerm(UUID clientCredentials, UUID storeId, UUID itemId, int quantity, boolean atLeast) {
+        ItemPurchaseRule rule = new ItemPurchaseRule(itemId);
+        PurchaseTerm term = atLeast ? new AtLeastPurchaseTerm(rule, quantity) : new AtMostPurchaseTerm(rule, quantity);
+        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, term);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return response;
+        }
+        eventLogger.log(Level.INFO, "Successfully added policy to store " + storeId);
+        return response;
+    }
+    
+    public Response<Boolean> addCategoryPolicyTerm(UUID clientCredentials, UUID storeId, String category, int quantity, boolean atLeast) {
+        CategoryPurchaseRule rule = new CategoryPurchaseRule(new Category(category));
+        PurchaseTerm term = atLeast ? new AtLeastPurchaseTerm(rule, quantity) : new AtMostPurchaseTerm(rule, quantity);
+        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, term);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return response;
+        }
+        eventLogger.log(Level.INFO, "Successfully added policy to store " + storeId);
+        return response;
+    }
+    
+    public Response<Boolean> addBasketPolicyTerm(UUID clientCredentials, UUID storeId, int quantity, boolean atLeast) {
+        ShoppingBasketPurchaseRule rule = new ShoppingBasketPurchaseRule();
+        PurchaseTerm term = atLeast ? new AtLeastPurchaseTerm(rule, quantity) : new AtMostPurchaseTerm(rule, quantity);
+        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, term);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return response;
+        }
+        eventLogger.log(Level.INFO, "Successfully added policy to store " + storeId);
+        return response;
     }
 }
 

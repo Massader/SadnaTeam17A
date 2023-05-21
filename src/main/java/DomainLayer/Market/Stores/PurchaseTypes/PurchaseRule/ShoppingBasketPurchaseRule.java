@@ -7,7 +7,7 @@ import DomainLayer.Market.Users.ShoppingBasket;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ShopingBasketPurchaseRule implements PurchaseRule {
+public class ShoppingBasketPurchaseRule implements PurchaseRule {
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity, Boolean atLeast) {
             int price = 0;
@@ -23,7 +23,7 @@ public class ShopingBasketPurchaseRule implements PurchaseRule {
 
     public boolean equals(Object obj) {
         // Use default instanceof
-            if(obj instanceof ShopingBasketPurchaseRule)
+            if(obj instanceof ShoppingBasketPurchaseRule)
                 return true;
             return false;
         }
