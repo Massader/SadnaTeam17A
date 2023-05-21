@@ -80,15 +80,15 @@ public class SimplePolicyRequest extends Request{
             case ItemPurchaseRule:
                 purchaseRule = new ItemPurchaseRule(getItemId());
             case ShoppingBasketPurchaseRule:
-                purchaseRule = new ShopingBasketPurchaseRule();
+                purchaseRule = new ShoppingBasketPurchaseRule();
             case CategoryPurchaseRule:
                 purchaseRule = new CategoryPurchaseRule(getCategory());
             default:
-                purchaseRule = new ShopingBasketPurchaseRule();
+                purchaseRule = new ShoppingBasketPurchaseRule();
 
         }
-            if(atLeast){return new AtLeastPurchaseRule(purchaseRule,getQuantity());}
-            else { return new AtMostPurchaseRule(purchaseRule,getQuantity());}
+            if(atLeast){return new AtLeastPurchaseTerm(purchaseRule,getQuantity());}
+            else { return new AtMostPurchaseTerm(purchaseRule,getQuantity());}
                 }
 }
 

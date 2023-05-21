@@ -316,7 +316,7 @@ public class Store {
                 purchaseRule = new ItemPurchaseRule(itemId);
                 break;
             case  2://ShoppingBasket
-                purchaseRule = new ShopingBasketPurchaseRule();
+                purchaseRule = new ShoppingBasketPurchaseRule();
                 break;
             case  3://category
                 purchaseRule = new CategoryPurchaseRule(category);
@@ -324,9 +324,9 @@ public class Store {
             { throw new Exception("can't Creating Purchase Term which is not a shopping basket item or category");}
         }
         if (atLeast){
-            return new AtLeastPurchaseRule(purchaseRule,quantity);
+            return new AtLeastPurchaseTerm(purchaseRule,quantity);
         }
-        else return new AtMostPurchaseRule(purchaseRule,quantity);
+        else return new AtMostPurchaseTerm(purchaseRule,quantity);
     }
 
     public Discount creatingDiscountTerm(int PurchaseRule,int DiscountRule, Boolean atLeast, int quantity, UUID itemId, Category category,Double discountPercentage,UUID DiscountItemId,Category discountCategory) throws Exception {

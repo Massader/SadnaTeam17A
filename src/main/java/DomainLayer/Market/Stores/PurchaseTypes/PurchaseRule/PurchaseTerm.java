@@ -59,7 +59,7 @@ public abstract class PurchaseTerm {
                 purchaseRule = new ItemPurchaseRule(itemId);
                 break;
             case  2://ShopingBasket
-                purchaseRule = new ShopingBasketPurchaseRule();
+                purchaseRule = new ShoppingBasketPurchaseRule();
                 break;
             case  3://category
                 if(category.length()==0){ throw new Exception("can't Creating Purchase Term of Item Purchase Rule if category is empty");}
@@ -68,9 +68,9 @@ public abstract class PurchaseTerm {
             { throw new Exception("can't Creating Purchase Term which is not a shopping basket item or category");}
         }
         if (atLeast){
-            return new AtLeastPurchaseRule(purchaseRule,quantity);
+            return new AtLeastPurchaseTerm(purchaseRule,quantity);
         }
-        else return new AtMostPurchaseRule(purchaseRule,quantity);
+        else return new AtMostPurchaseTerm(purchaseRule,quantity);
 
     }
     }
