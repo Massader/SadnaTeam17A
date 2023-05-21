@@ -200,6 +200,10 @@ public class Store {
         throw new Exception("The shopping Basket is not accepted by Store Policy");
     }
 
+    public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket){
+       return policy.purchaseRuleOccurs(shoppingBasket, this) ;
+    }
+
     public int getRatingCounter() {
         return ratingCounter;
     }

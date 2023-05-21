@@ -24,4 +24,5 @@ public abstract class NumericalAssemblyOfDiscount {
 
     public abstract Double CalculateDiscount(ShoppingBasket shoppingBasket, Store store);
 
+
 }
