@@ -27,7 +27,7 @@ public class CategoryPurchaseRule implements PurchaseRule {
          ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
         for (UUID itemId : items.keySet()) {
             Item item=  storeItems.get(itemId);
-            if (item!=null&&item.getCategories().equals(getCategory())) {
+            if (item!=null&&item.containsCategory(category.getCategoryName())) {
                 categoryQuantity+=items.get(itemId);
             }
         }

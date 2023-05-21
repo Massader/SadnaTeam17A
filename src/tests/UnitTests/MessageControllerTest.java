@@ -3,7 +3,6 @@ package UnitTests;
 import DomainLayer.Market.MessageController;
 import DomainLayer.Market.Notification;
 import DomainLayer.Market.UserController;
-import DomainLayer.Market.Users.Message;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.ServiceUser;

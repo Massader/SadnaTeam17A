@@ -19,7 +19,7 @@ public class Item {
     private String description;
     private PurchaseType purchaseType;
     private ConcurrentLinkedQueue<Category> categories;
-    private PurchaseRule purchaseRule;
+
     private ConcurrentHashMap<UUID, Review> reviews;
 
     public Item(UUID id, String name, double price, UUID storeId, double rating, int quantity, String description) {
@@ -32,7 +32,6 @@ public class Item {
         this.description = description;
         purchaseType = new DirectPurchase();
         categories = new ConcurrentLinkedQueue<>();
-        purchaseRule = null;
         reviews = new ConcurrentHashMap<>();
     }
 
