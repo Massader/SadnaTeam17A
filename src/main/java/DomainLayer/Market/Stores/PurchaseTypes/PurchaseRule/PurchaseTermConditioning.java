@@ -14,6 +14,12 @@ public class PurchaseTermConditioning extends PurchaseTerm {
         super(purchaseRule);
     }
 
+    public PurchaseTermConditioning(PurchaseRule purchaseRule, ConcurrentLinkedQueue<PurchaseTerm> purchaseTermThen, ConcurrentLinkedQueue<PurchaseTerm> purchaseTermIf) {
+        super(purchaseRule);
+        this.purchaseTermThen = purchaseTermThen;
+        this.purchaseTermIf = purchaseTermIf;
+    }
+
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store) {
         boolean toCheckResult = false;

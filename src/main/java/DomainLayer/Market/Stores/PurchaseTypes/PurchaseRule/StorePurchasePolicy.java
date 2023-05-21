@@ -39,7 +39,12 @@ public class StorePurchasePolicy {
             // If the new term is a CompositePurchaseTerm, remove any existing terms in the purchasePolicies
             // that are equal to it (using the equals() method)
             CompositePurchaseTerm compositeTerm = (CompositePurchaseTerm) term;
-            purchasePolicies.removeIf(p -> p.equals(term));
+            ConcurrentLinkedQueue<PurchaseTerm> purchaseTerm =compositeTerm.getPurchaseTerm();
+            for (PurchaseTerm oldTerm :purchaseTerm) {
+                if(purchasePolicies.contains(oldTerm)){
+                    purchasePolicies.remove(oldTerm);
+                }
+            }
             }
         // If the new term is not a CompositePurchaseTerm, simply add it to purchasePolicies
         purchasePolicies.add(term);

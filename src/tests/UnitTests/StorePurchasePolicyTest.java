@@ -5,6 +5,7 @@ import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.*;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ public class StorePurchasePolicyTest {
     private Item tomato;
     private Item cucumber;
     private Category vegetable;
-   // ConcurrentHashMap<UUID,Integer> items;
+
 
 
     @BeforeEach
@@ -35,13 +36,12 @@ public class StorePurchasePolicyTest {
             store.addItem(tomato);
             store.addItem(cucumber);
         } catch (Exception ignored) {}
-        //items = new ConcurrentHashMap<>();
-        // items.put(tomato.getId(), 2);
-        //items.put(cucumber.getId(), 1);
     }
 
+    
 
-    //the case of SimplePolicy {ShoppingBasketPurchaseRule,ItemPurchaseRule,CategoryPurchaseRule}*{Atmost, AtLeast}
+
+    //the case of SimplePolicy {ShoppingBasketPurchaseRule,ItemPurchaseRule,CategoryPurchaseRule}*{AtMost, AtLeast}
     @Test
     //SimplePolicy, ShoppingBasketPurchaseRule, AtLeast
     void addSimplePolicyAtLeastShoppingBasketPurchaseRule() throws Exception {
@@ -139,6 +139,48 @@ public class StorePurchasePolicyTest {
     }
 
     @Test
+    void addPurchaseTermConditioning() throws Exception {
+        ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
+        shoppingBasket1.addItem(tomato,10);
+        CategoryPurchaseRule vegetableCategoryPurchaseRule= new CategoryPurchaseRule(vegetable);
+        AtLeastPurchaseRule vegetableAtLeastPurchaseRule= new AtLeastPurchaseRule(vegetableCategoryPurchaseRule,2);
+
+        ItemPurchaseRule tomatoPurchaseRule = new ItemPurchaseRule(tomato.getId());
+        AtLeastPurchaseRule tomatoAtLeastPurchaseRule= new AtLeastPurchaseRule(tomatoPurchaseRule,2);
+
+        ConcurrentLinkedQueue<PurchaseTerm> purchaseTermThen = new ConcurrentLinkedQueue<>();
+        ConcurrentLinkedQueue<PurchaseTerm> purchaseTermIf = new ConcurrentLinkedQueue<>();
+        purchaseTermIf.add(vegetableAtLeastPurchaseRule);
+        purchaseTermThen.add(tomatoAtLeastPurchaseRule);
+
+        PurchaseTermConditioning purchaseTermConditioning= new PurchaseTermConditioning(tomatoPurchaseRule,purchaseTermThen,purchaseTermIf);
+        store.addPolicyTermByStoreOwner(purchaseTermConditioning);
+        assertTrue(purchaseTermConditioning.purchaseRuleOccurs(shoppingBasket1,store));
+            }
+
+    @Test
+    // addPurchaseTermConditioning
+    void addPurchaseTermConditioningFail() throws Exception {
+        ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
+        shoppingBasket1.addItem(tomato,10);
+        CategoryPurchaseRule vegetableCategoryPurchaseRule= new CategoryPurchaseRule(vegetable);
+        AtLeastPurchaseRule vegetableAtLeastPurchaseRule= new AtLeastPurchaseRule(vegetableCategoryPurchaseRule,2);
+
+        ItemPurchaseRule tomatoPurchaseRule = new ItemPurchaseRule(tomato.getId());
+        AtMostPurchaseRule tomatoAtMostPurchaseRule= new AtMostPurchaseRule(tomatoPurchaseRule,2);
+
+        ConcurrentLinkedQueue<PurchaseTerm> purchaseTermThen = new ConcurrentLinkedQueue<>();
+        ConcurrentLinkedQueue<PurchaseTerm> purchaseTermIf = new ConcurrentLinkedQueue<>();
+        purchaseTermIf.add(vegetableAtLeastPurchaseRule);
+        purchaseTermThen.add(tomatoAtMostPurchaseRule);
+
+        PurchaseTermConditioning purchaseTermConditioning= new PurchaseTermConditioning(tomatoPurchaseRule,purchaseTermThen,purchaseTermIf);
+        store.addPolicyTermByStoreOwner(purchaseTermConditioning);
+        assertTrue(purchaseTermConditioning.purchaseRuleOccurs(shoppingBasket1,store));
+    }
+
+
+    @Test
         //CompositePurchaseTermOr,
     void addCompositePolicyOr() throws Exception {
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
@@ -163,7 +205,28 @@ public class StorePurchasePolicyTest {
         assertTrue(purchaseTermOr.purchaseRuleOccurs(shoppingBasket1,store));
 
     }
-@Test
+    @Test
+    void addCompositePolicyOrFail() throws Exception {
+        //False
+        ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
+        shoppingBasket1.addItem(tomato,10);
+        ShopingBasketPurchaseRule shopingBasketPurchaseRule = new ShopingBasketPurchaseRule();
+        AtLeastPurchaseRule BasketAtLeastPurchaseRule= new AtLeastPurchaseRule(shopingBasketPurchaseRule,60);
+
+        //false
+        CategoryPurchaseRule vegetableCategoryPurchaseRule= new CategoryPurchaseRule(vegetable);
+        AtMostPurchaseRule vegetableAtMostPurchaseRule= new AtMostPurchaseRule(vegetableCategoryPurchaseRule,2);
+
+        ConcurrentLinkedQueue<PurchaseTerm> purchaseTerm = new ConcurrentLinkedQueue<>();
+        purchaseTerm.add(BasketAtLeastPurchaseRule);
+        purchaseTerm.add(vegetableAtMostPurchaseRule);
+
+        CompositePurchaseTermOr purchaseTermOr = new CompositePurchaseTermOr(shopingBasketPurchaseRule,purchaseTerm);
+        store.addPolicyTermByStoreOwner(purchaseTermOr);
+        assertFalse(purchaseTermOr.purchaseRuleOccurs(shoppingBasket1,store));
+
+    }
+    @Test
     void addCompositePolicyAnd() throws Exception {
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
         shoppingBasket1.addItem(tomato,10);
@@ -187,8 +250,76 @@ public class StorePurchasePolicyTest {
        purchaseTerm.add(vegetableAtMostPurchaseRule);
        CompositePurchaseTermAnd purchaseTermAnd1 = new CompositePurchaseTermAnd(shopingBasketPurchaseRule,purchaseTerm);
        assertFalse(purchaseTermAnd1.purchaseRuleOccurs(shoppingBasket1,store));
+    }
+
+
+    @Test
+    void addStorePurchasePolicy() throws Exception {
+        ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
+        shoppingBasket1.addItem(tomato,10);
+
+        ShopingBasketPurchaseRule shopingBasketPurchaseRule = new ShopingBasketPurchaseRule();
+        AtLeastPurchaseRule BasketAtLeastPurchaseRule= new AtLeastPurchaseRule(shopingBasketPurchaseRule,49);
+        store.addPolicyTermByStoreOwner(BasketAtLeastPurchaseRule);
+
+        ItemPurchaseRule tomatoPurchaseRule = new ItemPurchaseRule(tomato.getId());
+        AtLeastPurchaseRule tomatoAtLeastPurchaseRule= new AtLeastPurchaseRule(tomatoPurchaseRule,2);
+        store.addPolicyTermByStoreOwner(tomatoAtLeastPurchaseRule);
+
+        assertTrue(store.purchaseRuleOccurs(shoppingBasket1));
+
+        CategoryPurchaseRule vegetableCategoryPurchaseRule= new CategoryPurchaseRule(vegetable);
+        AtMostPurchaseRule vegetableAtMostPurchaseRule= new AtMostPurchaseRule(vegetableCategoryPurchaseRule,2);
+        store.addPolicyTermByStoreOwner(vegetableAtMostPurchaseRule);
+        assertFalse(store.purchaseRuleOccurs(shoppingBasket1));
+
+        store.removePolicyTermByStoreOwner(vegetableAtMostPurchaseRule);
+        assertTrue(store.purchaseRuleOccurs(shoppingBasket1));
 
     }
+
+
+    @Test
+    void addStorePurchasePolicyWithDuplicate() throws Exception {
+        ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
+        shoppingBasket1.addItem(tomato,10);
+        ShopingBasketPurchaseRule shopingBasketPurchaseRule = new ShopingBasketPurchaseRule();
+        AtLeastPurchaseRule BasketAtLeastPurchaseRule= new AtLeastPurchaseRule(shopingBasketPurchaseRule,49);
+
+        ItemPurchaseRule tomatoPurchaseRule = new ItemPurchaseRule(tomato.getId());
+        AtLeastPurchaseRule tomatoAtLeastPurchaseRule= new AtLeastPurchaseRule(tomatoPurchaseRule,2);
+
+        ConcurrentLinkedQueue<PurchaseTerm> purchaseTerm = new ConcurrentLinkedQueue<>();
+        purchaseTerm.add(BasketAtLeastPurchaseRule);
+        purchaseTerm.add(tomatoAtLeastPurchaseRule);
+        try {
+            store.addPolicyTermByStoreOwner(null); }
+        catch (Exception exception){
+            assertEquals("the purchase Term is null, please put valid purchaseTerm",exception.getMessage());
+        }
+
+        CompositePurchaseTermAnd purchaseTermAnd = new CompositePurchaseTermAnd(shopingBasketPurchaseRule,purchaseTerm);
+        store.addPolicyTermByStoreOwner(tomatoAtLeastPurchaseRule);
+        try{
+            store.addPolicyTermByStoreOwner(tomatoAtLeastPurchaseRule);
+        }
+        catch (Exception exception){
+            assertEquals("the purchase Term is already exist, please put valid purchaseTerm",exception.getMessage());
+        }
+       store.addPolicyTermByStoreOwner(purchaseTermAnd);
+        for (PurchaseTerm policy : store.getPolicy().getPurchasePolicies()) {
+            System.out.println(policy);
+        }
+        assertFalse(store.getPolicy().getPurchasePolicies().contains(tomatoAtLeastPurchaseRule));
+
+    }
+
+
+
+
+
+
+
 
 
 
