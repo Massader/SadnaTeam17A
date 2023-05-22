@@ -151,6 +151,9 @@ public class Item {
     }
 
     public void addCategory(Category category) {
+        if (containsCategory(category.getCategoryName())) {
+            throw new RuntimeException("Item is already assigned to category " + category.getCategoryName());
+        }
         categories.add(category);
     }
 
