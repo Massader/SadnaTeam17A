@@ -1041,5 +1041,21 @@ public class Service {
             output.add(new ServiceComplaint(complaint));
         return Response.getSuccessResponse(output);
     }
+
+    public Response<Boolean> closeComplaint(UUID clientCredentials, UUID complaintId) {
+        Response<Boolean> response = messageController.closeComplaint(clientCredentials, complaintId);
+        if (response.isError()){
+            errorLogger.log(Level.WARNING, response.getMessage());
+        }
+        return response;
+    }
+    
+    public Response<Boolean> reopenComplaint(UUID clientCredentials, UUID complaintId) {
+        Response<Boolean> response = messageController.reopenComplaint(clientCredentials, complaintId);
+        if (response.isError()){
+            errorLogger.log(Level.WARNING, response.getMessage());
+        }
+        return response;
+    }
 }
 

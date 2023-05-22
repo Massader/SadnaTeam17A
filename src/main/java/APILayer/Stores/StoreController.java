@@ -197,6 +197,16 @@ public class StoreController {
     public Response<Boolean> assignAdminToComplaint(@RequestBody TargetRequest request){
         return service.assignAdminToComplaint(request.getClientCredentials(), request.getTargetId());
     }
+    
+    @PutMapping(path = "/admin/close-complaint")
+    public Response<Boolean> closeComplaint(@RequestBody TargetRequest request) {
+        return service.closeComplaint(request.getClientCredentials(), request.getTargetId());
+    }
+    
+    @PutMapping(path = "/admin/reopen-complaint")
+    public Response<Boolean> reopenComplaint(@RequestBody TargetRequest request) {
+        return service.reopenComplaint(request.getClientCredentials(), request.getTargetId());
+    }
 
     @PostMapping(path = "/add-item-category")
     public Response<Boolean> addItemCategory(@RequestBody CategoryRequest request){
