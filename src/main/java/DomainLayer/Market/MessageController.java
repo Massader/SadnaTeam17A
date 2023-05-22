@@ -89,7 +89,7 @@ public class MessageController {
             }
             else return Response.getFailResponse("Messages not found.");
         }
-        List<Message> output = new ArrayList<>(messages.get(clientCredentials).values());
+        List<Message> output = new ArrayList<>(messages.get(recipient).values());
         output.sort(Comparator.comparing(Message::getTimestamp));
         return Response.getSuccessResponse(output);
     }
