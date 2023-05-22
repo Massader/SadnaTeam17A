@@ -11,6 +11,8 @@ public class ServiceComplaint {
     private boolean open;
     private UUID assignedAdmin;
     private UUID purchaseId;
+    private UUID itemId;
+    private UUID storeId;
 
     public ServiceComplaint(Complaint complaint) {
         this.id = complaint.getId();
@@ -19,6 +21,8 @@ public class ServiceComplaint {
         this.open = complaint.isOpen();
         this.assignedAdmin = complaint.getAssignedAdmin();
         this.purchaseId = complaint.getPurchaseId();
+        this.storeId = complaint.getStoreId();
+        this.itemId = complaint.getItemId();
     }
 
     public UUID getId() {
@@ -33,7 +37,7 @@ public class ServiceComplaint {
         return sender;
     }
 
-    public boolean isOpen() {
+    public boolean getOpen() {
         return open;
     }
 
@@ -43,5 +47,13 @@ public class ServiceComplaint {
 
     public UUID getPurchaseId() {
         return purchaseId;
+    }
+    
+    public UUID getItemId() {
+        return itemId;
+    }
+    
+    public UUID getStoreId() {
+        return storeId;
     }
 }

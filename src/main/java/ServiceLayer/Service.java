@@ -660,8 +660,8 @@ public class Service {
         return Response.getSuccessResponse(new ServiceMessage(response.getValue()));
     }
 
-    public Response<UUID> sendComplaint(UUID clientCredentials, UUID purchaseId, String body) {
-        Response<UUID> response = messageController.sendComplaint(clientCredentials, purchaseId, body);
+    public Response<UUID> sendComplaint(UUID clientCredentials, UUID purchaseId, UUID storeId, UUID itemId, String body) {
+        Response<UUID> response = messageController.sendComplaint(clientCredentials, purchaseId, storeId, itemId, body);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
