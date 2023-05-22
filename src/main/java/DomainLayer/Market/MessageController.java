@@ -1,6 +1,7 @@
 package DomainLayer.Market;
 
 import DomainLayer.Market.Stores.Store;
+import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.User;
 import ServiceLayer.Response;
@@ -44,7 +45,8 @@ public class MessageController {
         if (!clientCredentials.equals(sender)) {
             Store store = storeController.getStore(sender);
             if (store == null) return Response.getFailResponse("Message sender credentials do not match an existing store.");
-            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_COMMUNICATION))
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_COMMUNICATION)
+                    && !store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("Logged in user does not have the correct permissions to send a message for store " + sender);
         }
         else {
@@ -57,7 +59,19 @@ public class MessageController {
         }
         if (!messages.containsKey(recipient)) messages.put(recipient, new ConcurrentHashMap<>());
         messages.get(recipient).put(message.getId(), message);
-        notificationController.sendNotification(recipient, "New message received!");
+        if (storeController.storeExist(recipient)) {
+            Store store = storeController.getStore(recipient);
+            List<UUID> rolesToNotify = store.getStoreOwners();
+            for (UUID manager : store.getStoreManagers()) {
+                if (store.checkPermission(manager, StorePermissions.STORE_COMMUNICATION))
+                    rolesToNotify.add(manager);
+            }
+            for (UUID roleToNotify : rolesToNotify) {
+                notificationController.sendNotification(roleToNotify,
+                        "Store " + store.getName() + " has received a new message!");
+            }
+        }
+        else notificationController.sendNotification(recipient, "New message received!");
         return Response.getSuccessResponse(message.getId());
     }
 
@@ -65,7 +79,8 @@ public class MessageController {
         if (clientCredentials != recipient) {
             Store store = StoreController.getInstance().getStore(recipient);
             if (store == null) return Response.getFailResponse("Passed recipient ID do not match logged in user or an existing store.");
-            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_COMMUNICATION))
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_COMMUNICATION)
+                    && !store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("Logged in user does not have the correct permissions to read a message to store " + recipient);
         }
         if (!messages.containsKey(clientCredentials)) {
@@ -140,5 +155,18 @@ public class MessageController {
     public void resetController() {
         instance = new MessageController();
     }
-
+    
+    public Response<List<Complaint>> getAssignedComplaints(UUID clientCredentials) {
+        Response<User> userResponse = UserController.getInstance().getUser(clientCredentials);
+        if (userResponse.isError())
+            return Response.getFailResponse("Client credentials passed do not match existing user.");
+        if (!userResponse.getValue().isAdmin())
+            return Response.getFailResponse("Client credentials passed do not match to an admin.");
+        List<Complaint> output = new ArrayList<>(complaints.values()
+                .stream()
+                .filter(complaint -> complaint.getAssignedAdmin().equals(clientCredentials))
+                .toList());
+        output.sort(Comparator.comparing(Complaint::getTimestamp));
+        return Response.getSuccessResponse(output);
+    }
 }

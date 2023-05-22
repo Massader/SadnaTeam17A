@@ -255,7 +255,7 @@ public class RealBridge implements Bridge {
         return service.getCartTotal(clientCredentials);
     }
 
-    public Response<Boolean> addStoreRating(UUID clientCredentials, UUID storeId ,int rating) {
+    public Response<Double> addStoreRating(UUID clientCredentials, UUID storeId ,int rating) {
         return service.addStoreRating(clientCredentials, storeId, rating);
     }
 

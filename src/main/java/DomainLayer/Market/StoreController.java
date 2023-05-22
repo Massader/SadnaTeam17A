@@ -283,11 +283,10 @@ public class StoreController {
     }
 
     //calculate new rating given a new one
-    public Response<Boolean> addStoreRating(UUID storeId, int rating) {
+    public Response<Double> addStoreRating(UUID storeId, int rating) {
         try {
             Store store = getStore(storeId);
-            store.addRating(rating);
-            return Response.getSuccessResponse(true);
+            return Response.getSuccessResponse(store.addRating(rating));
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }

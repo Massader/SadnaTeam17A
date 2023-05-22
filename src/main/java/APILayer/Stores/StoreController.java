@@ -171,19 +171,23 @@ public class StoreController {
                 request.getStoreId(), request.getQuantity(), request.getDescription());
     }
 
-
-    @GetMapping(path = "/get-complaints/id={id}")
+    @GetMapping(path = "/admin/get-complaints/id={id}")
     public Response<List<ServiceComplaint>> getComplaints(@PathVariable(name = "id") UUID id){
         return service.getComplaints(id);
     }
+    
+    @GetMapping(path = "/admin/get-assigned-complaints/id={id}")
+    public Response<List<ServiceComplaint>> getAssignedComplaints(@PathVariable(name = "id") UUID id){
+        return service.getAssignedComplaints(id);
+    }
 
-    @GetMapping(path = "/get-complaint/id={id}&complaintId={complaintId}")
+    @GetMapping(path = "/admin/get-complaint/id={id}&complaintId={complaintId}")
     public Response<ServiceComplaint> getComplaint(@PathVariable(name = "id") UUID id,
                                                    @PathVariable(name = "complaintId") UUID complaintId){
         return service.getComplaint(id,complaintId);
     }
 
-    @PutMapping(path = "/assign-admin-to-complaint")
+    @PutMapping(path = "/admin/assign-admin-to-complaint")
     public Response<Boolean> assignAdminToComplaint(@RequestBody TargetRequest request){
         return service.assignAdminToComplaint(request.getClientCredentials(), request.getTargetId());
     }
@@ -261,5 +265,10 @@ public class StoreController {
     public Response<Boolean> addBasketPolicyTerm(@RequestBody BasketPolicyTermRequest request) {
         return service.addBasketPolicyTerm(request.getClientCredentials(), request.getStoreId(),
                 request.getQuantity(), request.getAtLeast());
+    }
+    
+    @PostMapping(path = "/rate-store")
+    public Response<Double> rateStore(@RequestBody RateStoreRequest request) {
+        return service.addStoreRating(request.getClientCredentials(), request.getStoreId(), request.getRating());
     }
 }
