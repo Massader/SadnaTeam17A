@@ -68,6 +68,6 @@ public interface Bridge {
     Response<Integer> numOfLoggedInUsers();
     Response<ConcurrentHashMap<String, UUID>> getUserNames();
     Response<Double> getCartTotal(UUID clientCredentials);
-    Response<Boolean> addStoreRating(UUID clientCredentials, UUID storeId ,int rating);
+    Response<Double> addStoreRating(UUID clientCredentials, UUID storeId ,int rating);
     Response<Boolean> addItemRating(UUID clientCredentials, UUID itemId, UUID storeId, int rating);
 }

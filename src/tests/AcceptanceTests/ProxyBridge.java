@@ -248,7 +248,7 @@ public class ProxyBridge implements Bridge {
         return real == null ? null : real.getCartTotal(clientCredentials);
     }
 
-    public Response<Boolean> addStoreRating(UUID clientCredentials, UUID storeId ,int rating) {
+    public Response<Double> addStoreRating(UUID clientCredentials, UUID storeId ,int rating) {
         return real == null ? null : real.addStoreRating(clientCredentials, storeId, rating);
     }
 

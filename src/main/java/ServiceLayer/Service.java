@@ -566,13 +566,13 @@ public class Service {
         return response;
     }
 
-    public Response<Boolean> addStoreRating(UUID clientCredentials, UUID storeId ,int rating){
+    public Response<Double> addStoreRating(UUID clientCredentials, UUID storeId ,int rating){
         Response<Boolean> userResponse = userController.isUser(clientCredentials);
         if(userResponse.isError()) {
             errorLogger.log(Level.SEVERE, userResponse.getMessage());
-            return userResponse;
+            return Response.getFailResponse(userResponse.getMessage());
         }
-        Response<Boolean> ratingResponse = storeController.addStoreRating(storeId,rating);
+        Response<Double> ratingResponse = storeController.addStoreRating(storeId,rating);
         if(ratingResponse.isError()){
             errorLogger.log(Level.SEVERE, ratingResponse.getMessage());
             return ratingResponse;
@@ -1028,6 +1028,18 @@ public class Service {
         }
         eventLogger.log(Level.INFO, "Successfully added policy to store " + storeId);
         return response;
+    }
+    
+    public Response<List<ServiceComplaint>> getAssignedComplaints(UUID clientCredentials) {
+        Response<List<Complaint>> response = messageController.getAssignedComplaints(clientCredentials);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        List<ServiceComplaint> output = new ArrayList<>();
+        for (Complaint complaint : response.getValue())
+            output.add(new ServiceComplaint(complaint));
+        return Response.getSuccessResponse(output);
     }
 }
 

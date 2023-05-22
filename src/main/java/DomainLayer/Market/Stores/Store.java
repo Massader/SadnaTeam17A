@@ -72,13 +72,14 @@ public class Store {
         return items;
     }
 
-    public void addRating(int newRating) {
+    public double addRating(int newRating) {
         if (newRating < 0 || newRating > 5)
             throw new RuntimeException("Rating can only be between 0 and 5.");
         double x = rating * ratingCounter;
         x += newRating;
         ratingCounter++;
         rating = x / ratingCounter;
+        return rating;
     }
 
     public boolean closeStore() {
@@ -357,6 +358,16 @@ public class Store {
             }
         }
         return managersIds;
+    }
+    
+    public List<UUID> getStoreOwners() {
+        List<UUID> ownersIds = new ArrayList<>();
+        for (Map.Entry<UUID, Role> entry : rolesMap.entrySet()) {
+            if (entry.getValue().getPermissions().contains(StorePermissions.STORE_OWNER)) {
+                ownersIds.add(entry.getKey());
+            }
+        }
+        return ownersIds;
     }
 }
 
