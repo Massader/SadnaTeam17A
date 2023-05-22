@@ -170,6 +170,12 @@ public class StoreController {
         return service.addItemToStore(request.getClientCredentials(), request.getName(), request.getPrice(),
                 request.getStoreId(), request.getQuantity(), request.getDescription());
     }
+    
+    @PostMapping(path = "/send-complaint")
+    public Response<UUID> sendComplaint(@RequestBody ComplaintRequest request) {
+        return service.sendComplaint(request.getClientCredentials(), request.getPurchaseId(),
+                request.getStoreId(), request.getItemId(), request.getBody());
+    }
 
     @GetMapping(path = "/admin/get-complaints/id={id}")
     public Response<List<ServiceComplaint>> getComplaints(@PathVariable(name = "id") UUID id){

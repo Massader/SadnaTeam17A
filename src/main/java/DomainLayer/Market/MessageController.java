@@ -127,8 +127,8 @@ public class MessageController {
         return Response.getSuccessResponse(output);
     }
 
-    public Response<UUID> sendComplaint(UUID clientCredentials, UUID purchaseId, String body) {
-        Complaint complaint = new Complaint(body, clientCredentials, purchaseId);
+    public Response<UUID> sendComplaint(UUID clientCredentials, UUID purchaseId, UUID storeId, UUID itemId, String body) {
+        Complaint complaint = new Complaint(body, clientCredentials, purchaseId, storeId, itemId);
         complaints.put(complaint.getId(), complaint);
         List<UUID> adminIds = UserController.getInstance().getAdminIds();
         for (UUID id : adminIds) {
