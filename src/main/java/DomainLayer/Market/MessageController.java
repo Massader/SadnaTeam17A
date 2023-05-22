@@ -83,7 +83,7 @@ public class MessageController {
                     && !store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("Logged in user does not have the correct permissions to read a message to store " + recipient);
         }
-        if (!messages.containsKey(clientCredentials)) {
+        if (!messages.containsKey(recipient)) {
             if (UserController.getInstance().isRegisteredUser(recipient)) {
                 messages.put(recipient, new ConcurrentHashMap<>());
             }
