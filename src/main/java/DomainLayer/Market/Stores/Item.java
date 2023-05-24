@@ -1,7 +1,6 @@
 package DomainLayer.Market.Stores;
 
 import DomainLayer.Market.Stores.PurchaseTypes.DirectPurchase;
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseRule;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
 
 import java.util.*;
@@ -20,7 +19,7 @@ public class Item {
     private PurchaseType purchaseType;
     private ConcurrentLinkedQueue<Category> categories;
 
-    private ConcurrentHashMap<UUID, Review> reviews;
+    private ConcurrentHashMap<UUID, ItemReview> reviews;
 
     public Item(UUID id, String name, double price, UUID storeId, double rating, int quantity, String description) {
         this.id = id;
@@ -113,17 +112,17 @@ public class Item {
         return purchaseType;
     }
 
-    public List<Review> getReviews() {
-        List<Review> output = new ArrayList<>(reviews.values());
-        output.sort(Comparator.comparing(Review::getTimestamp));
+    public List<ItemReview> getReviews() {
+        List<ItemReview> output = new ArrayList<>(reviews.values());
+        output.sort(Comparator.comparing(ItemReview::getTimestamp));
         return output;
     }
 
     public UUID addReview(UUID clientCredentials, String body, int rating) {
-        Review review = new Review(id, body, clientCredentials, rating);
-        reviews.put(review.getId(), review);
+        ItemReview itemReview = new ItemReview(id, body, clientCredentials, rating);
+        reviews.put(itemReview.getId(), itemReview);
         addRating(rating);
-        return review.getId();
+        return itemReview.getId();
     }
 
     // make average of the old ratings with the new one

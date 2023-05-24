@@ -27,8 +27,9 @@ public class Store {
     private final StorePurchasePolicy policy;
     private final ConcurrentLinkedQueue<Sale> sales;
     private final ConcurrentHashMap<UUID, Role> rolesMap;
-
-
+    private ConcurrentHashMap<UUID, StoreReview> reviews;
+    
+    
     public Store(String name, String description) {
         this.name = name;
         this.storeId = UUID.randomUUID();
@@ -42,6 +43,7 @@ public class Store {
         policy = new StorePurchasePolicy();
         sales = new ConcurrentLinkedQueue<>();
         rolesMap = new ConcurrentHashMap<>();
+        reviews = new ConcurrentHashMap<>();
     }
 
     public StoreDiscount getDiscounts() {
@@ -368,6 +370,19 @@ public class Store {
             }
         }
         return ownersIds;
+    }
+    
+    public List<StoreReview> getReviews() {
+        List<StoreReview> output = new ArrayList<>(reviews.values());
+        output.sort(Comparator.comparing(StoreReview::getTimestamp));
+        return output;
+    }
+    
+    public UUID addReview(UUID clientCredentials, String body, int rating) {
+        StoreReview review = new StoreReview(storeId, body, clientCredentials, rating);
+        reviews.put(review.getId(), review);
+        addRating(rating);
+        return review.getId();
     }
 }
 

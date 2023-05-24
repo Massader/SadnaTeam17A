@@ -1,25 +1,25 @@
 package ServiceLayer.ServiceObjects;
 
-import DomainLayer.Market.Stores.Review;
+import DomainLayer.Market.Stores.StoreReview;
 
 import java.util.Date;
 import java.util.UUID;
 
-public class ServiceReview {
+public class ServiceStoreReview {
     private UUID id;
-    private UUID itemId;
+    private UUID storeId;
     private String text;
     private UUID reviewer;
     private Date timestamp;
     private int rating;
     
-    public ServiceReview(Review review) {
-        this.id = review.getId();
-        this.itemId = review.getItemId();
-        this.text = review.getText();
-        this.reviewer = review.getReviewer();
-        this.timestamp = review.getTimestamp();
-        this.rating = review.getRating();
+    public ServiceStoreReview(StoreReview storeReview) {
+        this.id = storeReview.getId();
+        this.storeId = storeReview.getStoreId();
+        this.text = storeReview.getText();
+        this.reviewer = storeReview.getReviewer();
+        this.timestamp = storeReview.getTimestamp();
+        this.rating = storeReview.getRating();
     }
     
     public UUID getId() {
@@ -34,8 +34,8 @@ public class ServiceReview {
         return reviewer;
     }
     
-    public UUID getItemId() {
-        return itemId;
+    public UUID getStoreId() {
+        return storeId;
     }
     
     public Date getTimestamp() {

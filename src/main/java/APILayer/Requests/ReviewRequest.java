@@ -4,23 +4,23 @@ import java.util.UUID;
 
 public class ReviewRequest extends Request {
 
-    private UUID itemId;
+    private UUID targetId;
     private String body;
     private int rating;
 
     public ReviewRequest(UUID clientCredentials, UUID itemId, String body, int rating) {
         super(clientCredentials);
-        this.itemId = itemId;
+        this.targetId = itemId;
         this.body = body;
         this.rating = rating;
     }
 
-    public UUID getItemId() {
-        return itemId;
+    public UUID getTargetId() {
+        return targetId;
     }
 
-    public void setItemId(UUID itemId) {
-        this.itemId = itemId;
+    public void setTargetId(UUID targetId) {
+        this.targetId = targetId;
     }
 
     public String getBody() {

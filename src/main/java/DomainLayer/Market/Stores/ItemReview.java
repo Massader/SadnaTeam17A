@@ -4,7 +4,7 @@ import java.util.Date;
 import java.time.Instant;
 import java.util.UUID;
 
-public class Review {
+public class ItemReview {
     private UUID id;
     private UUID itemId;
     private String text;
@@ -12,7 +12,7 @@ public class Review {
     private Date timestamp;
     private int rating;
 
-    public Review(UUID itemId, String text, UUID reviewer, int rating) {
+    public ItemReview(UUID itemId, String text, UUID reviewer, int rating) {
         this.id = UUID.randomUUID();
         this.itemId = itemId;
         this.text = text;
