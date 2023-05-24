@@ -54,14 +54,14 @@ public class StoreController {
         return service.getItemInformation(storeId, itemId);
     }
 
-    @PostMapping(path = "/post-review")
-    public Response<UUID> postReview(@RequestBody ReviewRequest request) {
-        return service.postReview(request.getClientCredentials(), request.getItemId(), request.getBody(), request.getRating());
+    @PostMapping(path = "/post-item-review")
+    public Response<UUID> postItemReview(@RequestBody ReviewRequest request) {
+        return service.postItemReview(request.getClientCredentials(), request.getTargetId(), request.getBody(), request.getRating());
     }
     
     @GetMapping(path = "/get-reviews/storeId={storeId}&itemId={itemId}")
-    public Response<List<ServiceReview>> getReviews(@PathVariable(name = "storeId") UUID storeId,
-                                                    @PathVariable(name = "itemId") UUID itemId) {
+    public Response<List<ServiceItemReview>> getReviews(@PathVariable(name = "storeId") UUID storeId,
+                                                        @PathVariable(name = "itemId") UUID itemId) {
         return service.getReviews(storeId, itemId);
     }
     
@@ -283,8 +283,15 @@ public class StoreController {
                 request.getQuantity(), request.getAtLeast());
     }
     
-    @PostMapping(path = "/rate-store")
-    public Response<Double> rateStore(@RequestBody RateStoreRequest request) {
-        return service.addStoreRating(request.getClientCredentials(), request.getStoreId(), request.getRating());
+    @PostMapping(path = "/post-store-review")
+    public Response<UUID> postStoreReview(@RequestBody ReviewRequest request) {
+        return service.addStoreReview(request.getClientCredentials(), request.getTargetId(), request.getBody(),
+                request.getRating());
+    }
+    
+    @GetMapping(path = "/is-reviewable-by-user/id={id}&storeId={storeId}")
+    public Response<Boolean> isReviewableByUser(@PathVariable(name = "id") UUID clientCredentials,
+                                                @PathVariable(name = "storeId") UUID storeId) {
+        return service.isReviewableByUser(clientCredentials, storeId);
     }
 }

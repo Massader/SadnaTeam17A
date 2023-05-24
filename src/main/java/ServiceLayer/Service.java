@@ -354,7 +354,7 @@ public class Service {
         return Response.getSuccessResponse(cart);
     }
 
-    public Response<UUID> postReview(UUID clientCredentials, UUID itemId, String reviewBody, int rating){
+    public Response<UUID> postItemReview(UUID clientCredentials, UUID itemId, String reviewBody, int rating){
         Response<User> userResponse = userController.getUser(clientCredentials);
         if(userResponse.isError()) {
             errorLogger.log(Level.SEVERE, userResponse.getMessage());
@@ -370,21 +370,29 @@ public class Service {
         return reviewResponse;
     }
     
-    public Response<List<ServiceReview>> getReviews(UUID storeId, UUID itemId) {
-        Response<List<Review>> reviewsResponse = storeController.getReviews(storeId, itemId);
+    public Response<List<ServiceItemReview>> getReviews(UUID storeId, UUID itemId) {
+        Response<List<ItemReview>> reviewsResponse = storeController.getReviews(storeId, itemId);
         if (reviewsResponse.isError()) {
             errorLogger.log(Level.WARNING, reviewsResponse.getMessage());
             return Response.getFailResponse(reviewsResponse.getMessage());
         }
-        List<ServiceReview> output = new ArrayList<>();
-        for (Review review : reviewsResponse.getValue()) {
-            output.add(new ServiceReview(review));
+        List<ServiceItemReview> output = new ArrayList<>();
+        for (ItemReview itemReview : reviewsResponse.getValue()) {
+            output.add(new ServiceItemReview(itemReview));
         }
         return Response.getSuccessResponse(output);
     }
     
     public Response<Boolean> isReviewableByUser(UUID clientCredentials, UUID storeId, UUID itemId) {
         Response<Boolean> response = storeController.isReviewableByUser(clientCredentials, storeId, itemId);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+        }
+        return response;
+    }
+    
+    public Response<Boolean> isReviewableByUser(UUID clientCredentials, UUID storeId) {
+        Response<Boolean> response = storeController.isReviewableByUser(clientCredentials, storeId);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
         }
@@ -1056,6 +1064,22 @@ public class Service {
             errorLogger.log(Level.WARNING, response.getMessage());
         }
         return response;
+    }
+    
+    public Response<UUID> addStoreReview(UUID clientCredentials, UUID storeId, String body, int rating) {
+        Response<User> userResponse = userController.getUser(clientCredentials);
+        if(userResponse.isError()) {
+            errorLogger.log(Level.SEVERE, userResponse.getMessage());
+            return Response.getFailResponse(userResponse.getMessage());
+        }
+        Response<UUID> reviewResponse = storeController.postStoreReview(clientCredentials, storeId, body, rating);
+        if(reviewResponse.isError()) {
+            errorLogger.log(Level.SEVERE, reviewResponse.getMessage());
+            return Response.getFailResponse(reviewResponse.getMessage());
+        }
+        eventLogger.log(Level.INFO, "Successfully posted review by " + userResponse.getValue().getUsername() + " for store "
+                + storeId);
+        return reviewResponse;
     }
 }
 

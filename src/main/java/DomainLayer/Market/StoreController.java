@@ -252,7 +252,7 @@ public class StoreController {
             Item item = getItem(itemId).getValue();
             synchronized (item.getReviews()) {
                 if (item.getReviews()
-                        .stream().filter((review) -> review.getReviewer().equals(clientCredentials))
+                        .stream().filter((itemReview) -> itemReview.getReviewer().equals(clientCredentials))
                         .toList()
                         .isEmpty()
                         && userController.hasUserPurchasedItem(clientCredentials, itemId)) {
@@ -266,7 +266,7 @@ public class StoreController {
         }
     }
     
-    public Response<List<Review>> getReviews(UUID storeId, UUID itemId) {
+    public Response<List<ItemReview>> getReviews(UUID storeId, UUID itemId) {
         try {
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
@@ -287,10 +287,26 @@ public class StoreController {
                 return Response.getFailResponse("Item does not exist");
             Item item = getItem(itemId).getValue();
             if (item.getReviews()
-                    .stream().filter((review) -> review.getReviewer().equals(clientCredentials))
+                    .stream().filter((itemReview) -> itemReview.getReviewer().equals(clientCredentials))
                     .toList()
                     .isEmpty()
                 && userController.hasUserPurchasedItem(clientCredentials, itemId)) {
+                return Response.getSuccessResponse(true);
+            } else return Response.getSuccessResponse(false);
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
+    
+    public Response<Boolean> isReviewableByUser(UUID clientCredentials, UUID storeId) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Store store = getStore(storeId);
+            if (store.getReviews()
+                    .stream().filter((storeReview) -> storeReview.getReviewer().equals(clientCredentials))
+                    .toList()
+                    .isEmpty()) {
                 return Response.getSuccessResponse(true);
             } else return Response.getSuccessResponse(false);
         } catch (Exception e) {
@@ -306,7 +322,6 @@ public class StoreController {
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
-
     }
 
     //calculate new rating given a new one
@@ -728,4 +743,25 @@ public class StoreController {
     }
     
     
+    public Response<UUID> postStoreReview(UUID clientCredentials, UUID storeId, String body, int rating) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store doesn't exist");
+            if (rating > 5 || rating < 0)
+                return Response.getFailResponse("Rating must be between 0 and 5.");
+            Store store = getStore(storeId);
+            synchronized (store.getReviews()) {
+                if (store.getReviews()
+                        .stream().filter((storeReview) -> storeReview.getReviewer().equals(clientCredentials))
+                        .toList()
+                        .isEmpty()) {
+                    UUID reviewId = store.addReview(clientCredentials, body, rating);
+                    return Response.getSuccessResponse(reviewId);
+                }
+            }
+            return Response.getFailResponse("An item can only be reviewed once.");
+        } catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
 }
