@@ -65,7 +65,7 @@ public class StoreController {
         return service.getReviews(storeId, itemId);
     }
     
-    @GetMapping(path = "/is-reviewable-by-user/id={id}&storeId={storeId}&itemId={itemId}")
+    @GetMapping(path = "/item-is-reviewable-by-user/id={id}&storeId={storeId}&itemId={itemId}")
     public Response<Boolean> isReviewableByUser(@PathVariable(name = "id") UUID clientCredentials,
                                                 @PathVariable(name = "storeId") UUID storeId,
                                                 @PathVariable(name = "itemId") UUID itemId) {
@@ -289,7 +289,7 @@ public class StoreController {
                 request.getRating());
     }
     
-    @GetMapping(path = "/is-reviewable-by-user/id={id}&storeId={storeId}")
+    @GetMapping(path = "/store-is-reviewable-by-user/id={id}&storeId={storeId}")
     public Response<Boolean> isReviewableByUser(@PathVariable(name = "id") UUID clientCredentials,
                                                 @PathVariable(name = "storeId") UUID storeId) {
         return service.isReviewableByUser(clientCredentials, storeId);
