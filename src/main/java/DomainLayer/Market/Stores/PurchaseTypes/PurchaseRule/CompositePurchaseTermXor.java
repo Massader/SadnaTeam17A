@@ -6,16 +6,16 @@ import DomainLayer.Market.Users.ShoppingBasket;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CompositePurchaseTermXor extends CompositePurchaseTerm {
-
-    public CompositePurchaseTermXor(PurchaseRule purchaseRule) {
-        super(purchaseRule, new ConcurrentLinkedQueue<>());
+    
+    public CompositePurchaseTermXor(PurchaseRule purchaseRule, ConcurrentLinkedQueue<PurchaseTerm> purchaseTerm) {
+        super(purchaseRule, purchaseTerm);
     }
 
 
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store) {
         int counter=0;
-        for (PurchaseTerm purchaseTerm : this.getPurchaseTerm()) {
+        for (PurchaseTerm purchaseTerm : this.getPurchaseTerms()) {
             if (purchaseTerm.purchaseRuleOccurs(shoppingBasket,store))
                 counter++;
             if (counter>1)return  false;
@@ -33,6 +33,6 @@ public class CompositePurchaseTermXor extends CompositePurchaseTerm {
             return false;
         }
         CompositePurchaseTermXor c = (CompositePurchaseTermXor) o;
-        return getPurchaseTerm().equals(c.getPurchaseTerm());
+        return getPurchaseTerms().equals(c.getPurchaseTerms());
     }
 }

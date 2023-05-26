@@ -283,6 +283,16 @@ public class StoreController {
                 request.getQuantity(), request.getAtLeast());
     }
     
+    @PostMapping(path = "/add-conditional-policy-term")
+    public Response<Boolean> addConditionalPolicyTerm(@RequestBody ConditionalPolicyTermRequest request) {
+        return service.addConditionalPurchaseTerm(request.getClientCredentials(), request.getStoreId(), request.getTerm());
+    }
+    
+    @PostMapping(path = "/add-composite-policy-term")
+    public Response<Boolean> addCompositePolicyTerm(@RequestBody CompositePolicyTermRequest request) {
+        return service.addCompositePolicyTerm(request.getClientCredentials(), request.getStoreId(), request.getTerm());
+    }
+    
     @PostMapping(path = "/post-store-review")
     public Response<UUID> postStoreReview(@RequestBody ReviewRequest request) {
         return service.addStoreReview(request.getClientCredentials(), request.getTargetId(), request.getBody(),

@@ -15,7 +15,7 @@ public class CompositePurchaseTermAnd extends CompositePurchaseTerm {
 
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store) {
-        for (PurchaseTerm purchaseTerm : getPurchaseTerm()) {
+        for (PurchaseTerm purchaseTerm : getPurchaseTerms()) {
             if (!purchaseTerm.purchaseRuleOccurs(shoppingBasket,store))
                 return false;
         }
@@ -31,7 +31,7 @@ public class CompositePurchaseTermAnd extends CompositePurchaseTerm {
             return false;
         }
         CompositePurchaseTermAnd c = (CompositePurchaseTermAnd) o;
-        return getPurchaseTerm().equals(c.getPurchaseTerm());
+        return getPurchaseTerms().equals(c.getPurchaseTerms());
     }
 
 }
