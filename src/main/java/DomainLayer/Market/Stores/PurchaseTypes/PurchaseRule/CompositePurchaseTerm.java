@@ -4,19 +4,20 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public abstract class CompositePurchaseTerm extends PurchaseTerm {
 
-    private ConcurrentLinkedQueue<PurchaseTerm> purchaseTerm;
+    private ConcurrentLinkedQueue<PurchaseTerm> purchaseTerms;
 
-    public CompositePurchaseTerm(PurchaseRule purchaseRule, ConcurrentLinkedQueue<PurchaseTerm> purchaseTerm) {
+    public CompositePurchaseTerm(PurchaseRule purchaseRule, ConcurrentLinkedQueue<PurchaseTerm> purchaseTerms) {
         super(purchaseRule);
-        this.purchaseTerm = purchaseTerm;
-    }
-    //     public CompositePurchaseTerm(PurchaseRule purchaseRule) {
-//        super(purchaseRule);
-//    }
-
-    public ConcurrentLinkedQueue<PurchaseTerm> getPurchaseTerm() {
-        return purchaseTerm;
+        this.purchaseTerms = purchaseTerms;
     }
 
+
+    public ConcurrentLinkedQueue<PurchaseTerm> getPurchaseTerms() {
+        return purchaseTerms;
+    }
+    
+    public void setPurchaseTerms(ConcurrentLinkedQueue<PurchaseTerm> purchaseTerms) {
+        this.purchaseTerms = purchaseTerms;
+    }
 }
 

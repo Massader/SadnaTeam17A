@@ -5,6 +5,7 @@ package DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule;
 import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 
 import java.util.UUID;
 

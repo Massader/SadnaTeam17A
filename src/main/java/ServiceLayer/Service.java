@@ -17,6 +17,7 @@ import ServiceLayer.ServiceObjects.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.BiConsumer;
 import java.util.logging.Level;
 
@@ -1093,6 +1094,134 @@ public class Service {
             output.add(new ServiceStoreReview(review));
         }
         return Response.getSuccessResponse(output);
+    }
+    
+    public Response<Boolean> addConditionalPurchaseTerm(UUID clientCredentials, UUID storeId,
+                                                        ServiceConditionalPurchaseTerm term) {
+        ConditionalPurchaseTerm termToAdd = createConditionalPurchaseTerm(term);
+        if (termToAdd == null)
+            return Response.getFailResponse("Failed to create conditional purchase term");
+        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, termToAdd);
+        if (response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
+        }
+        else eventLogger.log(Level.INFO, "Successfully added purchase term to " + storeId);
+        return response;
+    }
+    
+    private ConditionalPurchaseTerm createConditionalPurchaseTerm(ServiceConditionalPurchaseTerm conditionalServiceTerm) {
+        ConditionalPurchaseTerm termToAdd = new ConditionalPurchaseTerm(null, null, null);
+        List<ServicePurchaseTerm> serviceIfTerms = conditionalServiceTerm.getIfPurchaseTerms();
+        ConcurrentLinkedQueue<PurchaseTerm> ifTerms = new ConcurrentLinkedQueue<>();
+        for (ServicePurchaseTerm serviceTerm : serviceIfTerms) {
+            PurchaseRule rule;
+            PurchaseTerm term;
+            switch (serviceTerm.getRule().getType()) {
+                case "ITEM":
+                    rule = new ItemPurchaseRule(UUID.fromString(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
+                    break;
+                case "CATEGORY":
+                    rule = new CategoryPurchaseRule(new Category(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
+                    break;
+                case "BASKET":
+                    rule = new ShoppingBasketPurchaseRule();
+                    break;
+                default:
+                    return null;
+            }
+            if (serviceTerm.getAtLeast())
+                term = new AtLeastPurchaseTerm(rule, serviceTerm.getQuantity());
+            else
+                term = new AtMostPurchaseTerm(rule, serviceTerm.getQuantity());
+            ifTerms.add(term);
+        }
+        
+        termToAdd.setPurchaseTermsIf(ifTerms);
+        
+        List<ServicePurchaseTerm> serviceThenTerms = conditionalServiceTerm.getThenPurchaseTerms();
+        ConcurrentLinkedQueue<PurchaseTerm> thenTerms = new ConcurrentLinkedQueue<>();
+        for (ServicePurchaseTerm serviceTerm : serviceIfTerms) {
+            PurchaseRule rule;
+            PurchaseTerm term;
+            switch (serviceTerm.getRule().getType()) {
+                case "ITEM":
+                    rule = new ItemPurchaseRule(UUID.fromString(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
+                    break;
+                case "CATEGORY":
+                    rule = new CategoryPurchaseRule(new Category(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
+                    break;
+                case "BASKET":
+                    rule = new ShoppingBasketPurchaseRule();
+                    break;
+                default:
+                    return null;
+            }
+            if (serviceTerm.getAtLeast())
+                term = new AtLeastPurchaseTerm(rule, serviceTerm.getQuantity());
+            else
+                term = new AtMostPurchaseTerm(rule, serviceTerm.getQuantity());
+            thenTerms.add(term);
+        }
+        
+        termToAdd.setPurchaseTermsThen(thenTerms);
+        return termToAdd;
+    }
+    
+    public Response<Boolean> addCompositePolicyTerm(UUID clientCredentials, UUID storeId,
+                                                    ServiceCompositePurchaseTerm term) {
+        CompositePurchaseTerm termToAdd = createCompositePurchaseTerm(term);
+        if (termToAdd == null)
+            return Response.getFailResponse("Failed to create composite purchase term.");
+        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, termToAdd);
+        if (response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
+        }
+        else eventLogger.log(Level.INFO, "Successfully added purchase term to " + storeId);
+        return response;
+    }
+    
+    private CompositePurchaseTerm createCompositePurchaseTerm(ServiceCompositePurchaseTerm compositeServiceTerm) {
+        CompositePurchaseTerm termToAdd;
+        switch (compositeServiceTerm.getType()) {
+            case "AND":
+                termToAdd = new CompositePurchaseTermAnd(null, new ConcurrentLinkedQueue<>());
+                break;
+            case "OR":
+                termToAdd = new CompositePurchaseTermOr(null, new ConcurrentLinkedQueue<>());
+                break;
+            case "XOR":
+                termToAdd = new CompositePurchaseTermXor(null, new ConcurrentLinkedQueue<>());
+                break;
+            default:
+                return null;
+        }
+        List<ServicePurchaseTerm> serviceTerms = compositeServiceTerm.getPurchaseTerms();
+        ConcurrentLinkedQueue<PurchaseTerm> terms = new ConcurrentLinkedQueue<>();
+        for (ServicePurchaseTerm serviceTerm : serviceTerms) {
+            PurchaseRule rule;
+            PurchaseTerm term;
+            switch (serviceTerm.getRule().getType()) {
+                case "ITEM":
+                    rule = new ItemPurchaseRule(UUID.fromString(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
+                    break;
+                case "CATEGORY":
+                    rule = new CategoryPurchaseRule(new Category(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
+                    break;
+                case "BASKET":
+                    rule = new ShoppingBasketPurchaseRule();
+                    break;
+                default:
+                    return null;
+            }
+            if (serviceTerm.getAtLeast())
+                term = new AtLeastPurchaseTerm(rule, serviceTerm.getQuantity());
+            else
+                term = new AtMostPurchaseTerm(rule, serviceTerm.getQuantity());
+            terms.add(term);
+        }
+        
+        termToAdd.setPurchaseTerms(terms);
+        return termToAdd;
     }
 }
 
