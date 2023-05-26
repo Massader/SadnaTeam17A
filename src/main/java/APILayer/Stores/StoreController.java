@@ -59,10 +59,10 @@ public class StoreController {
         return service.postItemReview(request.getClientCredentials(), request.getTargetId(), request.getBody(), request.getRating());
     }
     
-    @GetMapping(path = "/get-reviews/storeId={storeId}&itemId={itemId}")
+    @GetMapping(path = "/get-item-reviews/storeId={storeId}&itemId={itemId}")
     public Response<List<ServiceItemReview>> getReviews(@PathVariable(name = "storeId") UUID storeId,
                                                         @PathVariable(name = "itemId") UUID itemId) {
-        return service.getReviews(storeId, itemId);
+        return service.getItemReviews(storeId, itemId);
     }
     
     @GetMapping(path = "/item-is-reviewable-by-user/id={id}&storeId={storeId}&itemId={itemId}")
@@ -293,5 +293,10 @@ public class StoreController {
     public Response<Boolean> isReviewableByUser(@PathVariable(name = "id") UUID clientCredentials,
                                                 @PathVariable(name = "storeId") UUID storeId) {
         return service.isReviewableByUser(clientCredentials, storeId);
+    }
+    
+    @GetMapping(path = "/get-store-reviews/storeId={storeId}")
+    public Response<List<ServiceStoreReview>> getStoreReviews(@PathVariable(name = "storeId") UUID storeId) {
+        return service.getStoreReviews(storeId);
     }
 }

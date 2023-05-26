@@ -266,7 +266,7 @@ public class StoreController {
         }
     }
     
-    public Response<List<ItemReview>> getReviews(UUID storeId, UUID itemId) {
+    public Response<List<ItemReview>> getItemReviews(UUID storeId, UUID itemId) {
         try {
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
@@ -762,6 +762,17 @@ public class StoreController {
             return Response.getFailResponse("An item can only be reviewed once.");
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
+        }
+    }
+    
+    public Response<List<StoreReview>> getStoreReviews(UUID storeId) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Store store = getStore(storeId);
+            return Response.getSuccessResponse(store.getReviews());
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
         }
     }
 }

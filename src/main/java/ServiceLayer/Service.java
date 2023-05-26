@@ -370,8 +370,8 @@ public class Service {
         return reviewResponse;
     }
     
-    public Response<List<ServiceItemReview>> getReviews(UUID storeId, UUID itemId) {
-        Response<List<ItemReview>> reviewsResponse = storeController.getReviews(storeId, itemId);
+    public Response<List<ServiceItemReview>> getItemReviews(UUID storeId, UUID itemId) {
+        Response<List<ItemReview>> reviewsResponse = storeController.getItemReviews(storeId, itemId);
         if (reviewsResponse.isError()) {
             errorLogger.log(Level.WARNING, reviewsResponse.getMessage());
             return Response.getFailResponse(reviewsResponse.getMessage());
@@ -1080,6 +1080,19 @@ public class Service {
         eventLogger.log(Level.INFO, "Successfully posted review by " + userResponse.getValue().getUsername() + " for store "
                 + storeId);
         return reviewResponse;
+    }
+    
+    public Response<List<ServiceStoreReview>> getStoreReviews(UUID storeId) {
+        Response<List<StoreReview>> response = storeController.getStoreReviews(storeId);
+        if (response.isError()) {
+            errorLogger.log(Level.SEVERE, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        List<ServiceStoreReview> output = new ArrayList<>();
+        for (StoreReview review : response.getValue()) {
+            output.add(new ServiceStoreReview(review));
+        }
+        return Response.getSuccessResponse(output);
     }
 }
 
