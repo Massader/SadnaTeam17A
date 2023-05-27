@@ -1,4 +1,5 @@
 package AcceptanceTests;
+import DomainLayer.Market.Notification;
 import DomainLayer.Market.Users.Roles.Role;
 import ServiceLayer.*;
 import ServiceLayer.ServiceObjects.*;
@@ -261,5 +262,17 @@ public class RealBridge implements Bridge {
 
     public Response<Boolean> addItemRating(UUID clientCredentials, UUID itemId, UUID storeId, int rating) {
         return service.addItemRating(clientCredentials, itemId,storeId, rating);
+    }
+
+    public Response<List<ServiceMessage>> getMessages(UUID clientCredentials, UUID recipient) {
+        return service.getMessages(clientCredentials, recipient);
+    }
+
+    public Response<List<Notification>> getNotifications(UUID clientCredentials, UUID recipient) {
+        return service.getNotifications(clientCredentials, recipient);
+    }
+
+    public Response<Boolean> removeStoreRole(UUID clientCredentials, UUID roleToRemove, UUID storeId) {
+        return service.removeStoreRole(clientCredentials, roleToRemove, storeId);
     }
 }
