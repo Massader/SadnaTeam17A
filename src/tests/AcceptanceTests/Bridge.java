@@ -1,5 +1,6 @@
 package AcceptanceTests;
 
+import DomainLayer.Market.Notification;
 import DomainLayer.Market.Users.Roles.Role;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
@@ -70,4 +71,7 @@ public interface Bridge {
     Response<Double> getCartTotal(UUID clientCredentials);
     Response<Double> addStoreRating(UUID clientCredentials, UUID storeId ,int rating);
     Response<Boolean> addItemRating(UUID clientCredentials, UUID itemId, UUID storeId, int rating);
+    Response<List<ServiceMessage>> getMessages(UUID clientCredentials, UUID recipient);
+    Response<List<Notification>> getNotifications(UUID clientCredentials, UUID recipient);
+    Response<Boolean> removeStoreRole(UUID clientCredentials, UUID roleToRemove, UUID storeId);
 }

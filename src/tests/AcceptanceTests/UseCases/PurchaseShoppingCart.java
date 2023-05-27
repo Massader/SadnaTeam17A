@@ -84,21 +84,21 @@ public class PurchaseShoppingCart extends ProjectTest {
         bridge.addItemToCart(user1Id, item12Id, 4, store1Id);
 
         Response<List<ServiceShoppingBasket>> cart0 = bridge.getCart(user1Id);
-        Response<Boolean> purchase = bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "Aa12340000Aa12340000");
+        Response<Boolean> purchase = bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "1234000012340000");
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeFounderId, store1Id);
         Response<ServiceItem> item11 = bridge.getItemInformation(store1Id, item11Id);
         Response<ServiceItem> item22 = bridge.getItemInformation(store1Id, item12Id);
         Response<List<ServiceShoppingBasket>> cart1 = bridge.getCart(user1Id);
 
         assertFalse(cart0.isError(), String.format("bridge.getCart(user1Id) => %s", cart0.getMessage()));
-        assertFalse(purchase.isError(), String.format("bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), \"address\", \"Aa12340000Aa12340000\") => %s", purchase.getMessage()));
+        assertFalse(purchase.isError(), String.format("bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), \"address\", \"1234000012340000\") => %s", purchase.getMessage()));
         assertFalse(sales.isError(), String.format("bridge.getStoreSaleHistory(storeFounderId, store1Id) => %s", sales.getMessage()));
         assertFalse(item11.isError(), String.format("bridge.getItemInformation(store1Id, item11Id) => %s", item11.getMessage()));
         assertFalse(item22.isError(), String.format("bridge.getItemInformation(store1Id, item12Id) => %s", item22.getMessage()));
         assertFalse(cart1.isError(), String.format("bridge.getCart(user1Id) => %s", cart1.getMessage()));
 
         assertFalse(cart0.getValue().isEmpty(), "cart is empty before purchase");
-        assertTrue(purchase.getValue(), "bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), \"address\", \"Aa12340000Aa12340000\") failed");
+        assertTrue(purchase.getValue(), "bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), \"address\", \"1234000012340000\") failed");
         assertNotNull(sales.getValue(), "bridge.getStoreSaleHistory(storeFounderId, store1Id) failed");
         assertEquals(2, sales.getValue().size(), "sales list size is not 2");
         assertTrue(sales.getValue().stream().anyMatch(sale -> sale.getUserId().equals(user1Id) && sale.getItemId().equals(item11Id) && sale.getQuantity() == 2), "sales list does not contain item11");
@@ -113,13 +113,13 @@ public class PurchaseShoppingCart extends ProjectTest {
         bridge.addItemToCart(user1Id, item21Id, 200, store2Id);
 
         Response<List<ServiceShoppingBasket>> cart0 = bridge.getCart(user1Id);
-        Response<Boolean> purchase = bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "Aa12340000Aa12340000");
+        Response<Boolean> purchase = bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "1234000012340000");
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeFounderId, store2Id);
         Response<List<ServiceShoppingBasket>> cart1 = bridge.getCart(user1Id);
         Response<ServiceItem> item21 = bridge.getItemInformation(store2Id, item21Id);
 
         assertFalse(cart0.isError(), String.format("bridge.getCart(user1Id) => %s", cart0.getMessage()));
-        assertTrue(purchase.isError(), "bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), \"address\", \"Aa12340000Aa12340000\") should have failed");
+        assertTrue(purchase.isError(), "bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), \"address\", \"1234000012340000\") should have failed");
         assertFalse(sales.isError(), String.format("bridge.getStoreSaleHistory(storeFounderId, store2Id) => %s", sales.getMessage()));
         assertFalse(cart1.isError(), String.format("bridge.getCart(user1Id) => %s", cart1.getMessage()));
         assertFalse(item21.isError(), String.format("bridge.getItemInformation(store2Id, item21Id) => %s", item21.getMessage()));
@@ -159,13 +159,13 @@ public class PurchaseShoppingCart extends ProjectTest {
         bridge.addItemToCart(user3Id, item21Id, 1, store2Id);
 
         Response<List<ServiceShoppingBasket>> cart0 = bridge.getCart(user3Id);
-        Response<Boolean> purchase = bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue() - 1, "address", "Aa12340000Aa12340000");
+        Response<Boolean> purchase = bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue() - 1, "address", "1234000012340000");
         Response<List<ServiceSale>> sales = bridge.getStoreSaleHistory(storeFounderId, store2Id);
         Response<List<ServiceShoppingBasket>> cart1 = bridge.getCart(user3Id);
         Response<ServiceItem> item21 = bridge.getItemInformation(store2Id, item21Id);
 
         assertFalse(cart0.isError(), String.format("bridge.getCart(user3Id) => %s", cart0.getMessage()));
-        assertTrue(purchase.isError(), "bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue() - 1, \"address\", \"Aa12340000Aa12340000\") should have failed");
+        assertTrue(purchase.isError(), "bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue() - 1, \"address\", \"1234000012340000\") should have failed");
         assertFalse(sales.isError(), String.format("bridge.getStoreSaleHistory(storeFounderId, store2Id) => %s", sales.getMessage()));
         assertFalse(cart1.isError(), String.format("bridge.getCart(user3Id) => %s", cart1.getMessage()));
         assertFalse(item21.isError(), String.format("bridge.getItemInformation(store2Id, item21Id) => %s", item21.getMessage()));
@@ -193,7 +193,7 @@ public class PurchaseShoppingCart extends ProjectTest {
                 final int index = i;
                 threads[i] = new Thread(() -> {
                     bridge.addItemToCart(ids[index], item22Id, 1, store2Id);
-                    purchases[index] = bridge.purchaseCart(ids[index], bridge.getCartTotal(ids[index]).getValue(), "address", "Aa12340000Aa12340000");
+                    purchases[index] = bridge.purchaseCart(ids[index], bridge.getCartTotal(ids[index]).getValue(), "address", "1234000012340000");
                     carts[index] = bridge.getCart(ids[index]);
                 });
                 threads[i].start();
@@ -244,7 +244,7 @@ public class PurchaseShoppingCart extends ProjectTest {
                 threads[i] = new Thread(() -> {
                     int amount = (int)(Math.random() * 5);
                     bridge.addItemToCart(ids[index], item22Id, amount, store2Id);
-                    purchases[index] = bridge.purchaseCart(ids[index], bridge.getCartTotal(ids[index]).getValue(), "address", "Aa12340000Aa12340000");
+                    purchases[index] = bridge.purchaseCart(ids[index], bridge.getCartTotal(ids[index]).getValue(), "address", "1234000012340000");
                     carts[index] = bridge.getCart(ids[index]);
                 });
                 threads[i].start();
