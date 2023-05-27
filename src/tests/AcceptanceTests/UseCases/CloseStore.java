@@ -87,24 +87,20 @@ public class CloseStore extends ProjectTest {
     }
 
     @Test
-    //tests whether a store can be closed successfully by its owner.
-    public void CloseStoreByOwnerSuccess() {
+    //tests whether a store can be closed by its owner.
+    public void CloseStoreByOwnerFail() {
         Response<Integer> stores0 = bridge.numOfOpenStores();
         Response<Boolean> close = bridge.closeStore(storeOwnerId, storeId);
         Response<Integer> stores1 = bridge.numOfOpenStores();
-        Response<ServiceStore> storeInfoByOwner = bridge.getStoreInformation(storeOwnerId, storeId);
-        Response<ServiceStore> storeInfoByUser = bridge.getStoreInformation(userId, storeId);
-
+        Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeOwnerId, storeId);
+    
         assertFalse(stores0.isError(), String.format("bridge.numOfOpenStores() => %s", stores0.getMessage()));
-        assertFalse(close.isError(), String.format("bridge.closeStore(storeOwnerId, storeId) => %s", close.getMessage()));
+        assertTrue(close.isError(), "bridge.closeStore(storeOwnerId, storeId) should have failed");
         assertFalse(stores1.isError(), String.format("bridge.numOfOpenStores() => %s", stores1.getMessage()));
-        assertFalse(storeInfoByOwner.isError(), String.format("bridge.getStoreInformation(storeOwnerId, storeId) => %s", storeInfoByOwner.getMessage()));
-        assertTrue(storeInfoByUser.isError(), "bridge.getStoreInformation(userId, storeId) should have failed");
-
-        assertTrue(close.getValue(), "bridge.closeStore(storeOwnerId, storeId) failed");
-        assertEquals(1, stores0.getValue() - stores1.getValue(), "number of open stores did not decreased by 1");
-        assertTrue(storeInfoByOwner.getValue().getIsClosed());
-        assertEquals("Store is closed.", storeInfoByUser.getMessage(), "bridge.getStoreInformation(storeFounderId, storeId) should have failed");
+        assertFalse(storeInfo.isError(), String.format("bridge.getStoreInformation(storeOwnerId, storeId) => %s", storeInfo.getMessage()));
+    
+        assertEquals(stores0.getValue(), stores1.getValue(), "number of open stores has changed");
+        assertFalse(storeInfo.getValue().getIsClosed(), "the store is closed");
     }
 
     @Test

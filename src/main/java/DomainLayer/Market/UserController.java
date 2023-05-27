@@ -244,6 +244,8 @@ public class UserController {
             Response<User> response2 = this.getUser(appointee);
             if(response2.isError())
                 return Response.getFailResponse(response2.getMessage());
+            if (!loggedInUsers.containsKey(clientCredentials))
+                return Response.getFailResponse("Appointing user is not logged in.");
             if(storeController.getStore(storeId).getRolesMap().containsKey(appointee) &&
                     storeController.getStore(storeId).checkPermission(appointee, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("User already owner of the shop.");
@@ -267,6 +269,8 @@ public class UserController {
             Response<User> response2 = this.getUser(appointee);
             if(response2.isError())
                 return Response.getFailResponse("User does not exist.");
+            if (!loggedInUsers.containsKey(clientCredentials))
+                return Response.getFailResponse("Appointing user is not logged in.");
             if(storeController.getStore(storeId).getRolesMap().containsKey(appointee))
                 return Response.getFailResponse("User already manager in the shop.");
             StoreManager storeManager = new StoreManager(storeId);
