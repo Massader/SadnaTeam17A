@@ -97,6 +97,8 @@ public class StoreController {
             Store store = getStore(storeId);
             if (!store.checkPermission(clientCredentials, StorePermissions.STORE_FOUNDER))
                 return Response.getFailResponse("User doesn't have permission.");
+            if (!userController.isUserLoggedIn(clientCredentials))
+                return Response.getFailResponse("Appointing user is not logged in.");
             if (store.closeStore()) {
                 for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
                     List<StorePermissions> rolePermissions = role.getValue().getPermissions();

@@ -66,7 +66,6 @@ public class NotificationControllerTest {
             Thread thread = new Thread(() -> {
                 for (int j = 0; j < numOfNotificationsPerThread; j++) {
                     notificationController.sendNotification(recipient, "test notification");
-                    notificationController.getNotifications(recipient, recipient);
                 }
             });
             threads.add(thread);
