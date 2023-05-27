@@ -2,7 +2,7 @@ package UnitTests;
 
 import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Item;
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.*;
+import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 import org.junit.jupiter.api.BeforeEach;

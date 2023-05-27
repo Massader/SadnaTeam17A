@@ -3,7 +3,8 @@ package ServiceLayer;
 import DomainLayer.Market.*;
 import DomainLayer.Market.Stores.*;
 import DomainLayer.Market.Stores.Discounts.condition.Discount;
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.*;
+import DomainLayer.Market.Stores.PurchaseRule.*;
+import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Users.*;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Payment.PaymentController;
@@ -1222,6 +1223,31 @@ public class Service {
         
         termToAdd.setPurchaseTerms(terms);
         return termToAdd;
+    }
+    
+    public Response<Boolean> addBidToItem(UUID clientCredentials, UUID storeId, UUID itemId, double bidPrice, int quantity) {
+        Response<Boolean> response = storeController.addBidToItem(clientCredentials, storeId, itemId, bidPrice, quantity);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        else
+            eventLogger.log(Level.INFO, "Successfully bid on item " + itemId);
+        return response;
+    }
+    
+    public Response<Boolean> acceptItemBid(UUID clientCredentials, UUID storeId, UUID itemId, UUID bidderId, double bidPrice) {
+        Response<Boolean> response = storeController.acceptItemBid(clientCredentials, storeId, itemId, bidderId, bidPrice);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        else
+            eventLogger.log(Level.INFO, "Successfully accepted bid on item " + itemId);
+        return response;
+    }
+    
+    public Response<List<Bid>> getItemBids(UUID clientCredentials, UUID storeId, UUID itemId) {
+        Response<List<Bid>> response = storeController.getItemBids(clientCredentials, storeId, itemId);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
     }
 }
 

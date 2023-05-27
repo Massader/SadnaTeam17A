@@ -1,9 +1,7 @@
 package APILayer.Requests;
 
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
 import ServiceLayer.ServiceObjects.ServiceConditionalPurchaseTerm;
 
-import java.util.List;
 import java.util.UUID;
 
 public class ConditionalPolicyTermRequest extends Request{

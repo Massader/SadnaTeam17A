@@ -1,7 +1,7 @@
 package DomainLayer.Market.Stores;
 
 import DomainLayer.Market.Stores.Discounts.condition.*;
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.*;
+import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Users.Client;
 import DomainLayer.Market.Users.Purchase;
 import DomainLayer.Market.Users.Roles.Role;
@@ -198,7 +198,7 @@ public class Store {
 
     public  double calculatePriceOfBasketWithPolicyAndDiscount(ShoppingBasket shoppingBasket) throws Exception { // Map of Item ID -> Quantity)
         if (policy.purchaseRuleOccurs(shoppingBasket, this)) {
-            return discounts.CalculateShoppingBasket(shoppingBasket, this);
+            return discounts.calculateShoppingBasket(shoppingBasket, this);
         }
         throw new Exception("The shopping Basket is not accepted by Store Policy");
     }

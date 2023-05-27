@@ -2,7 +2,9 @@ package DomainLayer.Market;
 
 import DomainLayer.Market.Stores.*;
 import DomainLayer.Market.Stores.Discounts.condition.Discount;
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
+import DomainLayer.Market.Stores.PurchaseRule.PurchaseTerm;
+import DomainLayer.Market.Stores.PurchaseTypes.Bid;
+import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
 import DomainLayer.Market.Users.*;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreFounder;
@@ -771,6 +773,117 @@ public class StoreController {
                 return Response.getFailResponse("Store does not exist.");
             Store store = getStore(storeId);
             return Response.getSuccessResponse(store.getReviews());
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
+    
+    public Response<PurchaseType> getItemPurchaseType(UUID storeId, UUID itemId) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Item item = getStore(storeId).getItem(itemId);
+            if (item == null)
+                return Response.getFailResponse("Item does not exist.");
+            PurchaseType purchaseType = item.getPurchaseType();
+            if (purchaseType == null)
+                return Response.getFailResponse("Item purchase type was null.");
+            return Response.getSuccessResponse(purchaseType);
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
+    
+    public Response<Boolean> setItemPurchaseType(UUID clientCredentials, UUID storeId, UUID itemId, PurchaseType purchaseType) {
+        try {
+            if (!userController.isRegisteredUser(clientCredentials))
+                return Response.getFailResponse("User does not exist.");
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT) &&
+                !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
+                return Response.getFailResponse("User does not have permission to change item purchase type.");
+            Item item = getStore(storeId).getItem(itemId);
+            if (item == null)
+                return Response.getFailResponse("Item does not exist.");
+            item.setPurchaseType(purchaseType);
+            return Response.getSuccessResponse(true);
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
+    
+    public Response<Boolean> addBidToItem(UUID clientCredentials, UUID storeId, UUID itemId, double bidPrice,
+                                          int quantity) {
+        try {
+            if (!userController.isRegisteredUser(clientCredentials))
+                return Response.getFailResponse("User does not exist.");
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Item item = getStore(storeId).getItem(itemId);
+            if (item == null)
+                return Response.getFailResponse("Item does not exist.");
+            return Response.getSuccessResponse(item.addBid(clientCredentials, bidPrice, quantity));
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
+    
+    public Response<Boolean> removeBidOnItem(UUID clientCredentials, UUID storeId, UUID itemId) {
+        try {
+            if (!userController.isRegisteredUser(clientCredentials))
+                return Response.getFailResponse("User does not exist.");
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Item item = getStore(storeId).getItem(itemId);
+            if (item == null)
+                return Response.getFailResponse("Item does not exist.");
+            return Response.getSuccessResponse(item.removeBid(clientCredentials));
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
+    
+    public Response<Boolean> acceptItemBid(UUID clientCredentials, UUID storeId, UUID itemId,
+                                           UUID bidderId, double bidPrice) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Store store = getStore(storeId);
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
+                return Response.getFailResponse("Only store owners can accept bids");
+            Item item = store.getItem(itemId);
+            if (item == null)
+                return Response.getFailResponse("Item does not exist.");
+            if (item.getQuantity() <= 0)
+                return Response.getFailResponse("Can't accept bid on item when item does not have quantity.");
+            Bid bid = item.acceptBid(clientCredentials, bidderId, bidPrice);
+            if (bid.getOwnersAccepted().containsAll(getStore(storeId).getStoreOwners())) {
+                bid.setAccepted(true);
+                notificationController.sendNotification(bid.getBidderId(), "Your bid on " + item.getName() + " from " + store.getName()
+                + " has been accepted. You can now add it to your cart.");
+            }
+            return Response.getSuccessResponse(true);
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
+    
+    public Response<List<Bid>> getItemBids(UUID clientCredentials, UUID storeId, UUID itemId) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Store store = getStore(storeId);
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) &&
+                !store.checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
+                return Response.getFailResponse("User does not have permission to see item bids.");
+            Item item = store.getItem(itemId);
+            if (item == null)
+                return Response.getFailResponse("Item does not exist.");
+            List<Bid> output = item.getBids();
+            if (output == null)
+                return Response.getFailResponse("Failed to get bids.");
+            return Response.getSuccessResponse(output);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }
