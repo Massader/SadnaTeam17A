@@ -1,6 +1,6 @@
 package DomainLayer.Market.Stores.Discounts.condition;
 
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
+import DomainLayer.Market.Stores.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 

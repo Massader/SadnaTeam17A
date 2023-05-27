@@ -6,6 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import DomainLayer.Market.Stores.Item;
+import DomainLayer.Market.Stores.PurchaseTypes.Bid;
+import DomainLayer.Market.Stores.PurchaseTypes.BidPurchase;
+import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
 import DomainLayer.Security.SecurityController;
@@ -177,9 +180,15 @@ public class UserController {
             if (itemResponse.isError())
                 return Response.getFailResponse(itemResponse.getMessage());
             synchronized (itemResponse.getValue()) {
-                //Response<Boolean> response = storeController.removeItemQuantity(storeId, itemId, quantity);
-                //if (response.isError()) return response;
-                if (shoppingCart.addItemToCart(storeController.getItem(itemId).getValue(), storeId, quantity)) {
+                Item item = itemResponse.getValue();
+                if (item.getPurchaseType().getType().equals(PurchaseType.BID_PURCHASE) &&
+                        ((BidPurchase)item.getPurchaseType()).isBidAccepted(clientCredentials)) {
+                    Bid bid = item.getBid(clientCredentials);
+                    item = new Item(item);
+                    item.setPrice(bid.getPrice());
+                    quantity = bid.getQuantity();
+                }
+                if (shoppingCart.addItemToCart(item, storeId, quantity)) {
                     return Response.getSuccessResponse(true);
                 } else {
                     return Response.getFailResponse("Cannot add item to cart");

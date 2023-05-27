@@ -1,9 +1,6 @@
 package ServiceLayer.ServiceObjects;
 
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
-
 import java.util.List;
-import java.util.UUID;
 
 public class ServiceCompositePurchaseTerm {
 

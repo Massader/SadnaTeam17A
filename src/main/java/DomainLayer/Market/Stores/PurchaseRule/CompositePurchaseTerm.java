@@ -1,4 +1,4 @@
-package DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule;
+package DomainLayer.Market.Stores.PurchaseRule;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 

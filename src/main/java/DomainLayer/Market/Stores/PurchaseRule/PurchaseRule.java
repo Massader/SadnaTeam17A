@@ -1,4 +1,4 @@
-package DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule;
+package DomainLayer.Market.Stores.PurchaseRule;
 
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;

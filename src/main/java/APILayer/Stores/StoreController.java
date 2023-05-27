@@ -1,6 +1,7 @@
 package APILayer.Stores;
 
 import APILayer.Requests.*;
+import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.*;
@@ -308,5 +309,24 @@ public class StoreController {
     @GetMapping(path = "/get-store-reviews/storeId={storeId}")
     public Response<List<ServiceStoreReview>> getStoreReviews(@PathVariable(name = "storeId") UUID storeId) {
         return service.getStoreReviews(storeId);
+    }
+    
+    @PostMapping(path = "/add-bid-to-item")
+    public Response<Boolean> addBidToItem(@RequestBody AddBidRequest request) {
+        return service.addBidToItem(request.getClientCredentials(), request.getStoreId(),
+                request.getItemId(), request.getBidPrice(), request.getQuantity());
+    }
+    
+    @PostMapping(path = "/accept-item-bid")
+    public Response<Boolean> acceptItemBid(@RequestBody AcceptBidRequest request) {
+        return service.acceptItemBid(request.getClientCredentials(), request.getStoreId(), request.getItemId(),
+                request.getBidderId(), request.getBidPrice());
+    }
+    
+    @GetMapping(path = "/get-item-bids/id={id}&storeId={storeId}&itemId={itemId}")
+    public Response<List<Bid>> getItemBids(@PathVariable(name = "id") UUID clientCredentials,
+                                           @PathVariable(name = "storeId") UUID storeId,
+                                           @PathVariable(name = "itemId") UUID itemId) {
+        return service.getItemBids(clientCredentials, storeId, itemId);
     }
 }

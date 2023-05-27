@@ -1,7 +1,5 @@
 package ServiceLayer.ServiceObjects;
 
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.PurchaseTerm;
-
 import java.util.List;
 
 public class ServiceConditionalPurchaseTerm {

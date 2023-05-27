@@ -1,6 +1,6 @@
 package DomainLayer.Market.Stores.Discounts.condition;
 
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.CompositePurchaseTerm;
+import DomainLayer.Market.Stores.PurchaseRule.CompositePurchaseTerm;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 
@@ -52,13 +52,13 @@ public class StoreDiscount {
         }
     }
 
-    public synchronized double CalculateDiscount(ShoppingBasket shoppingBasket, Store store){
+    public synchronized double calculateDiscount(ShoppingBasket shoppingBasket, Store store){
         return  this.discountsAssembly.CalculateDiscount(shoppingBasket,store);
     }
 
-    public synchronized double CalculateShoppingBasket(ShoppingBasket shoppingBasket, Store store){
-        double originalPrice= store.calculatePriceOfBasket(shoppingBasket.getItems());
-        double discount = this.CalculateDiscount(shoppingBasket,store);
+    public synchronized double calculateShoppingBasket(ShoppingBasket shoppingBasket, Store store){
+        double originalPrice = store.calculatePriceOfBasket(shoppingBasket.getItems());
+        double discount = this.calculateDiscount(shoppingBasket,store);
         return  Math.max(0.0, originalPrice-discount);
     }
 

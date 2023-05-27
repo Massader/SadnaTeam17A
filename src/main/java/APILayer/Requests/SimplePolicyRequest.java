@@ -1,7 +1,7 @@
 package APILayer.Requests;
 
 import DomainLayer.Market.Stores.Category;
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.*;
+import DomainLayer.Market.Stores.PurchaseRule.*;
 
 import java.util.UUID;
 
