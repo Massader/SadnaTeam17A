@@ -29,7 +29,7 @@ public class CategoryCalculateDiscount implements CalculateDiscount {
         ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
         for (UUID itemId : items.keySet()) {
             Item item=  storeItems.get(itemId);
-            if (item!=null&&item.getCategories().equals(getCategory())) {
+            if (item!=null&&item.containsCategory(category.getCategoryName())) {
                 int quantity = items.get(itemId);
                 categoryDiscount+=item.getPrice()*quantity*discountPercentage;
             }
