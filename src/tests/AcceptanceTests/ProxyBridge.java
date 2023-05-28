@@ -268,5 +268,15 @@ public class ProxyBridge implements Bridge {
     public Response<Boolean> removeStoreRole(UUID clientCredentials, UUID roleToRemove, UUID storeId) {
         return real == null ? null : real.removeStoreRole(clientCredentials, roleToRemove, storeId);
     }
+
+    public Response<Boolean> addItemPolicyTerm(UUID clientCredentials, UUID storeId, UUID itemId, int quantity, boolean atLeast) {
+        return real == null ? null : real.addItemPolicyTerm(clientCredentials, storeId, itemId, quantity, atLeast);
+    }
+    public Response<Boolean> addCategoryPolicyTerm(UUID clientCredentials, UUID storeId, String category, int quantity, boolean atLeast) {
+        return real == null ? null : real.addCategoryPolicyTerm(clientCredentials, storeId, category, quantity, atLeast);
+    }
+    public Response<Boolean> addBasketPolicyTerm(UUID clientCredentials, UUID storeId, int quantity, boolean atLeast) {
+        return real == null ? null : real.addBasketPolicyTerm(clientCredentials, storeId, quantity, atLeast);
+    }
 }
 
