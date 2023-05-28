@@ -5,11 +5,11 @@ import {
   CardFooter,
   Divider,
   Flex,
-  Heading,
   Image,
   Input,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
 import itemIcon from "../../assets/item.png";
@@ -19,10 +19,13 @@ import { ClientCredentialsContext } from "../../App";
 
 interface Props {
   editItem: Item;
+  refreshItems: () => {};
 }
 
-const EditItem = ({ editItem }: Props) => {
+const EditItem = ({ editItem, refreshItems }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
+
+  const toast = useToast();
 
   const handleEdit = () => {
     if (
@@ -33,13 +36,24 @@ const EditItem = ({ editItem }: Props) => {
     ) {
       setErrorMsg(false);
       setInEdit(false);
-      setMessage("Edit saved");
+      toast({
+        title: `${name} edit saved!`,
+        colorScheme: "blue",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
       setMessageName("");
       setMessageDescription("");
       setMessageQuantity("");
       setMessagePrice("");
     } else {
-      setErrorMsg(true);
+      toast({
+        title: `${name} edit failed.`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -133,9 +147,30 @@ const EditItem = ({ editItem }: Props) => {
     if (!response.data.error) {
       setErrorMsg(false);
       setMessage("Item deleted!");
+      refreshItems();
     } else {
       setErrorMsg(true);
       setMessage(response.data.message);
+    }
+  };
+
+  const handleAddCategory = async () => {
+    const response = await axios.post(
+      "http://localhost:8080/api/v1/stores/add-item-category",
+      {
+        clientCredentials: clientCredentials,
+        storeId: editItem.storeId,
+        itemId: editItem.id,
+        category: category,
+      }
+    );
+    if (!response.data.error) {
+      setErrorMsgCategory(false);
+      setMessageCategory("Category added!");
+      setCategory("");
+    } else {
+      setErrorMsgCategory(true);
+      setMessageCategory(response.data.message);
     }
   };
 
@@ -143,10 +178,12 @@ const EditItem = ({ editItem }: Props) => {
   const [description, setDescription] = useState(editItem.description);
   const [quantity, setQuantity] = useState("");
   const [price, setPrice] = useState("");
+  const [category, setCategory] = useState("");
 
   const [inEdit, setInEdit] = useState(false);
   const [sureDelete, setSureDelete] = useState(false);
   const [errorMsg, setErrorMsg] = useState(false);
+  const [message, setMessage] = useState("");
   const [errorMsgName, setErrorMsgName] = useState(false);
   const [messageName, setMessageName] = useState("");
   const [errorMsgDescription, setErrorMsgDescription] = useState(false);
@@ -155,7 +192,8 @@ const EditItem = ({ editItem }: Props) => {
   const [messageQuantity, setMessageQuantity] = useState("");
   const [errorMsgPrice, setErrorMsgPrice] = useState(false);
   const [messagePrice, setMessagePrice] = useState("");
-  const [message, setMessage] = useState("");
+  const [errorMsgCategory, setErrorMsgCategory] = useState(false);
+  const [messageCategory, setMessageCategory] = useState("");
 
   useEffect(() => {
     if (!errorMsgName) setMessageName("");
@@ -258,6 +296,30 @@ const EditItem = ({ editItem }: Props) => {
               ) : (
                 <Text>{messagePrice}</Text>
               )}
+              <Text>add category:</Text>
+              <Flex>
+                <Input
+                  bg="white"
+                  value={category}
+                  onChange={(category) => setCategory(category.target.value)}
+                />
+                <Button
+                  onClick={() => {
+                    if (category !== "") handleAddCategory();
+                    else {
+                      setMessageCategory("Category cannot be empty");
+                      setErrorMsgCategory(true);
+                    }
+                  }}
+                >
+                  V
+                </Button>
+              </Flex>
+              {errorMsgCategory ? (
+                <Text color="red">{messageCategory}</Text>
+              ) : (
+                <Text>{messageCategory}</Text>
+              )}
             </>
           )}
         </Stack>
@@ -282,7 +344,10 @@ const EditItem = ({ editItem }: Props) => {
             )}
             {inEdit && (
               <Button
-                onClick={() => handleEdit()}
+                onClick={() => {
+                  handleEdit();
+                  refreshItems();
+                }}
                 variant="solid"
                 colorScheme="blue"
                 width="100%"
@@ -304,7 +369,10 @@ const EditItem = ({ editItem }: Props) => {
             )}
             {!inEdit && sureDelete && (
               <Button
-                onClick={handleRemoveItem}
+                onClick={() => {
+                  handleRemoveItem();
+                  refreshItems();
+                }}
                 variant="solid"
                 colorScheme="red"
                 width="100%"

@@ -24,6 +24,7 @@ import SetManagerPermissions from "./components/ManageStore/SetManagerPermission
 import PositionsInfo from "./components/ManageStore/PositionsInfo";
 import PurchaseAndDiscountPolicy from "./components/ManageStore/PurchaseAndDiscountPolicy";
 import AddPurchaseRules from "./components/ManageStore/AddPurchaseRules";
+import Messages from "./components/Messages";
 
 type ClientCredentialsContextValue = {
   clientCredentials: string;
@@ -34,6 +35,8 @@ type ClientCredentialsContextValue = {
   setAdmin: React.Dispatch<React.SetStateAction<boolean>>;
   roles: Role[];
   setRoles: React.Dispatch<React.SetStateAction<Role[]>>;
+  isLogged: boolean;
+  setStoreManage: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export const ClientCredentialsContext =
@@ -46,6 +49,8 @@ export const ClientCredentialsContext =
     setAdmin: () => {},
     roles: [],
     setRoles: () => {},
+    isLogged: false,
+    setStoreManage: () => {},
   });
 
 function App() {
@@ -65,6 +70,7 @@ function App() {
     "setManagerPermissions",
     "positionInfo",
     "purchaseAndDiscountPolicy",
+    "messages",
   ];
 
   const leftPages = ["empty", "filters", "manageStore"];
@@ -141,7 +147,6 @@ function App() {
     setLeftPage(leftPages[1]);
     setPage(pages[0]);
     setNotifications([]);
-    source?.close;
   };
 
   const onLogin = (clientCredentials: string) => {
@@ -167,7 +172,6 @@ function App() {
       const message = eventData.message;
       notifications.push(message);
       setNotificationAlert(true);
-      // console.log(notifications);
     };
     setSource(source);
     return source;
@@ -224,6 +228,8 @@ function App() {
         setAdmin: setAdmin,
         roles: roles,
         setRoles: setRoles,
+        isLogged: logged,
+        setStoreManage: setStoreManage,
       }}
     >
       <Grid
@@ -241,6 +247,7 @@ function App() {
             pages={pages}
             setLeftPage={setLeftPage}
             leftPages={leftPages}
+            source={source || null}
           />
         </GridItem>
         <GridItem height="70px" area="searchBar3" bg="blackAlpha.900" />
@@ -270,9 +277,9 @@ function App() {
           {leftPage === "filters" && (
             <Filters
               setItemRating={setItemRating}
-              itemRating={itemRating}
               setMinPrice={setMinPrice}
               setMaxPrice={setMaxPrice}
+              setCategory={setCategory}
             />
           )}
         </GridItem>
@@ -281,7 +288,7 @@ function App() {
           {page === "home" && (
             <ItemGrid
               keyword={keyword}
-              category=""
+              category={category}
               minPrice={minPrice}
               maxPrice={maxPrice}
               itemRating={itemRating}
@@ -359,6 +366,7 @@ function App() {
           )}
           {page === "myCart" && <MyCart />}
           {page === "adminPage" && <AdminPage />}
+          {page === "messages" && <Messages storeId={storeManage} />}
         </GridItem>
 
         <GridItem area="right" bg="white">

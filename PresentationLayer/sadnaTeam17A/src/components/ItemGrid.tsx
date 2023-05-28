@@ -15,7 +15,7 @@ import { ClientCredentialsContext } from "../App";
 interface Props {
   keyword: string;
   storeId: string;
-  category?: string;
+  category: string;
   minPrice: number;
   maxPrice: number;
   itemRating: number;
@@ -28,6 +28,7 @@ const ItemGrid = ({
   maxPrice,
   keyword,
   itemRating,
+  category,
 }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
 
@@ -48,7 +49,7 @@ const ItemGrid = ({
   const fetchItems = async () => {
     if (clientCredentials !== "") {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/stores/search-item/keyword=${keyword}&category=&minPrice=${minPrice}&maxPrice=${maxPrice}&itemRating=${itemRating}&storeRating=&storeId=${storeId}&number=${number}&page=${page}`
+        `http://localhost:8080/api/v1/stores/search-item/keyword=${keyword}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}&itemRating=${itemRating}&storeRating=&storeId=${storeId}&number=${number}&page=${page}`
       );
       if (!response.data.error) {
         setItems(response.data.value);
@@ -61,7 +62,7 @@ const ItemGrid = ({
   const getItemsNumber = async () => {
     if (clientCredentials !== "") {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/stores/search-item-num/keyword=${keyword}&category=&minPrice=${minPrice}&maxPrice=${maxPrice}&itemRating=${itemRating}&storeRating=&storeId=${storeId}&number=&page=`
+        `http://localhost:8080/api/v1/stores/search-item-num/keyword=${keyword}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}&itemRating=${itemRating}&storeRating=&storeId=${storeId}&number=&page=`
       );
       if (!response.data.error) {
         setPagesNum(response.data.value / number);
@@ -73,7 +74,7 @@ const ItemGrid = ({
 
   useEffect(() => {
     setPage(1);
-  }, [clientCredentials, keyword, minPrice, maxPrice, itemRating]);
+  }, [clientCredentials, keyword, minPrice, maxPrice, itemRating, category]);
 
   useEffect(() => {
     fetchItems();
@@ -86,6 +87,7 @@ const ItemGrid = ({
     minPrice,
     maxPrice,
     itemRating,
+    category,
   ]);
 
   useEffect(() => {
@@ -99,6 +101,7 @@ const ItemGrid = ({
     minPrice,
     maxPrice,
     itemRating,
+    category,
   ]);
 
   return (

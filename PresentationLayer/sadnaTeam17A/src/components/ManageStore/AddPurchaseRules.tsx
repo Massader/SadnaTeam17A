@@ -1,8 +1,10 @@
 import React from "react";
-import PurchaseRule from "./PurchaseRule";
+import PurchaseTerm from "./PurchaseTerm";
 import AndOrPurchaseRules from "./AndOrPurchaseRules";
 import { Button } from "@chakra-ui/react";
 import ConditioningPurchaseRule from "./ConditioningPurchaseRule";
+import { Item, PurchaseRuleType, PurchaseTermType } from "../../types";
+import AddSimplePurcahseRule from "./AddSimplePurcahseRule";
 
 interface Props {
   storeId: string;
@@ -19,17 +21,17 @@ const AddPurchaseRules = ({
 }: Props) => {
   return (
     <>
-      <Button
-        onClick={() => {
-          setPurchaseAndDiscountPage(purchaseAndDiscountPages[0]);
-        }}
-        colorScheme="blackAlpha"
-      >
-        Back
-      </Button>
-      {purchaseType === "simple" && (
-        <PurchaseRule purchaseType={purchaseType} storeId={storeId} />
+      {purchaseAndDiscountPages[0] !== "0" && (
+        <Button
+          onClick={() => {
+            setPurchaseAndDiscountPage(purchaseAndDiscountPages[0]);
+          }}
+          colorScheme="blackAlpha"
+        >
+          Back
+        </Button>
       )}
+      {purchaseType === "simple" && <AddSimplePurcahseRule storeId={storeId} />}
       {purchaseType === "and" && (
         <AndOrPurchaseRules purchaseType={purchaseType} storeId={storeId} />
       )}

@@ -26,7 +26,7 @@ const InventoryManagement = ({ storeId, setPage, pages }: Props) => {
 
   useEffect(() => {
     fetchItems();
-  }, [items]);
+  }, []);
 
   return (
     <>
@@ -41,7 +41,7 @@ const InventoryManagement = ({ storeId, setPage, pages }: Props) => {
         </Button>
       </Box>
       <Heading padding={5} textAlign="center">
-        Inventory management
+        Inventory Management
       </Heading>
       <SimpleGrid
         columns={{ sm: 1, md: 2, lg: 3, xl: 3, "2xl": 4 }}
@@ -49,7 +49,7 @@ const InventoryManagement = ({ storeId, setPage, pages }: Props) => {
         spacing={6}
       >
         {items.map((item) => (
-          <EditItem key={item.id} editItem={item} />
+          <EditItem key={item.id} editItem={item} refreshItems={fetchItems} />
         ))}
       </SimpleGrid>
     </>

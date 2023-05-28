@@ -6,18 +6,15 @@ import { Item } from "../../types";
 
 interface Props {
   storeId: string;
-  purchaseType: string;
 }
 
-const PurchaseRule = ({ purchaseType, storeId }: Props) => {
+const Discount = ({ storeId }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
 
   const [selectedOption, setSelectedOption] = useState("");
-  const [selectedOptionAtMostLeast, setSelectedOptionAtMostLeast] =
-    useState("");
   const [items, setItems] = useState<Item[]>([]);
   const [selectedItem, setSelectedItem] = useState("");
-  const [howMany, setHowMany] = useState("");
+  const [percent, setPercent] = useState("");
 
   const fetchItems = async () => {
     const response = await axios.get(
@@ -42,7 +39,7 @@ const PurchaseRule = ({ purchaseType, storeId }: Props) => {
         placeholder="Select option"
         value={selectedOption}
         onChange={(event) => {
-          setHowMany("");
+          setPercent("");
           setSelectedOption(event.target.value);
         }}
       >
@@ -53,10 +50,10 @@ const PurchaseRule = ({ purchaseType, storeId }: Props) => {
       {selectedOption === "Shopping busket" && (
         <Input
           bg="white"
-          placeholder="Busket value?"
+          placeholder="how many percent?"
           type="number"
-          value={howMany}
-          onChange={(howMany) => setHowMany(howMany.target.value)}
+          value={percent}
+          onChange={(percent) => setPercent(percent.target.value)}
         />
       )}
       {selectedOption === "Item" && (
@@ -78,44 +75,21 @@ const PurchaseRule = ({ purchaseType, storeId }: Props) => {
           </Select>
           <Input
             bg="white"
-            placeholder="How many?"
+            placeholder="how many percent?"
             type="number"
-            value={howMany}
-            onChange={(howMany) => setHowMany(howMany.target.value)}
+            value={percent}
+            onChange={(percent) => setPercent(percent.target.value)}
           />
         </>
       )}
-      {(selectedOption === "Shopping busket" || selectedOption === "Item") && (
-        <>
-          <Select
-            bg="white"
-            colorScheme="white"
-            placeholder="Select option"
-            value={selectedOptionAtMostLeast}
-            onChange={(event) => {
-              setSelectedOptionAtMostLeast(event.target.value);
-            }}
-          >
-            <option value="AtMost">At most</option>
-            <option value="AtLeast">At least</option>
-          </Select>
-        </>
+      {selectedOption === "Item" && percent !== "" && selectedItem !== "" && (
+        <Button colorScheme="blue">Submit</Button>
       )}
-      {purchaseType === "simple" &&
-        selectedOption === "Item" &&
-        howMany !== "" &&
-        selectedItem !== "" &&
-        selectedOptionAtMostLeast !== "" && (
-          <Button colorScheme="blue">Submit</Button>
-        )}
-      {purchaseType === "simple" &&
-        selectedOption === "Shopping busket" &&
-        howMany !== "" &&
-        selectedOptionAtMostLeast !== "" && (
-          <Button colorScheme="blue">Submit</Button>
-        )}
+      {selectedOption === "Shopping busket" && percent !== "" && (
+        <Button colorScheme="blue">Submit</Button>
+      )}
     </Stack>
   );
 };
 
-export default PurchaseRule;
+export default Discount;

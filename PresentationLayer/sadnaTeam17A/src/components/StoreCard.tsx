@@ -7,8 +7,18 @@ import {
   Flex,
   Heading,
   Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Stack,
   Text,
+  Textarea,
+  useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import storeIcon from "../assets/store.png";
 import React, { useContext, useState } from "react";
@@ -24,7 +34,9 @@ interface Props {
 }
 
 const StoreCard = ({ name, storeId, rating, description, onShop }: Props) => {
-  const { clientCredentials, isAdmin } = useContext(ClientCredentialsContext);
+  const { clientCredentials, isAdmin, isLogged } = useContext(
+    ClientCredentialsContext
+  );
 
   const handleShutdown = async () => {
     const response = await axios.put(
@@ -43,8 +55,45 @@ const StoreCard = ({ name, storeId, rating, description, onShop }: Props) => {
     }
   };
 
+  const toast = useToast();
+
+  const sendMessageToStore = async () => {
+    const response = await axios.post(
+      "http://localhost:8080/api/v1/stores/messages/send-message",
+      {
+        clientCredentials: clientCredentials,
+        sender: clientCredentials,
+        recipient: storeId,
+        body: body,
+      }
+    );
+    if (!response.data.error) {
+      toast({
+        title: "Message sent!",
+        description: `The message sent to ${name}`,
+        position: "top",
+        colorScheme: "blue",
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Message sent!",
+        description: `${response.data.value.message}`,
+        position: "top",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    }
+  };
+
   const [errorMsg, setErrorMsg] = useState(false);
   const [message, setMessage] = useState("");
+
+  const [body, setBody] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Card maxW="sm">
@@ -71,6 +120,50 @@ const StoreCard = ({ name, storeId, rating, description, onShop }: Props) => {
           >
             Shop
           </Button>
+          {isLogged && (
+            <>
+              {" "}
+              <Button
+                onClick={onOpen}
+                variant="outline"
+                colorScheme="blue"
+                width="100%"
+              >
+                Send Message
+              </Button>
+              <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Send message to {name}</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <Textarea
+                      bg="white"
+                      value={body}
+                      onChange={(body) => setBody(body.target.value)}
+                      placeholder="Message Body"
+                      size="sm"
+                    />
+                  </ModalBody>
+
+                  <ModalFooter justifyContent="space-between">
+                    <Button colorScheme="blackAlpha" mr={3} onClick={onClose}>
+                      Close
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        sendMessageToStore();
+                        onClose();
+                      }}
+                      colorScheme="blue"
+                    >
+                      Send
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            </>
+          )}
           {isAdmin && (
             <>
               <Button

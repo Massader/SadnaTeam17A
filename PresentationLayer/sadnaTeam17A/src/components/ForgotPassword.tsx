@@ -21,7 +21,7 @@ const ForgotPassword = ({
 
   const getUserId = async () => {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/users/search-user/username=${username}`
+      `http://localhost:8080/api/v1/users/-by-username/username=${username}`
     );
     if (!response.data.error) {
       setUserId(response.data.value[0].id);

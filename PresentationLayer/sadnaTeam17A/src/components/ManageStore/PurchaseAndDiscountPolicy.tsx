@@ -1,8 +1,9 @@
 import { Button, Flex, Heading, Stack } from "@chakra-ui/react";
 import React, { useState } from "react";
-import PurchaseRule from "./PurchaseRule";
+import PurchaseTerm from "./PurchaseTerm";
 import AndOrPurchaseRules from "./AndOrPurchaseRules";
 import AddPurchaseRules from "./AddPurchaseRules";
+import AddDiscount from "./AddDiscount";
 
 interface Props {
   storeId: string;
@@ -11,19 +12,21 @@ interface Props {
 }
 
 const PurchaseAndDiscountPolicy = ({ storeId, setPage, pages }: Props) => {
-  const purchaseAndDiscountPages = ["home", "addPurchaseRule"];
+  const purchaseAndDiscountPages = ["home", "addPurchaseRule", "addDiscount"];
   const [purchaseAndDiscountPage, setPurchaseAndDiscountPage] = useState(
     purchaseAndDiscountPages[0]
   );
   const [purchaseType, setPurchaseType] = useState("");
+  const [discountType, setDiscountType] = useState("");
 
   const [addPurchaseRuleOn, setAddPurchaseRuleOn] = useState(false);
+  const [addDiscountOn, setAddDiscountOn] = useState(false);
 
   return (
     <Flex padding={10} justifyContent="center" alignItems="center">
       <Stack w="80%" justifyContent="center" alignItems="center">
         <Heading padding={5} textAlign="center">
-          Purchase and discount policy
+          Purchase and Discount Policy
         </Heading>
         {purchaseAndDiscountPage === "home" && (
           <>
@@ -33,7 +36,7 @@ const PurchaseAndDiscountPolicy = ({ storeId, setPage, pages }: Props) => {
               }}
               colorScheme="blackAlpha"
             >
-              Add a purchase rule to the store
+              Add a Purchase Rule to the Store
             </Button>
             {addPurchaseRuleOn && (
               <>
@@ -45,7 +48,7 @@ const PurchaseAndDiscountPolicy = ({ storeId, setPage, pages }: Props) => {
                   padding={4}
                   colorScheme="gray"
                 >
-                  Add simple purchase rule
+                  Add Simple Purchase Rule
                 </Button>
                 <Button
                   onClick={() => {
@@ -55,7 +58,7 @@ const PurchaseAndDiscountPolicy = ({ storeId, setPage, pages }: Props) => {
                   padding={4}
                   colorScheme="gray"
                 >
-                  Add "And" purchase rule
+                  Add "And" Purchase Rule
                 </Button>
                 <Button
                   onClick={() => {
@@ -65,7 +68,7 @@ const PurchaseAndDiscountPolicy = ({ storeId, setPage, pages }: Props) => {
                   padding={4}
                   colorScheme="gray"
                 >
-                  Add "Or" purchase rule
+                  Add "Or" Purchase Rule
                 </Button>
                 <Button
                   onClick={() => {
@@ -75,15 +78,47 @@ const PurchaseAndDiscountPolicy = ({ storeId, setPage, pages }: Props) => {
                   padding={4}
                   colorScheme="gray"
                 >
-                  Add "Conditioning" purchase rule
+                  Add "Conditional" Purchase Rule
+                </Button>
+              </>
+            )}
+            <Button
+              onClick={() => {
+                setAddDiscountOn(!addDiscountOn);
+              }}
+              colorScheme="blackAlpha"
+            >
+              Add Discount to the Store
+            </Button>
+            {addDiscountOn && (
+              <>
+                <Button
+                  onClick={() => {
+                    setDiscountType("simple");
+                    setPurchaseAndDiscountPage(purchaseAndDiscountPages[2]);
+                  }}
+                  padding={4}
+                  colorScheme="gray"
+                >
+                  Add Simple Discount
+                </Button>
+                <Button
+                  onClick={() => {
+                    setDiscountType("conditioning");
+                    setPurchaseAndDiscountPage(purchaseAndDiscountPages[2]);
+                  }}
+                  padding={4}
+                  colorScheme="gray"
+                >
+                  Add Conditional Discount
                 </Button>
               </>
             )}
             <Button colorScheme="blackAlpha">
-              Show store's purchase rules
+              Show Store's Purchase Rules
             </Button>
             <Button colorScheme="blackAlpha">
-              Remove a store purchase rule
+              Remove a Store Purchase Rule
             </Button>
           </>
         )}
@@ -94,6 +129,14 @@ const PurchaseAndDiscountPolicy = ({ storeId, setPage, pages }: Props) => {
             purchaseAndDiscountPages={purchaseAndDiscountPages}
             purchaseType={purchaseType}
           ></AddPurchaseRules>
+        )}
+        {purchaseAndDiscountPage === "addDiscount" && (
+          <AddDiscount
+            storeId={storeId}
+            setPurchaseAndDiscountPage={setPurchaseAndDiscountPage}
+            purchaseAndDiscountPages={purchaseAndDiscountPages}
+            discountType={discountType}
+          ></AddDiscount>
         )}
       </Stack>
     </Flex>

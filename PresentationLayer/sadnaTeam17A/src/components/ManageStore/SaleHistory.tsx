@@ -42,7 +42,7 @@ const SaleHistory = ({ storeId, setPage, pages }: Props) => {
         </Button>
       </Box>
       <Heading padding={5} textAlign="center">
-        Sale history
+        Sale History
       </Heading>
       <SimpleGrid
         columns={{ sm: 1, md: 2, lg: 3, xl: 3, "2xl": 4 }}

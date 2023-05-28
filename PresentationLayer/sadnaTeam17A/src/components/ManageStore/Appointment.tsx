@@ -14,48 +14,58 @@ const Appointment = ({ storeId, onBack, role }: Props) => {
 
   const getUserId = async () => {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/users/search-user/username=${username}`
+      `http://localhost:8080/api/v1/users/get-user-by-username/username=${username}`
     );
     if (!response.data.error) {
-      setAppointee(response.data.value[0].id);
+      setAppointee(response.data.value.id);
     } else {
-      console.log(response.data.error);
+      setAppointee("");
     }
   };
 
   const addManager = async () => {
-    const response = await axios.post(
-      `http://localhost:8080/api/v1/stores/role/appoint-manager`,
-      {
-        clientCredentials: clientCredentials,
-        appointee: appointee,
-        storeId: storeId,
-      }
-    );
-    if (!response.data.error) {
-      setErrorMsg(false);
-      setMessage(username + " is now a manager!");
-    } else {
+    if (appointee === "") {
       setErrorMsg(true);
-      setMessage(response.data.message);
+      setMessage("User not found");
+    } else {
+      const response = await axios.post(
+        `http://localhost:8080/api/v1/stores/role/appoint-manager`,
+        {
+          clientCredentials: clientCredentials,
+          appointee: appointee,
+          storeId: storeId,
+        }
+      );
+      if (!response.data.error) {
+        setErrorMsg(false);
+        setMessage(username + " is now a manager!");
+      } else {
+        setErrorMsg(true);
+        setMessage(response.data.message);
+      }
     }
   };
 
   const addOwner = async () => {
-    const response = await axios.post(
-      `http://localhost:8080/api/v1/stores/role/appoint-owner`,
-      {
-        clientCredentials: clientCredentials,
-        appointee: appointee,
-        storeId: storeId,
-      }
-    );
-    if (!response.data.error) {
-      setErrorMsg(false);
-      setMessage(username + " is now an owner!");
-    } else {
+    if (appointee === "") {
       setErrorMsg(true);
-      setMessage(response.data.message);
+      setMessage("User not found");
+    } else {
+      const response = await axios.post(
+        `http://localhost:8080/api/v1/stores/role/appoint-owner`,
+        {
+          clientCredentials: clientCredentials,
+          appointee: appointee,
+          storeId: storeId,
+        }
+      );
+      if (!response.data.error) {
+        setErrorMsg(false);
+        setMessage(username + " is now an owner!");
+      } else {
+        setErrorMsg(true);
+        setMessage(response.data.message);
+      }
     }
   };
 
