@@ -1,5 +1,6 @@
 package ServiceLayer;
 
+import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.*;
 import DomainLayer.Market.Stores.*;
 import DomainLayer.Market.Stores.Discounts.condition.Discount;
@@ -37,6 +38,7 @@ public class Service {
     private PaymentProxy paymentProxy;
     private NotificationController notificationController;
     private SearchController searchController;
+    private RepositoryFactory repositoryFactory;
 
     private boolean initialized;
 
@@ -53,16 +55,17 @@ public class Service {
         return instance;
     }
 
-    public boolean init() {
+    public boolean init(RepositoryFactory repositoryFactory) {
         synchronized (this) {
             if (initialized) return true;
             initialized = true;
         }
+        this.repositoryFactory = repositoryFactory;
         eventLogger.log(Level.INFO, "Booting system");
         storeController = StoreController.getInstance();
         storeController.init();
         userController = UserController.getInstance();
-        userController.init();  // Creates default admin
+        userController.init(repositoryFactory);  // Creates default admin
         purchaseController = PurchaseController.getInstance();
         purchaseController.init();
         securityController = SecurityController.getInstance();
@@ -95,6 +98,11 @@ public class Service {
         userController.register("LiorL", "Lior1");
 
         Response<UUID> response = userController.createClient();
+        if(response.isError())
+            errorLogger.log(Level.SEVERE, response.getMessage());
+//        }else{
+//            eventLogger.log(Level.INFO, "Successfully closed client " + clientCredentials);
+//        }
         UUID clientCredentials = response.getValue();
         UUID userCredentials = userController.login(clientCredentials, "Nitzan", "Nitzan1").getValue().getId();
         Response<Store> storeResponse = storeController.createStore(userCredentials, "Nitzan's Kitchen Store", "");
@@ -713,7 +721,7 @@ public class Service {
         paymentController.resetController();
         securityController.resetController();
         supplyController.resetController();
-        init();
+        init(repositoryFactory);
         return null;
     }
 

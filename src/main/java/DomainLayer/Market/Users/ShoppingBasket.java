@@ -1,19 +1,34 @@
 package DomainLayer.Market.Users;
 
 import DomainLayer.Market.Stores.Item;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Entity
+@Table(name = "ShoppingBaskets")
 public class ShoppingBasket {
-    private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "uuid", nullable = false)
+    private Long uuid;
+
+    @Column(name = "id")
+    private UUID id; //id of the shopping basket
+
+    @Column(name = "storeId")
     private UUID storeId;
+
+//    @OneToMany
     private ConcurrentHashMap<UUID,Integer> items;//UUID itemId, int quantity
 
     public ConcurrentHashMap<UUID, Integer> getItems() {
         return items;
     }
 
+
+    public ShoppingBasket() {}
 
     public ShoppingBasket(UUID storeId) {
         this.id = UUID.randomUUID();

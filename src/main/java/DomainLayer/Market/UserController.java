@@ -5,12 +5,15 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import DataAccessLayer.ClientRepository;
+import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
 import DomainLayer.Security.SecurityController;
 import ServiceLayer.Response;
 import DomainLayer.Market.Users.Roles.*;
+import com.fasterxml.jackson.databind.deser.CreatorProperty;
 
 public class UserController {
 
@@ -22,12 +25,13 @@ public class UserController {
     private ConcurrentHashMap<UUID, Client> clients;  // for non-registered clients only!
     private StoreController storeController;
     private NotificationController notificationController;
+    private RepositoryFactory repositoryFactory;
 
     private UserController() {
 
     }
 
-    public void init() {
+    public void init(RepositoryFactory repositoryFactory) {
         users = new ConcurrentHashMap<>();
         usernames = new ConcurrentHashMap<>();
         loggedInUsers = new ConcurrentHashMap<>();
@@ -35,6 +39,7 @@ public class UserController {
         clients = new ConcurrentHashMap<>();
         storeController = StoreController.getInstance();
         notificationController = NotificationController.getInstance();
+        this.repositoryFactory = repositoryFactory;
         registerDefaultAdmin();
     }
 
@@ -127,10 +132,13 @@ public class UserController {
 
     public Response<UUID> createClient() {
         try {
-            UUID id = UUID.randomUUID();
-            Client client = new Client(id);
-            clients.put(id, client);
-            return Response.getSuccessResponse(id);
+//            UUID id = UUID.randomUUID();
+            Client client = new Client();
+            ClientRepository clientRepository = repositoryFactory.getClientRepository();
+            clientRepository.save(client);
+            clients.put(client.getId(), client);
+//            System.out.println(client.getId());
+            return Response.getSuccessResponse(client.getId());
         }
         catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -461,12 +469,12 @@ public class UserController {
     // On remove item from store, goes over all the users with the item in their carts and removes it
     public void removeItemFromCarts(UUID storeId, Item item) {
         for (Client client : clients.values()) {
-            ConcurrentHashMap<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
+            Map<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
             if (!baskets.containsKey(storeId)) continue;
             baskets.get(storeId).getItems().remove(item.getId());
         }
         for (Client client : users.values()) {
-            ConcurrentHashMap<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
+            Map<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
             if (!baskets.containsKey(storeId)) continue;
             baskets.get(storeId).getItems().remove(item.getId());
         }
