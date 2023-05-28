@@ -74,4 +74,7 @@ public interface Bridge {
     Response<List<ServiceMessage>> getMessages(UUID clientCredentials, UUID recipient);
     Response<List<Notification>> getNotifications(UUID clientCredentials, UUID recipient);
     Response<Boolean> removeStoreRole(UUID clientCredentials, UUID roleToRemove, UUID storeId);
+    Response<Boolean> addItemPolicyTerm(UUID clientCredentials, UUID storeId, UUID itemId, int quantity, boolean atLeast);
+    Response<Boolean> addCategoryPolicyTerm(UUID clientCredentials, UUID storeId, String category, int quantity, boolean atLeast);
+    Response<Boolean> addBasketPolicyTerm(UUID clientCredentials, UUID storeId, int quantity, boolean atLeast);
 }
