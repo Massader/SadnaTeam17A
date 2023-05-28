@@ -114,42 +114,42 @@ const ManageStore = ({ storeId, setPage, pages }: Props) => {
               onClick={() => setLeftPage(leftPages[1])}
               whiteSpace="normal"
             >
-              Add item
+              Add Item
             </Button>
             <Button onClick={() => setPage(pages[11])} whiteSpace="normal">
-              Inventory management
+              Inventory Management
             </Button>
             <Button onClick={() => setPage(pages[14])} whiteSpace="normal">
-              Purchase and discount policy
+              Purchase and Discount Policy
             </Button>
-            <Button whiteSpace="normal">Traceability constraints</Button>
+            <Button whiteSpace="normal">Traceability Constraints</Button>
             <Button
               onClick={() => setLeftPage(leftPages[2])}
               whiteSpace="normal"
             >
-              Appointment of store owner
+              Appointment of Store Owner
             </Button>
             <Button
               onClick={() => setLeftPage(leftPages[3])}
               whiteSpace="normal"
             >
-              Appointment of store manager
+              Appointment of Store Manager
             </Button>
             <Button
               onClick={() => setLeftPage(leftPages[4])}
               whiteSpace="normal"
             >
-              Removing a store role appointment
+              Removing a Store Role Appointment
             </Button>
             <Button onClick={() => setPage(pages[12])} whiteSpace="normal">
-              Set store manager permissions
+              Set Store Manager Permissions
             </Button>
             {!store?.isClosed && (
               <Button
                 onClick={() => setCloseStoreSure(!closeStoreSure)}
                 whiteSpace="normal"
               >
-                Close store
+                Close Store
               </Button>
             )}
             {store?.isClosed && (
@@ -171,13 +171,13 @@ const ManageStore = ({ storeId, setPage, pages }: Props) => {
               </Flex>
             )}
             <Button onClick={() => setPage(pages[13])} whiteSpace="normal">
-              Information on store positions
+              Information on Store Positions
             </Button>
-            <Button whiteSpace="normal">
-              Receiving information and response
+            <Button onClick={() => setPage(pages[15])} whiteSpace="normal">
+              Store Messages
             </Button>
             <Button onClick={() => setPage(pages[10])} whiteSpace="normal">
-              Purchase history in store
+              Purchase History in Store
             </Button>
           </>
         )}

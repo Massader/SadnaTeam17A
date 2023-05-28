@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useContext, useState } from "react";
 import { ClientCredentialsContext } from "../../App";
-import { Button, Flex, Heading, Input, Text } from "@chakra-ui/react";
+import { Button, Flex, Heading, Input, Stack, Text } from "@chakra-ui/react";
 
 interface Props {
   setPage: React.Dispatch<React.SetStateAction<string>>;
@@ -36,35 +36,41 @@ const RegisterAdmin = ({ setPage, pages }: Props) => {
 
   return (
     <>
-      <Heading padding={5} textAlign="center">
-        Register Admin
-      </Heading>
-      <Input
-        bg="white"
-        placeholder="Username"
-        value={username}
-        onChange={(username) => setUsername(username.target.value)}
-      />
-      <Input
-        bg="white"
-        placeholder="Password"
-        value={password}
-        type="password"
-        onChange={(password) => setPassword(password.target.value)}
-      />
-      <Button colorScheme="blue" size="lg" onClick={handleRegisterAdmin}>
-        Register admin
-      </Button>
-      <Button
-        colorScheme="blackAlpha"
-        size="lg"
-        onClick={() => setPage(pages[0])}
-      >
-        Back
-      </Button>
-      <Flex justifyContent="center">
-        {errorMsg ? <Text color="red">{message}</Text> : <Text>{message}</Text>}
-      </Flex>
+      <Stack w="50%" maxW="400px">
+        <Heading padding={5} textAlign="center">
+          Register Admin
+        </Heading>
+        <Input
+          bg="white"
+          placeholder="Username"
+          value={username}
+          onChange={(username) => setUsername(username.target.value)}
+        />
+        <Input
+          bg="white"
+          placeholder="Password"
+          value={password}
+          type="password"
+          onChange={(password) => setPassword(password.target.value)}
+        />
+        <Button colorScheme="blue" size="lg" onClick={handleRegisterAdmin}>
+          Register admin
+        </Button>
+        <Button
+          colorScheme="blackAlpha"
+          size="lg"
+          onClick={() => setPage(pages[0])}
+        >
+          Back
+        </Button>
+        <Flex justifyContent="center">
+          {errorMsg ? (
+            <Text color="red">{message}</Text>
+          ) : (
+            <Text>{message}</Text>
+          )}
+        </Flex>
+      </Stack>
     </>
   );
 };

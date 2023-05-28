@@ -1,6 +1,9 @@
-import React, { useState } from "react";
-import PurchaseRule from "./PurchaseRule";
-import { Button, Stack } from "@chakra-ui/react";
+import React, { useContext, useState } from "react";
+import PurchaseTerm from "./PurchaseTerm";
+import { Button, Stack, useToast } from "@chakra-ui/react";
+import { PurchaseTermType } from "../../types";
+import axios from "axios";
+import { ClientCredentialsContext } from "../../App";
 
 interface Props {
   storeId: string;
@@ -8,18 +11,48 @@ interface Props {
 }
 
 const AndOrPurchaseRules = ({ purchaseType, storeId }: Props) => {
+  const { clientCredentials } = useContext(ClientCredentialsContext);
+
   const [purchaseRules, setPurchaseRules] = useState<
-    { id: number; component: React.ReactNode }[]
+    { id: number; component: React.ReactNode; purchaseTerm: PurchaseTermType }[]
   >([]);
   const [ruleIdCounter, setRuleIdCounter] = useState(0);
+
+  const toast = useToast();
+
+  const addCompositeTerm = async () => {
+    const response = await axios.post(
+      "http://localhost:8080/api/v1/stores/add-basket-policy-term",
+      {
+        clientCredentials,
+        storeId: storeId,
+        term: purchaseRules.map((rule) => rule.purchaseTerm),
+      }
+    );
+    if (!response.data.error) {
+      console.log(response.data.value);
+      toast({
+        title: "Policy added.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: `${response.data.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   const handleAddRule = () => {
     const newRule = {
       id: ruleIdCounter,
-      component: <PurchaseRule purchaseType={purchaseType} storeId={storeId} />,
+      // component: <PurchaseTerm purchaseType={purchaseType} storeId={storeId} />,
     };
 
-    setPurchaseRules([...purchaseRules, newRule]);
     setRuleIdCounter((prevCounter) => prevCounter + 1);
   };
 
@@ -46,6 +79,11 @@ const AndOrPurchaseRules = ({ purchaseType, storeId }: Props) => {
           </Button>
         </div>
       ))}
+      {purchaseRules.length > 1 && (
+        <Button padding={4} colorScheme="blue" onClick={addCompositeTerm}>
+          Submit
+        </Button>
+      )}
     </Stack>
   );
 };

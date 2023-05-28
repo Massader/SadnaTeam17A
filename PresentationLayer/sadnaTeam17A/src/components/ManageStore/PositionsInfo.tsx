@@ -66,7 +66,7 @@ const PositionsInfo = ({ storeId, setPage, pages }: Props) => {
           Back
         </Button>
         <Heading padding={5} textAlign="center">
-          Store's positions information
+          Store's Positions Information
         </Heading>
         <Flex padding={10} justifyContent="center" alignItems="center">
           <Stack spacing={4} w="80%" px={4}>

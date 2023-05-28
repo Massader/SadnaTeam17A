@@ -7,9 +7,11 @@ import { ClientCredentialsContext } from "../App";
 
 interface Props {
   basket: Basket;
+  getCart: () => {};
+  getCartPrice: () => {};
 }
 
-const StoreBasket = ({ basket }: Props) => {
+const StoreBasket = ({ basket, getCart, getCartPrice }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
   const [storeName, setStoreName] = useState("");
 
@@ -41,6 +43,8 @@ const StoreBasket = ({ basket }: Props) => {
         {Object.entries(basket.items).map(([itemId, quantity]) => (
           <div key={itemId}>
             <ItemInBusket
+              getCart={getCart}
+              getCartPrice={getCartPrice}
               itemId={itemId}
               quantity={quantity}
               storeId={basket.storeId}

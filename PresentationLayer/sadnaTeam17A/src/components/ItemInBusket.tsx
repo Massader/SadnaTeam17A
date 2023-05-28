@@ -21,9 +21,17 @@ interface Props {
   itemId: string;
   quantity: number;
   storeId: string;
+  getCart: () => {};
+  getCartPrice: () => {};
 }
 
-const ItemInBusket = ({ itemId, quantity, storeId }: Props) => {
+const ItemInBusket = ({
+  itemId,
+  quantity,
+  storeId,
+  getCart,
+  getCartPrice,
+}: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
 
   const getItemInfo = async () => {
@@ -57,6 +65,8 @@ const ItemInBusket = ({ itemId, quantity, storeId }: Props) => {
     if (!response.data.error) {
       setErrorMsg(false);
       setMessage("Item removed from cart!");
+      getCart();
+      getCartPrice();
     } else {
       setErrorMsg(true);
       setMessage(response.data.message);
@@ -76,6 +86,8 @@ const ItemInBusket = ({ itemId, quantity, storeId }: Props) => {
     if (!response.data.error) {
       setErrorMsg(false);
       setMessage("Item added to cart!");
+      getCart();
+      getCartPrice();
     } else {
       setErrorMsg(true);
       setMessage(response.data.message);

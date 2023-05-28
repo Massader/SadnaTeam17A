@@ -28,8 +28,11 @@ const Notifications = ({
         setLoggedOutNotifications(response.data.value);
         if (response.data.value.length !== 0) {
           setNotificationAlert(true);
+        } else {
+          setNotificationAlert(false);
         }
       } else {
+        setNotificationAlert(false);
         console.log(response.data.error);
       }
     }

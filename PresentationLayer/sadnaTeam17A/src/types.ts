@@ -66,3 +66,46 @@ export interface NotificationType {
   id: string;
   timestamp: Date;
 }
+
+export interface MessageType {
+  body: string;
+  id: string;
+  recipient: string;
+  sender: string;
+}
+
+export interface ReviewType {
+  id: string;
+  itemId: string;
+  reviewer: string;
+  text: string;
+  rating: number;
+  timestamp: Date;
+}
+
+export interface ComplaintType {
+  assignedAdmin: string;
+  body: string;
+  id: string;
+  itemId: string;
+  open: boolean;
+  purchaseId: string;
+  sender: string;
+  storeId: string;
+}
+
+export interface PurchaseRuleType {
+  type: string; //CATEGORY ITEM BASKET
+  itemIdOrCategoryOrNull?: string; //
+}
+
+export interface PurchaseTermType {
+  rule: PurchaseRuleType;
+  atLeast: boolean;
+  quantity: number;
+}
+
+export interface CompositePurchaseTermType {
+  purchaseTerms: PurchaseTermType[];
+  type: string; //AND OR XOR
+}

@@ -5,18 +5,28 @@ import {
   CardBody,
   CardFooter,
   Divider,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
   Flex,
   Heading,
   Image,
+  Radio,
+  RadioGroup,
   Stack,
   Text,
+  useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import itemIcon from "../assets/item.png";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { Category } from "../types";
+import { Category, ReviewType } from "../types";
 import { ClientCredentialsContext } from "../App";
+import Review from "./Review";
 
 interface Props {
   name: string;
@@ -55,6 +65,8 @@ const ItemCard = ({
     getStoreName();
   }, []);
 
+  const toast = useToast();
+
   const handleAddToCart = async () => {
     const response = await axios.post(
       "http://localhost:8080/api/v1/users/add-to-cart",
@@ -66,18 +78,54 @@ const ItemCard = ({
       }
     );
     if (!response.data.error) {
-      setErrorMsg(false);
-      setMessage("Item added to cart!");
+      toast({
+        title: `${name} added to your cart!`,
+        colorScheme: "blue",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     } else {
-      setErrorMsg(true);
-      setMessage(response.data.message);
+      toast({
+        title: `${response.data.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
+  const getReviews = async () => {
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/stores/get-item-reviews/storeId=${storeId}&itemId=${id}`
+    );
+    if (!response.data.error) {
+      setReviews(response.data.value);
+    } else {
+      console.log(response.data.error);
+    }
+  };
+
+  const getStoreReviews = async () => {
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/stores/get-store-reviews/storeId=${storeId}`
+    );
+    if (!response.data.error) {
+      setReviewsStore(response.data.value);
+    } else {
+      console.log(response.data.error);
+    }
+  };
+
+  const [reviews, setReviews] = useState<ReviewType[]>([]);
+  const [reviewsStore, setReviewsStore] = useState<ReviewType[]>([]);
+
+  const [reviewType, setReviewType] = useState("item");
+
   const [storeName, setStoreName] = useState("");
 
-  const [errorMsg, setErrorMsg] = useState(false);
-  const [message, setMessage] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Card maxW="sm">
       <CardBody>
@@ -110,15 +158,56 @@ const ItemCard = ({
             <Box marginRight={2}>
               <AiOutlineShoppingCart />
             </Box>
-            Add to cart
+            Add to Cart
           </Button>
-          <Flex justifyContent="center">
-            {errorMsg ? (
-              <Text color="red">{message}</Text>
-            ) : (
-              <Text>{message}</Text>
-            )}
-          </Flex>
+          <Button
+            variant="outline"
+            colorScheme="blue"
+            onClick={() => {
+              onOpen();
+              getReviews();
+              getStoreReviews();
+            }}
+          >
+            Reviews
+          </Button>
+          <Drawer
+            placement="left"
+            onClose={() => {
+              onClose();
+              setReviewType("item");
+            }}
+            isOpen={isOpen}
+          >
+            <DrawerOverlay />
+            <DrawerContent>
+              <RadioGroup
+                padding={3}
+                onChange={(value) => {
+                  setReviewType(value);
+                }}
+                value={reviewType}
+              >
+                <Stack direction="row">
+                  <Radio value="item">Item</Radio>
+                  <Radio value="store">Store</Radio>
+                </Stack>
+              </RadioGroup>
+              <DrawerHeader borderBottomWidth="1px">
+                {reviewType === "item" ? name : storeName} Reviews:
+              </DrawerHeader>
+              <DrawerBody>
+                {reviewType === "item" &&
+                  reviews.map((review) => (
+                    <Review key={review.id} review={review} />
+                  ))}
+                {reviewType === "store" &&
+                  reviewsStore.map((review) => (
+                    <Review key={review.id} review={review} />
+                  ))}
+              </DrawerBody>
+            </DrawerContent>
+          </Drawer>
         </Stack>
       </CardFooter>
     </Card>

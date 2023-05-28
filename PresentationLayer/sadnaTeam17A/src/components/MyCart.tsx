@@ -37,7 +37,7 @@ const MyCart = () => {
     if (!response.data.error) {
       setCartPrice(response.data.value);
     } else {
-      console.log(response.data.error);
+      setCartPrice(0);
     }
   };
 
@@ -64,18 +64,23 @@ const MyCart = () => {
 
   useEffect(() => {
     getCart();
-  }, [cart]);
+  }, []);
 
   useEffect(() => {
     getCartPrice();
-  }, [cart]);
+  }, []);
 
   return (
     <>
       {page === "myCart" && (
         <Stack>
           {cart.map((basket) => (
-            <StoreBasket key={basket.storeId} basket={basket} />
+            <StoreBasket
+              getCart={getCart}
+              getCartPrice={getCartPrice}
+              key={basket.storeId}
+              basket={basket}
+            />
           ))}
           <Flex padding={10}>
             <Stack w="100%">
@@ -131,7 +136,11 @@ const MyCart = () => {
             <Button
               colorScheme="blackAlpha"
               size="lg"
-              onClick={() => setPage(pages[0])}
+              onClick={() => {
+                setPage(pages[0]);
+                getCart();
+                getCartPrice();
+              }}
             >
               Back
             </Button>

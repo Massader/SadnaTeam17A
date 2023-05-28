@@ -16,17 +16,18 @@ interface Props {
   setMinPrice: React.Dispatch<React.SetStateAction<number>>;
   setMaxPrice: React.Dispatch<React.SetStateAction<number>>;
   setItemRating: React.Dispatch<React.SetStateAction<number>>;
-  itemRating: number;
+  setCategory: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Filters = ({
   setMinPrice,
   setMaxPrice,
-  itemRating,
   setItemRating,
+  setCategory,
 }: Props) => {
   const [submittedItem, setSubmittedItem] = useState(0);
   const [storeRating, setStoreRating] = useState(0);
+  const [itemRatingView, setItemRatingView] = useState(0);
   const [submittedStore, setSubmittedStore] = useState(0);
 
   useEffect(() => {
@@ -34,18 +35,22 @@ const Filters = ({
   }, []);
 
   const handleMouseEnterItem = (index: number) => {
-    setItemRating(index + 1);
+    setItemRatingView(index + 1);
   };
 
   const handleMouseLeaveItem = () => {
-    submittedItem !== 0 ? setItemRating(submittedItem) : setItemRating(0);
+    submittedItem !== 0
+      ? setItemRatingView(submittedItem)
+      : setItemRatingView(0);
   };
 
   const handleClickitemRating = (index: number) => {
     if (submittedItem === index + 1) {
       setSubmittedItem(0);
+      setItemRating(0);
     } else {
       setSubmittedItem(index + 1);
+      setItemRating(index + 1);
     }
   };
 
@@ -112,7 +117,7 @@ const Filters = ({
               onMouseLeave={() => handleMouseLeaveItem()}
               onClick={() => handleClickitemRating(index)}
             >
-              {index < itemRating ? (
+              {index < itemRatingView ? (
                 <AiFillStar color="ffb703" size={30} />
               ) : (
                 <AiOutlineStar size={30} />
@@ -120,6 +125,14 @@ const Filters = ({
             </span>
           ))}
         </Flex>
+        <Text>Category:</Text>
+        <Input
+          bg="white"
+          placeholder="Category"
+          onChange={(category) => {
+            setCategory(category.target.value);
+          }}
+        />
         {/* <Text>Category:</Text>
         <Select placeholder="Select Category">
           <option value="option1">Option 1</option>
