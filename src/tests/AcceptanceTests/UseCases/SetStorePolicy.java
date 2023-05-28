@@ -297,16 +297,16 @@ public class SetStorePolicy extends ProjectTest {
 
     @Test
     public void setBasketPolicySuccess() {
-        //Response<Boolean> addTeslaToBasket0 = bridge.addItemToCart(user3Id, teslaId, 1, carStoreId);
-        //Response<Boolean> purchaseTesla0 = bridge.purchaseCart(user3Id, 200000, "address", "1234000012340000");
+        Response<Boolean> addTeslaToBasket0 = bridge.addItemToCart(user3Id, teslaId, 1, carStoreId);
+        Response<Boolean> purchaseTesla0 = bridge.purchaseCart(user3Id, 200000, "address", "1234000012340000");
 
-        Response<Boolean> basketPolicy = bridge.addBasketPolicyTerm(storeOwnerId, carStoreId, 2, true);
+        Response<Boolean> basketPolicy = bridge.addBasketPolicyTerm(storeOwnerId, carStoreId, 200001, true);
 
         Response<Boolean> addTeslaToBasket1 = bridge.addItemToCart(user3Id, teslaId, 1, carStoreId);
         Response<Boolean> purchaseTesla1 = bridge.purchaseCart(user3Id, 200000, "address", "1234000012340000");
 
-        //assertFalse(addTeslaToBasket0.isError(), addTeslaToBasket0.getMessage());
-        //assertFalse(purchaseTesla0.isError(), purchaseTesla0.getMessage());
+        assertFalse(addTeslaToBasket0.isError(), addTeslaToBasket0.getMessage());
+        assertFalse(purchaseTesla0.isError(), purchaseTesla0.getMessage());
         assertFalse(basketPolicy.isError(), basketPolicy.getMessage());
         assertFalse(addTeslaToBasket1.isError(), addTeslaToBasket1.getMessage());
         assertTrue(purchaseTesla1.isError(), "bridge.purchaseCart(user3Id, 200000, \"address\", \"1234000012340000\") should have failed");
