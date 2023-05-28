@@ -30,6 +30,11 @@ public class StoreDiscount {
         if (discountsAssembly.getDiscounts().contains(discount))
             throw new Exception("the discount is already exist, please put valid discount");
 
+        for (Discount dis:discountsAssembly.getDiscounts()) {
+            if(dis.getOptioncalculateDiscount().equals(discount.getOptioncalculateDiscount()))
+                throw new Exception("the discount is already exist, please put valid discount");
+        }
+
         if (discount.getPurchaseTerm() instanceof CompositePurchaseTerm) {
             // If the new term is a CompositePurchaseTerm, remove any existing terms in the purchasePolicies
             // that are equal to it (using the equals() method)
@@ -52,14 +57,20 @@ public class StoreDiscount {
         }
     }
 
-    public synchronized double calculateDiscount(ShoppingBasket shoppingBasket, Store store){
+    public synchronized double CalculateDiscount(ShoppingBasket shoppingBasket, Store store){
         return  this.discountsAssembly.CalculateDiscount(shoppingBasket,store);
     }
 
-    public synchronized double calculateShoppingBasket(ShoppingBasket shoppingBasket, Store store){
-        double originalPrice = store.calculatePriceOfBasket(shoppingBasket.getItems());
-        double discount = this.calculateDiscount(shoppingBasket,store);
+    public synchronized double CalculateShoppingBasket(ShoppingBasket shoppingBasket, Store store){
+        double originalPrice= store.calculatePriceOfBasket(shoppingBasket.getItems());
+        double discount = this.CalculateDiscount(shoppingBasket,store);
         return  Math.max(0.0, originalPrice-discount);
+    }
+    public void changeNumericalAssemblyOfDiscount(){
+        if( getDiscountsAssembly() instanceof CombiningDiscounts){
+            this.discountsAssembly =new MaxDiscounts(getDiscountsAssembly().getDiscounts());
+        }
+        else this.discountsAssembly= new CombiningDiscounts(getDiscountsAssembly().getDiscounts());
     }
 
 
