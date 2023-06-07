@@ -3,20 +3,18 @@ package DomainLayer.Market.Users;
 import jakarta.persistence.*;
 import org.hibernate.annotations.IdGeneratorType;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 
 import java.util.UUID;
-
-//@Entity
-//@Table (name = "Clients")
+@MappedSuperclass
 public class Client {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.UUID)
-//    @Column(name = "uuid", nullable = false)
-//    private Long uuid;
-//    @Column(name = "id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "client_credentials", nullable = false, unique = true)
     private UUID clientCredentials;
 
-//    @OneToOne  (cascade = CascadeType.ALL)// cascade
+    @OneToOne  (fetch = FetchType.EAGER, cascade = CascadeType.ALL)// cascade
+//@JoinColumn(name = "shopping_cart_id")
     private ShoppingCart cart;
 
     public Client(UUID id){
@@ -26,6 +24,7 @@ public class Client {
     }
 
     public Client(){
+        cart = new ShoppingCart();
     }
 
     public void setCart(ShoppingCart cart){

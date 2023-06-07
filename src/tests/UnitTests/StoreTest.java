@@ -1,27 +1,22 @@
 package UnitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
-import DomainLayer.Market.Stores.Discounts.condition.Discount;
+//import DomainLayer.Market.Stores.Discounts.Discount;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
-import DomainLayer.Market.Users.Roles.Role;
-import DomainLayer.Market.Users.Roles.StoreOwner;
-import DomainLayer.Market.Users.Roles.StorePermissions;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class StoreTest {
 
     private Store store;
     private Item item1;
     private Item item2;
-    private Discount discount1;
-    private Discount discount2;
+//    private Discount discount1;
+//    private Discount discount2;
     ConcurrentHashMap<UUID,Integer> items;
 
     @BeforeEach

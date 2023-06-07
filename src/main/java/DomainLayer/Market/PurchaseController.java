@@ -1,5 +1,6 @@
 package DomainLayer.Market;
 
+import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.Client;
@@ -7,6 +8,7 @@ import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.ShoppingBasket;
 import DomainLayer.Market.Users.ShoppingCart;
+import DomainLayer.Market.Users.User;
 import DomainLayer.Payment.PaymentProxy;
 import DomainLayer.Supply.SupplyProxy;
 import ServiceLayer.Response;
@@ -24,13 +26,15 @@ public class PurchaseController {
     PaymentProxy paymentProxy;
     SupplyProxy supplyProxy;
     NotificationController notificationController;
+    private RepositoryFactory repositoryFactory;
 
-    private PurchaseController() { }
+    private PurchaseController(RepositoryFactory repositoryFactory) { this.repositoryFactory = repositoryFactory;}
 
-    public static PurchaseController getInstance() {
+    public static PurchaseController getInstance(RepositoryFactory repositoryFactory) {
         synchronized(instanceLock) {
             if (instance == null)
-                instance = new PurchaseController();
+                instance = new PurchaseController(repositoryFactory);
+
         }
         return instance;
     }
@@ -92,7 +96,9 @@ public class PurchaseController {
                     UUID storeId = entry.getKey();
                     ShoppingBasket basket = entry.getValue();
                     Store store = storeController.getStore(storeId);
-                    store.purchaseBasket(client,basket);
+                    User user = store.purchaseBasket(client,basket);
+                    if (user != null)
+                        repositoryFactory.userRepository.save(user);
                     for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
                         if (role.getValue().getPermissions().contains(StorePermissions.STORE_OWNER))
                         notificationController.sendNotification(role.getKey(), "A purchase from "

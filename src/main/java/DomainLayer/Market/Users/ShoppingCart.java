@@ -15,13 +15,16 @@ public class ShoppingCart {
     @Column(name = "uuid", nullable = false)
     private Long uuid;
 
+//    @OneToOne(mappedBy = "cart")
     @Column(name = "userId")
     private UUID userId;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Map<UUID,ShoppingBasket> shoppingBaskets;// store id,
 
-    public ShoppingCart(){}
+    public ShoppingCart(){
+        this.shoppingBaskets = new ConcurrentHashMap<>();
+    }
     public ShoppingCart(UUID userId){
         this.userId = userId;
         this.shoppingBaskets = new ConcurrentHashMap<>();

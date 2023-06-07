@@ -1,7 +1,11 @@
 package AcceptanceTests;
+import APILayer.Main;
+import DomainLayer.Market.Notification;
+import DomainLayer.Market.UserController;
 import DomainLayer.Market.Users.Roles.Role;
 import ServiceLayer.*;
 import ServiceLayer.ServiceObjects.*;
+import org.springframework.boot.SpringApplication;
 
 import java.util.List;
 import java.util.UUID;
@@ -10,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RealBridge implements Bridge {
 
     Service service;
+    public static boolean initielized = false;
 
     @Override
     public void setReal() {
@@ -17,8 +22,12 @@ public class RealBridge implements Bridge {
     }
 
     public RealBridge() {
+        if(!initielized){
+            SpringApplication.run(Main.class);
+            initielized = true;
+        }
         service = Service.getInstance();
-        service.init();
+        service.init(UserController.repositoryFactory);
     }
 
     public Response<Boolean> systemBoot() {
@@ -261,5 +270,27 @@ public class RealBridge implements Bridge {
 
     public Response<Boolean> addItemRating(UUID clientCredentials, UUID itemId, UUID storeId, int rating) {
         return service.addItemRating(clientCredentials, itemId,storeId, rating);
+    }
+
+    public Response<List<ServiceMessage>> getMessages(UUID clientCredentials, UUID recipient) {
+        return service.getMessages(clientCredentials, recipient);
+    }
+
+    public Response<List<Notification>> getNotifications(UUID clientCredentials, UUID recipient) {
+        return service.getNotifications(clientCredentials, recipient);
+    }
+
+    public Response<Boolean> removeStoreRole(UUID clientCredentials, UUID roleToRemove, UUID storeId) {
+        return service.removeStoreRole(clientCredentials, roleToRemove, storeId);
+    }
+
+    public Response<Boolean> addItemPolicyTerm(UUID clientCredentials, UUID storeId, UUID itemId, int quantity, boolean atLeast) {
+        return service.addItemPolicyTerm(clientCredentials, storeId, itemId, quantity, atLeast);
+    }
+    public Response<Boolean> addCategoryPolicyTerm(UUID clientCredentials, UUID storeId, String category, int quantity, boolean atLeast) {
+        return service.addCategoryPolicyTerm(clientCredentials, storeId, category, quantity, atLeast);
+    }
+    public Response<Boolean> addBasketPolicyTerm(UUID clientCredentials, UUID storeId, int quantity, boolean atLeast) {
+        return service.addBasketPolicyTerm(clientCredentials, storeId, quantity, atLeast);
     }
 }

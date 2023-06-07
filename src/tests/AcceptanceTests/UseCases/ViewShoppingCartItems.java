@@ -5,13 +5,12 @@ import ServiceLayer.ServiceObjects.*;
 import java.util.List;
 import java.util.UUID;
 
-
-
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ViewShoppingCartItems extends ProjectTest {
-/*
+
     UUID client;
 
     @BeforeAll
@@ -41,8 +40,8 @@ public class ViewShoppingCartItems extends ProjectTest {
         bridge.register("founder", "Pass1");
         client = bridge.createClient().getValue();
         List<ServiceShoppingBasket> shoppingCartView=  bridge.getCart(client).getValue();
-        Assert.assertNotNull(shoppingCartView);
-        Assert.assertTrue(shoppingCartView.isEmpty());
+        assertNotNull(shoppingCartView);
+        assertTrue(shoppingCartView.isEmpty());
     }
 
     @Test
@@ -52,8 +51,8 @@ public class ViewShoppingCartItems extends ProjectTest {
         UUID newClient = bridge.createClient().getValue();
         UUID user = bridge.login(newClient, "newUser", "Pass1").getValue().getId();
         List<ServiceShoppingBasket> shoppingCartView=  bridge.getCart(user).getValue();
-        Assert.assertNotNull(shoppingCartView);
-        Assert.assertTrue(shoppingCartView.isEmpty());
+        assertNotNull(shoppingCartView);
+        assertTrue(shoppingCartView.isEmpty());
         bridge.logout(user);
         bridge.closeClient(newClient);
     }
@@ -63,8 +62,8 @@ public class ViewShoppingCartItems extends ProjectTest {
     public void ViewShoppingCartItemsFail() {
         UUID notUserOrClient = UUID.randomUUID();
         List<ServiceShoppingBasket> shoppingCartView=  bridge.getCart(notUserOrClient).getValue();
-        Assert.assertNull(shoppingCartView);
+        assertNull(shoppingCartView);
     }
 
- */
+
 }

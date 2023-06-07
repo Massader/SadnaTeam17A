@@ -4,6 +4,8 @@ import AcceptanceTests.*;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import DataAccessLayer.UserRepository;
+import DomainLayer.Market.UserController;
 import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.ServiceUser;
 
@@ -25,7 +27,8 @@ public class Register extends ProjectTest {
 
     @AfterEach
     public void tearDown() {
-
+        UserRepository userRepository = UserController.repositoryFactory.userRepository;
+        userRepository.deleteAll();
     }
 
     @AfterAll
@@ -37,21 +40,22 @@ public class Register extends ProjectTest {
     //Tests whether the registration of a new user with valid credentials is successful.
     public void registerSuccess() {
         Response<Integer> users0 = bridge.numOfUsers();
-        Response<ConcurrentHashMap<String, UUID>> userNames0 = bridge.getUserNames();
+        Response<ConcurrentHashMap<String, UUID>> userNames0Response = bridge.getUserNames();
+        ConcurrentHashMap<String, UUID> userNames0 = new ConcurrentHashMap<>(userNames0Response.getValue());
         Response<Boolean> register = bridge.register("user1", "Aa1234");
         Response<Integer> users1 = bridge.numOfUsers();
         Response<ConcurrentHashMap<String, UUID>> userNames1 = bridge.getUserNames();
 
         assertFalse(users0.isError(), String.format("bridge.numOfUsers() => %s", users0.getMessage()));
-        assertFalse(userNames0.isError(), String.format("bridge.getUserNames() => %s", userNames0.getMessage()));
+        assertFalse(userNames0Response.isError(), String.format("bridge.getUserNames() => %s", userNames0Response.getMessage()));
         assertFalse(register.isError(), String.format("bridge.register(\"user1\", \"Aa1234\") => %s", register.getMessage()));
         assertFalse(users1.isError(), String.format("bridge.numOfUsers() => %s", users1.getMessage()));
         assertFalse(userNames1.isError(), String.format("bridge.getUserNames() => %s", userNames1.getMessage()));
 
         assertTrue(register.getValue(), "bridge.register(\"user1\", \"Aa1234\") failed");     //register success
         assertEquals(1, users1.getValue() - users0.getValue(), "number of registered users did not increased by 1");    //one more user is registered
-        assertNotNull(userNames0.getValue(), "bridge.getUserNames() failed");
-        assertFalse(userNames0.getValue().containsKey("user1"), "user names list contain \"user1\" before registration");     //no username "user1" before registration
+        assertNotNull(userNames0, "bridge.getUserNames() failed");
+        assertFalse(userNames0.containsKey("user1"), "user names list contain \"user1\" before registration");     //no username "user1" before registration
         assertNotNull(userNames1.getValue(), "bridge.getUserNames() failed");
         assertTrue(userNames1.getValue().containsKey("user1"), "user names list does not contain \"user1\" after registration");      //there is "user1" username after registration
     }
@@ -107,15 +111,15 @@ public class Register extends ProjectTest {
         assertTrue(register.isError(), "bridge.register(\"user3\", null) should have failed");
         assertFalse(users1.isError(), String.format("bridge.numOfUsers() => %s", users1.getMessage()));
 
-        assertEquals("No username input.", register.getMessage(), register.getMessage());    //register failed
+        assertEquals("No password input.", register.getMessage(), register.getMessage());    //register failed
         assertEquals(users1.getValue(), users0.getValue(), "number of users has changed");    //users amount remain the same
     }
 
     @Test
     public void registerConcurrently() {
         Response<Integer> users0 = bridge.numOfUsers();
-        Response<ConcurrentHashMap<String, UUID>> userNames0 = bridge.getUserNames();
-
+        Response<ConcurrentHashMap<String, UUID>> userNames0Response = bridge.getUserNames();
+        ConcurrentHashMap<String, UUID> userNames0 = new ConcurrentHashMap<>(userNames0Response.getValue());
         Response<Boolean>[] registrations = new Response[1000];
         Thread[] threads = new Thread[1000];
         try {
@@ -134,7 +138,7 @@ public class Register extends ProjectTest {
         Response<ConcurrentHashMap<String, UUID>> userNames1 = bridge.getUserNames();
 
         assertFalse(users0.isError(), String.format("bridge.numOfUsers() => %s", users0.getMessage()));
-        assertFalse(userNames0.isError(), String.format("bridge.getUserNames() => %s", userNames0.getMessage()));
+        assertFalse(userNames0Response.isError(), String.format("bridge.getUserNames() => %s", userNames0Response.getMessage()));
         assertFalse(users1.isError(), String.format("bridge.numOfUsers() => %s", users1.getMessage()));
         assertFalse(userNames1.isError(), String.format("bridge.getUserNames() => %s", userNames1.getMessage()));
         for (Response<Boolean> r : registrations) {
@@ -142,7 +146,7 @@ public class Register extends ProjectTest {
             assertTrue(r.getValue(), "bridge.register(\"user_\" + index, \"Aa1234\") failed");
         }
         for (int i = 0; i < 1000; i++) {
-            assertFalse(userNames0.getValue().containsKey("user_" + i), "user names list contain \"user_" + i + "\" before registration");
+            assertFalse(userNames0.containsKey("user_" + i), "user names list contain \"user_" + i + "\" before registration");
             assertTrue(userNames1.getValue().containsKey("user_" + i), "user names list does not contain \"user_" + i + "\" after registration");
         }
         assertEquals(1000, users1.getValue() - users0.getValue(), "number of users did not increased by 1000");

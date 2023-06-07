@@ -15,6 +15,7 @@ import DomainLayer.Supply.SupplyProxy;
 import ServiceLayer.Loggers.ErrorLogger;
 import ServiceLayer.Loggers.EventLogger;
 import ServiceLayer.ServiceObjects.*;
+import jakarta.transaction.Transactional;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,6 +23,7 @@ import java.util.function.BiConsumer;
 import java.util.logging.Level;
 
 @org.springframework.stereotype.Service
+//@Transactional
 public class Service {
     private static ServiceLayer.Service instance = null;
     private static final Object instanceLock = new Object();
@@ -42,6 +44,7 @@ public class Service {
 
     private boolean initialized;
 
+
     private Service() {
         initialized = false;
     }
@@ -60,18 +63,19 @@ public class Service {
             if (initialized) return true;
             initialized = true;
         }
-        this.repositoryFactory = repositoryFactory;
         eventLogger.log(Level.INFO, "Booting system");
+        this.repositoryFactory = repositoryFactory;
         storeController = StoreController.getInstance();
-        storeController.init();
+        storeController.init(repositoryFactory);
         userController = UserController.getInstance();
         userController.init(repositoryFactory);  // Creates default admin
-        purchaseController = PurchaseController.getInstance();
+        purchaseController = PurchaseController.getInstance(repositoryFactory);
         purchaseController.init();
         securityController = SecurityController.getInstance();
+        securityController.init(repositoryFactory);
         //securityController.init();
         messageController = MessageController.getInstance();
-        messageController.init();
+        messageController.init(repositoryFactory);
         supplyController = SupplyController.getInstance();
         supplyController.init();
         paymentController = PaymentController.getInstance();
@@ -79,104 +83,117 @@ public class Service {
 
         //paymentController.init();
         notificationController = NotificationController.getInstance();
-        notificationController.init();
+        notificationController.init(repositoryFactory);
         searchController = SearchController.getInstance();
+        searchController.init(repositoryFactory);
         //searchController.init();
 
         //Add Supply and Payment JSON config file read here
 
-        loadObjects();
+//        loadObjects();
         eventLogger.log(Level.INFO, "System boot successful.");
         return true;
     }
 
     private void loadObjects() {
-        userController.register("Nitzan", "Nitzan1");
-        userController.register("Guy", "Guy1");
-        userController.register("Roei", "Roei1");
-        userController.register("LiorW", "Lior1");
-        userController.register("LiorL", "Lior1");
+        try {
+            repositoryFactory.userRepository.deleteAll();
+            repositoryFactory.passwordRepository.deleteAll();
+//            repositoryFactory.passwordRepository.deleteAll();
+//            repositoryFactory..deleteAll();
+//            repositoryFactory.userRepository.deleteAll();
+            Response<Boolean> response1 = userController.register("Nitzan", "Nitzan1");
+            if (response1.isError())
+                errorLogger.log(Level.SEVERE, response1.getMessage());
+            userController.register("Guy", "Guy1");
+            userController.register("Roei", "Roei1");
+            userController.register("LiorW", "Lior1");
+            userController.register("LiorL", "Lior1");
 
-        Response<UUID> response = userController.createClient();
-        if(response.isError())
-            errorLogger.log(Level.SEVERE, response.getMessage());
+            Response<UUID> response = userController.createClient();
+            if (response.isError())
+                errorLogger.log(Level.SEVERE, response.getMessage());
 //        }else{
 //            eventLogger.log(Level.INFO, "Successfully closed client " + clientCredentials);
 //        }
-        UUID clientCredentials = response.getValue();
-        UUID userCredentials = userController.login(clientCredentials, "Nitzan", "Nitzan1").getValue().getId();
-        Response<Store> storeResponse = storeController.createStore(userCredentials, "Nitzan's Kitchen Store", "");
-        storeController.addItemToStore(userCredentials,"Knife", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Pan", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Pot", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Nitzan's Furniture Store", "");
-        storeController.addItemToStore(userCredentials,"Sofa", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Couch", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Closet", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Nitzan's Food Store", "");
-        storeController.addItemToStore(userCredentials,"Banana", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Chicken", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Tofu", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Nitzan's Sword Store", "");
-        storeController.addItemToStore(userCredentials,"Big Sword", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Small Sword", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Guy's Small Penis Sword", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Nitzan's Gun Store", "");
-        storeController.addItemToStore(userCredentials,"M16", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"M4", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"AK47", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Nitzan's Kill Roei Store", "");
-        storeController.addItemToStore(userCredentials,"Hang", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Shoot", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Stab", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        clientCredentials = userController.logout(userCredentials).getValue();
+            UUID clientCredentials = response.getValue();
+            UUID userCredentials = userController.login(clientCredentials, "Nitzan", "Nitzan1").getValue().getId();
+            Response<User> u = userController.getUser(userCredentials);
+            Response<Store> storeResponse = storeController.createStore(userCredentials, "Nitzan's Kitchen Store", "");
+            storeController.addItemToStore(userCredentials, "Knife", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Pan", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Pot", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(userCredentials, "Nitzan's Furniture Store", "");
+            storeController.addItemToStore(userCredentials, "Sofa", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Couch", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Closet", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(userCredentials, "Nitzan's Food Store", "");
+            storeController.addItemToStore(userCredentials, "Banana", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Chicken", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Tofu", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(userCredentials, "Nitzan's Sword Store", "");
+            storeController.addItemToStore(userCredentials, "Big Sword", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Small Sword", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Guy's Small Penis Sword", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(userCredentials, "Nitzan's Gun Store", "");
+            storeController.addItemToStore(userCredentials, "M16", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "M4", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "AK47", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(userCredentials, "Nitzan's Kill Roei Store", "");
+            storeController.addItemToStore(userCredentials, "Hang", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Shoot", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Stab", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            clientCredentials = userController.logout(userCredentials).getValue();
 
-        userCredentials = userController.login(clientCredentials, "Guy", "Guy1").getValue().getId();
-        storeResponse = storeController.createStore(userCredentials, "Guy's Basketball Store", "");
-        storeController.addItemToStore(userCredentials,"Basketball", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Kyrie Irving", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"LeBron James", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Guy's Tall Clothes Store", "");
-        storeController.addItemToStore(userCredentials,"Tall Shirt", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Tall Pants", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Tall Shoes", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Guy's Stupid Clothes Store", "");
-        storeController.addItemToStore(userCredentials,"Stupid Shirt", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Stupid Pants", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Stupid Shoes", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Guy's Weed Store", "");
-        storeController.addItemToStore(userCredentials,"Good Weed", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Bad Weed", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Ugly Weed", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Guy's Ball Store", "");
-        storeController.addItemToStore(userCredentials,"Ping Pong Ball", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Tennis Ball", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Guy's Balls", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        clientCredentials = userController.logout(userCredentials).getValue();
+            userCredentials = userController.login(clientCredentials, "Guy", "Guy1").getValue().getId();
+            storeResponse = storeController.createStore(userCredentials, "Guy's Basketball Store", "");
+            storeController.addItemToStore(userCredentials, "Basketball", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Kyrie Irving", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "LeBron James", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(userCredentials, "Guy's Tall Clothes Store", "");
+            storeController.addItemToStore(userCredentials, "Tall Shirt", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Tall Pants", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Tall Shoes", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(userCredentials, "Guy's Stupid Clothes Store", "");
+            storeController.addItemToStore(userCredentials, "Stupid Shirt", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Stupid Pants", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Stupid Shoes", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(userCredentials, "Guy's Weed Store", "");
+            storeController.addItemToStore(userCredentials, "Good Weed", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Bad Weed", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Ugly Weed", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(userCredentials, "Guy's Ball Store", "");
+            storeController.addItemToStore(userCredentials, "Ping Pong Ball", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Tennis Ball", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Guy's Balls", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            clientCredentials = userController.logout(userCredentials).getValue();
 
-        userCredentials = userController.login(clientCredentials, "Roei", "Roei1").getValue().getId();
-        storeResponse = storeController.createStore(userCredentials, "Roei's Color Store", "");
-        storeController.addItemToStore(userCredentials,"Kelev", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Pink", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Black", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Roei's Frontend Store", "");
-        storeController.addItemToStore(userCredentials,"Grid", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Component", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"HTTP Call", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Roei's Football Store", "");
-        storeController.addItemToStore(userCredentials,"Lionel Messi", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Christiano Ronaldo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Son Heung-min", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Roei's Soccer Store", "");
-        storeController.addItemToStore(userCredentials,"American Messi", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"American Ronaldo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"American Son Heung-min", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Roei's Tottenham Store", "");
-        storeController.addItemToStore(userCredentials,"Scarf", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Shirt", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Harry Kane", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        userController.logout(userCredentials);
-        eventLogger.log(Level.INFO, "Created objects.");
+            userCredentials = userController.login(clientCredentials, "Roei", "Roei1").getValue().getId();
+            storeResponse = storeController.createStore(userCredentials, "Roei's Color Store", "");
+            storeController.addItemToStore(userCredentials, "Kelev", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Pink", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Black", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(userCredentials, "Roei's Frontend Store", "");
+            storeController.addItemToStore(userCredentials, "Grid", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Component", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "HTTP Call", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(userCredentials, "Roei's Football Store", "");
+            storeController.addItemToStore(userCredentials, "Lionel Messi", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Christiano Ronaldo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Son Heung-min", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(userCredentials, "Roei's Soccer Store", "");
+            storeController.addItemToStore(userCredentials, "American Messi", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "American Ronaldo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "American Son Heung-min", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(userCredentials, "Roei's Tottenham Store", "");
+            storeController.addItemToStore(userCredentials, "Scarf", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Shirt", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(userCredentials, "Harry Kane", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            userController.logout(userCredentials);
+            eventLogger.log(Level.INFO, "Created objects.");
+        }catch (Exception exception){
+            errorLogger.log(Level.SEVERE, exception.getMessage());
+        }
     }
 
     public Response<UUID> createClient(){
@@ -982,9 +999,9 @@ public class Service {
         return loggedInUsers;
     }
 
-    public Response<ConcurrentHashMap<String, UUID>> getUserNames() {
-        return Response.getSuccessResponse(userController.getUsernames());
-    }
+//    public Response<ConcurrentHashMap<String, UUID>> getUserNames() {
+//        return Response.getSuccessResponse(userController.getUsernames());
+//    }
     
     public Response<List<ServiceUser>> getStoreManagers(UUID clientCredentials, UUID storeId) {
         Response<List<User>> response = storeController.getStoreManagers(clientCredentials, storeId);
@@ -1088,6 +1105,16 @@ public class Service {
         eventLogger.log(Level.INFO, "Successfully posted review by " + userResponse.getValue().getUsername() + " for store "
                 + storeId);
         return reviewResponse;
+    }
+
+    public Response<ConcurrentHashMap<String, UUID>> getUserNames() {
+        List<User> users = repositoryFactory.userRepository.findAll();
+        ConcurrentHashMap<String, UUID> userNames = new ConcurrentHashMap<>();
+        for(User user : users){
+            userNames.put(user.getUsername(), user.getId());
+        }
+        return Response.getSuccessResponse(userNames);
+
     }
 }
 

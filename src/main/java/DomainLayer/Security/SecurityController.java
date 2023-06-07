@@ -1,26 +1,37 @@
 package DomainLayer.Security;
 
+import DataAccessLayer.RepositoryFactory;
+import DataAccessLayer.controllers.UserDalController;
 import DomainLayer.Market.StoreController;
 import DomainLayer.Market.UserController;
 import DomainLayer.Market.Users.User;
 import ServiceLayer.Response;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SecurityController {
     private static SecurityController singleton = null;
-    private final ConcurrentHashMap<UUID, String> passwords;
-    protected ConcurrentHashMap<UUID, SecurityQuestion> securityQuestions;
+//    private final ConcurrentHashMap<UUID, String> passwords;
+//    protected ConcurrentHashMap<UUID, SecurityQuestion> securityQuestions;
     private final int PASS_MIN_LEN = 4;
     private final int PASS_MAX_LEN = 20;
     private final PasswordEncryptor encryptor;
+    private RepositoryFactory repositoryFactory;
+    private UserDalController userDalController;
 
-    private  SecurityController(){
-        passwords = new ConcurrentHashMap<>();
-        securityQuestions = new ConcurrentHashMap<>();
+    private SecurityController(){
+//        passwords = new ConcurrentHashMap<>();
+//        securityQuestions = new ConcurrentHashMap<>();
         encryptor = new PasswordEncryptor();
     }
+
+    public void init(RepositoryFactory repositoryFactory) {
+        this.repositoryFactory = repositoryFactory;
+        userDalController = UserDalController.getInstance(repositoryFactory);}
 
     public static synchronized SecurityController getInstance()
     {
@@ -31,9 +42,10 @@ public class SecurityController {
 
     public Response<Boolean> validatePassword(UUID id, String password) {
         try {
-            if (!passwords.containsKey(id))
+            Password passwordObj = userDalController.getPassword(id);
+            if (passwordObj == null)
                 return Response.getFailResponse("User does not have a registered password.");
-            if(passwords.get(id).equals(encryptor.encrypt(password)))
+            if(passwordObj.getEncryptedPassword().equals(encryptor.encrypt(password)))
                 return Response.getSuccessResponse(true);
             else return Response.getFailResponse("Incorrect password");
         }
@@ -78,15 +90,18 @@ public class SecurityController {
     }
 
     public void removePassword(UUID id){
-        securityQuestions.remove(id);
-        passwords.remove(id);
+//        securityQuestions.remove(id);
+        userDalController.deleteSecurityQuestion(id);
+        userDalController.deletePassword(id);
     }
 
     public Response<Boolean> encryptAndSavePassword(UUID id, String newPass){
         try {
             if (!isLegalPassword(newPass))
                 return Response.getFailResponse("Illegal Password");
-            passwords.put(id, encryptor.encrypt(newPass));
+            Password password = new Password(id, encryptor.encrypt(newPass));
+//            repositoryFactory.passwordRepository.save(password);
+            userDalController.addPassword(password);
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception){
@@ -96,8 +111,9 @@ public class SecurityController {
 
     public Response<Boolean> validateSecurityQuestion(UUID id, String answer){
         try{
-            if(securityQuestions.get(id) != null){
-                boolean valid = securityQuestions.get(id).validateAnswer(answer);
+            SecurityQuestion securityQuestion = userDalController.getSecurityQuestion(id);
+            if(securityQuestion != null){
+                boolean valid = securityQuestion.validateAnswer(answer);
                 if (valid) {
                     UserController.getInstance().loginFromSecurityQuestion(id);
                     return Response.getSuccessResponse(true);
@@ -114,10 +130,11 @@ public class SecurityController {
     public Response<Boolean> addSecurityQuestion(UUID id, String question, String answer) {
         try {
             SecurityQuestion securityQuestion = new SecurityQuestion(id, question, answer);
-            if (securityQuestions.get(id) != null && securityQuestions.get(id).getQuestion().equals(question)) {
+            SecurityQuestion prevSecurityQuestion = userDalController.getSecurityQuestion(id);
+            if (prevSecurityQuestion != null && prevSecurityQuestion.getQuestion().equals(question)) {
                 return Response.getFailResponse("The same question already exists for the user");
             }
-            securityQuestions.put(id, securityQuestion);
+            userDalController.addSecurityQuestion(securityQuestion);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -126,9 +143,10 @@ public class SecurityController {
 
     public Response<String> getSecurityQuestion (UUID id){
         try {
-            if (securityQuestions.get(id) == null)
+            SecurityQuestion SecurityQuestion = userDalController.getSecurityQuestion(id);
+            if (SecurityQuestion == null)
                 return Response.getFailResponse("There is no security question for this user");
-            else return Response.getSuccessResponse(securityQuestions.get(id).getQuestion());
+            else return Response.getSuccessResponse(SecurityQuestion.getQuestion());
         }
         catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -137,7 +155,8 @@ public class SecurityController {
 
         //added for tests
     public void addPassword(UUID id, String pass) throws Exception {
-        passwords.put(id, encryptor.encrypt(pass));
+//        passwords.put(id, encryptor.encrypt(pass));
+        userDalController.addPassword(new Password(id, encryptor.encrypt(pass)));
     }
 
     public void resetController() {

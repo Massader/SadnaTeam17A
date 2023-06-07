@@ -1,5 +1,6 @@
 package AcceptanceTests;
 
+import DomainLayer.Market.Notification;
 import DomainLayer.Market.Users.Roles.Role;
 import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.*;
@@ -254,6 +255,28 @@ public class ProxyBridge implements Bridge {
 
     public Response<Boolean> addItemRating(UUID clientCredentials, UUID itemId, UUID storeId, int rating) {
         return real == null ? null : real.addItemRating(clientCredentials, itemId, storeId, rating);
+    }
+
+    public Response<List<ServiceMessage>> getMessages(UUID clientCredentials, UUID recipient) {
+        return real == null ? null : real.getMessages(clientCredentials, recipient);
+    }
+
+    public Response<List<Notification>> getNotifications(UUID clientCredentials, UUID recipient) {
+        return real == null ? null : real.getNotifications(clientCredentials, recipient);
+    }
+
+    public Response<Boolean> removeStoreRole(UUID clientCredentials, UUID roleToRemove, UUID storeId) {
+        return real == null ? null : real.removeStoreRole(clientCredentials, roleToRemove, storeId);
+    }
+
+    public Response<Boolean> addItemPolicyTerm(UUID clientCredentials, UUID storeId, UUID itemId, int quantity, boolean atLeast) {
+        return real == null ? null : real.addItemPolicyTerm(clientCredentials, storeId, itemId, quantity, atLeast);
+    }
+    public Response<Boolean> addCategoryPolicyTerm(UUID clientCredentials, UUID storeId, String category, int quantity, boolean atLeast) {
+        return real == null ? null : real.addCategoryPolicyTerm(clientCredentials, storeId, category, quantity, atLeast);
+    }
+    public Response<Boolean> addBasketPolicyTerm(UUID clientCredentials, UUID storeId, int quantity, boolean atLeast) {
+        return real == null ? null : real.addBasketPolicyTerm(clientCredentials, storeId, quantity, atLeast);
     }
 }
 

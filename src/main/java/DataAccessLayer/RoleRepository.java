@@ -1,12 +1,12 @@
 package DataAccessLayer;
 
-import DomainLayer.Market.Users.ShoppingCart;
+import DomainLayer.Market.Users.Roles.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, UUID> {
+public interface RoleRepository extends JpaRepository<Role, UUID> {
 
 }

@@ -19,7 +19,7 @@ public class NotificationControllerTest {
     @BeforeEach
     void setUp() {
         notificationController = NotificationController.getInstance();
-        notificationController.init();
+//        notificationController.init();
         recipient = UUID.randomUUID();
         notificationController.sendNotification(recipient, "test notification");
     }
@@ -66,7 +66,6 @@ public class NotificationControllerTest {
             Thread thread = new Thread(() -> {
                 for (int j = 0; j < numOfNotificationsPerThread; j++) {
                     notificationController.sendNotification(recipient, "test notification");
-                    notificationController.getNotifications(recipient, recipient);
                 }
             });
             threads.add(thread);

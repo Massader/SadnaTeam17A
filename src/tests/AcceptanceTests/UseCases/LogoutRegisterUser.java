@@ -3,6 +3,7 @@ import AcceptanceTests.*;
 
 import java.util.UUID;
 
+import DomainLayer.Market.UserController;
 import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.ServiceUser;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -17,6 +18,7 @@ public class LogoutRegisterUser extends ProjectTest {
 
     @BeforeAll
     public void beforeClass()  {
+        UserController.repositoryFactory.userRepository.deleteAll();
         bridge.register("user", "Aa1234");
         userId = bridge.login(bridge.createClient().getValue(), "user", "Aa1234").getValue().getId();
         bridge.logout(userId);
