@@ -188,7 +188,7 @@ public class Item {
             throw new RuntimeException("Bidding is only available on Bid Purchase type items.");
         if (amount * quantity < price)
             throw new RuntimeException("Bidding price can only be equal or larger than item base price.");
-        ((BidPurchase)purchaseType).addBid(clientCredentials, amount, quantity);
+        ((BidPurchase)purchaseType).addBid(clientCredentials, this.id, amount, quantity);
         return true;
     }
     

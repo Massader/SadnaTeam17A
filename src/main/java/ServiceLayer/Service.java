@@ -1282,6 +1282,13 @@ public class Service {
         return response;
     }
     
+    public Response<List<Bid>> getStoreBids(UUID clientCredentials, UUID storeId) {
+        Response<List<Bid>> response = storeController.getStoreBids(clientCredentials, storeId);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
+    }
+    
     public Response<List<Object>> getStorePurchaseTerms(UUID clientCredentials, UUID storeId) {
         Response<List<PurchaseTerm>> response = storeController.getStorePurchaseTerms(clientCredentials, storeId);
         if (response.isError()) {
