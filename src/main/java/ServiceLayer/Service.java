@@ -1327,5 +1327,12 @@ public class Service {
             errorLogger.log(Level.WARNING, response.getMessage());
         return response;
     }
+    
+    public Response<Boolean> setItemPurchaseType(UUID clientCredentials, UUID storeId, UUID itemId, String purchaseType) {
+        Response<Boolean> response = storeController.setItemPurchaseType(clientCredentials, storeId, itemId, purchaseType);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
+    }
 }
 

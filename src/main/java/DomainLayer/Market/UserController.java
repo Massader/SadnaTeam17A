@@ -257,20 +257,23 @@ public class UserController {
                     .filter(element -> element.getAppointeeId().equals(user.getId()) &&
                                        element.getStoreId().equals(storeId))
                     .toList();
-            
-            if (petitions.isEmpty())
-                store.getOwnerPetitions().add(new OwnerPetition(user.getId(), clientCredentials, storeId));
+            OwnerPetition petition;
+            if (petitions.isEmpty()) {
+                petition = new OwnerPetition(user.getId(), clientCredentials, storeId);
+                store.getOwnerPetitions().add(petition);
+            }
             else {
-                OwnerPetition petition = petitions.get(0);
-                List<UUID> ownersList = petition.approveAppointment(clientCredentials);
-                if (ownersList.containsAll(storeController.getStore(storeId).getStoreOwners())) {
-                    StoreOwner storeOwner = new StoreOwner(storeId);
-                    user.addStoreRole(storeOwner);
-                    store.addRole(appointee, storeOwner);
-                    store.getOwner(clientCredentials).addAppointee(appointee);
-                    notificationController.sendNotification(appointee,
-                            "Your appointment as a store owner for " + store.getName() + " has been approved by all owners.");
-                }
+                petition = petitions.get(0);
+                petition.approveAppointment(clientCredentials);
+            }
+            if (petition.getOwnersList().containsAll(storeController.getStore(storeId).getStoreOwners())) {
+                StoreOwner storeOwner = new StoreOwner(storeId);
+                user.addStoreRole(storeOwner);
+                store.addRole(appointee, storeOwner);
+                store.getOwner(clientCredentials).addAppointee(appointee);
+                notificationController.sendNotification(appointee,
+                        "Your appointment as a store owner for " + store.getName() + " has been approved by all owners.");
+                store.getOwnerPetitions().remove(petition);
             }
             return Response.getSuccessResponse(true);
         }

@@ -4,8 +4,7 @@ import DomainLayer.Market.Stores.*;
 import DomainLayer.Market.Stores.Discounts.Discount;
 import DomainLayer.Market.Stores.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.PurchaseRule.StorePurchasePolicy;
-import DomainLayer.Market.Stores.PurchaseTypes.Bid;
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
+import DomainLayer.Market.Stores.PurchaseTypes.*;
 import DomainLayer.Market.Users.*;
 import DomainLayer.Market.Users.Roles.OwnerPetition;
 import DomainLayer.Market.Users.Roles.Role;
@@ -795,7 +794,7 @@ public class StoreController {
         }
     }
     
-    public Response<Boolean> setItemPurchaseType(UUID clientCredentials, UUID storeId, UUID itemId, PurchaseType purchaseType) {
+    public Response<Boolean> setItemPurchaseType(UUID clientCredentials, UUID storeId, UUID itemId, String purchaseTypeName) {
         try {
             if (!userController.isRegisteredUser(clientCredentials))
                 return Response.getFailResponse("User does not exist.");
@@ -807,6 +806,23 @@ public class StoreController {
             Item item = getStore(storeId).getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
+            PurchaseType purchaseType;
+            switch (purchaseTypeName) {
+                case "DIRECT":
+                    purchaseType = new DirectPurchase(purchaseTypeName);
+                    break;
+                case "BID":
+                    purchaseType = new BidPurchase(purchaseTypeName);
+                    break;
+                case "AUCTION":
+                    purchaseType = new AuctionPurchase(purchaseTypeName);
+                    break;
+                case "LOTTERY":
+                    purchaseType = new LotteryPurchase(purchaseTypeName);
+                    break;
+                default:
+                    return Response.getFailResponse("Purchase type name is invalid");
+            }
             item.setPurchaseType(purchaseType);
             return Response.getSuccessResponse(true);
         } catch (Exception e) {
