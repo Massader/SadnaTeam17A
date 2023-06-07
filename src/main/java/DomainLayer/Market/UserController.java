@@ -253,13 +253,15 @@ public class UserController {
             if (user == null)
                 return Response.getFailResponse("User returned was null");
             Store store = storeController.getStore(storeId);
-            OwnerPetition petition = store.getOwnerPetitions().stream()
+            List<OwnerPetition> petitions = store.getOwnerPetitions().stream()
                     .filter(element -> element.getAppointeeId().equals(user.getId()) &&
                                        element.getStoreId().equals(storeId))
-                    .toList().get(0);
-            if (petition == null)
+                    .toList();
+            
+            if (petitions.isEmpty())
                 store.getOwnerPetitions().add(new OwnerPetition(user.getId(), clientCredentials, storeId));
             else {
+                OwnerPetition petition = petitions.get(0);
                 List<UUID> ownersList = petition.approveAppointment(clientCredentials);
                 if (ownersList.containsAll(storeController.getStore(storeId).getStoreOwners())) {
                     StoreOwner storeOwner = new StoreOwner(storeId);
