@@ -1,29 +1,36 @@
 package ServiceLayer.ServiceObjects;
 
+import DomainLayer.Market.Stores.PurchaseRule.ConditionalPurchaseTerm;
+
 import java.util.List;
 
 public class ServiceConditionalPurchaseTerm {
-    private List<ServicePurchaseTerm> ifPurchaseTerms;
-    private List<ServicePurchaseTerm> thenPurchaseTerms;
+    private ServicePurchaseTerm ifPurchaseTerm;
+    private ServicePurchaseTerm thenPurchaseTerm;
     
-    public ServiceConditionalPurchaseTerm(List<ServicePurchaseTerm> ifPurchaseTerms, List<ServicePurchaseTerm> thenPurchaseTerms) {
-        this.ifPurchaseTerms = ifPurchaseTerms;
-        this.thenPurchaseTerms = thenPurchaseTerms;
+    public ServiceConditionalPurchaseTerm(ServicePurchaseTerm ifPurchaseTerm, ServicePurchaseTerm thenPurchaseTerm) {
+        this.ifPurchaseTerm = ifPurchaseTerm;
+        this.thenPurchaseTerm = thenPurchaseTerm;
     }
     
-    public List<ServicePurchaseTerm> getIfPurchaseTerms() {
-        return ifPurchaseTerms;
+    public ServiceConditionalPurchaseTerm(ConditionalPurchaseTerm term) {
+        ifPurchaseTerm = new ServicePurchaseTerm(term.getPurchaseTermIf());
+        thenPurchaseTerm = new ServicePurchaseTerm(term.getPurchaseTermThen());
     }
     
-    public List<ServicePurchaseTerm> getThenPurchaseTerms() {
-        return thenPurchaseTerms;
+    public ServicePurchaseTerm getIfPurchaseTerm() {
+        return ifPurchaseTerm;
     }
     
-    public void setIfPurchaseTerms(List<ServicePurchaseTerm> ifPurchaseTerms) {
-        this.ifPurchaseTerms = ifPurchaseTerms;
+    public ServicePurchaseTerm getThenPurchaseTerm() {
+        return thenPurchaseTerm;
     }
     
-    public void setThenPurchaseTerms(List<ServicePurchaseTerm> thenPurchaseTerms) {
-        this.thenPurchaseTerms = thenPurchaseTerms;
+    public void setIfPurchaseTerm(ServicePurchaseTerm ifPurchaseTerm) {
+        this.ifPurchaseTerm = ifPurchaseTerm;
+    }
+    
+    public void setThenPurchaseTerm(ServicePurchaseTerm thenPurchaseTerm) {
+        this.thenPurchaseTerm = thenPurchaseTerm;
     }
 }

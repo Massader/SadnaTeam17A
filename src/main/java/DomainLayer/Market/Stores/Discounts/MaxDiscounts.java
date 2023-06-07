@@ -1,4 +1,4 @@
-package DomainLayer.Market.Stores.Discounts.condition;
+package DomainLayer.Market.Stores.Discounts;
 
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
@@ -15,10 +15,10 @@ public class MaxDiscounts extends NumericalAssemblyOfDiscount {
     }
 
     @Override
-    public Double CalculateDiscount(ShoppingBasket shoppingBasket, Store store) {
+    public Double calculateDiscount(ShoppingBasket shoppingBasket, Store store) {
         ConcurrentLinkedQueue<Double> discountOption = new ConcurrentLinkedQueue<>();
-        for ( Discount discount:getDiscounts()) {
-            Double pricePerDiscount = discount.CalculateDiscount(shoppingBasket,store);
+        for (Discount discount : getDiscounts()) {
+            Double pricePerDiscount = discount.calculateDiscount(shoppingBasket,store);
             discountOption.add(pricePerDiscount);
         }
         Double maxDiscount = discountOption.stream().max(Double::compare).orElse(0.0);

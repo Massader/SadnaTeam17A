@@ -1,5 +1,9 @@
 package ServiceLayer.ServiceObjects;
 
+import DomainLayer.Market.Stores.PurchaseRule.AtLeastPurchaseTerm;
+import DomainLayer.Market.Stores.PurchaseRule.AtMostPurchaseTerm;
+import DomainLayer.Market.Stores.PurchaseRule.PurchaseTerm;
+
 public class ServicePurchaseTerm {
     private ServicePurchaseRule rule;
     private boolean atLeast;
@@ -9,6 +13,19 @@ public class ServicePurchaseTerm {
         this.rule = rule;
         this.atLeast = atLeast;
         this.quantity = quantity;
+    }
+    
+    public ServicePurchaseTerm(PurchaseTerm term) {
+        if (term instanceof AtLeastPurchaseTerm) {
+            this.rule = new ServicePurchaseRule(term.getPurchaseRule());
+            this.atLeast = true;
+            this.quantity = ((AtLeastPurchaseTerm) term).getQuantity();
+        }
+        else if (term instanceof AtMostPurchaseTerm) {
+            this.rule = new ServicePurchaseRule(term.getPurchaseRule());
+            this.atLeast = false;
+            this.quantity = ((AtMostPurchaseTerm) term).getQuantity();
+        }
     }
     
     public ServicePurchaseRule getRule() {

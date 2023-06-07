@@ -1,6 +1,6 @@
 package DomainLayer.Market.Stores;
 
-import DomainLayer.Market.Stores.Discounts.condition.*;
+import DomainLayer.Market.Stores.Discounts.*;
 import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Stores.PurchaseRule.StorePurchasePolicy;
 import DomainLayer.Market.Users.Client;
@@ -24,7 +24,7 @@ public class Store {
     private boolean shutdown;
     private int ratingCounter;
     private final ConcurrentHashMap<UUID, Item> items;
-    private final StoreDiscount discounts; // Map of Item ID -> Discount
+    private final StoreDiscount discounts;
     private final StorePurchasePolicy policy;
     private final ConcurrentLinkedQueue<Sale> sales;
     private final ConcurrentHashMap<UUID, Role> rolesMap;
@@ -197,16 +197,9 @@ public class Store {
         return price;
     }
 
-//    public  double calculatePriceOfBasketWithPolicyAndDiscount(ShoppingBasket shoppingBasket) throws Exception { // Map of Item ID -> Quantity)
-//        if (policy.purchaseRuleOccurs(shoppingBasket, this)) {
-//            return discounts.calculateShoppingBasket(shoppingBasket, this);
-//        }
-//        throw new Exception("The shopping Basket is not accepted by Store Policy");
-//    }
-
     public  double calculatePriceOfBasketWithPolicyAndDiscount(ShoppingBasket shoppingBasket) throws Exception { // Map of Item ID -> Quantity)
         if (policy.purchaseRuleOccurs(shoppingBasket, this)) {
-            return discounts.CalculateShoppingBasket(shoppingBasket, this);
+            return discounts.calculateShoppingBasket(shoppingBasket, this);
         }
         throw new Exception("The shopping Basket is not accepted by Store Policy");
     }
@@ -304,17 +297,27 @@ public class Store {
         return true;
     }
 
-    public Boolean removePolicyTermByStoreOwner( PurchaseTerm term) throws Exception {
-        this.policy.removePurchaseTerm(term);
+    public Boolean removePolicyTerm(UUID itemId) throws Exception {
+        this.policy.removePurchaseTerm(itemId);
+        return true;
+    }
+    
+    public Boolean removePolicyTerm(String categoryName) throws Exception {
+        this.policy.removePurchaseTerm(categoryName);
+        return true;
+    }
+    
+    public Boolean removePolicyTerm() throws Exception {
+        this.policy.removePurchaseTerm();
         return true;
     }
 
-    public Boolean addDiscountByStoreOwner(Discount discount) throws Exception {
+    public Boolean addDiscount(Discount discount) throws Exception {
         this.discounts.addDiscount(discount);
         return true;
     }
 
-    public Boolean removeDiscountByStoreOwner(Discount discount) throws Exception {
+    public Boolean removeDiscount(Discount discount) throws Exception {
         this.discounts.removeDiscount(discount);
         return true;
     }
@@ -353,12 +356,12 @@ public class Store {
                 OptioncalculateDiscount = new ItemCalculateDiscount(itemId);
                 break;
             case  2://ShoppingBasket
-                OptioncalculateDiscount = new ShopingBasketCalculateDiscount();
+                OptioncalculateDiscount = new ShoppingBasketCalculateDiscount();
                 break;
             case  3://category
                 OptioncalculateDiscount = new CategoryCalculateDiscount(discountCategory);
             default:
-            { throw new Exception("can't Creating Discount Term which is not a shopping basket item or category");}
+                throw new Exception("can't Creating Discount Term which is not a shopping basket item or category");
         }
         Discount discount = new Discount(OptioncalculateDiscount,discountPercentage,purchaseTerm);
         return discount;

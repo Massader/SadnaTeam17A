@@ -1,4 +1,4 @@
-package DomainLayer.Market.Stores.Discounts.condition;
+package DomainLayer.Market.Stores.Discounts;
 
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
@@ -6,7 +6,6 @@ import DomainLayer.Market.Users.ShoppingBasket;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ItemCalculateDiscount implements CalculateDiscount {
 
@@ -19,13 +18,11 @@ public class ItemCalculateDiscount implements CalculateDiscount {
     public UUID getItemId() {
         return itemId;
     }
-
-
-
-
+    
     @Override
-    public Double CalculateDiscount(ShoppingBasket shoppingBasket, Store store, Double discountPercentage) {
-        if (discountPercentage>1||discountPercentage<=0){return 0.0;}
+    public Double calculateDiscount(ShoppingBasket shoppingBasket, Store store, Double discountPercentage) {
+        if (discountPercentage > 1 || discountPercentage <= 0)
+            return 0.0;
       //  ConcurrentLinkedQueue<Double> discountOption = new ConcurrentLinkedQueue<>();
         double price = store.calculatePriceOfBasket(shoppingBasket.getItems());
         double discount = 0;
@@ -36,7 +33,7 @@ public class ItemCalculateDiscount implements CalculateDiscount {
             discount = storeItems.get(getItemId()).getPrice() * quantity * discountPercentage;
         }
        // discountOption.add(discount);
-        return  discount;
+        return discount;
     }
 
 }

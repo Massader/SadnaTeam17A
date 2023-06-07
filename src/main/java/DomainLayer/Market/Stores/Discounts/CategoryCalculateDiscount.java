@@ -1,4 +1,4 @@
-package DomainLayer.Market.Stores.Discounts.condition;
+package DomainLayer.Market.Stores.Discounts;
 
 import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Item;
@@ -7,7 +7,6 @@ import DomainLayer.Market.Users.ShoppingBasket;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CategoryCalculateDiscount implements CalculateDiscount {
     Category category;
@@ -21,17 +20,19 @@ public class CategoryCalculateDiscount implements CalculateDiscount {
     }
 
     @Override
-    public Double CalculateDiscount(ShoppingBasket shoppingBasket, Store store, Double discountPercentage) {
-        if (discountPercentage>1||discountPercentage<=0){return 0.0;}
+    public Double calculateDiscount(ShoppingBasket shoppingBasket, Store store, Double discountPercentage) {
+        if (discountPercentage>1||discountPercentage<=0){
+            return 0.0;
+        }
     //    ConcurrentLinkedQueue<Double> DiscountOption= new ConcurrentLinkedQueue<>();
-        Double categoryDiscount = 0.0;
+        double categoryDiscount = 0.0;
         ConcurrentHashMap<UUID, Item> storeItems = store.getItems();
-        ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
+        ConcurrentHashMap<UUID, Integer> items = shoppingBasket.getItems();
         for (UUID itemId : items.keySet()) {
-            Item item=  storeItems.get(itemId);
-            if (item!=null&&item.containsCategory(category.getCategoryName())) {
+            Item item = storeItems.get(itemId);
+            if (item != null && item.containsCategory(category.getCategoryName())) {
                 int quantity = items.get(itemId);
-                categoryDiscount+=item.getPrice()*quantity*discountPercentage;
+                categoryDiscount += item.getPrice() * quantity * discountPercentage;
             }
         }
       //  DiscountOption.add(categoryDiscount);

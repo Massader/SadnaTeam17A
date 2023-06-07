@@ -1,8 +1,9 @@
 package DomainLayer.Market;
 
 import DomainLayer.Market.Stores.*;
-import DomainLayer.Market.Stores.Discounts.condition.Discount;
+import DomainLayer.Market.Stores.Discounts.Discount;
 import DomainLayer.Market.Stores.PurchaseRule.PurchaseTerm;
+import DomainLayer.Market.Stores.PurchaseRule.StorePurchasePolicy;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
 import DomainLayer.Market.Users.*;
@@ -638,44 +639,67 @@ public class StoreController {
         }
     }
 
-    public Response<Boolean> removePolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term)  {
+    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, UUID itemId)  {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            store.removePolicyTermByStoreOwner(term);
-            return Response.getSuccessResponse(true);
-    } catch(
-    Exception exception)
-    {
-        return Response.getFailResponse(exception.getMessage());
+            return Response.getSuccessResponse(store.removePolicyTerm(itemId));
+        } catch(Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
     }
-}
-
-    public Response<Boolean> addDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
+    
+    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, String categoryName)  {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            store.addDiscountByStoreOwner(discount);
+            return Response.getSuccessResponse(store.removePolicyTerm(categoryName));
+        } catch(Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+    
+    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId)  {
+        try {
+            if (!storeMap.containsKey(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Store store = storeMap.get(storeId);
+            if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
+                return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
+            return Response.getSuccessResponse(store.removePolicyTerm());
+        } catch(Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
+    public Response<Boolean> addDiscount(UUID clientCredentials, UUID storeId, Discount discount) {
+        try {
+            if (!storeMap.containsKey(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Store store = storeMap.get(storeId);
+            if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
+                return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
+            store.addDiscount(discount);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
     }
 
-    public Response<Boolean> removeDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
+    public Response<Boolean> removeDiscount(UUID clientCredentials, UUID storeId, Discount discount) {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
-            if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) && !store.checkPermission(clientCredentials, StorePermissions.STORE_DISCOUNT_MANAGEMENT))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            store.removeDiscountByStoreOwner(discount);
+            store.removeDiscount(discount);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -886,6 +910,26 @@ public class StoreController {
             if (output == null)
                 return Response.getFailResponse("Failed to get bids.");
             return Response.getSuccessResponse(output);
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
+    
+    public Response<List<PurchaseTerm>> getStorePurchaseTerms(UUID clientCredentials, UUID storeId) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Store store = getStore(storeId);
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) &&
+                    !store.checkPermission(clientCredentials, StorePermissions.STORE_POLICY_MANAGEMENT))
+                return Response.getFailResponse("User does not have permission to see item bids.");
+            StorePurchasePolicy policy = store.getPolicy();
+            if (policy == null)
+                return Response.getFailResponse("Store policy was null");
+            List<PurchaseTerm> terms = policy.getPurchasePolicies().stream().toList();
+            if (terms == null)
+                return Response.getFailResponse("Store policy terms were null");
+            return Response.getSuccessResponse(terms);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }

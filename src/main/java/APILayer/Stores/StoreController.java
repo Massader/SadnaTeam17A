@@ -294,6 +294,22 @@ public class StoreController {
         return service.addCompositePolicyTerm(request.getClientCredentials(), request.getStoreId(), request.getTerm());
     }
     
+    @GetMapping(path = "/get-store-purchase-terms/id={id}&storeId={storeId}")
+    public Response<List<Object>> getStorePurchaseTerms(@PathVariable(name = "id") UUID clientCredentials,
+                                                                      @PathVariable(name = "storeId") UUID storeId) {
+        return service.getStorePurchaseTerms(clientCredentials, storeId);
+    }
+    
+    @PostMapping(path = "/remove-policy-term")
+    public Response<Boolean> removePolicyTerm(@RequestBody RemovePolicyTermRequest request) {
+        if (request.getItemId() != null)
+            return service.removePolicyTerm(request.getClientCredentials(), request.getStoreId(), request.getItemId());
+        else if (request.getCategoryName() != null)
+            return service.removePolicyTerm(request.getClientCredentials(), request.getStoreId(), request.getCategoryName());
+        else
+            return service.removePolicyTerm(request.getClientCredentials(), request.getStoreId());
+    }
+    
     @PostMapping(path = "/post-store-review")
     public Response<UUID> postStoreReview(@RequestBody ReviewRequest request) {
         return service.addStoreReview(request.getClientCredentials(), request.getTargetId(), request.getBody(),
@@ -329,4 +345,11 @@ public class StoreController {
                                            @PathVariable(name = "itemId") UUID itemId) {
         return service.getItemBids(clientCredentials, storeId, itemId);
     }
+    
+    @PostMapping(path = "/add-discount")
+    public Response<Boolean> addItemDiscount(@RequestBody AddDiscountRequest request) {
+        return service.addDiscount(request.getClientCredentials(), request.getStoreId(), request.getDiscount());
+    }
+    
+    
 }
