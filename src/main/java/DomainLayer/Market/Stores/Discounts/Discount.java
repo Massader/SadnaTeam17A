@@ -1,8 +1,12 @@
 package DomainLayer.Market.Stores.Discounts;
 
+import DomainLayer.Market.Stores.Category;
+import DomainLayer.Market.Stores.PurchaseRule.AtLeastPurchaseTerm;
+import DomainLayer.Market.Stores.PurchaseRule.AtMostPurchaseTerm;
 import DomainLayer.Market.Stores.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import ServiceLayer.ServiceObjects.ServiceDiscount;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -22,6 +26,22 @@ public class Discount {
         this.discountPercentage = discountPercentage;
         this.purchaseTerm = purchaseTerm;
         this.id = UUID.randomUUID();
+    }
+    
+    public Discount(ServiceDiscount serviceDiscount) {
+        this.id = serviceDiscount.getId() == null ? UUID.randomUUID() : serviceDiscount.getId();
+        this.discountPercentage = serviceDiscount.getDiscountPercentage();
+        if (serviceDiscount.getPurchaseTerm().getAtLeast())
+            purchaseTerm = new AtLeastPurchaseTerm(serviceDiscount.getPurchaseTerm());
+        else
+            purchaseTerm = new AtMostPurchaseTerm(serviceDiscount.getPurchaseTerm());
+        
+        if (serviceDiscount.getType().equals("ITEM"))
+            this.optionCalculateDiscount = new ItemCalculateDiscount(UUID.fromString(serviceDiscount.getItemIdOrCategoryOrNull()));
+        else if (serviceDiscount.getType().equals("CATEGORY"))
+            this.optionCalculateDiscount = new CategoryCalculateDiscount(new Category(serviceDiscount.getItemIdOrCategoryOrNull()));
+        else
+            this.optionCalculateDiscount = new ShoppingBasketCalculateDiscount();
     }
 
     public CalculateDiscount getOptionCalculateDiscount() {

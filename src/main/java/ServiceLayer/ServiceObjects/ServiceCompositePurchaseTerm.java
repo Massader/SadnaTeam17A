@@ -9,6 +9,7 @@ public class ServiceCompositePurchaseTerm {
 
     private List<ServicePurchaseTerm> purchaseTerms;
     private String type;
+    private String termType = "COMPOSITE";
     
     public ServiceCompositePurchaseTerm(List<ServicePurchaseTerm> purchaseTerms, String type) {
         this.purchaseTerms = purchaseTerms;
@@ -47,5 +48,13 @@ public class ServiceCompositePurchaseTerm {
     
     public void setType(String type) {
         this.type = type;
+    }
+    
+    public String getTermType() {
+        return termType;
+    }
+    
+    public void setTermType(String termType) {
+        this.termType = termType;
     }
 }

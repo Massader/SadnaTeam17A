@@ -934,4 +934,18 @@ public class StoreController {
             return Response.getFailResponse(e.getMessage());
         }
     }
+    
+    public Response<List<Discount>> getStoreDiscounts(UUID clientCredentials, UUID storeId) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Store store = getStore(storeId);
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) &&
+                    !store.checkPermission(clientCredentials, StorePermissions.STORE_DISCOUNT_MANAGEMENT))
+                return Response.getFailResponse("User does not have permission to see item bids.");
+            return Response.getSuccessResponse(store.getDiscounts().getDiscountsAssembly().getDiscounts().stream().toList());
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
 }

@@ -895,7 +895,13 @@ public class Service {
         
     }
     
-    public Response<Boolean> removeDiscount(UUID clientCredentials, UUID storeId, Discount discount) {
+    public Response<Boolean> removeDiscount(UUID clientCredentials, UUID storeId, ServiceDiscount serviceDiscount) {
+        Discount discount;
+        try {
+            discount = new Discount(serviceDiscount);
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
         Response<Boolean> response = storeController.removeDiscount(clientCredentials, storeId, discount);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
@@ -1312,6 +1318,19 @@ public class Service {
         }
         return Response.getSuccessResponse(output);
         
+    }
+    
+    public Response<List<ServiceDiscount>> getStoreDiscounts(UUID clientCredentials, UUID storeId) {
+        Response<List<Discount>> response = storeController.getStoreDiscounts(clientCredentials, storeId);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        List<ServiceDiscount> output = new ArrayList<>();
+        for (Discount discount : response.getValue()) {
+            output.add(new ServiceDiscount(discount));
+        }
+        return Response.getSuccessResponse(output);
     }
 }
 
