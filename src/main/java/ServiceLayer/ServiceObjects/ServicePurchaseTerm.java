@@ -4,20 +4,25 @@ import DomainLayer.Market.Stores.PurchaseRule.AtLeastPurchaseTerm;
 import DomainLayer.Market.Stores.PurchaseRule.AtMostPurchaseTerm;
 import DomainLayer.Market.Stores.PurchaseRule.PurchaseTerm;
 
+import java.util.UUID;
+
 public class ServicePurchaseTerm {
+    private UUID termId;
     private ServicePurchaseRule rule;
     private boolean atLeast;
     private int quantity;
     private String termType = "SIMPLE";
     
     
-    public ServicePurchaseTerm(ServicePurchaseRule rule, boolean atLeast, int quantity) {
+    public ServicePurchaseTerm(UUID termId, ServicePurchaseRule rule, boolean atLeast, int quantity) {
+        this.termId = termId;
         this.rule = rule;
         this.atLeast = atLeast;
         this.quantity = quantity;
     }
     
     public ServicePurchaseTerm(PurchaseTerm term) {
+        this.termId = term.getTermId();
         if (term instanceof AtLeastPurchaseTerm) {
             this.rule = new ServicePurchaseRule(term.getPurchaseRule());
             this.atLeast = true;
@@ -60,5 +65,13 @@ public class ServicePurchaseTerm {
     
     public void setTermType(String termType) {
         this.termType = termType;
+    }
+    
+    public UUID getTermId() {
+        return termId;
+    }
+    
+    public void setTermId(UUID termId) {
+        this.termId = termId;
     }
 }

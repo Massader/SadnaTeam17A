@@ -806,33 +806,13 @@ public class Service {
         return response;
     }
 
-    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, UUID itemId) {
-        Response<Boolean> response = storeController.removePolicyTerm(clientCredentials, storeId, itemId);
+    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, UUID termId) {
+        Response<Boolean> response = storeController.removePolicyTerm(clientCredentials, storeId, termId);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
         }
-        eventLogger.log(Level.INFO, "Successfully add Policy to store " + storeId);
-        return response;
-    }
-    
-    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, String categoryName) {
-        Response<Boolean> response = storeController.removePolicyTerm(clientCredentials, storeId, categoryName);
-        if (response.isError()) {
-            errorLogger.log(Level.WARNING, response.getMessage());
-            return response;
-        }
-        eventLogger.log(Level.INFO, "Successfully add Policy to store " + storeId);
-        return response;
-    }
-    
-    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId) {
-        Response<Boolean> response = storeController.removePolicyTerm(clientCredentials, storeId);
-        if (response.isError()) {
-            errorLogger.log(Level.WARNING, response.getMessage());
-            return response;
-        }
-        eventLogger.log(Level.INFO, "Successfully add Policy to store " + storeId);
+        eventLogger.log(Level.INFO, "Successfully removed policy term from store " + storeId);
         return response;
     }
     

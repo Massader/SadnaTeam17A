@@ -5,15 +5,30 @@ package DomainLayer.Market.Stores.PurchaseRule;
 import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import ServiceLayer.ServiceObjects.ServicePurchaseRule;
+import ServiceLayer.ServiceObjects.ServicePurchaseTerm;
 
 import java.util.UUID;
 
 public abstract class PurchaseTerm {
 
+    UUID termId;
+    
     PurchaseRule purchaseRule;
 
     public PurchaseTerm(PurchaseRule purchaseRule) {
+        this.termId = UUID.randomUUID();
         this.purchaseRule = purchaseRule;
+    }
+    
+    public PurchaseTerm(ServicePurchaseTerm serviceTerm) {
+        this.termId = serviceTerm.getTermId();
+        if (serviceTerm.getRule().getType().equals("ITEM"))
+            purchaseRule = new ItemPurchaseRule(UUID.fromString(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
+        else if (serviceTerm.getRule().getType().equals("CATEGORY"))
+            purchaseRule = new CategoryPurchaseRule(new Category(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
+        else
+            purchaseRule = new ShoppingBasketPurchaseRule();
     }
 
     public PurchaseRule getPurchaseRule() {
@@ -73,7 +88,11 @@ public abstract class PurchaseTerm {
         else return new AtMostPurchaseTerm(purchaseRule,quantity);
 
     }
+    
+    public UUID getTermId() {
+        return termId;
     }
+}
 
 
 

@@ -5,13 +5,13 @@ import java.util.UUID;
 public class RemovePolicyTermRequest extends Request {
     
     private UUID storeId;
-    private UUID itemId;
+    private UUID termId;
     private String categoryName;
     
-    public RemovePolicyTermRequest(UUID clientCredentials, UUID storeId, UUID itemId, String categoryName) {
+    public RemovePolicyTermRequest(UUID clientCredentials, UUID storeId, UUID termId, String categoryName) {
         super(clientCredentials);
         this.storeId = storeId;
-        this.itemId = itemId;
+        this.termId = termId;
         this.categoryName = categoryName;
     }
     
@@ -23,12 +23,12 @@ public class RemovePolicyTermRequest extends Request {
         this.storeId = storeId;
     }
     
-    public UUID getItemId() {
-        return itemId;
+    public UUID getTermId() {
+        return termId;
     }
     
-    public void setItemId(UUID itemId) {
-        this.itemId = itemId;
+    public void setTermId(UUID termId) {
+        this.termId = termId;
     }
     
     public String getCategoryName() {

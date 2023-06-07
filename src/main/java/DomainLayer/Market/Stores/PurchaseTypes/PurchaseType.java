@@ -17,4 +17,9 @@ public abstract class PurchaseType {
     public String getType() {
         return type;
     }
+    
+    @Override
+    public String toString() {
+        return type;
+    }
 }

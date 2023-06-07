@@ -4,26 +4,30 @@ import DomainLayer.Market.Stores.PurchaseRule.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ServiceCompositePurchaseTerm {
 
+    private UUID termId;
     private List<ServicePurchaseTerm> purchaseTerms;
     private String type;
     private String termType = "COMPOSITE";
     
-    public ServiceCompositePurchaseTerm(List<ServicePurchaseTerm> purchaseTerms, String type) {
+    public ServiceCompositePurchaseTerm(UUID termId, List<ServicePurchaseTerm> purchaseTerms, String type) {
+        this.termId = termId;
         this.purchaseTerms = purchaseTerms;
         this.type = type;
     }
     
     public ServiceCompositePurchaseTerm(CompositePurchaseTerm term) {
+        this.termId = term.getTermId();
         this.purchaseTerms = new ArrayList<>();
         for (PurchaseTerm purchaseTerm : term.getPurchaseTerms()) {
             if (purchaseTerm instanceof AtLeastPurchaseTerm)
-                purchaseTerms.add(new ServicePurchaseTerm(new ServicePurchaseRule(purchaseTerm.getPurchaseRule()), true,
+                purchaseTerms.add(new ServicePurchaseTerm(purchaseTerm.getTermId(), new ServicePurchaseRule(purchaseTerm.getPurchaseRule()), true,
                         ((AtLeastPurchaseTerm) purchaseTerm).getQuantity()));
             else if (purchaseTerm instanceof AtMostPurchaseTerm)
-                purchaseTerms.add(new ServicePurchaseTerm(new ServicePurchaseRule(purchaseTerm.getPurchaseRule()), false,
+                purchaseTerms.add(new ServicePurchaseTerm(purchaseTerm.getTermId(), new ServicePurchaseRule(purchaseTerm.getPurchaseRule()), false,
                         ((AtMostPurchaseTerm) purchaseTerm).getQuantity()));
         }
         if (term instanceof CompositePurchaseTermAnd)
@@ -56,5 +60,13 @@ public class ServiceCompositePurchaseTerm {
     
     public void setTermType(String termType) {
         this.termType = termType;
+    }
+    
+    public UUID getTermId() {
+        return termId;
+    }
+    
+    public void setTermId(UUID termId) {
+        this.termId = termId;
     }
 }

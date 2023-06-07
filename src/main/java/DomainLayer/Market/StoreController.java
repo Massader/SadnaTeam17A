@@ -640,40 +640,14 @@ public class StoreController {
         }
     }
 
-    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, UUID itemId)  {
+    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, UUID termId)  {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            return Response.getSuccessResponse(store.removePolicyTerm(itemId));
-        } catch(Exception exception) {
-            return Response.getFailResponse(exception.getMessage());
-        }
-    }
-    
-    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, String categoryName)  {
-        try {
-            if (!storeMap.containsKey(storeId))
-                return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
-            if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
-                return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            return Response.getSuccessResponse(store.removePolicyTerm(categoryName));
-        } catch(Exception exception) {
-            return Response.getFailResponse(exception.getMessage());
-        }
-    }
-    
-    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId)  {
-        try {
-            if (!storeMap.containsKey(storeId))
-                return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
-            if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
-                return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            return Response.getSuccessResponse(store.removePolicyTerm());
+            return Response.getSuccessResponse(store.removePolicyTerm(termId));
         } catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }

@@ -314,12 +314,7 @@ public class StoreController {
     
     @DeleteMapping(path = "/remove-policy-term")
     public Response<Boolean> removePolicyTerm(@RequestBody RemovePolicyTermRequest request) {
-        if (request.getItemId() != null)
-            return service.removePolicyTerm(request.getClientCredentials(), request.getStoreId(), request.getItemId());
-        else if (request.getCategoryName() != null)
-            return service.removePolicyTerm(request.getClientCredentials(), request.getStoreId(), request.getCategoryName());
-        else
-            return service.removePolicyTerm(request.getClientCredentials(), request.getStoreId());
+        return service.removePolicyTerm(request.getClientCredentials(), request.getStoreId(), request.getTermId());
     }
     
     @PostMapping(path = "/post-store-review")
