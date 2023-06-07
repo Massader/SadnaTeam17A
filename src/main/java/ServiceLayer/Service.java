@@ -1340,5 +1340,12 @@ public class Service {
             errorLogger.log(Level.WARNING, response.getMessage());
         return response;
     }
+    
+    public Response<Boolean> removeOwnerPetitionApproval(UUID clientCredentials, UUID storeId, UUID appointee) {
+        Response<Boolean> response = storeController.removeOwnerPetitionApproval(clientCredentials, storeId, appointee);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
+    }
 }
 

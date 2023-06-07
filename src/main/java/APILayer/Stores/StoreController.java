@@ -101,6 +101,11 @@ public class StoreController {
                                                                 @PathVariable(name = "storeId") UUID storeId) {
         return service.getStoreOwnerPetitions(clientCredentials, storeId);
     }
+    
+    @DeleteMapping(path = "/remove-store-owner-approval")
+    public Response<Boolean> removeStoreOwnerApproval(@RequestBody RoleRequest request) {
+        return service.removeOwnerPetitionApproval(request.getClientCredentials(), request.getStoreId(), request.getAppointee());
+    }
 
     @DeleteMapping(path = "/role/remove")
     public Response<Boolean> removeStoreRole(@RequestBody RoleRequest request) {
@@ -307,7 +312,7 @@ public class StoreController {
         return service.getStorePurchaseTerms(clientCredentials, storeId);
     }
     
-    @PostMapping(path = "/remove-policy-term")
+    @DeleteMapping(path = "/remove-policy-term")
     public Response<Boolean> removePolicyTerm(@RequestBody RemovePolicyTermRequest request) {
         if (request.getItemId() != null)
             return service.removePolicyTerm(request.getClientCredentials(), request.getStoreId(), request.getItemId());
@@ -364,7 +369,7 @@ public class StoreController {
         return service.getStoreDiscounts(clientCredentials, storeId);
     }
     
-    @PostMapping(path = "/remove-discount")
+    @DeleteMapping(path = "/remove-discount")
     public Response<Boolean> removeDiscount(@RequestBody DiscountRequest request) {
         return service.removeDiscount(request.getClientCredentials(), request.getStoreId(), request.getDiscount());
     }
