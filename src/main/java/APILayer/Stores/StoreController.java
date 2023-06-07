@@ -96,13 +96,13 @@ public class StoreController {
         return service.appointStoreOwner(request.getClientCredentials(), request.getAppointee(), request.getStoreId());
     }
     
-    @GetMapping(path = "/get-store-owner-appointments/id={id}&storeId={storeId}")
+    @GetMapping(path = "/role/get-store-owner-appointments/id={id}&storeId={storeId}")
     public Response<List<OwnerPetition>> getStoreOwnerPetitions(@PathVariable(name = "id") UUID clientCredentials,
                                                                 @PathVariable(name = "storeId") UUID storeId) {
         return service.getStoreOwnerPetitions(clientCredentials, storeId);
     }
     
-    @DeleteMapping(path = "/remove-store-owner-approval")
+    @DeleteMapping(path = "/role/remove-store-owner-approval")
     public Response<Boolean> removeStoreOwnerApproval(@RequestBody RoleRequest request) {
         return service.removeOwnerPetitionApproval(request.getClientCredentials(), request.getStoreId(), request.getAppointee());
     }
@@ -351,6 +351,12 @@ public class StoreController {
                                            @PathVariable(name = "storeId") UUID storeId,
                                            @PathVariable(name = "itemId") UUID itemId) {
         return service.getItemBids(clientCredentials, storeId, itemId);
+    }
+    
+    @PutMapping(path = "/set-item-purchase-type")
+    public Response<Boolean> setItemPurchaseType(@RequestBody ChangeItemPurchaseTypeRequest request) {
+        return service.setItemPurchaseType(request.getClientCredentials(), request.getStoreId(), request.getItemId(),
+                request.getPurchaseType());
     }
     
     @PostMapping(path = "/add-discount")
