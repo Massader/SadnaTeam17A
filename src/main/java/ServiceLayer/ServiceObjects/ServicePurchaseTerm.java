@@ -53,4 +53,12 @@ public class ServicePurchaseTerm {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+    
+    public String getTermType() {
+        return termType;
+    }
+    
+    public void setTermType(String termType) {
+        this.termType = termType;
+    }
 }

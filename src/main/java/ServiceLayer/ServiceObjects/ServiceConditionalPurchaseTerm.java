@@ -35,4 +35,12 @@ public class ServiceConditionalPurchaseTerm {
     public void setThenPurchaseTerm(ServicePurchaseTerm thenPurchaseTerm) {
         this.thenPurchaseTerm = thenPurchaseTerm;
     }
+    
+    public String getTermType() {
+        return termType;
+    }
+    
+    public void setTermType(String termType) {
+        this.termType = termType;
+    }
 }
