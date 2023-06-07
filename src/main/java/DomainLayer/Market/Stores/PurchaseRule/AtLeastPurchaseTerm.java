@@ -1,7 +1,11 @@
 package DomainLayer.Market.Stores.PurchaseRule;
 
+import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import ServiceLayer.ServiceObjects.ServicePurchaseTerm;
+
+import java.util.UUID;
 
 public class AtLeastPurchaseTerm extends PurchaseTerm {
 
@@ -13,6 +17,13 @@ public class AtLeastPurchaseTerm extends PurchaseTerm {
         this.quantity = quantity;
     }
 
+    public AtLeastPurchaseTerm(ServicePurchaseTerm serviceTerm) {
+        super(serviceTerm.getRule().getType().equals("ITEM") ? new ItemPurchaseRule(UUID.fromString(serviceTerm.getRule().getItemIdOrCategoryOrNull())) :
+                serviceTerm.getRule().getType().equals("CATEGORY") ? new CategoryPurchaseRule(new Category(serviceTerm.getRule().getItemIdOrCategoryOrNull())) :
+                new ShoppingBasketPurchaseRule());
+        this.quantity = serviceTerm.getQuantity();
+    }
+    
     public int getQuantity() {
         return quantity;
     }

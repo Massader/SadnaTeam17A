@@ -7,6 +7,8 @@ import java.util.List;
 public class ServiceConditionalPurchaseTerm {
     private ServicePurchaseTerm ifPurchaseTerm;
     private ServicePurchaseTerm thenPurchaseTerm;
+    private String termType = "CONDITIONAL";
+    
     
     public ServiceConditionalPurchaseTerm(ServicePurchaseTerm ifPurchaseTerm, ServicePurchaseTerm thenPurchaseTerm) {
         this.ifPurchaseTerm = ifPurchaseTerm;

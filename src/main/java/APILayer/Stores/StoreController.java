@@ -347,9 +347,18 @@ public class StoreController {
     }
     
     @PostMapping(path = "/add-discount")
-    public Response<Boolean> addItemDiscount(@RequestBody AddDiscountRequest request) {
+    public Response<Boolean> addDiscount(@RequestBody DiscountRequest request) {
         return service.addDiscount(request.getClientCredentials(), request.getStoreId(), request.getDiscount());
     }
     
+    @GetMapping(path = "/get-discounts/id={id}&storeId={storeId}")
+    public Response<List<ServiceDiscount>> getStoreDiscounts(@PathVariable(name = "id") UUID clientCredentials,
+                                                             @PathVariable(name = "storeId") UUID storeId) {
+        return service.getStoreDiscounts(clientCredentials, storeId);
+    }
     
+    @PostMapping(path = "/remove-discount")
+    public Response<Boolean> removeDiscount(@RequestBody DiscountRequest request) {
+        return service.removeDiscount(request.getClientCredentials(), request.getStoreId(), request.getDiscount());
+    }
 }

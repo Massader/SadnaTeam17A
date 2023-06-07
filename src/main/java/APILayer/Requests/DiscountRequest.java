@@ -4,11 +4,11 @@ import ServiceLayer.ServiceObjects.ServiceDiscount;
 
 import java.util.UUID;
 
-public class AddDiscountRequest extends Request {
+public class DiscountRequest extends Request {
     private ServiceDiscount discount;
     private UUID storeId;
     
-    public AddDiscountRequest(UUID clientCredentials, ServiceDiscount discount, UUID storeId) {
+    public DiscountRequest(UUID clientCredentials, ServiceDiscount discount, UUID storeId) {
         super(clientCredentials);
         this.discount = discount;
         this.storeId = storeId;

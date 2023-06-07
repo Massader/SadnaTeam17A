@@ -8,6 +8,8 @@ public class ServicePurchaseTerm {
     private ServicePurchaseRule rule;
     private boolean atLeast;
     private int quantity;
+    private String termType = "SIMPLE";
+    
     
     public ServicePurchaseTerm(ServicePurchaseRule rule, boolean atLeast, int quantity) {
         this.rule = rule;
