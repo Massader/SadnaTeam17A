@@ -2,7 +2,10 @@ package ServiceLayer;
 
 import DomainLayer.Market.*;
 import DomainLayer.Market.Stores.*;
-import DomainLayer.Market.Stores.Discounts.condition.Discount;
+import DomainLayer.Market.Stores.Discounts.CategoryCalculateDiscount;
+import DomainLayer.Market.Stores.Discounts.Discount;
+import DomainLayer.Market.Stores.Discounts.ItemCalculateDiscount;
+import DomainLayer.Market.Stores.Discounts.ShoppingBasketCalculateDiscount;
 import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Users.*;
@@ -802,8 +805,8 @@ public class Service {
         return response;
     }
 
-    public Response<Boolean> removePolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
-        Response<Boolean> response = storeController.removePolicyTermByStoreOwner(clientCredentials, storeId, term);
+    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, UUID itemId) {
+        Response<Boolean> response = storeController.removePolicyTerm(clientCredentials, storeId, itemId);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
@@ -811,9 +814,34 @@ public class Service {
         eventLogger.log(Level.INFO, "Successfully add Policy to store " + storeId);
         return response;
     }
-
-    public Response<Boolean> addDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
-        Response<Boolean> response = storeController.addDiscountByStoreOwner(clientCredentials, storeId, discount);
+    
+    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, String categoryName) {
+        Response<Boolean> response = storeController.removePolicyTerm(clientCredentials, storeId, categoryName);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return response;
+        }
+        eventLogger.log(Level.INFO, "Successfully add Policy to store " + storeId);
+        return response;
+    }
+    
+    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId) {
+        Response<Boolean> response = storeController.removePolicyTerm(clientCredentials, storeId);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return response;
+        }
+        eventLogger.log(Level.INFO, "Successfully add Policy to store " + storeId);
+        return response;
+    }
+    
+    public Response<Boolean> addDiscount(UUID clientCredentials, UUID storeId, ServiceDiscount serviceDiscount) {
+        Discount discount = createDiscount(serviceDiscount);
+        if (discount == null) {
+            errorLogger.log(Level.WARNING, "Received bad discount");
+            return Response.getFailResponse("Received bad discount");
+        }
+        Response<Boolean> response = storeController.addDiscount(clientCredentials, storeId, discount);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
@@ -821,9 +849,54 @@ public class Service {
         eventLogger.log(Level.INFO, "Successfully add discount to store " + storeId);
         return response;
     }
-
-    public Response<Boolean> removeDiscountByStoreOwner(UUID clientCredentials, UUID storeId, Discount discount) {
-        Response<Boolean> response = storeController.removeDiscountByStoreOwner(clientCredentials, storeId, discount);
+    
+    private Discount createDiscount(ServiceDiscount serviceDiscount) {
+        Discount output = null;
+        try {
+            switch (serviceDiscount.getType()) {
+                case "ITEM":
+                    output = new Discount(
+                            new ItemCalculateDiscount(UUID.fromString(serviceDiscount.getItemIdOrCategoryOrNull())),
+                            serviceDiscount.getDiscountPercentage(),
+                            serviceDiscount.getPurchaseTerm().getAtLeast() ?
+                                    new AtLeastPurchaseTerm(createPurchaseRule(serviceDiscount.getPurchaseTerm().getRule()),
+                                            serviceDiscount.getPurchaseTerm().getQuantity()) :
+                                    new AtMostPurchaseTerm(createPurchaseRule(serviceDiscount.getPurchaseTerm().getRule()),
+                                            serviceDiscount.getPurchaseTerm().getQuantity()));
+                    break;
+                case "CATEGORY":
+                    output = new Discount(
+                            new CategoryCalculateDiscount(new Category(serviceDiscount.getItemIdOrCategoryOrNull())),
+                            serviceDiscount.getDiscountPercentage(),
+                            serviceDiscount.getPurchaseTerm().getAtLeast() ?
+                                    new AtLeastPurchaseTerm(createPurchaseRule(serviceDiscount.getPurchaseTerm().getRule()),
+                                            serviceDiscount.getPurchaseTerm().getQuantity()) :
+                                    new AtMostPurchaseTerm(createPurchaseRule(serviceDiscount.getPurchaseTerm().getRule()),
+                                            serviceDiscount.getPurchaseTerm().getQuantity()));
+                    break;
+                case "BASKET":
+                    output = new Discount(
+                            new ShoppingBasketCalculateDiscount(),
+                            serviceDiscount.getDiscountPercentage(),
+                            serviceDiscount.getPurchaseTerm().getAtLeast() ?
+                                    new AtLeastPurchaseTerm(createPurchaseRule(serviceDiscount.getPurchaseTerm().getRule()),
+                                            serviceDiscount.getPurchaseTerm().getQuantity()) :
+                                    new AtMostPurchaseTerm(createPurchaseRule(serviceDiscount.getPurchaseTerm().getRule()),
+                                            serviceDiscount.getPurchaseTerm().getQuantity()));
+                    break;
+                default:
+                    return null;
+            }
+            return output;
+        } catch (Exception e) {
+            errorLogger.log(Level.WARNING, e.getMessage());
+            return null;
+        }
+        
+    }
+    
+    public Response<Boolean> removeDiscount(UUID clientCredentials, UUID storeId, Discount discount) {
+        Response<Boolean> response = storeController.removeDiscount(clientCredentials, storeId, discount);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
@@ -1112,60 +1185,45 @@ public class Service {
     
     private ConditionalPurchaseTerm createConditionalPurchaseTerm(ServiceConditionalPurchaseTerm conditionalServiceTerm) {
         ConditionalPurchaseTerm termToAdd = new ConditionalPurchaseTerm(null, null, null);
-        List<ServicePurchaseTerm> serviceIfTerms = conditionalServiceTerm.getIfPurchaseTerms();
-        ConcurrentLinkedQueue<PurchaseTerm> ifTerms = new ConcurrentLinkedQueue<>();
-        for (ServicePurchaseTerm serviceTerm : serviceIfTerms) {
-            PurchaseRule rule;
-            PurchaseTerm term;
-            switch (serviceTerm.getRule().getType()) {
-                case "ITEM":
-                    rule = new ItemPurchaseRule(UUID.fromString(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
-                    break;
-                case "CATEGORY":
-                    rule = new CategoryPurchaseRule(new Category(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
-                    break;
-                case "BASKET":
-                    rule = new ShoppingBasketPurchaseRule();
-                    break;
-                default:
-                    return null;
-            }
-            if (serviceTerm.getAtLeast())
-                term = new AtLeastPurchaseTerm(rule, serviceTerm.getQuantity());
-            else
-                term = new AtMostPurchaseTerm(rule, serviceTerm.getQuantity());
-            ifTerms.add(term);
-        }
+        ServicePurchaseTerm serviceIfTerm = conditionalServiceTerm.getIfPurchaseTerm();
+        PurchaseRule ifRule = createPurchaseRule(serviceIfTerm.getRule());
+        PurchaseTerm ifTerm;
+        if (serviceIfTerm.getAtLeast())
+            ifTerm = new AtLeastPurchaseTerm(ifRule, serviceIfTerm.getQuantity());
+        else
+            ifTerm = new AtMostPurchaseTerm(ifRule, serviceIfTerm.getQuantity());
         
-        termToAdd.setPurchaseTermsIf(ifTerms);
+        termToAdd.setPurchaseTermIf(ifTerm);
         
-        List<ServicePurchaseTerm> serviceThenTerms = conditionalServiceTerm.getThenPurchaseTerms();
-        ConcurrentLinkedQueue<PurchaseTerm> thenTerms = new ConcurrentLinkedQueue<>();
-        for (ServicePurchaseTerm serviceTerm : serviceIfTerms) {
-            PurchaseRule rule;
-            PurchaseTerm term;
-            switch (serviceTerm.getRule().getType()) {
-                case "ITEM":
-                    rule = new ItemPurchaseRule(UUID.fromString(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
-                    break;
-                case "CATEGORY":
-                    rule = new CategoryPurchaseRule(new Category(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
-                    break;
-                case "BASKET":
-                    rule = new ShoppingBasketPurchaseRule();
-                    break;
-                default:
-                    return null;
-            }
-            if (serviceTerm.getAtLeast())
-                term = new AtLeastPurchaseTerm(rule, serviceTerm.getQuantity());
-            else
-                term = new AtMostPurchaseTerm(rule, serviceTerm.getQuantity());
-            thenTerms.add(term);
-        }
+        ServicePurchaseTerm serviceThenTerm = conditionalServiceTerm.getThenPurchaseTerm();
+        PurchaseRule thenRule = createPurchaseRule(serviceThenTerm.getRule());
+        PurchaseTerm thenTerm;
         
-        termToAdd.setPurchaseTermsThen(thenTerms);
+        if (serviceThenTerm.getAtLeast())
+            thenTerm = new AtLeastPurchaseTerm(thenRule, serviceThenTerm.getQuantity());
+        else
+            thenTerm = new AtMostPurchaseTerm(thenRule, serviceThenTerm.getQuantity());
+        
+        termToAdd.setPurchaseTermThen(thenTerm);
         return termToAdd;
+    }
+    
+    private PurchaseRule createPurchaseRule(ServicePurchaseRule rule) {
+        PurchaseRule outputRule = null;
+        switch (rule.getType()) {
+            case "ITEM":
+                outputRule = new ItemPurchaseRule(UUID.fromString(rule.getItemIdOrCategoryOrNull()));
+                break;
+            case "CATEGORY":
+                outputRule = new CategoryPurchaseRule(new Category(rule.getItemIdOrCategoryOrNull()));
+                break;
+            case "BASKET":
+                outputRule = new ShoppingBasketPurchaseRule();
+                break;
+            default:
+                return null;
+        }
+        return outputRule;
     }
     
     public Response<Boolean> addCompositePolicyTerm(UUID clientCredentials, UUID storeId,
@@ -1199,21 +1257,8 @@ public class Service {
         List<ServicePurchaseTerm> serviceTerms = compositeServiceTerm.getPurchaseTerms();
         ConcurrentLinkedQueue<PurchaseTerm> terms = new ConcurrentLinkedQueue<>();
         for (ServicePurchaseTerm serviceTerm : serviceTerms) {
-            PurchaseRule rule;
+            PurchaseRule rule = createPurchaseRule(serviceTerm.getRule());
             PurchaseTerm term;
-            switch (serviceTerm.getRule().getType()) {
-                case "ITEM":
-                    rule = new ItemPurchaseRule(UUID.fromString(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
-                    break;
-                case "CATEGORY":
-                    rule = new CategoryPurchaseRule(new Category(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
-                    break;
-                case "BASKET":
-                    rule = new ShoppingBasketPurchaseRule();
-                    break;
-                default:
-                    return null;
-            }
             if (serviceTerm.getAtLeast())
                 term = new AtLeastPurchaseTerm(rule, serviceTerm.getQuantity());
             else
@@ -1248,6 +1293,25 @@ public class Service {
         if (response.isError())
             errorLogger.log(Level.WARNING, response.getMessage());
         return response;
+    }
+    
+    public Response<List<Object>> getStorePurchaseTerms(UUID clientCredentials, UUID storeId) {
+        Response<List<PurchaseTerm>> response = storeController.getStorePurchaseTerms(clientCredentials, storeId);
+        if (response.isError()) {
+            errorLogger.log(Level.WARNING, response.getMessage());
+            return Response.getFailResponse(response.getMessage());
+        }
+        List<Object> output = new ArrayList<>();
+        for (PurchaseTerm term : response.getValue()) {
+            if (term instanceof CompositePurchaseTerm)
+                output.add(new ServiceCompositePurchaseTerm((CompositePurchaseTerm) term));
+            else if (term instanceof ConditionalPurchaseTerm)
+                output.add(new ServiceConditionalPurchaseTerm((ConditionalPurchaseTerm) term));
+            else
+                output.add(new ServicePurchaseTerm(term));
+        }
+        return Response.getSuccessResponse(output);
+        
     }
 }
 

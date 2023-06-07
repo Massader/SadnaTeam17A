@@ -3,63 +3,47 @@ package DomainLayer.Market.Stores.PurchaseRule;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ConditionalPurchaseTerm extends PurchaseTerm {
 
-    private ConcurrentLinkedQueue<PurchaseTerm> purchaseTermsThen;
-    private ConcurrentLinkedQueue<PurchaseTerm> purchaseTermsIf;
+    private PurchaseTerm purchaseTermThen;
+    private PurchaseTerm purchaseTermIf;
 
     public ConditionalPurchaseTerm(PurchaseRule purchaseRule) {
         super(purchaseRule);
     }
     
-    public ConditionalPurchaseTerm(PurchaseRule purchaseRule, List<PurchaseTerm> purchaseTermsIf,
-                                   List<PurchaseTerm> purchaseTermsThen) {
+    public ConditionalPurchaseTerm(PurchaseRule purchaseRule, PurchaseTerm purchaseTermIf,
+                                   PurchaseTerm purchaseTermThen) {
         super(purchaseRule);
-        this.purchaseTermsIf = new ConcurrentLinkedQueue<>(purchaseTermsIf);
-        this.purchaseTermsThen = new ConcurrentLinkedQueue<>(purchaseTermsThen);
+        this.purchaseTermIf = purchaseTermIf;
+        this.purchaseTermThen = purchaseTermThen;
     }
 
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store) {
-        boolean toCheckResult = false;
-        if (purchaseTermsIf != null && !purchaseTermsThen.isEmpty()) {return true;}
-            for (PurchaseTerm purchaseTerm : purchaseTermsThen) {
-                if (purchaseTerm.purchaseRuleOccurs(shoppingBasket, store)) {
-                    toCheckResult = true;
-                    break;
-                }
-            }
-
-        if (!toCheckResult) {
+        if (purchaseTermIf != null && purchaseTermIf.purchaseRuleOccurs(shoppingBasket, store) && purchaseTermThen != null)
+            return purchaseTermThen.purchaseRuleOccurs(shoppingBasket, store);
+        else if (purchaseTermIf != null && !purchaseTermIf.purchaseRuleOccurs(shoppingBasket, store))
             return true;
-        }
-        if (purchaseTermsIf != null && !purchaseTermsIf.isEmpty()) {
-            for (PurchaseTerm purchaseTerm : purchaseTermsIf) {
-                if (!purchaseTerm.purchaseRuleOccurs(shoppingBasket, store)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return false;
     }
     
-    public ConcurrentLinkedQueue<PurchaseTerm> getPurchaseTermsThen() {
-        return purchaseTermsThen;
+    public PurchaseTerm getPurchaseTermThen() {
+        return purchaseTermThen;
     }
     
-    public ConcurrentLinkedQueue<PurchaseTerm> getPurchaseTermsIf() {
-        return purchaseTermsIf;
+    public PurchaseTerm getPurchaseTermIf() {
+        return purchaseTermIf;
     }
     
-    public void setPurchaseTermsThen(ConcurrentLinkedQueue<PurchaseTerm> purchaseTermsThen) {
-        this.purchaseTermsThen = purchaseTermsThen;
+    public void setPurchaseTermThen(PurchaseTerm purchaseTermThen) {
+        this.purchaseTermThen = purchaseTermThen;
     }
     
-    public void setPurchaseTermsIf(ConcurrentLinkedQueue<PurchaseTerm> purchaseTermsIf) {
-        this.purchaseTermsIf = purchaseTermsIf;
+    public void setPurchaseTermIf(PurchaseTerm purchaseTermIf) {
+        this.purchaseTermIf = purchaseTermIf;
     }
 }
 

@@ -1,4 +1,4 @@
-package DomainLayer.Market.Stores.Discounts.condition;
+package DomainLayer.Market.Stores.Discounts;
 
 import DomainLayer.Market.Stores.PurchaseRule.CompositePurchaseTerm;
 import DomainLayer.Market.Stores.Store;
@@ -25,20 +25,17 @@ public class StoreDiscount {
 
     public synchronized void addDiscount(Discount discount) throws Exception {
         if (discount == null) {
-            throw new Exception("the discount is null, please put valid discount");
+            throw new Exception("the discount is null");
         }
         if (discountsAssembly.getDiscounts().contains(discount))
-            throw new Exception("the discount is already exist, please put valid discount");
-
-        for (Discount dis:discountsAssembly.getDiscounts()) {
-            if(dis.getOptioncalculateDiscount().equals(discount.getOptioncalculateDiscount()))
-                throw new Exception("the discount is already exist, please put valid discount");
+            throw new Exception("the discount already exists");
+        for (Discount dis : discountsAssembly.getDiscounts()) {
+            if(dis.getOptionCalculateDiscount().equals(discount.getOptionCalculateDiscount()))
+                throw new Exception("the discount already exists");
         }
-
         if (discount.getPurchaseTerm() instanceof CompositePurchaseTerm) {
             // If the new term is a CompositePurchaseTerm, remove any existing terms in the purchasePolicies
             // that are equal to it (using the equals() method)
-            CompositePurchaseTerm compositeTerm = (CompositePurchaseTerm) discount.getPurchaseTerm();
             discountsAssembly.getDiscounts().removeIf(p -> p.getPurchaseTerm().equals(discount.getPurchaseTerm()));
         }
         // If the new term is not a CompositePurchaseTerm, simply add it to purchasePolicies
@@ -57,20 +54,20 @@ public class StoreDiscount {
         }
     }
 
-    public synchronized double CalculateDiscount(ShoppingBasket shoppingBasket, Store store){
-        return  this.discountsAssembly.CalculateDiscount(shoppingBasket,store);
+    public synchronized double calculateDiscount(ShoppingBasket shoppingBasket, Store store){
+        return this.discountsAssembly.calculateDiscount(shoppingBasket,store);
     }
 
-    public synchronized double CalculateShoppingBasket(ShoppingBasket shoppingBasket, Store store){
+    public synchronized double calculateShoppingBasket(ShoppingBasket shoppingBasket, Store store){
         double originalPrice= store.calculatePriceOfBasket(shoppingBasket.getItems());
-        double discount = this.CalculateDiscount(shoppingBasket,store);
-        return  Math.max(0.0, originalPrice-discount);
+        double discount = this.calculateDiscount(shoppingBasket,store);
+        return  Math.max(0.0, originalPrice - discount);
     }
     public void changeNumericalAssemblyOfDiscount(){
         if( getDiscountsAssembly() instanceof CombiningDiscounts){
-            this.discountsAssembly =new MaxDiscounts(getDiscountsAssembly().getDiscounts());
+            this.discountsAssembly = new MaxDiscounts(getDiscountsAssembly().getDiscounts());
         }
-        else this.discountsAssembly= new CombiningDiscounts(getDiscountsAssembly().getDiscounts());
+        else this.discountsAssembly = new CombiningDiscounts(getDiscountsAssembly().getDiscounts());
     }
 
 
