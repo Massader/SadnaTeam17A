@@ -370,8 +370,11 @@ public class UserController {
             deleteShoppingCart(user.getCart());
             usernames.remove(user.getUsername());
             //remove roles
-            for (Role role: user.getRoles())
+            for (Role role: user.getRoles()) {
                 removeStoreRole(clientCredentials, userId, role.getStoreId());
+                if (role.getPermissions().contains(StorePermissions.STORE_FOUNDER))
+                    storeController.shutdownStore(clientCredentials, role.getStoreId());
+            }
             securityController.removePassword(userId);
             return Response.getSuccessResponse(true);
         }
