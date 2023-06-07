@@ -1,8 +1,11 @@
 package DomainLayer.Market.Users;
 
+import DomainLayer.Market.Users.Roles.OwnerPetition;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -71,7 +74,6 @@ public class User extends Client{
     public void setPurchases(ConcurrentLinkedQueue<Purchase> purchases){
         this.purchases=purchases;
     }
-
-
-
+    
+    
 }

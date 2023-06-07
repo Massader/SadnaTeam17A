@@ -240,7 +240,7 @@ public class UserController {
             if(!storeController.storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
             if(!storeController.getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
-                return Response.getFailResponse("User doesn't have permission.");
+                return Response.getFailResponse("User doesn't have permission to appoint owners.");
             Response<User> response2 = this.getUser(appointee);
             if(response2.isError())
                 return Response.getFailResponse(response2.getMessage());
@@ -249,10 +249,32 @@ public class UserController {
             if(storeController.getStore(storeId).getRolesMap().containsKey(appointee) &&
                     storeController.getStore(storeId).checkPermission(appointee, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("User already owner of the shop.");
-            StoreOwner storeOwner = new StoreOwner(storeId);
-            response2.getValue().addStoreRole(storeOwner);
-            storeController.getStore(storeId).addRole(appointee, storeOwner);
-            storeController.getStore(storeId).getOwner(clientCredentials).addAppointee(appointee);
+            User user = response2.getValue();
+            if (user == null)
+                return Response.getFailResponse("User returned was null");
+            Store store = storeController.getStore(storeId);
+            List<OwnerPetition> petitions = store.getOwnerPetitions().stream()
+                    .filter(element -> element.getAppointeeId().equals(user.getId()) &&
+                                       element.getStoreId().equals(storeId))
+                    .toList();
+            OwnerPetition petition;
+            if (petitions.isEmpty()) {
+                petition = new OwnerPetition(user.getId(), clientCredentials, storeId);
+                store.getOwnerPetitions().add(petition);
+            }
+            else {
+                petition = petitions.get(0);
+                petition.approveAppointment(clientCredentials);
+            }
+            if (petition.getOwnersList().containsAll(storeController.getStore(storeId).getStoreOwners())) {
+                StoreOwner storeOwner = new StoreOwner(storeId);
+                user.addStoreRole(storeOwner);
+                store.addRole(appointee, storeOwner);
+                store.getOwner(clientCredentials).addAppointee(appointee);
+                notificationController.sendNotification(appointee,
+                        "Your appointment as a store owner for " + store.getName() + " has been approved by all owners.");
+                store.getOwnerPetitions().remove(petition);
+            }
             return Response.getSuccessResponse(true);
         }
         catch(Exception exception){
@@ -353,8 +375,11 @@ public class UserController {
             deleteShoppingCart(user.getCart());
             usernames.remove(user.getUsername());
             //remove roles
-            for (Role role: user.getRoles())
+            for (Role role: user.getRoles()) {
                 removeStoreRole(clientCredentials, userId, role.getStoreId());
+                if (role.getPermissions().contains(StorePermissions.STORE_FOUNDER))
+                    storeController.shutdownStore(clientCredentials, role.getStoreId());
+            }
             securityController.removePassword(userId);
             return Response.getSuccessResponse(true);
         }

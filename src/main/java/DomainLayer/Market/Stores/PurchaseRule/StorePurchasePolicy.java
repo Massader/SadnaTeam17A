@@ -71,44 +71,13 @@ public class StorePurchasePolicy {
 
 
 
-    public synchronized void removePurchaseTerm(UUID itemId) throws Exception {
-        if (itemId == null) {
-            throw new Exception("Failed to remove purchase term - item id was null");
+    public synchronized void removePurchaseTerm(UUID termId) throws Exception {
+        if (termId == null) {
+            throw new Exception("Failed to remove purchase term - term id was null");
         }
         boolean deleted = false;
         for (PurchaseTerm term : purchasePolicies) {
-            if (term.getPurchaseRule() instanceof ItemPurchaseRule &&
-                    ((ItemPurchaseRule) term.getPurchaseRule()).getItemId().equals(itemId)) {
-                purchasePolicies.remove(term);
-                deleted = true;
-                break;
-            }
-        }
-        if (!deleted)
-            throw new Exception("Failed to remove purchase term - term not found");
-    }
-    
-    public synchronized void removePurchaseTerm(String categoryName) throws Exception {
-        if (categoryName == null) {
-            throw new Exception("Failed to remove purchase term - category name was null");
-        }
-        boolean deleted = false;
-        for (PurchaseTerm term : purchasePolicies) {
-            if (term.getPurchaseRule() instanceof CategoryPurchaseRule &&
-                    ((CategoryPurchaseRule) term.getPurchaseRule()).getCategory().getCategoryName().equals(categoryName)) {
-                purchasePolicies.remove(term);
-                deleted = true;
-                break;
-            }
-        }
-        if (!deleted)
-            throw new Exception("Failed to remove purchase term - term not found");
-    }
-    
-    public synchronized void removePurchaseTerm() throws Exception {
-        boolean deleted = false;
-        for (PurchaseTerm term : purchasePolicies) {
-            if (term.getPurchaseRule() instanceof ShoppingBasketPurchaseRule) {
+            if (term.getTermId().equals(termId)) {
                 purchasePolicies.remove(term);
                 deleted = true;
                 break;

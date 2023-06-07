@@ -2,6 +2,7 @@ package APILayer.Stores;
 
 import APILayer.Requests.*;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
+import DomainLayer.Market.Users.Roles.OwnerPetition;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.*;
@@ -80,9 +81,9 @@ public class StoreController {
     }
 
     @GetMapping(path = "/store-staff/id={id}&storeId={storeId}")
-    public Response<List<ServiceUser>> getStoreStaff(@PathVariable(name = "id") UUID id,
+    public Response<List<ServiceUser>> getStoreStaff(@PathVariable(name = "id") UUID clientCredentials,
                                                      @PathVariable(name = "storeId") UUID storeId) {
-        return service.getStoreStaff(id, storeId);
+        return service.getStoreStaff(clientCredentials, storeId);
     }
 
     @PostMapping(path = "/role/appoint-manager")
@@ -93,6 +94,17 @@ public class StoreController {
     @PostMapping(path = "/role/appoint-owner")
     public Response<Boolean> appointStoreOwner(@RequestBody RoleRequest request) {
         return service.appointStoreOwner(request.getClientCredentials(), request.getAppointee(), request.getStoreId());
+    }
+    
+    @GetMapping(path = "/role/get-store-owner-appointments/id={id}&storeId={storeId}")
+    public Response<List<OwnerPetition>> getStoreOwnerPetitions(@PathVariable(name = "id") UUID clientCredentials,
+                                                                @PathVariable(name = "storeId") UUID storeId) {
+        return service.getStoreOwnerPetitions(clientCredentials, storeId);
+    }
+    
+    @DeleteMapping(path = "/role/remove-store-owner-approval")
+    public Response<Boolean> removeStoreOwnerApproval(@RequestBody RoleRequest request) {
+        return service.removeOwnerPetitionApproval(request.getClientCredentials(), request.getStoreId(), request.getAppointee());
     }
 
     @DeleteMapping(path = "/role/remove")
@@ -300,14 +312,9 @@ public class StoreController {
         return service.getStorePurchaseTerms(clientCredentials, storeId);
     }
     
-    @PostMapping(path = "/remove-policy-term")
+    @DeleteMapping(path = "/remove-policy-term")
     public Response<Boolean> removePolicyTerm(@RequestBody RemovePolicyTermRequest request) {
-        if (request.getItemId() != null)
-            return service.removePolicyTerm(request.getClientCredentials(), request.getStoreId(), request.getItemId());
-        else if (request.getCategoryName() != null)
-            return service.removePolicyTerm(request.getClientCredentials(), request.getStoreId(), request.getCategoryName());
-        else
-            return service.removePolicyTerm(request.getClientCredentials(), request.getStoreId());
+        return service.removePolicyTerm(request.getClientCredentials(), request.getStoreId(), request.getTermId());
     }
     
     @PostMapping(path = "/post-store-review")
@@ -346,14 +353,14 @@ public class StoreController {
         return service.getItemBids(clientCredentials, storeId, itemId);
     }
     
-<<<<<<< Updated upstream
-=======
+
     @GetMapping(path = "/get-store-bids/id={id}&storeId={storeId}")
     public Response<List<Bid>> getItemBids(@PathVariable(name = "id") UUID clientCredentials,
                                            @PathVariable(name = "storeId") UUID storeId) {
         return service.getStoreBids(clientCredentials, storeId);
     }
     
+
     @GetMapping(path = "/get-user-item-bid/id={id}&storeId={storeId}&itemId={itemId}&bidderId={bidderId}")
     public Response<Bid> getUserItemBid(@PathVariable(name = "id") UUID clientCredentials,
                                         @PathVariable(name = "storeId") UUID storeId,
@@ -368,7 +375,6 @@ public class StoreController {
                 request.getPurchaseType());
     }
     
->>>>>>> Stashed changes
     @PostMapping(path = "/add-discount")
     public Response<Boolean> addDiscount(@RequestBody DiscountRequest request) {
         return service.addDiscount(request.getClientCredentials(), request.getStoreId(), request.getDiscount());
@@ -380,7 +386,7 @@ public class StoreController {
         return service.getStoreDiscounts(clientCredentials, storeId);
     }
     
-    @PostMapping(path = "/remove-discount")
+    @DeleteMapping(path = "/remove-discount")
     public Response<Boolean> removeDiscount(@RequestBody DiscountRequest request) {
         return service.removeDiscount(request.getClientCredentials(), request.getStoreId(), request.getDiscount());
     }

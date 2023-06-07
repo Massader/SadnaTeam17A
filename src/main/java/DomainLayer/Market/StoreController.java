@@ -4,9 +4,9 @@ import DomainLayer.Market.Stores.*;
 import DomainLayer.Market.Stores.Discounts.Discount;
 import DomainLayer.Market.Stores.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.PurchaseRule.StorePurchasePolicy;
-import DomainLayer.Market.Stores.PurchaseTypes.Bid;
-import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
+import DomainLayer.Market.Stores.PurchaseTypes.*;
 import DomainLayer.Market.Users.*;
+import DomainLayer.Market.Users.Roles.OwnerPetition;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreFounder;
 import DomainLayer.Market.Users.Roles.StorePermissions;
@@ -639,40 +639,14 @@ public class StoreController {
         }
     }
 
-    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, UUID itemId)  {
+    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, UUID termId)  {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            return Response.getSuccessResponse(store.removePolicyTerm(itemId));
-        } catch(Exception exception) {
-            return Response.getFailResponse(exception.getMessage());
-        }
-    }
-    
-    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, String categoryName)  {
-        try {
-            if (!storeMap.containsKey(storeId))
-                return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
-            if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
-                return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            return Response.getSuccessResponse(store.removePolicyTerm(categoryName));
-        } catch(Exception exception) {
-            return Response.getFailResponse(exception.getMessage());
-        }
-    }
-    
-    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId)  {
-        try {
-            if (!storeMap.containsKey(storeId))
-                return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
-            if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
-                return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            return Response.getSuccessResponse(store.removePolicyTerm());
+            return Response.getSuccessResponse(store.removePolicyTerm(termId));
         } catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
@@ -820,7 +794,7 @@ public class StoreController {
         }
     }
     
-    public Response<Boolean> setItemPurchaseType(UUID clientCredentials, UUID storeId, UUID itemId, PurchaseType purchaseType) {
+    public Response<Boolean> setItemPurchaseType(UUID clientCredentials, UUID storeId, UUID itemId, String purchaseTypeName) {
         try {
             if (!userController.isRegisteredUser(clientCredentials))
                 return Response.getFailResponse("User does not exist.");
@@ -832,6 +806,23 @@ public class StoreController {
             Item item = getStore(storeId).getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
+            PurchaseType purchaseType;
+            switch (purchaseTypeName) {
+                case "DIRECT":
+                    purchaseType = new DirectPurchase(purchaseTypeName);
+                    break;
+                case "BID":
+                    purchaseType = new BidPurchase(purchaseTypeName);
+                    break;
+                case "AUCTION":
+                    purchaseType = new AuctionPurchase(purchaseTypeName);
+                    break;
+                case "LOTTERY":
+                    purchaseType = new LotteryPurchase(purchaseTypeName);
+                    break;
+                default:
+                    return Response.getFailResponse("Purchase type name is invalid");
+            }
             item.setPurchaseType(purchaseType);
             return Response.getSuccessResponse(true);
         } catch (Exception e) {
@@ -915,6 +906,24 @@ public class StoreController {
         }
     }
     
+    public Response<List<Bid>> getStoreBids(UUID clientCredentials, UUID storeId) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Store store = getStore(storeId);
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) &&
+                    !store.checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
+                return Response.getFailResponse("User does not have permission to see item bids.");
+            List<Bid> bids = new ArrayList<>();
+            for (Item item : store.getItems().values()) {
+                bids.addAll(item.getBids());
+            }
+            return Response.getSuccessResponse(bids);
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
+    
     public Response<List<PurchaseTerm>> getStorePurchaseTerms(UUID clientCredentials, UUID storeId) {
         try {
             if (!storeExist(storeId))
@@ -948,8 +957,6 @@ public class StoreController {
             return Response.getFailResponse(e.getMessage());
         }
     }
-<<<<<<< Updated upstream
-=======
     
     public Response<List<OwnerPetition>> getStoreOwnerPetitions(UUID clientCredentials, UUID storeId) {
         try {
@@ -997,5 +1004,4 @@ public class StoreController {
             return Response.getFailResponse(e.getMessage());
         }
     }
->>>>>>> Stashed changes
 }

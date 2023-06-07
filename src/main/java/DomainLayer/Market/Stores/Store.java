@@ -5,6 +5,7 @@ import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Stores.PurchaseRule.StorePurchasePolicy;
 import DomainLayer.Market.Users.Client;
 import DomainLayer.Market.Users.Purchase;
+import DomainLayer.Market.Users.Roles.OwnerPetition;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
@@ -29,6 +30,7 @@ public class Store {
     private final ConcurrentLinkedQueue<Sale> sales;
     private final ConcurrentHashMap<UUID, Role> rolesMap;
     private ConcurrentHashMap<UUID, StoreReview> reviews;
+    private List<OwnerPetition> ownerPetitions;
     
     
     public Store(String name, String description) {
@@ -45,6 +47,7 @@ public class Store {
         sales = new ConcurrentLinkedQueue<>();
         rolesMap = new ConcurrentHashMap<>();
         reviews = new ConcurrentHashMap<>();
+        ownerPetitions = new ArrayList<>();
     }
 
     public StoreDiscount getDiscounts() {
@@ -297,18 +300,8 @@ public class Store {
         return true;
     }
 
-    public Boolean removePolicyTerm(UUID itemId) throws Exception {
-        this.policy.removePurchaseTerm(itemId);
-        return true;
-    }
-    
-    public Boolean removePolicyTerm(String categoryName) throws Exception {
-        this.policy.removePurchaseTerm(categoryName);
-        return true;
-    }
-    
-    public Boolean removePolicyTerm() throws Exception {
-        this.policy.removePurchaseTerm();
+    public Boolean removePolicyTerm(UUID termId) throws Exception {
+        this.policy.removePurchaseTerm(termId);
         return true;
     }
 
@@ -398,6 +391,21 @@ public class Store {
         reviews.put(review.getId(), review);
         addRating(rating);
         return review.getId();
+    }
+    
+    public List<OwnerPetition> getOwnerPetitions() {
+        return ownerPetitions;
+    }
+    
+    public boolean removeOwnerPetitionApproval(UUID appointee, UUID owner) throws Exception {
+        List<OwnerPetition> petitions = ownerPetitions.stream().filter(appointment -> appointment.getAppointeeId().equals(appointee)).toList();
+        if (petitions.isEmpty())
+            throw new Exception("Petition for this appointee does not exist");
+        OwnerPetition petition = petitions.get(0);
+        petition.removeApproval(owner);
+        if (petition.getOwnersList().isEmpty())
+            ownerPetitions.remove(petition);
+        return true;
     }
 }
 

@@ -9,6 +9,7 @@ import DomainLayer.Market.Stores.Discounts.ShoppingBasketCalculateDiscount;
 import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Users.*;
+import DomainLayer.Market.Users.Roles.OwnerPetition;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Payment.PaymentController;
 import DomainLayer.Payment.PaymentProxy;
@@ -805,33 +806,13 @@ public class Service {
         return response;
     }
 
-    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, UUID itemId) {
-        Response<Boolean> response = storeController.removePolicyTerm(clientCredentials, storeId, itemId);
+    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, UUID termId) {
+        Response<Boolean> response = storeController.removePolicyTerm(clientCredentials, storeId, termId);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
         }
-        eventLogger.log(Level.INFO, "Successfully add Policy to store " + storeId);
-        return response;
-    }
-    
-    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, String categoryName) {
-        Response<Boolean> response = storeController.removePolicyTerm(clientCredentials, storeId, categoryName);
-        if (response.isError()) {
-            errorLogger.log(Level.WARNING, response.getMessage());
-            return response;
-        }
-        eventLogger.log(Level.INFO, "Successfully add Policy to store " + storeId);
-        return response;
-    }
-    
-    public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId) {
-        Response<Boolean> response = storeController.removePolicyTerm(clientCredentials, storeId);
-        if (response.isError()) {
-            errorLogger.log(Level.WARNING, response.getMessage());
-            return response;
-        }
-        eventLogger.log(Level.INFO, "Successfully add Policy to store " + storeId);
+        eventLogger.log(Level.INFO, "Successfully removed policy term from store " + storeId);
         return response;
     }
     
@@ -1301,6 +1282,13 @@ public class Service {
         return response;
     }
     
+    public Response<List<Bid>> getStoreBids(UUID clientCredentials, UUID storeId) {
+        Response<List<Bid>> response = storeController.getStoreBids(clientCredentials, storeId);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
+    }
+    
     public Response<List<Object>> getStorePurchaseTerms(UUID clientCredentials, UUID storeId) {
         Response<List<PurchaseTerm>> response = storeController.getStorePurchaseTerms(clientCredentials, storeId);
         if (response.isError()) {
@@ -1332,8 +1320,6 @@ public class Service {
         }
         return Response.getSuccessResponse(output);
     }
-<<<<<<< Updated upstream
-=======
     
     public Response<List<OwnerPetition>> getStoreOwnerPetitions(UUID clientCredentials, UUID storeId) {
         Response<List<OwnerPetition>> response = storeController.getStoreOwnerPetitions(clientCredentials, storeId);
@@ -1362,6 +1348,5 @@ public class Service {
             errorLogger.log(Level.WARNING, response.getMessage());
         return response;
     }
->>>>>>> Stashed changes
 }
 
