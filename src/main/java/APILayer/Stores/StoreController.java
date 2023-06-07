@@ -346,6 +346,29 @@ public class StoreController {
         return service.getItemBids(clientCredentials, storeId, itemId);
     }
     
+<<<<<<< Updated upstream
+=======
+    @GetMapping(path = "/get-store-bids/id={id}&storeId={storeId}")
+    public Response<List<Bid>> getItemBids(@PathVariable(name = "id") UUID clientCredentials,
+                                           @PathVariable(name = "storeId") UUID storeId) {
+        return service.getStoreBids(clientCredentials, storeId);
+    }
+    
+    @GetMapping(path = "/get-user-item-bid/id={id}&storeId={storeId}&itemId={itemId}&bidderId={bidderId}")
+    public Response<Bid> getUserItemBid(@PathVariable(name = "id") UUID clientCredentials,
+                                        @PathVariable(name = "storeId") UUID storeId,
+                                        @PathVariable(name = "itemId") UUID itemId,
+                                        @PathVariable(name = "bidderId") UUID bidderId) {
+        return service.getUserItemBid(clientCredentials, storeId, itemId, bidderId);
+    }
+    
+    @PutMapping(path = "/set-item-purchase-type")
+    public Response<Boolean> setItemPurchaseType(@RequestBody ChangeItemPurchaseTypeRequest request) {
+        return service.setItemPurchaseType(request.getClientCredentials(), request.getStoreId(), request.getItemId(),
+                request.getPurchaseType());
+    }
+    
+>>>>>>> Stashed changes
     @PostMapping(path = "/add-discount")
     public Response<Boolean> addDiscount(@RequestBody DiscountRequest request) {
         return service.addDiscount(request.getClientCredentials(), request.getStoreId(), request.getDiscount());

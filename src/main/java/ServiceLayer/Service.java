@@ -1332,5 +1332,36 @@ public class Service {
         }
         return Response.getSuccessResponse(output);
     }
+<<<<<<< Updated upstream
+=======
+    
+    public Response<List<OwnerPetition>> getStoreOwnerPetitions(UUID clientCredentials, UUID storeId) {
+        Response<List<OwnerPetition>> response = storeController.getStoreOwnerPetitions(clientCredentials, storeId);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
+    }
+    
+    public Response<Boolean> removeOwnerPetitionApproval(UUID clientCredentials, UUID storeId, UUID appointee) {
+        Response<Boolean> response = storeController.removeOwnerPetitionApproval(clientCredentials, storeId, appointee);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
+    }
+    
+    public Response<Boolean> setItemPurchaseType(UUID clientCredentials, UUID storeId, UUID itemId, String purchaseType) {
+        Response<Boolean> response = storeController.setItemPurchaseType(clientCredentials, storeId, itemId, purchaseType);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
+    }
+    
+    public Response<Bid> getUserItemBid(UUID clientCredentials, UUID storeId, UUID itemId, UUID bidderId) {
+        Response<Bid> response = storeController.getUserItemBid(clientCredentials, storeId, itemId, bidderId);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
+    }
+>>>>>>> Stashed changes
 }
 
