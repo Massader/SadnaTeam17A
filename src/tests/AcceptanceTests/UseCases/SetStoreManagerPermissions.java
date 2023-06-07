@@ -1,5 +1,6 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import DomainLayer.Market.UserController;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.*;
@@ -43,6 +44,7 @@ public class SetStoreManagerPermissions extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
+        UserController.repositoryFactory.userRepository.deleteAll();
         bridge.register("founder", "Aa1234");
         bridge.register("owner", "Aa1234");
         bridge.register("manager1", "Aa1234");

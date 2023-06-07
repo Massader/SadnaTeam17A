@@ -18,6 +18,10 @@ public class StoreDiscount {
         if(max){this.discountsAssembly= new MaxDiscounts();}
             else{this.discountsAssembly= new CombiningDiscounts();}}
 
+    public StoreDiscount() {
+
+    }
+
 
     public NumericalAssemblyOfDiscount getDiscountsAssembly() {
         return discountsAssembly;

@@ -1,19 +1,35 @@
 package DomainLayer.Market.Users;
 
 import DomainLayer.Market.Stores.Item;
+import jakarta.persistence.*;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Entity
+@Table(name = "ShoppingCarts")
 public class ShoppingCart {
-    private UUID userId;
-    private ConcurrentHashMap<UUID,ShoppingBasket> shoppingBaskets;// store id,
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "uuid", nullable = false)
+    private Long uuid;
 
+//    @OneToOne(mappedBy = "cart")
+    @Column(name = "userId")
+    private UUID userId;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Map<UUID,ShoppingBasket> shoppingBaskets;// store id,
+
+    public ShoppingCart(){
+        this.shoppingBaskets = new ConcurrentHashMap<>();
+    }
     public ShoppingCart(UUID userId){
         this.userId = userId;
         this.shoppingBaskets = new ConcurrentHashMap<>();
     }
-    public ConcurrentHashMap<UUID,ShoppingBasket> getShoppingBaskets() {
+    public Map<UUID,ShoppingBasket> getShoppingBaskets() {
         return shoppingBaskets;
     }
 

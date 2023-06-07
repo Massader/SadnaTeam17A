@@ -16,7 +16,7 @@ public class ServicePurchase {
 
     public ServicePurchase(Purchase purchase) {
         this.id = purchase.getId();
-        this.userId = purchase.getUserId();
+        this.userId = purchase.getUser().getId();
         this.itemId = purchase.getItemId();
         this.date = purchase.getDate();
         this.quantity = purchase.getQuantity();

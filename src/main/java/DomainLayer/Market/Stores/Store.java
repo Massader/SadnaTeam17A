@@ -3,6 +3,11 @@ package DomainLayer.Market.Stores;
 import DomainLayer.Market.Stores.Discounts.*;
 import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Stores.PurchaseRule.StorePurchasePolicy;
+import DataAccessLayer.RepositoryFactory;
+import DataAccessLayer.UserRepository;
+import DataAccessLayer.controllers.UserDalController;
+import DomainLayer.Market.Stores.Discounts.condition.*;
+import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.*;
 import DomainLayer.Market.Users.Client;
 import DomainLayer.Market.Users.Purchase;
 import DomainLayer.Market.Users.Roles.OwnerPetition;
@@ -11,19 +16,27 @@ import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.ShoppingBasket;
 import DomainLayer.Market.Users.User;
+import jakarta.persistence.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+//@Entity
+//@Table(name = "Stores")
 public class Store {
-    private String name;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.UUID)
+//    @Column(name = "storeId", nullable = false, unique = true)
     private UUID storeId;
+
+    private String name;
     private String description;
     private double rating;
     private boolean closed;
     private boolean shutdown;
     private int ratingCounter;
+
     private final ConcurrentHashMap<UUID, Item> items;
     private final StoreDiscount discounts;
     private final StorePurchasePolicy policy;
@@ -31,7 +44,7 @@ public class Store {
     private final ConcurrentHashMap<UUID, Role> rolesMap;
     private ConcurrentHashMap<UUID, StoreReview> reviews;
     private List<OwnerPetition> ownerPetitions;
-    
+
     
     public Store(String name, String description) {
         this.name = name;
@@ -50,6 +63,15 @@ public class Store {
         ownerPetitions = new ArrayList<>();
     }
 
+    public Store(){
+        items = new ConcurrentHashMap<>();
+        discounts = new StoreDiscount();
+        policy = new StorePurchasePolicy();
+        sales = new ConcurrentLinkedQueue<>();
+        rolesMap = new ConcurrentHashMap<>();
+
+
+    }
     public StoreDiscount getDiscounts() {
         return discounts;
     }
@@ -57,7 +79,7 @@ public class Store {
     public StorePurchasePolicy getPolicy() {
         return policy;
     }
-    public ConcurrentHashMap<UUID, Role> getRolesMap() {
+    public Map<UUID, Role> getRolesMap() {
         return rolesMap;
     }
 
@@ -74,7 +96,7 @@ public class Store {
         return (rolesMap.get(clientCredentials).getPermissions().contains(permission));
     }
 
-    public ConcurrentHashMap<UUID, Item> getItems() {
+    public Map<UUID, Item> getItems() {
         return items;
     }
 
@@ -116,18 +138,21 @@ public class Store {
         return description;
     }
 
-    public void addRole(UUID clientCredentials, Role role) throws Exception {
-        if (rolesMap.containsKey(clientCredentials)) {
-            Role existingRole = rolesMap.get(clientCredentials);
+    public void addRole(User user, Role role) throws Exception {
+        if (rolesMap.containsKey(user.getId())) {
+            Role existingRole = rolesMap.get(user.getId());
             if (role.getPermissions().contains(StorePermissions.STORE_OWNER)
                     && !existingRole.getPermissions().contains(StorePermissions.STORE_OWNER)) {
-                rolesMap.put(clientCredentials, role);
+                rolesMap.put(user.getId(), role);
                 return;
             } else {
                 throw new Exception("User is already a member of store staff.");
             }
         }
-        rolesMap.put(clientCredentials, role);
+//        user.addStoreRole(role);
+        rolesMap.put(user.getId(), role);
+
+
     }
 
     public void removeRole(UUID idToRemove) {
@@ -179,14 +204,14 @@ public class Store {
         return items.containsKey(itemId);
     }
 
-    public ConcurrentLinkedQueue<Sale> getSales(UUID clientCredentials) throws Exception {
+    public Collection<Sale> getSales(UUID clientCredentials) throws Exception {
         if (rolesMap.containsKey(clientCredentials)) {
             return sales;
         }
         throw new Exception("the user is not have permissions to get sale history of store " + this.name);
     }
 
-    public ConcurrentLinkedQueue<Sale> getSales() {
+    public Collection<Sale> getSales() {
         return sales;
     }
 
@@ -236,7 +261,7 @@ public class Store {
         }
     }
 
-    public void purchaseBasket(Client client, ShoppingBasket shoppingBasket) throws Exception {
+    public User purchaseBasket(Client client, ShoppingBasket shoppingBasket) throws Exception {
         ConcurrentHashMap<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
         synchronized (items) {
             for (UUID itemId : shoppingBasketItems.keySet()) {
@@ -248,12 +273,15 @@ public class Store {
                     Sale sale = new Sale(client.getId(),shoppingBasket.getStoreId(), itemId,quantityToRemove);
                     sales.add(sale);
                     if(client instanceof User){
-                        Purchase purchase = new Purchase(client.getId(),itemId,quantityToRemove, shoppingBasket.getStoreId());
+                        Purchase purchase = new Purchase((User) client,itemId,quantityToRemove, shoppingBasket.getStoreId());
                         ((User) client).addPurchase(purchase);
-                    }}
+                        return (User) client;
+                    }
+                }
                 else throw new Exception("Quantity of item in store is lower than quantity to purchase.");
             }
         }
+        return null;
     }
 
     public void unPurchaseBasket(Client client, ShoppingBasket shoppingBasket) throws Exception {

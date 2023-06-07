@@ -5,6 +5,7 @@ import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,7 +27,7 @@ public class CategoryCalculateDiscount implements CalculateDiscount {
         }
     //    ConcurrentLinkedQueue<Double> DiscountOption= new ConcurrentLinkedQueue<>();
         double categoryDiscount = 0.0;
-        ConcurrentHashMap<UUID, Item> storeItems = store.getItems();
+        Map<UUID, Item> storeItems = store.getItems();
         ConcurrentHashMap<UUID, Integer> items = shoppingBasket.getItems();
         for (UUID itemId : items.keySet()) {
             Item item = storeItems.get(itemId);

@@ -1,10 +1,21 @@
 package DomainLayer.Security;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import java.util.UUID;
 
+@Entity
+@Table(name = "security_questions")
 public class SecurityQuestion {
+
+    @Id
     private UUID clientCredentials;
+    @Column
     private String question;
+    @Column
     private String answer;
 
     public SecurityQuestion(UUID clientCredentials, String question, String answer) {
@@ -12,7 +23,7 @@ public class SecurityQuestion {
         this.question = question;
         this.answer = answer;
     }
-
+    public SecurityQuestion(){}
     public String getQuestion() {
         return question;
     }

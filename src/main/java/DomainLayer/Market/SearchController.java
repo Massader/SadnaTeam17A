@@ -1,5 +1,7 @@
 package DomainLayer.Market;
 
+import DataAccessLayer.RepositoryFactory;
+import DataAccessLayer.controllers.UserDalController;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.User;
@@ -18,6 +20,8 @@ public class SearchController {
 
     private static SearchController instance = null;
     private static final Object instanceLock = new Object();
+    private RepositoryFactory repositoryFactory;
+    private UserDalController userDalController;
 
     public static SearchController getInstance() {
         synchronized(instanceLock) {
@@ -28,6 +32,10 @@ public class SearchController {
     }
 
     private SearchController() {
+    }
+    public void init(RepositoryFactory repositoryFactory) {
+        this.repositoryFactory = repositoryFactory;
+        userDalController = UserDalController.getInstance(repositoryFactory);
         storeController = StoreController.getInstance();
     }
 
@@ -100,19 +108,28 @@ public class SearchController {
         return Response.getSuccessResponse(items);
     }
 
-    public Response<List<User>> searchUser(String username) {
+//    public Response<List<User>> searchUser(String username) {
+//        try {
+//            UserController userController = UserController.getInstance();
+//            ConcurrentHashMap<String, UUID> usernames = userController.getUsernames();
+//            List<User> users = new ArrayList<>();
+//            for (Map.Entry<String, UUID> entry : usernames.entrySet()) {
+//                if (entry.getKey().toLowerCase().contains(username.toLowerCase()))
+//                    users.add(userController.getUserById(entry.getValue()));
+//            }
+//            return Response.getSuccessResponse(users);
+//        } catch (Exception e) {
+//            return Response.getFailResponse(e.getMessage());
+//        }
+//
+//    }
+
+    public Response<List<User>> searchUser(String keyrord) {
         try {
-            UserController userController = UserController.getInstance();
-            ConcurrentHashMap<String, UUID> usernames = userController.getUsernames();
-            List<User> users = new ArrayList<>();
-            for (Map.Entry<String, UUID> entry : usernames.entrySet()) {
-                if (entry.getKey().toLowerCase().contains(username.toLowerCase()))
-                    users.add(userController.getUserById(entry.getValue()));
-            }
-            return Response.getSuccessResponse(users);
+            return Response.getSuccessResponse(userDalController.serachUser(keyrord));
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }
-
     }
+
 }

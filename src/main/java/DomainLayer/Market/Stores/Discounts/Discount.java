@@ -44,6 +44,10 @@ public class Discount {
             this.optionCalculateDiscount = new ShoppingBasketCalculateDiscount();
     }
 
+    public Discount() {
+
+    }
+
     public CalculateDiscount getOptionCalculateDiscount() {
         return optionCalculateDiscount;
     }

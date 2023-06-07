@@ -4,6 +4,8 @@ import AcceptanceTests.*;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import DataAccessLayer.UserRepository;
+import DomainLayer.Market.UserController;
 import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.ServiceUser;
 
@@ -25,7 +27,8 @@ public class Register extends ProjectTest {
 
     @AfterEach
     public void tearDown() {
-
+        UserRepository userRepository = UserController.repositoryFactory.userRepository;
+        userRepository.deleteAll();
     }
 
     @AfterAll

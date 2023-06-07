@@ -1,5 +1,7 @@
 package DomainLayer.Market;
 
+import DataAccessLayer.RepositoryFactory;
+import DataAccessLayer.controllers.UserDalController;
 import DomainLayer.Market.Stores.*;
 import DomainLayer.Market.Stores.Discounts.Discount;
 import DomainLayer.Market.Stores.PurchaseRule.PurchaseTerm;
@@ -24,6 +26,8 @@ public class StoreController {
     private UserController userController;
     private NotificationController notificationController;
     private ConcurrentHashMap<String, Category> itemCategories;
+    private RepositoryFactory repositoryFactory;
+    private UserDalController userDalController;
 
     private StoreController() {
     }
@@ -36,12 +40,22 @@ public class StoreController {
         return instance;
     }
 
+    public void init(RepositoryFactory repositoryFactory) {
+        this.repositoryFactory = repositoryFactory;
+        storeMap = new ConcurrentHashMap<>();
+        userController = UserController.getInstance();
+        notificationController = NotificationController.getInstance();
+        itemCategories = new ConcurrentHashMap<>();
+        userDalController = UserDalController.getInstance(repositoryFactory);
+    }
+
     public void init() {
         storeMap = new ConcurrentHashMap<>();
         userController = UserController.getInstance();
         notificationController = NotificationController.getInstance();
         itemCategories = new ConcurrentHashMap<>();
     }
+
 
     public List<Store> getStores() {
         return new ArrayList<>(storeMap.values());
@@ -338,7 +352,7 @@ public class StoreController {
             if (item == null) return Response.getFailResponse("Item not found");
             if (!userController.isRegisteredUser(clientCredentials))
                 return Response.getFailResponse("User not found.");
-            ConcurrentLinkedQueue<Purchase> purchases = userController.getUserById(clientCredentials).getPurchases();
+            Collection<Purchase> purchases = userController.getUserById(clientCredentials).getPurchases();
             for (Purchase purchase : purchases) {
                 if (purchase.getItemId().equals(itemId)) {
                     if (purchase.isRated())
@@ -394,8 +408,10 @@ public class StoreController {
                 if (store.getName().equals(storeName))
                     return Response.getFailResponse("A Store with this name already exists.");
             Store store = new Store(storeName, storeDescription);
-            store.addRole(clientCredentials, new StoreFounder(clientCredentials));
-            Response<Boolean> response = userController.setAsFounder(clientCredentials, store.getStoreId());
+            User user = userController.getUserById(clientCredentials);
+            store.addRole(user, new StoreFounder(clientCredentials));
+            Response<Boolean> response = userController.setAsFounder(user, store.getStoreId());
+
             if (response.isError())
                 return Response.getFailResponse(response.getMessage());
             storeMap.put(store.getStoreId(), store);

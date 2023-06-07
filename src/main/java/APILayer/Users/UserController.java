@@ -2,6 +2,8 @@ package APILayer.Users;
 
 import APILayer.Alerts.AlertController;
 import APILayer.Requests.*;
+import DataAccessLayer.ClientRepository;
+import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.Notification;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.User;
@@ -25,11 +27,13 @@ public class UserController {
     
     private final AlertController alertController;
     private final Service service;
+    private final RepositoryFactory repositoryFactory;
     
     @Autowired
-    public UserController(Service service, AlertController alertController) {
+    public UserController(Service service, AlertController alertController, RepositoryFactory repositoryFactory) {
+        this.repositoryFactory =repositoryFactory;
         this.service = service;
-        service.init();
+        service.init(repositoryFactory);
         this.alertController = alertController;
     }
     

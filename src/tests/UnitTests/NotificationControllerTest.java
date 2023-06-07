@@ -19,7 +19,7 @@ public class NotificationControllerTest {
     @BeforeEach
     void setUp() {
         notificationController = NotificationController.getInstance();
-        notificationController.init();
+//        notificationController.init();
         recipient = UUID.randomUUID();
         notificationController.sendNotification(recipient, "test notification");
     }

@@ -1,5 +1,6 @@
 package DomainLayer.Market;
 
+import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StorePermissions;
@@ -21,15 +22,17 @@ public class MessageController {
     private UserController userController;
     private ConcurrentHashMap<UUID, ConcurrentHashMap<UUID, Message>> messages;
     private ConcurrentHashMap<UUID, Complaint> complaints;
+    private RepositoryFactory repositoryFactory;
 
     private MessageController() { }
     
-    public void init() {
+    public void init(RepositoryFactory repositoryFactory) {
         messages = new ConcurrentHashMap<>();
         complaints = new ConcurrentHashMap<>();
         notificationController = NotificationController.getInstance();
         storeController = StoreController.getInstance();
         userController = UserController.getInstance();
+        this.repositoryFactory = repositoryFactory;
     }
     
     public static MessageController getInstance() {

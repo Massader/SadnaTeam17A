@@ -2,6 +2,7 @@ package UnitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
 import DomainLayer.Market.Stores.Discounts.Discount;
+//import DomainLayer.Market.Stores.Discounts.Discount;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,8 +16,8 @@ public class StoreTest {
     private Store store;
     private Item item1;
     private Item item2;
-    private Discount discount1;
-    private Discount discount2;
+//    private Discount discount1;
+//    private Discount discount2;
     ConcurrentHashMap<UUID,Integer> items;
 
     @BeforeEach

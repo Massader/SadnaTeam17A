@@ -1,8 +1,12 @@
 package AcceptanceTests;
 import DomainLayer.Market.Notification;
+import APILayer.Main;
+import DomainLayer.Market.Notification;
+import DomainLayer.Market.UserController;
 import DomainLayer.Market.Users.Roles.Role;
 import ServiceLayer.*;
 import ServiceLayer.ServiceObjects.*;
+import org.springframework.boot.SpringApplication;
 
 import java.util.List;
 import java.util.UUID;
@@ -11,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RealBridge implements Bridge {
 
     Service service;
+    public static boolean initielized = false;
 
     @Override
     public void setReal() {
@@ -18,8 +23,12 @@ public class RealBridge implements Bridge {
     }
 
     public RealBridge() {
+        if(!initielized){
+            SpringApplication.run(Main.class);
+            initielized = true;
+        }
         service = Service.getInstance();
-        service.init();
+        service.init(UserController.repositoryFactory);
     }
 
     public Response<Boolean> systemBoot() {

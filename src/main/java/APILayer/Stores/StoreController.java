@@ -3,6 +3,7 @@ package APILayer.Stores;
 import APILayer.Requests.*;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Users.Roles.OwnerPetition;
+import DataAccessLayer.RepositoryFactory;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.*;
@@ -19,9 +20,9 @@ public class StoreController {
     private final Service service;
 
     @Autowired
-    public StoreController(Service service) {
+    public StoreController(Service service, RepositoryFactory repositoryFactory) {
         this.service = service;
-        service.init();
+        service.init(repositoryFactory);
     }
 
     @PostMapping(path = "/create-store")
