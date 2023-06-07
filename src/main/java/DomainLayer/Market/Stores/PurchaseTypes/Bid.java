@@ -6,13 +6,15 @@ import java.util.UUID;
 
 public class Bid {
     private UUID bidderId;
+    private UUID itemId;
     private double price;
     private List<UUID> ownersAccepted;
     private int quantity;
     private boolean accepted;
     
-    public Bid(UUID bidderId, double price, int quantity) {
+    public Bid(UUID bidderId, UUID itemId, double price, int quantity) {
         this.bidderId = bidderId;
+        this.itemId = itemId;
         this.price = price;
         ownersAccepted = new ArrayList<>();
         accepted = false;
@@ -58,5 +60,13 @@ public class Bid {
     
     public void setAccepted(boolean accepted) {
         this.accepted = accepted;
+    }
+    
+    public UUID getItemId() {
+        return itemId;
+    }
+    
+    public void setItemId(UUID itemId) {
+        this.itemId = itemId;
     }
 }
