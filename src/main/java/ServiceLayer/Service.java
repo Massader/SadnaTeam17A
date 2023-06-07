@@ -9,6 +9,7 @@ import DomainLayer.Market.Stores.Discounts.ShoppingBasketCalculateDiscount;
 import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Users.*;
+import DomainLayer.Market.Users.Roles.OwnerPetition;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Payment.PaymentController;
 import DomainLayer.Payment.PaymentProxy;
@@ -1331,6 +1332,13 @@ public class Service {
             output.add(new ServiceDiscount(discount));
         }
         return Response.getSuccessResponse(output);
+    }
+    
+    public Response<List<OwnerPetition>> getStoreOwnerPetitions(UUID clientCredentials, UUID storeId) {
+        Response<List<OwnerPetition>> response = storeController.getStoreOwnerPetitions(clientCredentials, storeId);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
     }
 }
 
