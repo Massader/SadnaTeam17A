@@ -1341,5 +1341,12 @@ public class Service {
             errorLogger.log(Level.WARNING, response.getMessage());
         return response;
     }
+    
+    public Response<Bid> getUserItemBid(UUID clientCredentials, UUID storeId, UUID itemId, UUID bidderId) {
+        Response<Bid> response = storeController.getUserItemBid(clientCredentials, storeId, itemId, bidderId);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
+    }
 }
 

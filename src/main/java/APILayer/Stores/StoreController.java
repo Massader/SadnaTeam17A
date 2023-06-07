@@ -353,10 +353,20 @@ public class StoreController {
         return service.getItemBids(clientCredentials, storeId, itemId);
     }
     
+
     @GetMapping(path = "/get-store-bids/id={id}&storeId={storeId}")
     public Response<List<Bid>> getItemBids(@PathVariable(name = "id") UUID clientCredentials,
                                            @PathVariable(name = "storeId") UUID storeId) {
         return service.getStoreBids(clientCredentials, storeId);
+    }
+    
+
+    @GetMapping(path = "/get-user-item-bid/id={id}&storeId={storeId}&itemId={itemId}&bidderId={bidderId}")
+    public Response<Bid> getUserItemBid(@PathVariable(name = "id") UUID clientCredentials,
+                                        @PathVariable(name = "storeId") UUID storeId,
+                                        @PathVariable(name = "itemId") UUID itemId,
+                                        @PathVariable(name = "bidderId") UUID bidderId) {
+        return service.getUserItemBid(clientCredentials, storeId, itemId, bidderId);
     }
     
     @PutMapping(path = "/set-item-purchase-type")
