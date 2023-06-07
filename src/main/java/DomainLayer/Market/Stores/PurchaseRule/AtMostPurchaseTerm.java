@@ -9,7 +9,6 @@ import java.util.UUID;
 
 public class AtMostPurchaseTerm extends PurchaseTerm {
 
-
     private int quantity;
 
     public AtMostPurchaseTerm(PurchaseRule purchaseRule, int quantity) {
@@ -18,9 +17,7 @@ public class AtMostPurchaseTerm extends PurchaseTerm {
     }
     
     public AtMostPurchaseTerm(ServicePurchaseTerm serviceTerm) {
-        super(serviceTerm.getRule().getType().equals("ITEM") ? new ItemPurchaseRule(UUID.fromString(serviceTerm.getRule().getItemIdOrCategoryOrNull())) :
-                serviceTerm.getRule().getType().equals("CATEGORY") ? new CategoryPurchaseRule(new Category(serviceTerm.getRule().getItemIdOrCategoryOrNull())) :
-                        new ShoppingBasketPurchaseRule());
+        super(serviceTerm);
         this.quantity = serviceTerm.getQuantity();
     }
 

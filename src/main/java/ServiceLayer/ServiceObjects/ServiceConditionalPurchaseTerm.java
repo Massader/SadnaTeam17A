@@ -3,19 +3,23 @@ package ServiceLayer.ServiceObjects;
 import DomainLayer.Market.Stores.PurchaseRule.ConditionalPurchaseTerm;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ServiceConditionalPurchaseTerm {
+    private UUID termId;
     private ServicePurchaseTerm ifPurchaseTerm;
     private ServicePurchaseTerm thenPurchaseTerm;
     private String termType = "CONDITIONAL";
     
     
-    public ServiceConditionalPurchaseTerm(ServicePurchaseTerm ifPurchaseTerm, ServicePurchaseTerm thenPurchaseTerm) {
+    public ServiceConditionalPurchaseTerm(UUID termId, ServicePurchaseTerm ifPurchaseTerm, ServicePurchaseTerm thenPurchaseTerm) {
+        this.termId = termId;
         this.ifPurchaseTerm = ifPurchaseTerm;
         this.thenPurchaseTerm = thenPurchaseTerm;
     }
     
     public ServiceConditionalPurchaseTerm(ConditionalPurchaseTerm term) {
+        this.termId = term.getTermId();
         ifPurchaseTerm = new ServicePurchaseTerm(term.getPurchaseTermIf());
         thenPurchaseTerm = new ServicePurchaseTerm(term.getPurchaseTermThen());
     }
@@ -42,5 +46,13 @@ public class ServiceConditionalPurchaseTerm {
     
     public void setTermType(String termType) {
         this.termType = termType;
+    }
+    
+    public UUID getTermId() {
+        return termId;
+    }
+    
+    public void setTermId(UUID termId) {
+        this.termId = termId;
     }
 }

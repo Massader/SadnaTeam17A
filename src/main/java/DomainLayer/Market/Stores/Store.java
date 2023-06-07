@@ -300,18 +300,8 @@ public class Store {
         return true;
     }
 
-    public Boolean removePolicyTerm(UUID itemId) throws Exception {
-        this.policy.removePurchaseTerm(itemId);
-        return true;
-    }
-    
-    public Boolean removePolicyTerm(String categoryName) throws Exception {
-        this.policy.removePurchaseTerm(categoryName);
-        return true;
-    }
-    
-    public Boolean removePolicyTerm() throws Exception {
-        this.policy.removePurchaseTerm();
+    public Boolean removePolicyTerm(UUID termId) throws Exception {
+        this.policy.removePurchaseTerm(termId);
         return true;
     }
 
@@ -408,10 +398,13 @@ public class Store {
     }
     
     public boolean removeOwnerPetitionApproval(UUID appointee, UUID owner) throws Exception {
-        OwnerPetition petition = ownerPetitions.stream().filter(appointment -> appointment.getAppointeeId().equals(appointee)).toList().get(0);
-        if (petition == null)
+        List<OwnerPetition> petitions = ownerPetitions.stream().filter(appointment -> appointment.getAppointeeId().equals(appointee)).toList();
+        if (petitions.isEmpty())
             throw new Exception("Petition for this appointee does not exist");
+        OwnerPetition petition = petitions.get(0);
         petition.removeApproval(owner);
+        if (petition.getOwnersList().isEmpty())
+            ownerPetitions.remove(petition);
         return true;
     }
 }

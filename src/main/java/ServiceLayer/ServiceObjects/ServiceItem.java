@@ -30,7 +30,7 @@ public class ServiceItem {
         for (Category category : item.getCategories()) {
             categories.add(category.getCategoryName());
         }
-        this.purchaseType = item.getPurchaseType().getClass().getName();
+        this.purchaseType = item.getPurchaseType().toString();
     }
 
     public String getName() {
