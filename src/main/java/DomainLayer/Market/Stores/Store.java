@@ -5,6 +5,7 @@ import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Stores.PurchaseRule.StorePurchasePolicy;
 import DomainLayer.Market.Users.Client;
 import DomainLayer.Market.Users.Purchase;
+import DomainLayer.Market.Users.Roles.OwnerPetition;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
@@ -29,6 +30,7 @@ public class Store {
     private final ConcurrentLinkedQueue<Sale> sales;
     private final ConcurrentHashMap<UUID, Role> rolesMap;
     private ConcurrentHashMap<UUID, StoreReview> reviews;
+    private List<OwnerPetition> ownerPetitions;
     
     
     public Store(String name, String description) {
@@ -45,6 +47,7 @@ public class Store {
         sales = new ConcurrentLinkedQueue<>();
         rolesMap = new ConcurrentHashMap<>();
         reviews = new ConcurrentHashMap<>();
+        ownerPetitions = new ArrayList<>();
     }
 
     public StoreDiscount getDiscounts() {
@@ -398,6 +401,18 @@ public class Store {
         reviews.put(review.getId(), review);
         addRating(rating);
         return review.getId();
+    }
+    
+    public List<OwnerPetition> getOwnerPetitions() {
+        return ownerPetitions;
+    }
+    
+    public boolean removeOwnerPetitionApproval(UUID appointee, UUID owner) throws Exception {
+        OwnerPetition petition = ownerPetitions.stream().filter(appointment -> appointment.getAppointeeId().equals(appointee)).toList().get(0);
+        if (petition == null)
+            throw new Exception("Petition for this appointee does not exist");
+        petition.removeApproval(owner);
+        return true;
     }
 }
 

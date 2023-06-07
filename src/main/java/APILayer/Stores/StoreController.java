@@ -2,6 +2,7 @@ package APILayer.Stores;
 
 import APILayer.Requests.*;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
+import DomainLayer.Market.Users.Roles.OwnerPetition;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.*;
@@ -80,9 +81,9 @@ public class StoreController {
     }
 
     @GetMapping(path = "/store-staff/id={id}&storeId={storeId}")
-    public Response<List<ServiceUser>> getStoreStaff(@PathVariable(name = "id") UUID id,
+    public Response<List<ServiceUser>> getStoreStaff(@PathVariable(name = "id") UUID clientCredentials,
                                                      @PathVariable(name = "storeId") UUID storeId) {
-        return service.getStoreStaff(id, storeId);
+        return service.getStoreStaff(clientCredentials, storeId);
     }
 
     @PostMapping(path = "/role/appoint-manager")
@@ -93,6 +94,12 @@ public class StoreController {
     @PostMapping(path = "/role/appoint-owner")
     public Response<Boolean> appointStoreOwner(@RequestBody RoleRequest request) {
         return service.appointStoreOwner(request.getClientCredentials(), request.getAppointee(), request.getStoreId());
+    }
+    
+    @GetMapping(path = "/get-store-owner-appointments/id={id}&storeId={storeId}")
+    public Response<List<OwnerPetition>> getStoreOwnerPetitions(@PathVariable(name = "id") UUID clientCredentials,
+                                                                @PathVariable(name = "storeId") UUID storeId) {
+        return service.getStoreOwnerPetitions(clientCredentials, storeId);
     }
 
     @DeleteMapping(path = "/role/remove")

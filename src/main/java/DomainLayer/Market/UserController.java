@@ -240,7 +240,7 @@ public class UserController {
             if(!storeController.storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
             if(!storeController.getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
-                return Response.getFailResponse("User doesn't have permission.");
+                return Response.getFailResponse("User doesn't have permission to appoint owners.");
             Response<User> response2 = this.getUser(appointee);
             if(response2.isError())
                 return Response.getFailResponse(response2.getMessage());
@@ -249,10 +249,27 @@ public class UserController {
             if(storeController.getStore(storeId).getRolesMap().containsKey(appointee) &&
                     storeController.getStore(storeId).checkPermission(appointee, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("User already owner of the shop.");
-            StoreOwner storeOwner = new StoreOwner(storeId);
-            response2.getValue().addStoreRole(storeOwner);
-            storeController.getStore(storeId).addRole(appointee, storeOwner);
-            storeController.getStore(storeId).getOwner(clientCredentials).addAppointee(appointee);
+            User user = response2.getValue();
+            if (user == null)
+                return Response.getFailResponse("User returned was null");
+            Store store = storeController.getStore(storeId);
+            OwnerPetition petition = store.getOwnerPetitions().stream()
+                    .filter(element -> element.getAppointeeId().equals(user.getId()) &&
+                                       element.getStoreId().equals(storeId))
+                    .toList().get(0);
+            if (petition == null)
+                store.getOwnerPetitions().add(new OwnerPetition(user.getId(), clientCredentials, storeId));
+            else {
+                List<UUID> ownersList = petition.approveAppointment(clientCredentials);
+                if (ownersList.containsAll(storeController.getStore(storeId).getStoreOwners())) {
+                    StoreOwner storeOwner = new StoreOwner(storeId);
+                    user.addStoreRole(storeOwner);
+                    store.addRole(appointee, storeOwner);
+                    store.getOwner(clientCredentials).addAppointee(appointee);
+                    notificationController.sendNotification(appointee,
+                            "Your appointment as a store owner for " + store.getName() + " has been approved by all owners.");
+                }
+            }
             return Response.getSuccessResponse(true);
         }
         catch(Exception exception){

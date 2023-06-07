@@ -7,6 +7,7 @@ import DomainLayer.Market.Stores.PurchaseRule.StorePurchasePolicy;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
 import DomainLayer.Market.Users.*;
+import DomainLayer.Market.Users.Roles.OwnerPetition;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreFounder;
 import DomainLayer.Market.Users.Roles.StorePermissions;
@@ -944,6 +945,32 @@ public class StoreController {
                     !store.checkPermission(clientCredentials, StorePermissions.STORE_DISCOUNT_MANAGEMENT))
                 return Response.getFailResponse("User does not have permission to see item bids.");
             return Response.getSuccessResponse(store.getDiscounts().getDiscountsAssembly().getDiscounts().stream().toList());
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
+    
+    public Response<List<OwnerPetition>> getStoreOwnerPetitions(UUID clientCredentials, UUID storeId) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Store store = getStore(storeId);
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
+                return Response.getFailResponse("User does not have permission to view owner petitions");
+            return Response.getSuccessResponse(store.getOwnerPetitions());
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
+    
+    public Response<Boolean> removeOwnerPetitionApproval(UUID clientCredentials, UUID storeId, UUID appointee){
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Store store = getStore(storeId);
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
+                return Response.getFailResponse("User does not have permission to view owner petitions");
+            return Response.getSuccessResponse(store.removeOwnerPetitionApproval(appointee, clientCredentials));
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }
