@@ -9,7 +9,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "store_managers")
 public class StoreManager extends Role {
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private List<StorePermissions> permissionsList;
     public StoreManager(UUID storeId) {

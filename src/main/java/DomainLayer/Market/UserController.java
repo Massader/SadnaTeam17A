@@ -268,23 +268,28 @@ public class UserController {
             if (user == null)
                 return Response.getFailResponse("User returned was null");
             Store store = storeController.getStore(storeId);
-            OwnerPetition petition = store.getOwnerPetitions().stream()
+            List<OwnerPetition> petitions = store.getOwnerPetitions().stream()
                     .filter(element -> element.getAppointeeId().equals(user.getId()) &&
-                                       element.getStoreId().equals(storeId))
-                    .toList().get(0);
-            if (petition == null)
-                store.getOwnerPetitions().add(new OwnerPetition(user.getId(), clientCredentials, storeId));
+                            element.getStoreId().equals(storeId))
+                    .toList();
+            OwnerPetition petition;
+            if (petitions.isEmpty()) {
+                petition = new OwnerPetition(user.getId(), clientCredentials, storeId);
+                store.getOwnerPetitions().add(petition);
+            }
             else {
-                List<UUID> ownersList = petition.approveAppointment(clientCredentials);
-                if (ownersList.containsAll(storeController.getStore(storeId).getStoreOwners())) {
-                    StoreOwner storeOwner = new StoreOwner(storeId);
-                    user.addStoreRole(storeOwner);
-                    userDalController.saveUser(user);
-                    store.addRole(user, storeOwner);
-                    store.getOwner(clientCredentials).addAppointee(appointee);
-                    notificationController.sendNotification(appointee,
-                            "Your appointment as a store owner for " + store.getName() + " has been approved by all owners.");
-                }
+                petition = petitions.get(0);
+                petition.approveAppointment(clientCredentials);
+            }
+            if (petition.getOwnersList().containsAll(storeController.getStore(storeId).getStoreOwners())) {
+                StoreOwner storeOwner = new StoreOwner(storeId);
+                user.addStoreRole(storeOwner);
+                userDalController.saveUser(user);
+                store.addRole(getUserById(appointee), storeOwner);
+                store.getOwner(clientCredentials).addAppointee(appointee);
+                notificationController.sendNotification(appointee,
+                        "Your appointment as a store owner for " + store.getName() + " has been approved by all owners.");
+                store.getOwnerPetitions().remove(petition);
             }
             return Response.getSuccessResponse(true);
         }
@@ -307,8 +312,10 @@ public class UserController {
             if(storeController.getStore(storeId).getRolesMap().containsKey(appointee))
                 return Response.getFailResponse("User already manager in the shop.");
             StoreManager storeManager = new StoreManager(storeId);
-            response2.getValue().addStoreRole(storeManager);
-            storeController.getStore(storeId).addRole(getUserById(clientCredentials), storeManager);
+            User user = response2.getValue();
+            user.addStoreRole(storeManager);
+            userDalController.saveUser(user);
+            storeController.getStore(storeId).addRole(getUserById(appointee), storeManager);
             storeController.getStore(storeId).getOwner(clientCredentials).addAppointee(appointee);
             return Response.getSuccessResponse(true);
         }
