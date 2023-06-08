@@ -556,13 +556,19 @@ public class Service {
         return response;
     }
 
-    public Response<Boolean> validateSecurityQuestion(UUID clientCredentials, String answer ){
-        Response<Boolean> response = securityController.validateSecurityQuestion(clientCredentials,answer);
+    public Response<ServiceUser> validateSecurityQuestion(UUID clientCredentials, String answer, BiConsumer<UUID, Notification> notificationSender){
+        Response<Boolean> response = securityController.validateSecurityQuestion(clientCredentials, answer);
         if(response.isError()) {
             errorLogger.log(Level.SEVERE, response.getMessage());
             return Response.getFailResponse(response.getMessage());
         }
-        return response;
+        Response<User> userResponse = userController.getUser(clientCredentials);
+        if (userResponse.isError()) {
+            errorLogger.log(Level.SEVERE, userResponse.getMessage());
+            return Response.getFailResponse(userResponse.getMessage());
+        }
+        notificationController.addNotifier(clientCredentials, notificationSender);
+        return Response.getSuccessResponse(new ServiceUser(userResponse.getValue()));
     }
 
     public Response<Boolean> addSecurityQuestion(UUID clientCredentials,String question ,String answer ) {
@@ -817,11 +823,7 @@ public class Service {
     }
     
     public Response<Boolean> addDiscount(UUID clientCredentials, UUID storeId, ServiceDiscount serviceDiscount) {
-        Discount discount = createDiscount(serviceDiscount);
-        if (discount == null) {
-            errorLogger.log(Level.WARNING, "Received bad discount");
-            return Response.getFailResponse("Received bad discount");
-        }
+        Discount discount = new Discount(serviceDiscount);
         Response<Boolean> response = storeController.addDiscount(clientCredentials, storeId, discount);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
@@ -831,59 +833,8 @@ public class Service {
         return response;
     }
     
-    private Discount createDiscount(ServiceDiscount serviceDiscount) {
-        Discount output = null;
-        try {
-            switch (serviceDiscount.getType()) {
-                case "ITEM":
-                    output = new Discount(
-                            new ItemCalculateDiscount(UUID.fromString(serviceDiscount.getItemIdOrCategoryOrNull())),
-                            serviceDiscount.getDiscountPercentage(),
-                            serviceDiscount.getPurchaseTerm().getAtLeast() ?
-                                    new AtLeastPurchaseTerm(createPurchaseRule(serviceDiscount.getPurchaseTerm().getRule()),
-                                            serviceDiscount.getPurchaseTerm().getQuantity()) :
-                                    new AtMostPurchaseTerm(createPurchaseRule(serviceDiscount.getPurchaseTerm().getRule()),
-                                            serviceDiscount.getPurchaseTerm().getQuantity()));
-                    break;
-                case "CATEGORY":
-                    output = new Discount(
-                            new CategoryCalculateDiscount(new Category(serviceDiscount.getItemIdOrCategoryOrNull())),
-                            serviceDiscount.getDiscountPercentage(),
-                            serviceDiscount.getPurchaseTerm().getAtLeast() ?
-                                    new AtLeastPurchaseTerm(createPurchaseRule(serviceDiscount.getPurchaseTerm().getRule()),
-                                            serviceDiscount.getPurchaseTerm().getQuantity()) :
-                                    new AtMostPurchaseTerm(createPurchaseRule(serviceDiscount.getPurchaseTerm().getRule()),
-                                            serviceDiscount.getPurchaseTerm().getQuantity()));
-                    break;
-                case "BASKET":
-                    output = new Discount(
-                            new ShoppingBasketCalculateDiscount(),
-                            serviceDiscount.getDiscountPercentage(),
-                            serviceDiscount.getPurchaseTerm().getAtLeast() ?
-                                    new AtLeastPurchaseTerm(createPurchaseRule(serviceDiscount.getPurchaseTerm().getRule()),
-                                            serviceDiscount.getPurchaseTerm().getQuantity()) :
-                                    new AtMostPurchaseTerm(createPurchaseRule(serviceDiscount.getPurchaseTerm().getRule()),
-                                            serviceDiscount.getPurchaseTerm().getQuantity()));
-                    break;
-                default:
-                    return null;
-            }
-            return output;
-        } catch (Exception e) {
-            errorLogger.log(Level.WARNING, e.getMessage());
-            return null;
-        }
-        
-    }
-    
-    public Response<Boolean> removeDiscount(UUID clientCredentials, UUID storeId, ServiceDiscount serviceDiscount) {
-        Discount discount;
-        try {
-            discount = new Discount(serviceDiscount);
-        } catch (Exception e) {
-            return Response.getFailResponse(e.getMessage());
-        }
-        Response<Boolean> response = storeController.removeDiscount(clientCredentials, storeId, discount);
+    public Response<Boolean> removeDiscount(UUID clientCredentials, UUID storeId, UUID discountId) {
+        Response<Boolean> response = storeController.removeDiscount(clientCredentials, storeId, discountId);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;

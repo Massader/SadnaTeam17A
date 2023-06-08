@@ -4,6 +4,9 @@ import DomainLayer.Market.Stores.PurchaseRule.CompositePurchaseTerm;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 
+import java.util.List;
+import java.util.UUID;
+
 public class StoreDiscount {
     /**
      * ManageDiscount is a class that manages the discounts of a shop.
@@ -42,16 +45,16 @@ public class StoreDiscount {
         this.discountsAssembly.getDiscounts().add(discount);
     }
 
-    public synchronized void removeDiscount(Discount discount) throws Exception {
-        if (discount == null) {
-            throw new Exception("the discount Term is null, please put valid discount to remove");
+    public synchronized void removeDiscount(UUID discountId) throws Exception {
+        if (discountId == null) {
+            throw new Exception("Passed discount id is null.");
         }
-        // Check if the discount exists in discounts
-        boolean discountExists = discountsAssembly.getDiscounts().remove(discount);
+        List<Discount> discounts = discountsAssembly.getDiscounts().stream().filter(discount -> discount.getId().equals(discountId)).toList();
         // If the term was not found in purchasePolicies, log a message and return
-        if (!discountExists) {
-            throw new Exception("the discount Term is not exist in discounts  please put valid discount to remove");
+        if (discounts.isEmpty()) {
+            throw new Exception("the discount does not exist.");
         }
+        discountsAssembly.getDiscounts().remove(discounts.get(0));
     }
 
     public synchronized double calculateDiscount(ShoppingBasket shoppingBasket, Store store){

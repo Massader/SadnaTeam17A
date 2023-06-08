@@ -31,11 +31,12 @@ public class Discount {
     public Discount(ServiceDiscount serviceDiscount) {
         this.id = serviceDiscount.getId() == null ? UUID.randomUUID() : serviceDiscount.getId();
         this.discountPercentage = serviceDiscount.getDiscountPercentage();
-        if (serviceDiscount.getPurchaseTerm().getAtLeast())
-            purchaseTerm = new AtLeastPurchaseTerm(serviceDiscount.getPurchaseTerm());
-        else
-            purchaseTerm = new AtMostPurchaseTerm(serviceDiscount.getPurchaseTerm());
-        
+        if (serviceDiscount.getPurchaseTerm() != null) {
+            if (serviceDiscount.getPurchaseTerm().getAtLeast())
+                purchaseTerm = new AtLeastPurchaseTerm(serviceDiscount.getPurchaseTerm());
+            else
+                purchaseTerm = new AtMostPurchaseTerm(serviceDiscount.getPurchaseTerm());
+        }
         if (serviceDiscount.getType().equals("ITEM"))
             this.optionCalculateDiscount = new ItemCalculateDiscount(UUID.fromString(serviceDiscount.getItemIdOrCategoryOrNull()));
         else if (serviceDiscount.getType().equals("CATEGORY"))

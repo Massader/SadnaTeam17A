@@ -2,10 +2,10 @@ package DomainLayer.Market.Stores.PurchaseTypes;
 
 public abstract class PurchaseType {
     
-    public static final String DIRECT_PURCHASE = "Direct Purchase";
-    public static final String BID_PURCHASE = "Bid Purchase";
-    public static final String AUCTION_PURCHASE = "Auction Purchase";
-    public static final String LOTTERY_PURCHASE= "Lottery Purchase";
+    public static final String DIRECT_PURCHASE = "DIRECT";
+    public static final String BID_PURCHASE = "BID";
+    public static final String AUCTION_PURCHASE = "AUCTION";
+    public static final String LOTTERY_PURCHASE= "LOTTERY";
     
     
     private final String type;

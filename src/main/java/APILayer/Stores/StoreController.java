@@ -387,7 +387,7 @@ public class StoreController {
     }
     
     @DeleteMapping(path = "/remove-discount")
-    public Response<Boolean> removeDiscount(@RequestBody DiscountRequest request) {
-        return service.removeDiscount(request.getClientCredentials(), request.getStoreId(), request.getDiscount());
+    public Response<Boolean> removeDiscount(@RequestBody RemoveDiscountRequest request) {
+        return service.removeDiscount(request.getClientCredentials(), request.getStoreId(), request.getDiscountId());
     }
 }

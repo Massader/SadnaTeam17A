@@ -666,14 +666,14 @@ public class StoreController {
         }
     }
 
-    public Response<Boolean> removeDiscount(UUID clientCredentials, UUID storeId, Discount discount) {
+    public Response<Boolean> removeDiscount(UUID clientCredentials, UUID storeId, UUID discountId) {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) && !store.checkPermission(clientCredentials, StorePermissions.STORE_DISCOUNT_MANAGEMENT))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            store.removeDiscount(discount);
+            store.removeDiscount(discountId);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -833,8 +833,10 @@ public class StoreController {
     public Response<Boolean> addBidToItem(UUID clientCredentials, UUID storeId, UUID itemId, double bidPrice,
                                           int quantity) {
         try {
-            if (!userController.isRegisteredUser(clientCredentials))
+            if (userController.getClientOrUser(clientCredentials) == null)
                 return Response.getFailResponse("User does not exist.");
+            if (!userController.isRegisteredUser(clientCredentials))
+                return Response.getFailResponse("Only registered users can add bids to items.");
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Item item = getStore(storeId).getItem(itemId);

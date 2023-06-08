@@ -88,7 +88,12 @@ public class UserController {
     @GetMapping(path = "/security/validate-question/id={id}&answer={answer}")
     public Response<Boolean> validateSecurityQuestion(@PathVariable(name = "id") UUID clientCredentials,
                                                       @PathVariable(name = "answer") String answer) {
-        return service.validateSecurityQuestion(clientCredentials, answer);
+        Response<ServiceUser> response = service.validateSecurityQuestion(clientCredentials, answer, alertController::sendNotification);
+        if (!response.isError()) {
+            alertController.createNotifier(response.getValue().getId());
+            return Response.getSuccessResponse(true);
+        }
+        return Response.getFailResponse(response.getMessage());
     }
     
     @GetMapping(path = "/security/get-question/id={id}")

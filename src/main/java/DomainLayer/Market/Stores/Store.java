@@ -310,8 +310,8 @@ public class Store {
         return true;
     }
 
-    public Boolean removeDiscount(Discount discount) throws Exception {
-        this.discounts.removeDiscount(discount);
+    public Boolean removeDiscount(UUID discountId) throws Exception {
+        this.discounts.removeDiscount(discountId);
         return true;
     }
     

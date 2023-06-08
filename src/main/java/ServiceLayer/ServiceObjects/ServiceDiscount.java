@@ -25,8 +25,9 @@ public class ServiceDiscount {
     
     public ServiceDiscount(Discount discount) {
         this.id = discount.getId();
-        this.discountPercentage = discount.getDiscountPercentage();
-        this.purchaseTerm = new ServicePurchaseTerm(discount.getPurchaseTerm());
+        this.discountPercentage = discount.getDiscountPercentage() * 100;
+        if (discount.getPurchaseTerm() != null)
+            this.purchaseTerm = new ServicePurchaseTerm(discount.getPurchaseTerm());
         CalculateDiscount calc = discount.getOptionCalculateDiscount();
         if (calc instanceof ItemCalculateDiscount) {
             this.type = "ITEM";
