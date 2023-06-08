@@ -1,10 +1,17 @@
-import React from "react";
-import PurchaseTerm from "./PurchaseTerm";
+import React, { useContext } from "react";
 import AndOrPurchaseRules from "./AndOrPurchaseRules";
-import { Button } from "@chakra-ui/react";
-import ConditioningPurchaseRule from "./ConditioningPurchaseRule";
-import { Item, PurchaseRuleType, PurchaseTermType } from "../../types";
-import AddSimplePurcahseRule from "./AddSimplePurcahseRule";
+import { Button, useToast } from "@chakra-ui/react";
+import ConditionalPurchaseRule from "./ConditionalPurchaseRule";
+import {
+  CompositePurchaseTermType,
+  ConditionalPurchaseTermType,
+  DiscountType,
+  PurchaseTermType,
+} from "../../types";
+import SimplePurcahseRule from "./SimplePurcahseRule";
+import { ClientCredentialsContext } from "../../App";
+import axios from "axios";
+import SimpleDiscount from "./SimpleDiscount";
 
 interface Props {
   storeId: string;
@@ -19,27 +26,192 @@ const AddPurchaseRules = ({
   purchaseAndDiscountPages,
   purchaseType,
 }: Props) => {
+  const { clientCredentials } = useContext(ClientCredentialsContext);
+
+  const toast = useToast();
+
+  const onSumbitSimple = (purchaseTerm: PurchaseTermType) => {
+    if (purchaseTerm.rule.type === "BASKET") addBasketPolictyTerm(purchaseTerm);
+    if (purchaseTerm.rule.type === "ITEM")
+      addItemCategoryPolictyTerm(purchaseTerm);
+    if (purchaseTerm.rule.type === "CATEGORY")
+      addItemCategoryPolictyTerm(purchaseTerm);
+  };
+
+  const addBasketPolictyTerm = async (purchaseTerm: PurchaseTermType) => {
+    const response = await axios.post(
+      "http://localhost:8080/api/v1/stores/add-basket-policy-term",
+      {
+        clientCredentials,
+        storeId: storeId,
+        quantity: purchaseTerm.quantity,
+        atLeast: purchaseTerm.atLeast,
+      }
+    );
+    if (!response.data.error) {
+      toast({
+        title: "Policy added.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: `${response.data.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const addItemCategoryPolictyTerm = async (purchaseTerm: PurchaseTermType) => {
+    const response = await axios.post(
+      `http://localhost:8080/api/v1/stores/add-${
+        purchaseTerm.rule.type === "ITEM" ? "item" : "category"
+      }-policy-term`,
+      {
+        clientCredentials,
+        storeId: storeId,
+        itemId: purchaseTerm.rule.itemIdOrCategoryOrNull,
+        quantity: purchaseTerm.quantity,
+        atLeast: purchaseTerm.atLeast,
+      }
+    );
+    if (!response.data.error) {
+      toast({
+        title: "Policy added.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: `${response.data.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const addCompositePolictyTerm = async (
+    purchaseTerms: CompositePurchaseTermType
+  ) => {
+    const response = await axios.post(
+      "http://localhost:8080/api/v1/stores/add-composite-policy-term",
+      {
+        clientCredentials,
+        storeId: storeId,
+        term: purchaseTerms,
+      }
+    );
+    if (!response.data.error) {
+      toast({
+        title: "Policy added.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: `${response.data.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const addConditionalPolictyTerm = async (
+    conditionalPurchaseTerm: ConditionalPurchaseTermType
+  ) => {
+    const response = await axios.post(
+      "http://localhost:8080/api/v1/stores/add-conditional-policy-term",
+      {
+        clientCredentials,
+        storeId: storeId,
+        term: conditionalPurchaseTerm,
+      }
+    );
+    if (!response.data.error) {
+      toast({
+        title: "Policy added.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: `${response.data.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const addSimpleDiscount = async (discountTerm: DiscountType) => {
+    const response = await axios.post(
+      "http://localhost:8080/api/v1/stores/add-discount",
+      {
+        clientCredentials,
+        storeId: storeId,
+        discount: discountTerm,
+      }
+    );
+    if (!response.data.error) {
+      toast({
+        title: "Discount added.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: `${response.data.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <>
-      {purchaseAndDiscountPages[0] !== "0" && (
-        <Button
-          onClick={() => {
-            setPurchaseAndDiscountPage(purchaseAndDiscountPages[0]);
-          }}
-          colorScheme="blackAlpha"
-        >
-          Back
-        </Button>
+      <Button
+        onClick={() => {
+          setPurchaseAndDiscountPage(purchaseAndDiscountPages[0]);
+        }}
+        colorScheme="blackAlpha"
+      >
+        Back
+      </Button>
+      {purchaseType === "simple" && (
+        <SimplePurcahseRule onSubmit={onSumbitSimple} storeId={storeId} />
       )}
-      {purchaseType === "simple" && <AddSimplePurcahseRule storeId={storeId} />}
       {purchaseType === "and" && (
-        <AndOrPurchaseRules purchaseType={purchaseType} storeId={storeId} />
+        <AndOrPurchaseRules
+          onSubmit={addCompositePolictyTerm}
+          purchaseType={purchaseType}
+          storeId={storeId}
+        />
       )}
       {purchaseType === "or" && (
-        <AndOrPurchaseRules purchaseType={purchaseType} storeId={storeId} />
+        <AndOrPurchaseRules
+          onSubmit={addCompositePolictyTerm}
+          purchaseType={purchaseType}
+          storeId={storeId}
+        />
       )}
-      {purchaseType === "conditioning" && (
-        <ConditioningPurchaseRule storeId={storeId} />
+      {purchaseType === "conditional" && (
+        <ConditionalPurchaseRule
+          storeId={storeId}
+          onSubmit={addConditionalPolictyTerm}
+        />
+      )}
+      {purchaseType === "simpleDiscount" && (
+        <SimpleDiscount onSubmit={addSimpleDiscount} storeId={storeId} />
       )}
     </>
   );
