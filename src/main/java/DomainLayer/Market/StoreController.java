@@ -11,6 +11,7 @@ import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreFounder;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
+import ServiceLayer.ServiceObjects.ServiceDiscount;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -652,13 +653,14 @@ public class StoreController {
         }
     }
 
-    public Response<Boolean> addDiscount(UUID clientCredentials, UUID storeId, Discount discount) {
+    public Response<Boolean> addDiscount(UUID clientCredentials, UUID storeId, ServiceDiscount serviceDiscount) {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
+            Discount discount = new Discount(serviceDiscount);
             store.addDiscount(discount);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {

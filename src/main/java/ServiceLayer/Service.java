@@ -823,8 +823,7 @@ public class Service {
     }
     
     public Response<Boolean> addDiscount(UUID clientCredentials, UUID storeId, ServiceDiscount serviceDiscount) {
-        Discount discount = new Discount(serviceDiscount);
-        Response<Boolean> response = storeController.addDiscount(clientCredentials, storeId, discount);
+        Response<Boolean> response = storeController.addDiscount(clientCredentials, storeId, serviceDiscount);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;

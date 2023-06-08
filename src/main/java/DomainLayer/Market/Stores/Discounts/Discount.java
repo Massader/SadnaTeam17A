@@ -28,9 +28,11 @@ public class Discount {
         this.id = UUID.randomUUID();
     }
     
-    public Discount(ServiceDiscount serviceDiscount) {
+    public Discount(ServiceDiscount serviceDiscount) throws Exception {
         this.id = serviceDiscount.getId() == null ? UUID.randomUUID() : serviceDiscount.getId();
-        this.discountPercentage = serviceDiscount.getDiscountPercentage();
+        if (discountPercentage >= 100 || discountPercentage <= 0)
+            throw new Exception("discount Percentage have to be between 0 to 1");
+        this.discountPercentage = serviceDiscount.getDiscountPercentage() / 100;
         if (serviceDiscount.getPurchaseTerm() != null) {
             if (serviceDiscount.getPurchaseTerm().getAtLeast())
                 purchaseTerm = new AtLeastPurchaseTerm(serviceDiscount.getPurchaseTerm());
