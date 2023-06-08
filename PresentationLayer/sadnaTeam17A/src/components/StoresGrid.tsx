@@ -22,7 +22,7 @@ const StoresGrid = ({ onShop }: Props) => {
 
   const number =
     useBreakpointValue({
-      base: 2,
+      // base: 2,
       sm: 2,
       md: 4,
       lg: 6,

@@ -5,6 +5,7 @@ import axios from "axios";
 import { ClientCredentialsContext } from "../App";
 import AddItemToStore from "./ManageStore/AddItemToStore";
 import Appointment from "./ManageStore/Appointment";
+import OwnerPetitions from "./ManageStore/OwnerPetitions";
 
 interface Props {
   storeId: string;
@@ -26,6 +27,7 @@ const ManageStore = ({ storeId, setPage, pages }: Props) => {
     "appointmentOwner",
     "appointmentManager",
     "removeAppointment",
+    "ownerPetitions",
   ];
   const [leftPage, setLeftPage] = useState(leftPages[0]);
 
@@ -119,15 +121,23 @@ const ManageStore = ({ storeId, setPage, pages }: Props) => {
             <Button onClick={() => setPage(pages[11])} whiteSpace="normal">
               Inventory Management
             </Button>
+            <Button onClick={() => {}} whiteSpace="normal">
+              View Bids
+            </Button>
             <Button onClick={() => setPage(pages[14])} whiteSpace="normal">
               Purchase and Discount Policy
             </Button>
-            <Button whiteSpace="normal">Traceability Constraints</Button>
             <Button
               onClick={() => setLeftPage(leftPages[2])}
               whiteSpace="normal"
             >
               Appointment of Store Owner
+            </Button>
+            <Button
+              onClick={() => setLeftPage(leftPages[5])}
+              whiteSpace="normal"
+            >
+              Owner Petitions
             </Button>
             <Button
               onClick={() => setLeftPage(leftPages[3])}
@@ -192,6 +202,9 @@ const ManageStore = ({ storeId, setPage, pages }: Props) => {
         )}
         {leftPage === "removeAppointment" && (
           <Appointment storeId={storeId} onBack={onBack} role={"remove"} />
+        )}
+        {leftPage === "ownerPetitions" && (
+          <OwnerPetitions storeId={storeId} onBack={onBack} />
         )}
       </Stack>
     </>

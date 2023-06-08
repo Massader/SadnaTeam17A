@@ -88,13 +88,14 @@ const SetManagerPermissions = ({ storeId, setPage, pages }: Props) => {
         <Heading padding={5} textAlign="center">
           Set Manager Permissions
         </Heading>
-        <Flex padding={10} justifyContent="center" alignItems="center">
+        <Flex padding={5} justifyContent="center" alignItems="center">
           <Stack spacing={4} w="50%" maxW="320px" px={4}>
             <Select
               bg="white"
               colorScheme="white"
               placeholder="Select a user"
               value={selectedUser?.id || ""}
+              onClick={getStoreManagers}
               onChange={(event) => {
                 setMessage("");
                 const selectedId = event.target.value;

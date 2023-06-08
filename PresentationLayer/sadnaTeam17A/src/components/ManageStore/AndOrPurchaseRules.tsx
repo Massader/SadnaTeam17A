@@ -1,86 +1,107 @@
 import React, { useContext, useState } from "react";
 import PurchaseTerm from "./PurchaseTerm";
-import { Button, Stack, useToast } from "@chakra-ui/react";
-import { PurchaseTermType } from "../../types";
+import { Button, Flex, Stack, Text, useToast } from "@chakra-ui/react";
+import { CompositePurchaseTermType, PurchaseTermType } from "../../types";
 import axios from "axios";
 import { ClientCredentialsContext } from "../../App";
 
 interface Props {
   storeId: string;
   purchaseType: string;
+  onSubmit: (compositePurchaseTerm: CompositePurchaseTermType) => void;
 }
 
-const AndOrPurchaseRules = ({ purchaseType, storeId }: Props) => {
-  const { clientCredentials } = useContext(ClientCredentialsContext);
+const AndOrPurchaseRules = ({ storeId, purchaseType, onSubmit }: Props) => {
+  const [purchaseTerms, setPurchaseTerms] = useState<PurchaseTermType[]>([]);
+  const [termIndex, setTermIndex] = useState(0);
 
-  const [purchaseRules, setPurchaseRules] = useState<
-    { id: number; component: React.ReactNode; purchaseTerm: PurchaseTermType }[]
-  >([]);
-  const [ruleIdCounter, setRuleIdCounter] = useState(0);
-
-  const toast = useToast();
-
-  const addCompositeTerm = async () => {
-    const response = await axios.post(
-      "http://localhost:8080/api/v1/stores/add-basket-policy-term",
-      {
-        clientCredentials,
-        storeId: storeId,
-        term: purchaseRules.map((rule) => rule.purchaseTerm),
-      }
-    );
-    if (!response.data.error) {
-      console.log(response.data.value);
-      toast({
-        title: "Policy added.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } else {
-      toast({
-        title: `${response.data.message}`,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const handleAddRule = () => {
-    const newRule = {
-      id: ruleIdCounter,
-      // component: <PurchaseTerm purchaseType={purchaseType} storeId={storeId} />,
+  const addPurchaseTerm = () => {
+    const newTermId = termIndex + 1;
+    const newTerm = {
+      id: newTermId,
+      rule: {
+        type: "",
+        itemIdOrCategoryOrNull: "",
+      },
+      atLeast: true,
+      quantity: 0,
     };
-
-    setRuleIdCounter((prevCounter) => prevCounter + 1);
+    setPurchaseTerms([...purchaseTerms, newTerm]);
+    setTermIndex(newTermId);
   };
 
-  const handleDeleteRule = (id: number) => {
-    setPurchaseRules((prevRules) => prevRules.filter((rule) => rule.id !== id));
+  const deletePurchaseTerm = (termId: number) => {
+    setPurchaseTerms((prevTerms) =>
+      prevTerms.filter((term) => term.id !== termId)
+    );
+  };
+
+  const updatePurchaseTerm = (updatedTerm: PurchaseTermType, index: number) => {
+    setPurchaseTerms((prevTerms) => {
+      const updatedTerms = [...prevTerms];
+      updatedTerms[index] = updatedTerm;
+      return updatedTerms;
+    });
+  };
+
+  const checkSubmitConditions = () => {
+    for (const term of purchaseTerms) {
+      if (
+        !(
+          (term.rule.type === "ITEM" &&
+            term.rule.itemIdOrCategoryOrNull !== "" &&
+            term.quantity !== 0) ||
+          (term.rule.type === "CATEGORY" &&
+            term.rule.itemIdOrCategoryOrNull !== "" &&
+            term.quantity !== 0) ||
+          (term.rule.type === "BASKET" && term.quantity !== 0)
+        )
+      ) {
+        return false;
+      }
+    }
+    return true;
   };
 
   return (
     <Stack spacing={4}>
-      <Button padding={4} colorScheme="blackAlpha" onClick={handleAddRule}>
-        Add rule
+      <Button colorScheme="blackAlpha" onClick={addPurchaseTerm}>
+        Add Purchase Term
       </Button>
-
-      {purchaseRules.map((rule) => (
-        <div key={rule.id}>
-          {rule.component}
+      {purchaseTerms.map((term, index) => (
+        <div key={term.id}>
+          <PurchaseTerm
+            storeId={storeId}
+            purchaseTerm={term}
+            onUpdatePurchaseTerm={(updatedTerm) =>
+              updatePurchaseTerm(updatedTerm, index)
+            }
+          />
           <Button
-            padding={2}
-            colorScheme="red"
-            onClick={() => handleDeleteRule(rule.id)}
             w="100%"
+            colorScheme="red"
+            onClick={() => term.id && deletePurchaseTerm(term.id)}
           >
             Delete
           </Button>
+          <Flex justifyContent="center" paddingTop={2}>
+            {index !== purchaseTerms.length - 1 && (
+              <Text fontWeight="bold">{purchaseType.toUpperCase()}</Text>
+            )}
+          </Flex>
         </div>
       ))}
-      {purchaseRules.length > 1 && (
-        <Button padding={4} colorScheme="blue" onClick={addCompositeTerm}>
+      {purchaseTerms.length > 0 && checkSubmitConditions() && (
+        <Button
+          padding={4}
+          colorScheme="blue"
+          onClick={() =>
+            onSubmit({
+              purchaseTerms: purchaseTerms,
+              type: purchaseType.toUpperCase(),
+            })
+          }
+        >
           Submit
         </Button>
       )}
