@@ -16,16 +16,23 @@ const ForgotPassword = ({
   setPage,
   pages,
 }: Props) => {
-  const { clientCredentials, username, setUsername, setAdmin, setRoles } =
-    useContext(ClientCredentialsContext);
+  const { setUsername, setAdmin, setRoles } = useContext(
+    ClientCredentialsContext
+  );
+
+  const [forgotUsername, setForgotUsername] = useState("");
 
   const getUserId = async () => {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/users/-by-username/username=${username}`
+      `http://localhost:8080/api/v1/users/get-user-by-username/username=${forgotUsername}`
     );
     if (!response.data.error) {
-      setUserId(response.data.value[0].id);
+      setUserId(response.data.value.id);
+      getQuestion(response.data.value.id);
+      setErrorMsg(false);
+      setMessage("");
     } else {
+      setUserId("");
       setErrorMsg(true);
       setMessage(response.data.message);
     }
@@ -36,7 +43,7 @@ const ForgotPassword = ({
       `http://localhost:8080/api/v1/users/info/id=${userId}`
     );
     if (!response.data.error) {
-      setUsername(username);
+      setUsername(response.data.value.username);
       setAdmin(response.data.value.isAdmin);
       setRoles(response.data.value.roles);
     } else {
@@ -45,15 +52,7 @@ const ForgotPassword = ({
     }
   };
 
-  useEffect(() => {
-    getUserId();
-  }, [username]);
-
-  useEffect(() => {
-    setQuestion("");
-  }, [username]);
-
-  const getQuestion = async () => {
+  const getQuestion = async (userId: string) => {
     setMessage("");
     const response = await axios.get(
       `http://localhost:8080/api/v1/users/security/get-question/id=${userId}`
@@ -75,16 +74,16 @@ const ForgotPassword = ({
       if (response.data.value) {
         newClientCredentials(userId);
         getUserInfo();
-        setErrorMsg2(false);
-        setMessage2(username + " logged in successfully!");
         onLogin(userId);
+        setErrorMsg(false);
+        setMessage(forgotUsername + " logged in successfully!");
       } else {
-        setErrorMsg2(true);
-        setMessage2("Wrong answer.");
+        setErrorMsg(true);
+        setMessage("Wrong answer.");
       }
     } else {
-      setErrorMsg2(true);
-      setMessage2(response.data.message);
+      setErrorMsg(true);
+      setMessage(response.data.message);
     }
   };
 
@@ -93,8 +92,6 @@ const ForgotPassword = ({
   const [question, setQuestion] = useState("");
   const [errorMsg, setErrorMsg] = useState(false);
   const [message, setMessage] = useState("");
-  const [errorMsg2, setErrorMsg2] = useState(false);
-  const [message2, setMessage2] = useState("");
 
   return (
     <Flex padding={10} justifyContent="center" alignItems="center">
@@ -105,34 +102,38 @@ const ForgotPassword = ({
         <Input
           bg="white"
           placeholder="Username"
-          value={username}
-          onChange={(username) => setUsername(username.target.value)}
+          value={forgotUsername}
+          onChange={(forgotUsername) => {
+            setForgotUsername(forgotUsername.target.value);
+            setMessage("");
+          }}
         />
-        <Button colorScheme="blue" size="lg" onClick={getQuestion}>
+
+        <Button colorScheme="blue" size="lg" onClick={getUserId}>
           Get question
         </Button>
-        <Text>{question}</Text>
+        {userId !== "" && (
+          <>
+            <Text>{question}</Text>
+            <Input
+              bg="white"
+              placeholder="Answer"
+              value={answer}
+              onChange={(answer) => {
+                setAnswer(answer.target.value);
+                setMessage("");
+              }}
+            />
+            <Button colorScheme="blue" size="lg" onClick={validateAnswer}>
+              Sign In
+            </Button>
+          </>
+        )}
         <Flex justifyContent="center">
           {errorMsg ? (
             <Text color="red">{message}</Text>
           ) : (
             <Text>{message}</Text>
-          )}
-        </Flex>
-        <Input
-          bg="white"
-          placeholder="Answer"
-          value={answer}
-          onChange={(answer) => setAnswer(answer.target.value)}
-        />
-        <Button colorScheme="blue" size="lg" onClick={validateAnswer}>
-          Sign In
-        </Button>
-        <Flex justifyContent="center">
-          {errorMsg2 ? (
-            <Text color="red">{message2}</Text>
-          ) : (
-            <Text>{message2}</Text>
           )}
         </Flex>
       </Stack>

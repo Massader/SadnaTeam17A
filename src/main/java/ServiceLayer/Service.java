@@ -94,17 +94,21 @@ public class Service {
         searchController.init(repositoryFactory);
         //searchController.init();
 
-        //Add Supply and Payment JSON config file read here
+        //DAL controllers
+//        StoreController storeController = StoreController.getInstance();
+//        storeController.init(repositoryFactory);
 
-//        loadObjects();
+        //Add Supply and Payment JSON config file read here
+        loadObjects();
         eventLogger.log(Level.INFO, "System boot successful.");
         return true;
     }
 
     private void loadObjects() {
         try {
-            repositoryFactory.userRepository.deleteAll();
-            repositoryFactory.passwordRepository.deleteAll();
+//            StoreController storeController = StoreController.getInstance();
+//            repositoryFactory.userRepository.deleteAll();
+//            repositoryFactory.passwordRepository.deleteAll();
 //            repositoryFactory.passwordRepository.deleteAll();
 //            repositoryFactory..deleteAll();
 //            repositoryFactory.userRepository.deleteAll();
@@ -817,7 +821,7 @@ public class Service {
         return Response.getSuccessResponse(output);
     }
 
-    public Response<Integer> numOfStores(){
+    public Response<Long> numOfStores(){
         return storeController.numOfStores();
     }
 
@@ -937,8 +941,8 @@ public class Service {
         return response;
     }
 
-    public Response<Integer> numOfItems(UUID storeId) {
-        Response<Integer> response = storeController.numOfItems(storeId);
+    public Response<Long> numOfItems(UUID storeId) {
+        Response<Long> response = storeController.numOfItems(storeId);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return Response.getFailResponse(response.getMessage());
@@ -1057,8 +1061,8 @@ public class Service {
         return Response.getSuccessResponse(serviceUsers);
     }
 
-    public Response<Integer> numOfOpenStores() {
-        Response<Integer> openStoresResponse = storeController.numOfOpenStores();
+    public Response<Long> numOfOpenStores() {
+        Response<Long> openStoresResponse = storeController.numOfOpenStores();
         if (openStoresResponse.isError()) {
             errorLogger.log(Level.WARNING, openStoresResponse.getMessage());
         }

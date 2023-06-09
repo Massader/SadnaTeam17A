@@ -1,5 +1,8 @@
 package DomainLayer.Market.Stores;
 
+import DataAccessLayer.ItemRepository;
+import DataAccessLayer.StoreRepository;
+import DataAccessLayer.controllers.StoreDalController;
 import DomainLayer.Market.Stores.Discounts.*;
 import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Stores.PurchaseRule.StorePurchasePolicy;
@@ -8,6 +11,7 @@ import DataAccessLayer.UserRepository;
 import DataAccessLayer.controllers.UserDalController;
 //import DomainLayer.Market.Stores.Discounts.condition.*;
 //import DomainLayer.Market.Stores.PurchaseTypes.PurchaseRule.*;
+import DomainLayer.Market.UserController;
 import DomainLayer.Market.Users.Client;
 import DomainLayer.Market.Users.Purchase;
 import DomainLayer.Market.Users.Roles.OwnerPetition;
@@ -22,56 +26,88 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-//@Entity
-//@Table(name = "Stores")
+@Entity
+@Table(name = "Stores")
 public class Store {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.UUID)
-//    @Column(name = "storeId", nullable = false, unique = true)
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "storeId", nullable = false, unique = true)
     private UUID storeId;
-
+    @Column
     private String name;
+    @Column
     private String description;
+    @Column
     private double rating;
+    @Column
     private boolean closed;
+    @Column
     private boolean shutdown;
+    @Column
     private int ratingCounter;
 
-    private final ConcurrentHashMap<UUID, Item> items;
-    private final StoreDiscount discounts;
-    private final StorePurchasePolicy policy;
-    private final ConcurrentLinkedQueue<Sale> sales;
-    private final ConcurrentHashMap<UUID, Role> rolesMap;
-    private ConcurrentHashMap<UUID, StoreReview> reviews;
+//    @ElementCollection
+//    @CollectionTable(name = "store_items", joinColumns = @JoinColumn(name = "store_id"))
+//    @MapKeyColumn(name = "item_id")
+//    @JoinColumn(name = "item_id")
+//    @Column(name = "item")
+//    private Map<UUID, Item> items;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Collection<Item> items;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private StoreDiscount discounts;
+
+//    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Transient
+    private StorePurchasePolicy policy;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Collection<Sale> sales;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Map<UUID, Role> rolesMap;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Map<UUID, StoreReview> reviews;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<OwnerPetition> ownerPetitions;
+
+    @Transient
+    StoreDalController storeDalController;
+
 
     
     public Store(String name, String description) {
         this.name = name;
-        this.storeId = UUID.randomUUID();
         this.description = description;
         this.rating = 0;
         this.closed = false;
         this.shutdown = false;
         this.ratingCounter = 0;
-        items = new ConcurrentHashMap<>();
+        items = new ConcurrentLinkedQueue<>();
         discounts = new StoreDiscount(true);// always max until change
         policy = new StorePurchasePolicy();
         sales = new ConcurrentLinkedQueue<>();
         rolesMap = new ConcurrentHashMap<>();
         reviews = new ConcurrentHashMap<>();
+        storeDalController = StoreDalController.getInstance(UserController.repositoryFactory);
         ownerPetitions = new ArrayList<>();
     }
 
     public Store(){
-        items = new ConcurrentHashMap<>();
-        discounts = new StoreDiscount();
-        policy = new StorePurchasePolicy();
-        sales = new ConcurrentLinkedQueue<>();
-        rolesMap = new ConcurrentHashMap<>();
-
+//        items = new ConcurrentLinkedQueue<>();
+//        discounts = new StoreDiscount();
+//        policy = new StorePurchasePolicy();
+//        sales = new ConcurrentLinkedQueue<>();
+//        rolesMap = new ConcurrentHashMap<>();
+//        storeDalController = StoreDalController.getInstance(UserController.repositoryFactory);
+//
 
     }
+
     public StoreDiscount getDiscounts() {
         return discounts;
     }
@@ -96,7 +132,7 @@ public class Store {
         return (rolesMap.get(clientCredentials).getPermissions().contains(permission));
     }
 
-    public Map<UUID, Item> getItems() {
+    public Collection<Item> getItems() {
         return items;
     }
 
@@ -185,23 +221,21 @@ public class Store {
         if (item.getPrice() <= 0)
             throw new Exception("Item price must be larger than 0");
         synchronized (items) {
-            for (Item existingItem : items.values()) {
+            for (Item existingItem : items) {
                 if (item.getName().equals(existingItem.getName()))
                     throw new Exception("Store already has item of this name.");
             }
             UUID id = item.getId();
-            items.put(id, item);
+            items.add(item);
         }
     }
 
     public Item getItem(UUID itemId) {
-        if (!hasItem(itemId))
-            return null;
-        return items.get(itemId);
+        return storeDalController.getItem(itemId);
     }
 
     public boolean hasItem(UUID itemId) {
-        return items.containsKey(itemId);
+        return storeDalController.isItemExists(itemId);
     }
 
     public Collection<Sale> getSales(UUID clientCredentials) throws Exception {
@@ -240,10 +274,10 @@ public class Store {
         return ratingCounter;
     }
 
-    public boolean removeItem(UUID itemId) {
-        if (!items.containsKey(itemId))
-            return false;
-        items.remove(itemId);
+    public boolean removeItem(Item item) {
+        items.remove(item);
+        item.setStore(null); // Set the store reference in the item to null
+        storeDalController.deleteItem(item); // Delete the item from the database using the appropriate repository
         return true;
     }
 
@@ -253,9 +287,9 @@ public class Store {
         synchronized (items) {
             for (UUID itemId : shoppingBasketItems.keySet()) {
                 int quantityToRemove = shoppingBasketItems.get(itemId);
-                int oldQuantity = items.get(itemId).getQuantity();
+                int oldQuantity = storeDalController.getItem(itemId).getQuantity();
                 if (oldQuantity < quantityToRemove)
-                    missingItems.add(items.get(itemId));
+                    missingItems.add(storeDalController.getItem(itemId));
             }
             return missingItems;
         }
@@ -266,10 +300,10 @@ public class Store {
         synchronized (items) {
             for (UUID itemId : shoppingBasketItems.keySet()) {
                 int quantityToRemove = shoppingBasketItems.get(itemId);
-                int oldQuantity = items.get(itemId).getQuantity();
+                int oldQuantity =  storeDalController.getItem(itemId).getQuantity();
                 if (quantityToRemove <= oldQuantity){
                 //update Store, history Sale Store, User purchase
-                    items.get(itemId).setQuantity(oldQuantity - quantityToRemove);
+                    storeDalController.getItem(itemId).setQuantity(oldQuantity - quantityToRemove);
                     Sale sale = new Sale(client.getId(),shoppingBasket.getStoreId(), itemId,quantityToRemove);
                     sales.add(sale);
                     if(client instanceof User){
@@ -288,8 +322,8 @@ public class Store {
         synchronized (items) {
             for (UUID itemId : shoppingBasket.getItems().keySet()) {
                 int quantityToRestore = shoppingBasket.getItems().get(itemId);
-                int oldQuantity = items.get(itemId).getQuantity() + quantityToRestore;
-                items.get(itemId).setQuantity(oldQuantity);
+                int oldQuantity =  storeDalController.getItem(itemId).getQuantity() + quantityToRestore;
+                storeDalController.getItem(itemId).setQuantity(oldQuantity);
 
                 // Remove the sale from the sales history
                 Sale saleToRemove = null;

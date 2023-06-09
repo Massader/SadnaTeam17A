@@ -38,7 +38,7 @@ const ItemGrid = ({
 
   const number =
     useBreakpointValue({
-      base: 2,
+      // base: 2,
       sm: 2,
       md: 4,
       lg: 6,
@@ -52,6 +52,7 @@ const ItemGrid = ({
         `http://localhost:8080/api/v1/stores/search-item/keyword=${keyword}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}&itemRating=${itemRating}&storeRating=&storeId=${storeId}&number=${number}&page=${page}`
       );
       if (!response.data.error) {
+        console.log(response.data.value);
         setItems(response.data.value);
       } else {
         setPage(page - 1);
@@ -113,17 +114,7 @@ const ItemGrid = ({
       >
         {items.map((item) => (
           <ItemCardContainer key={item.id}>
-            <ItemCard
-              key={item.id}
-              id={item.id}
-              name={item.name}
-              price={item.price}
-              storeId={item.storeId}
-              rating={item.rating}
-              quantity={item.quantity}
-              description={item.description}
-              categories={item.categories}
-            />
+            <ItemCard item={item} key={item.id} />
           </ItemCardContainer>
         ))}
       </SimpleGrid>

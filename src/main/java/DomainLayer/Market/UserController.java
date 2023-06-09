@@ -33,6 +33,13 @@ public class UserController {
     private UserController() {
     }
 
+    public static synchronized UserController getInstance() {
+        if (singleton == null) {
+            singleton = new UserController();
+        }
+        return singleton;
+    }
+
     public void init(RepositoryFactory repositoryFactory) {
 //        users = new ConcurrentHashMap<>();
 //        usernames = new ConcurrentHashMap<>();
@@ -46,17 +53,10 @@ public class UserController {
         registerDefaultAdmin();
     }
 
-    public static synchronized UserController getInstance() {
-        if (singleton == null) {
-            singleton = new UserController();
-        }
-        return singleton;
-    }
-
     public Response<Boolean> setAsFounder(User user, UUID storeId){
         try {
             user.addStoreRole(new StoreFounder(storeId));
-            repositoryFactory.userRepository.save(user);
+            userDalController.saveUser(user);
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception) {

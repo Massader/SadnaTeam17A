@@ -55,10 +55,15 @@ const PurchaseTerm = ({
 
   const handleUpdatePurchaseTerm = (eventType: string, event: string) => {
     const updatedPurchaseTerm: PurchaseTermType = {
+      id: purchaseTerm.id,
       rule: {
         type: eventType === "selectType" ? event : ruleType,
         itemIdOrCategoryOrNull:
-          eventType === "itemIdOrCategory" ? event : itemIdOrCategory,
+          eventType === "selectType"
+            ? ""
+            : eventType === "itemIdOrCategory"
+            ? event
+            : itemIdOrCategory,
       },
       atLeast: eventType === "atLeast" ? event === "true" : atLeast,
       quantity:
@@ -82,17 +87,18 @@ const PurchaseTerm = ({
         onChange={(event) => {
           setQuantity(0);
           setRuleType(event.target.value);
+          setItemIdOrCategory("");
           handleUpdatePurchaseTerm("selectType", event.target.value);
         }}
       >
-        <option value="BUSKET">Shopping busket</option>
+        <option value="BASKET">Shopping basket</option>
         <option value="ITEM">Item</option>
         <option value="CATEGORY">Category</option>
       </Select>
-      {ruleType === "BUSKET" && (
+      {ruleType === "BASKET" && (
         <Input
           bg="white"
-          placeholder="Busket value?"
+          placeholder="Basket value?"
           type="number"
           onChange={(event) => {
             setQuantity(parseInt(event.target.value));
@@ -113,24 +119,35 @@ const PurchaseTerm = ({
         </>
       )}
       {ruleType === "ITEM" && (
-        <Select
-          bg="white"
-          colorScheme="white"
-          placeholder="Select an item"
-          value={itemIdOrCategory}
-          onChange={(event) => {
-            setItemIdOrCategory(event.target.value);
-            handleUpdatePurchaseTerm("itemIdOrCategory", event.target.value);
-          }}
-        >
-          {items.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name}
-            </option>
-          ))}
-        </Select>
+        <>
+          <Select
+            bg="white"
+            colorScheme="white"
+            placeholder="Select an item"
+            value={itemIdOrCategory}
+            onChange={(event) => {
+              setItemIdOrCategory(event.target.value);
+              handleUpdatePurchaseTerm("itemIdOrCategory", event.target.value);
+            }}
+          >
+            {items.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name}
+              </option>
+            ))}
+          </Select>
+          <Input
+            bg="white"
+            placeholder="How many?"
+            type="number"
+            onChange={(event) => {
+              setQuantity(parseInt(event.target.value));
+              handleUpdatePurchaseTerm("quantity", event.target.value);
+            }}
+          />
+        </>
       )}
-      {(ruleType === "ITEM" || ruleType === "CATEGORY") && (
+      {ruleType === "CATEGORY" && (
         <Input
           bg="white"
           placeholder="How many?"
@@ -141,7 +158,7 @@ const PurchaseTerm = ({
           }}
         />
       )}
-      {(ruleType === "BUSKET" ||
+      {(ruleType === "BASKET" ||
         ruleType === "ITEM" ||
         ruleType === "CATEGORY") && (
         <>

@@ -45,7 +45,7 @@ public class SearchController {
             List<Store> filteredStores = stores.stream().filter(store -> store.getRating() >= storeRating).toList();
             List<Item> items = new ArrayList<>();
             for (Store store : filteredStores) {
-                items.addAll(store.getItems().values().stream().filter(item ->
+                items.addAll(store.getItems().stream().filter(item ->
                         item.containsCategory(category) &
                                 priceRange(item, minPrice, maxPrice) &
                                 item.getRating() >= itemRating &
@@ -73,12 +73,12 @@ public class SearchController {
                 return Response.getFailResponse("Store does not exist");
             if (store.isClosed())
                 return Response.getFailResponse("Store is not open");
-            items = store.getItems().values().stream().filter(item -> item.getStoreId().equals(storeId)).toList();
+            items = store.getItems().stream().filter(item -> item.getStore().getStoreId().equals(storeId)).toList();
         }
         else {
             for (Store store : storeController.getStores()) {
                 if (!store.isClosed())
-                    items.addAll(store.getItems().values());
+                    items.addAll(store.getItems());
             }
         }
         if (keyword != null && !keyword.isEmpty()){

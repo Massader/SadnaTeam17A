@@ -22,17 +22,15 @@ public abstract class Role {
     @Column(name = "store_id")
     private UUID storeId;
 
-    @ManyToMany(mappedBy = "roles")
-    private List<User> users;
-
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Role(UUID storeId){
         this.storeId = storeId;
-        this.users = new ArrayList<>();
     }
 
     public Role(){
-        this.users = new ArrayList<>();
     }
 
     public abstract List<StorePermissions> getPermissions();
@@ -45,17 +43,17 @@ public abstract class Role {
         return storeId;
     }
 
-    public Collection<User> getUsers() {
-        return users;
+    public User getUser() {
+        return user;
     }
 
-    public void addUser(User user) {
-        users.add(user);
-        user.getRoles().add(this);
-    }
-
-    public void removeUser(User user) {
-        users.remove(user);
-        user.getRoles().remove(this);
-    }
+//    public void addUser(User user) {
+//        users.add(user);
+//        user.getRoles().add(this);
+//    }
+//
+//    public void removeUser(User user) {
+//        users.remove(user);
+//        user.getRoles().remove(this);
+//    }
 }

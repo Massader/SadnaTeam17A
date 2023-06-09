@@ -5,6 +5,7 @@ import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -24,10 +25,10 @@ public class CategoryPurchaseRule implements PurchaseRule {
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity, Boolean atLeast) {
         int categoryQuantity = 0;
-        Map<UUID,Item> storeItems = store.getItems();
+        Collection<Item> storeItems = store.getItems();
          ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
         for (UUID itemId : items.keySet()) {
-            Item item=  storeItems.get(itemId);
+            Item item = store.getItem(itemId);
             if (item!=null&&item.containsCategory(category.getCategoryName())) {
                 categoryQuantity+=items.get(itemId);
             }

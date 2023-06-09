@@ -1,24 +1,40 @@
 package DomainLayer.Market.Stores;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 import java.time.Instant;
 import java.util.UUID;
-
+@Entity
+@Table(name = "ItemReviews")
 public class ItemReview {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "ItemReviewId", nullable = false, unique = true)
     private UUID id;
-    private UUID itemId;
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
+    @Column
     private String text;
+    @Column
     private UUID reviewer;
+    @Column
     private Date timestamp;
+    @Column
     private int rating;
 
-    public ItemReview(UUID itemId, String text, UUID reviewer, int rating) {
+    public ItemReview(Item item, String text, UUID reviewer, int rating) {
         this.id = UUID.randomUUID();
-        this.itemId = itemId;
+        this.item=item;
         this.text = text;
         this.reviewer = reviewer;
         this.timestamp = Date.from(Instant.now());
         this.rating = rating;
+    }
+    public ItemReview()
+    {
+
     }
 
     public UUID getId() {
@@ -45,8 +61,8 @@ public class ItemReview {
         this.reviewer = reviewer;
     }
     
-    public UUID getItemId() {
-        return itemId;
+    public Item getItem() {
+        return item;
     }
     
     public Date getTimestamp() {

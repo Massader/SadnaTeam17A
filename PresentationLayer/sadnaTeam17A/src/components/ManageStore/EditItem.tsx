@@ -7,8 +7,17 @@ import {
   Flex,
   Image,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Select,
   Stack,
   Text,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
@@ -174,6 +183,22 @@ const EditItem = ({ editItem, refreshItems }: Props) => {
     }
   };
 
+  const setPurchaseType = async (purchaseType: string) => {
+    const response = await axios.put(
+      "http://localhost:8080/api/v1/stores/set-item-purchase-type",
+      {
+        clientCredentials: clientCredentials,
+        storeId: editItem.storeId,
+        itemId: editItem.id,
+        purchaseType: purchaseType,
+      }
+    );
+    if (!response.data.error) {
+      refreshItems();
+    } else {
+    }
+  };
+
   const [name, setName] = useState(editItem.name);
   const [description, setDescription] = useState(editItem.description);
   const [quantity, setQuantity] = useState("");
@@ -195,6 +220,8 @@ const EditItem = ({ editItem, refreshItems }: Props) => {
   const [errorMsgCategory, setErrorMsgCategory] = useState(false);
   const [messageCategory, setMessageCategory] = useState("");
 
+  const [selectedPurchaseType, setSelectedPurchaseType] = useState("DIRECT");
+
   useEffect(() => {
     if (!errorMsgName) setMessageName("");
   }, [name]);
@@ -207,6 +234,8 @@ const EditItem = ({ editItem, refreshItems }: Props) => {
   useEffect(() => {
     if (!errorMsgPrice) setMessagePrice("");
   }, [price]);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Card maxW="sm">
@@ -221,6 +250,7 @@ const EditItem = ({ editItem, refreshItems }: Props) => {
               <Text>description: {editItem.description}</Text>
               <Text>quantity: {editItem.quantity}</Text>
               <Text>price: ${editItem.price}</Text>
+              <Text>purchase type: {editItem.purchaseType}</Text>
             </>
           )}
           {inEdit && (
@@ -356,6 +386,57 @@ const EditItem = ({ editItem, refreshItems }: Props) => {
               </Button>
             )}
           </Flex>
+          {!inEdit && (
+            <>
+              <Button
+                onClick={onOpen}
+                variant="outline"
+                colorScheme="blue"
+                width="100%"
+              >
+                Change Purchase Type
+              </Button>
+              <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>
+                    Change Purchase Type of {editItem.name}
+                  </ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <Text>Current purchase type: {editItem.purchaseType}</Text>
+                    <Select
+                      bg="white"
+                      colorScheme="white"
+                      placeholder="Select Purchase Type"
+                      value={selectedPurchaseType}
+                      onChange={(event) => {
+                        setSelectedPurchaseType(event.target.value);
+                      }}
+                    >
+                      <option value="DIRECT">Direct purchase</option>
+                      <option value="BID">Bid purchase</option>
+                    </Select>
+                  </ModalBody>
+
+                  <ModalFooter justifyContent="space-between">
+                    <Button colorScheme="blackAlpha" mr={3} onClick={onClose}>
+                      Close
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setPurchaseType(selectedPurchaseType);
+                        onClose();
+                      }}
+                      colorScheme="blue"
+                    >
+                      Submit
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            </>
+          )}
           <Flex justifyContent="center">
             {!inEdit && !sureDelete && (
               <Button

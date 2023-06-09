@@ -4,13 +4,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.persistence.*;
+import java.util.*;
+
+@Entity
+@Table(name = "owner_petitions")
 public class OwnerPetition {
-    
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "petition_id", nullable = false, unique = true)
+    private UUID id;
+
+    @Column(name = "appointee_id")
     private UUID appointeeId;
+
+    @Column
     private UUID appointer;
+
+    @Column(name = "store_id")
     private UUID storeId;
+
+    @ElementCollection
+    @CollectionTable(name = "owners_list",
+            joinColumns = @JoinColumn(name = "petition_id"))
+    @Column(name = "owner_id")
     private List<UUID> ownersList;
-    
+
     public OwnerPetition(UUID appointeeId, UUID appointer, UUID storeId) {
         this.appointeeId = appointeeId;
         this.appointer = appointer;
@@ -18,6 +38,7 @@ public class OwnerPetition {
         ownersList = new ArrayList<>();
         ownersList.add(appointer);
     }
+    public OwnerPetition(){ownersList = new ArrayList<>();}
     
     public UUID getAppointeeId() {
         return appointeeId;

@@ -25,6 +25,7 @@ import PositionsInfo from "./components/ManageStore/PositionsInfo";
 import PurchaseAndDiscountPolicy from "./components/ManageStore/PurchaseAndDiscountPolicy";
 import AddPurchaseRules from "./components/ManageStore/AddPurchaseRules";
 import Messages from "./components/Messages";
+import ViewBids from "./components/ManageStore/ViewBids";
 
 type ClientCredentialsContextValue = {
   clientCredentials: string;
@@ -55,22 +56,23 @@ export const ClientCredentialsContext =
 
 function App() {
   const pages = [
-    "home",
-    "signIn",
-    "myStores",
-    "register",
-    "customerService",
-    "stores",
-    "createStore",
-    "myCart",
-    "adminPage",
-    "forgot",
-    "saleHistory",
-    "inventoryManagement",
-    "setManagerPermissions",
-    "positionInfo",
-    "purchaseAndDiscountPolicy",
-    "messages",
+    "home", //0
+    "signIn", //1
+    "myStores", //2
+    "register", //3
+    "customerService", //4
+    "stores", //5
+    "createStore", //6
+    "myCart", //7
+    "adminPage", //8
+    "forgot", //9
+    "saleHistory", //10
+    "inventoryManagement", //11
+    "setManagerPermissions", //12
+    "positionInfo", //13
+    "purchaseAndDiscountPolicy", //14
+    "messages", //15
+    "viewBids", //16
   ];
 
   const leftPages = ["empty", "filters", "manageStore"];
@@ -149,11 +151,11 @@ function App() {
     setNotifications([]);
   };
 
-  const onLogin = (clientCredentials: string) => {
+  const onLogin = (id: string) => {
     setLeftPage(leftPages[1]);
     setPage(pages[0]);
     setLogged(true);
-    getNotifier(clientCredentials);
+    getNotifier(id);
   };
 
   const getNotifier = async (id: string) => {
@@ -342,6 +344,9 @@ function App() {
               setPage={setPage}
               pages={pages}
             />
+          )}
+          {page === "viewBids" && (
+            <ViewBids storeId={storeManage} setPage={setPage} pages={pages} />
           )}
           {page === "setManagerPermissions" && (
             <SetManagerPermissions

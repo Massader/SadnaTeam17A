@@ -1,6 +1,8 @@
 package DomainLayer.Market;
 
 import DataAccessLayer.RepositoryFactory;
+import DataAccessLayer.UserRepository;
+import DataAccessLayer.controllers.StoreDalController;
 import DataAccessLayer.controllers.UserDalController;
 import DomainLayer.Market.Stores.*;
 import DomainLayer.Market.Stores.Discounts.Discount;
@@ -17,17 +19,17 @@ import ServiceLayer.Response;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class StoreController {
     private static StoreController instance = null;
     private static final Object instanceLock = new Object();
-    private ConcurrentHashMap<UUID, Store> storeMap;
+//    private ConcurrentHashMap<UUID, Store> storeMap;
     private UserController userController;
     private NotificationController notificationController;
     private ConcurrentHashMap<String, Category> itemCategories;
     private RepositoryFactory repositoryFactory;
     private UserDalController userDalController;
+    private StoreDalController storeDalController;
 
     private StoreController() {
     }
@@ -42,15 +44,16 @@ public class StoreController {
 
     public void init(RepositoryFactory repositoryFactory) {
         this.repositoryFactory = repositoryFactory;
-        storeMap = new ConcurrentHashMap<>();
+//        storeMap = new ConcurrentHashMap<>();
         userController = UserController.getInstance();
         notificationController = NotificationController.getInstance();
         itemCategories = new ConcurrentHashMap<>();
         userDalController = UserDalController.getInstance(repositoryFactory);
+        storeDalController = StoreDalController.getInstance(repositoryFactory);
     }
 
     public void init() {
-        storeMap = new ConcurrentHashMap<>();
+//        storeMap = new ConcurrentHashMap<>();
         userController = UserController.getInstance();
         notificationController = NotificationController.getInstance();
         itemCategories = new ConcurrentHashMap<>();
@@ -58,19 +61,21 @@ public class StoreController {
 
 
     public List<Store> getStores() {
-        return new ArrayList<>(storeMap.values());
+
+        return storeDalController.getAllStores();
     }
 
     public Response<List<Store>> getStoresPage(int number, int page) {
         try {
             if (number <= 0) return Response.getFailResponse("Number of stores per page can't be lower than 1.");
-            if (storeMap == null || storeMap.size() == 0) return Response.getSuccessResponse(new ArrayList<Store>());
-            if (page == 0 || page > (storeMap.size() / number) + 1)
-                return Response.getFailResponse("Page number can't be 0 or larger than available stores.");
-            List<Store> stores = new ArrayList<>(storeMap.values().stream().filter(store -> !store.isClosed() && !store.isShutdown()).toList());
-            int start = (page - 1) * number;
-            int end = Math.min(start + number, stores.size());
-            return Response.getSuccessResponse(stores.subList(start, end));
+//            List<Store> stores = getStores();
+//            if (storeMap == null || storeMap.size() == 0) return Response.getSuccessResponse(new ArrayList<Store>());
+//            List<Store> stores = new ArrayList<>(storeMap.values().stream().filter(store -> !store.isClosed() && !store.isShutdown()).toList());
+//            if (page == 0 || page > (stores.size() / number) + 1) {
+//                return Response.getFailResponse("Page number can't be 0 or larger than available stores.");
+//            }
+            List<Store> stores = storeDalController.getStoresPage(number, page);
+            return Response.getSuccessResponse(stores);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }
@@ -78,7 +83,7 @@ public class StoreController {
 
 
     public boolean storeExist(UUID storeId) {
-        return this.storeMap.containsKey(storeId);
+        return storeDalController.isStoreExists(storeId);
     }
 
     public Response<Store> getStoreInformation(UUID clientCredentials, UUID storeId) {
@@ -168,7 +173,7 @@ public class StoreController {
                 return Response.getFailResponse("User does not exist.");
             if (!user.isAdmin())
                 return Response.getFailResponse("Only admins can shutdown stores.");
-            if (storeMap.get(storeId).shutdownStore()) {
+            if (getStore(storeId).shutdownStore()) {
                 for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
                     List<StorePermissions> rolePermissions = role.getValue().getPermissions();
                     if (rolePermissions.contains(StorePermissions.STORE_OWNER)
@@ -192,14 +197,10 @@ public class StoreController {
 
     public Response<Item> getItem(UUID itemId) {
         try {
-            Item item = null;
-            for (Store currentStore : storeMap.values()) {
-                if (currentStore.hasItem(itemId)) {
-                    item = currentStore.getItem(itemId);
-                    return Response.getSuccessResponse(item);
-                }
-            }
-            return Response.getFailResponse("item doesn't exist");
+            Item item = storeDalController.getItem(itemId);
+            if (item == null)
+                return Response.getFailResponse("item doesn't exist");
+            else return Response.getSuccessResponse(item);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }
@@ -207,20 +208,18 @@ public class StoreController {
 
     public Response<Item> addItemToStore(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
         try {
-            if (!storeExist(storeId))
+            Store store = storeDalController.getStore(storeId);
+            if (store == null)
                 return Response.getFailResponse("Store does not exist");
             if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
                     && !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
                 return Response.getFailResponse("User doesn't have permission.");
 
-            UUID id = UUID.randomUUID();
-            Item item = new Item(id, name, price, storeId, 0, quantity, description);
+            Item item = new Item(name, price, store, 0, quantity, description);
 
-
-            //add the item to the store
-            Store store = getStore(storeId);
+            UUID id2 = storeDalController.saveItem(item);
             store.addItem(item);
-
+            UUID id3 = storeDalController.saveStore(store);
             return Response.getSuccessResponse(item);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -242,10 +241,7 @@ public class StoreController {
 
     // check id the item id exist
     protected boolean itemExist(UUID itemId) {
-        for (Store currentStore : storeMap.values())
-            if (currentStore.hasItem(itemId))
-                return true;
-        return false;
+        return storeDalController.isItemExists(itemId);
     }
 
     public Response<ShoppingCart> getShoppingCart(UUID clientId) {
@@ -260,7 +256,7 @@ public class StoreController {
     }
 
     public Store getStore(UUID storeId) {
-        return storeMap.get(storeId);
+        return storeDalController.getStore(storeId);
     }
 
     public Response<UUID> postReview(UUID clientCredentials, UUID itemId, String reviewBody, int rating) {
@@ -347,8 +343,8 @@ public class StoreController {
     //calculate new rating given a new one
     public Response<Boolean> addItemRating(UUID clientCredentials, UUID itemId, UUID storeId, int rating) {
         try {
-            if (!storeMap.containsKey(storeId)) return Response.getFailResponse("Store not found.");
-            Item item = storeMap.get(storeId).getItem(itemId);
+            if (!storeDalController.isStoreExists(storeId)) return Response.getFailResponse("Store not found.");
+            Item item = storeDalController.getItem(itemId);
             if (item == null) return Response.getFailResponse("Item not found");
             if (!userController.isRegisteredUser(clientCredentials))
                 return Response.getFailResponse("User not found.");
@@ -404,17 +400,18 @@ public class StoreController {
         try {
             if (storeName == null || storeName.length() == 0)
                 return Response.getFailResponse("Store must have a name.");
-            for (Store store : storeMap.values())
-                if (store.getName().equals(storeName))
+            if (storeDalController.isStoreExists(storeName))
                     return Response.getFailResponse("A Store with this name already exists.");
             Store store = new Store(storeName, storeDescription);
+//            storeDalController.saveStore(store);
             User user = userController.getUserById(clientCredentials);
             store.addRole(user, new StoreFounder(clientCredentials));
             Response<Boolean> response = userController.setAsFounder(user, store.getStoreId());
-
+            storeDalController.saveStore(store);
             if (response.isError())
                 return Response.getFailResponse(response.getMessage());
-            storeMap.put(store.getStoreId(), store);
+//            storeMap.put(store.getStoreId(), store);
+//            storeDalController.saveStore(store);
             return Response.getSuccessResponse(store);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -428,9 +425,11 @@ public class StoreController {
             if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
                     && !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
                 return Response.getFailResponse("User doesn't have permission.");
-            if (!getStore(storeId).getItems().containsKey(itemId))
+            Item item =  storeDalController.getItem(itemId);
+            if (item == null)
                 return Response.getFailResponse("Item does not exist");
-            getStore(storeId).getItems().get(itemId).setQuantity(newQuantity);
+            item.setQuantity(newQuantity);
+            storeDalController.saveItem(item);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -444,11 +443,13 @@ public class StoreController {
             if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
                     && !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
                 return Response.getFailResponse("User doesn't have permission.");
-            if (!getStore(storeId).getItems().containsKey(itemId))
+            Item item =  storeDalController.getItem(itemId);
+            if (item == null)
                 return Response.getFailResponse("Item does not exist");
             if (name == "")
                 return Response.getFailResponse("illegal name!");
-            getStore(storeId).getItems().get(itemId).setName(name);
+            item.setName(name);
+            storeDalController.saveItem(item);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -462,9 +463,11 @@ public class StoreController {
             if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
                     && !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
                 return Response.getFailResponse("User doesn't have permission.");
-            if (!getStore(storeId).getItems().containsKey(itemId))
+            Item item =  storeDalController.getItem(itemId);
+            if (item == null)
                 return Response.getFailResponse("Item does not exist");
-            getStore(storeId).getItems().get(itemId).setDescription(description);
+            item.setDescription(description);
+            storeDalController.saveItem(item);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -478,11 +481,13 @@ public class StoreController {
             if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
                     && !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
                 return Response.getFailResponse("User doesn't have permission.");
-            if (!getStore(storeId).getItems().containsKey(itemId))
+            Item item =  storeDalController.getItem(itemId);
+            if (item == null)
                 return Response.getFailResponse("Item does not exist");
             if (price <=0)
                 return Response.getFailResponse("illegal price");
-            getStore(storeId).getItems().get(itemId).setPrice(price);
+            item.setPrice(price);
+            storeDalController.saveItem(item);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -491,14 +496,16 @@ public class StoreController {
 
     public Response<Boolean> removeItemQuantity(UUID storeId, UUID itemId, int quantity) {
         try {
-            if (!storeMap.containsKey(storeId))
+            Store store = storeDalController.getStore(storeId);
+            if (store == null)
                 return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
-            Item item = store.getItem(itemId);
+            Item item = storeDalController.getItem(itemId);
             if (item == null) return Response.getFailResponse("Item does not exist.");
             synchronized (item) {
-                if (item.removeFromQuantity(quantity))
+                if (item.removeFromQuantity(quantity)) {
+                    storeDalController.saveItem(item);
                     return Response.getSuccessResponse(true);
+                }
                 else return Response.getFailResponse("Failed to remove quantity from item.");
             }
         } catch (Exception exception) {
@@ -535,7 +542,8 @@ public class StoreController {
                 return Response.getFailResponse("User does not exist.");
             ShoppingCart cart = client.getCart();
             for (UUID storeId : cart.getShoppingBaskets().keySet()) {// iterator on the storeId
-                price += storeMap.get(storeId).calculatePriceOfBasketWithPolicyAndDiscount(cart.getShoppingBaskets().get(storeId));
+                price += storeDalController.getStore(storeId)
+                        .calculatePriceOfBasketWithPolicyAndDiscount(cart.getShoppingBaskets().get(storeId));
             }
             return Response.getSuccessResponse(price);
         } catch (Exception exception) {
@@ -546,7 +554,8 @@ public class StoreController {
     public double verifyCartPrice(ShoppingCart shoppingCart) throws Exception {
         double price = 0;
         for (UUID storeId : shoppingCart.getShoppingBaskets().keySet()) {// iterator on the storeId
-            price += storeMap.get(storeId).calculatePriceOfBasketWithPolicyAndDiscount(shoppingCart.getShoppingBaskets().get(storeId));
+            price += storeDalController.getStore(storeId)
+                    .calculatePriceOfBasketWithPolicyAndDiscount(shoppingCart.getShoppingBaskets().get(storeId));
         }
         return price;
 
@@ -556,7 +565,7 @@ public class StoreController {
     // for unit tests
     public UUID addStore(Store store) {
         UUID id = UUID.randomUUID();
-        storeMap.put(id, store);
+        storeDalController.saveStore(store);
         return id;
     }
 
@@ -566,9 +575,10 @@ public class StoreController {
 
     public Response<Boolean> addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category) {
         try {
-            if (!storeMap.containsKey(storeId))
+            Store store = storeDalController.getStore(storeId);
+            if (store == null) {
                 return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
+            }
             if (!store.checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT) && !(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have item management permissions for this store.");
             Item item = store.getItem(itemId);
@@ -584,18 +594,21 @@ public class StoreController {
 
     public Response<Boolean> removeItemFromStore(UUID clientCredentials, UUID storeId, UUID itemId) {
         try {
-            if (!storeMap.containsKey(storeId))
+            Store store = storeDalController.getStore(storeId);
+            if (store == null) {
                 return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
+            }
             if (!store.checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT) && !(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have item management permissions for this store.");
-            Item item = store.getItem(itemId);
+            Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
             synchronized (item) {
                 userController.removeItemFromCarts(storeId, item);
-                if (!store.removeItem(itemId))
+                if (!store.removeItem(item))
                     return Response.getFailResponse("Failed to remove item.");
+                else
+                    storeDalController.saveStore(store);
                 return Response.getSuccessResponse(true);
             }
         } catch (Exception e) {
@@ -610,7 +623,7 @@ public class StoreController {
                 List<Item> allItems = new ArrayList<>();
                 for (Store store : getStores()) {
                     if (!store.isClosed() && !store.isShutdown())
-                        allItems.addAll(store.getItems().values());
+                        allItems.addAll(store.getItems());
                 }
                 int start = (page - 1) * number;
                 int end = Math.min(start + number, allItems.size());
@@ -621,7 +634,7 @@ public class StoreController {
                     return Response.getFailResponse("Store does not exist");
                 if (store.isClosed())
                     return Response.getFailResponse("Store is temporarily closed.");
-                List<Item> allItems = new ArrayList<>(store.getItems().values());
+                List<Item> allItems = new ArrayList<>(store.getItems());
                 int start = (page - 1) * number;
                 int end = Math.min(start + number, allItems.size());
                 output.addAll(allItems.subList(start, end));
@@ -632,9 +645,9 @@ public class StoreController {
         }
     }
 
-    public Response<Integer> numOfStores() {
+    public Response<Long> numOfStores() {
         try {
-            int num = storeMap.size();
+            long num = storeDalController.storesCount();;
             return Response.getSuccessResponse(num);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
@@ -644,9 +657,10 @@ public class StoreController {
 
     public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
         try {
-            if (!storeMap.containsKey(storeId))
+            Store store = storeDalController.getStore(storeId);
+            if (store == null) {
                 return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
+            }
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
             store.addPolicyTermByStoreOwner(term);
@@ -658,9 +672,10 @@ public class StoreController {
 
     public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, UUID itemId)  {
         try {
-            if (!storeMap.containsKey(storeId))
+            Store store = storeDalController.getStore(storeId);
+            if (store == null) {
                 return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
+            }
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
             return Response.getSuccessResponse(store.removePolicyTerm(itemId));
@@ -671,9 +686,10 @@ public class StoreController {
     
     public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId, String categoryName)  {
         try {
-            if (!storeMap.containsKey(storeId))
+            Store store = storeDalController.getStore(storeId);
+            if (store == null) {
                 return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
+            }
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
             return Response.getSuccessResponse(store.removePolicyTerm(categoryName));
@@ -684,9 +700,10 @@ public class StoreController {
     
     public Response<Boolean> removePolicyTerm(UUID clientCredentials, UUID storeId)  {
         try {
-            if (!storeMap.containsKey(storeId))
+            Store store = storeDalController.getStore(storeId);
+            if (store == null) {
                 return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
+            }
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
             return Response.getSuccessResponse(store.removePolicyTerm());
@@ -697,9 +714,10 @@ public class StoreController {
 
     public Response<Boolean> addDiscount(UUID clientCredentials, UUID storeId, Discount discount) {
         try {
-            if (!storeMap.containsKey(storeId))
+            Store store = storeDalController.getStore(storeId);
+            if (store == null) {
                 return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
+            }
             if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
             store.addDiscount(discount);
@@ -711,9 +729,10 @@ public class StoreController {
 
     public Response<Boolean> removeDiscount(UUID clientCredentials, UUID storeId, Discount discount) {
         try {
-            if (!storeMap.containsKey(storeId))
+            Store store = storeDalController.getStore(storeId);
+            if (store == null) {
                 return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
+            }
             if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) && !store.checkPermission(clientCredentials, StorePermissions.STORE_DISCOUNT_MANAGEMENT))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
             store.removeDiscount(discount);
@@ -723,28 +742,25 @@ public class StoreController {
         }
     }
 
-    public Response<Integer> numOfItems(UUID storeId) {
+    public Response<Long> numOfItems(UUID storeId) {
         if (storeId == null)
             return Response.getSuccessResponse(numOfItems());
 
         if (!storeExist(storeId))
             return Response.getFailResponse("store no exist");
         int num = getStore(storeId).numOfItems();
-        return Response.getSuccessResponse(num);
+        return Response.getSuccessResponse((long)num);
     }
 
-    private Integer numOfItems() {
-        int num = 0;
-        for (Store store : storeMap.values())
-            num+= store.numOfItems();
-        return num;
+    private Long numOfItems() {
+        return storeDalController.itemsCount();
 
     }
 
-    public Response<Integer> numOfOpenStores() {
+    public Response<Long> numOfOpenStores() {
         try {
-            int openStores = storeMap.values().stream().filter(store -> !store.isClosed()).toList().size();
-            return Response.getSuccessResponse(openStores);
+            long count = storeDalController.openStoresCount();
+            return Response.getSuccessResponse(count);
         }
         catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());

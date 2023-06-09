@@ -58,8 +58,8 @@ public interface Bridge {
     Response<Boolean> removeItemFromStore(UUID clientCredentials, UUID storeId, UUID itemId);
     Response<Boolean> isLoggedIn(UUID userId);
     Response<Integer> numOfUsers();
-    Response<Integer> numOfStores();
-    Response<Integer> numOfOpenStores();
+    Response<Long> numOfStores();
+    Response<Long> numOfOpenStores();
     Response<Integer> numOfClients();
     Response<List<Role>> getUserRoles(UUID clientCredentials);
     Response<ServiceUser> getUserInfo(UUID clientCredentials);

@@ -17,8 +17,13 @@ export interface Item {
   quantity: number;
   description: string;
   categories: Category[];
-  // purchaseType
+  purchaseType: string;
 }
+
+// export interface PurchaseType {
+//   DIRECT_PURCHASE: string;
+//   BID_PURCHASE: string;
+// }
 
 export interface PurchasedItemType {
   date: Date;
@@ -94,12 +99,21 @@ export interface ComplaintType {
   storeId: string;
 }
 
+export interface DiscountType {
+  id?: string;
+  type: string; //CATEGORY ITEM BASKET
+  itemIdOrCategoryOrNull?: string;
+  discountPercentage: number;
+  purchaseTerm?: PurchaseTermType;
+}
+
 export interface PurchaseRuleType {
   type: string; //CATEGORY ITEM BASKET
   itemIdOrCategoryOrNull?: string; //
 }
 
 export interface PurchaseTermType {
+  id?: number;
   rule: PurchaseRuleType;
   atLeast: boolean;
   quantity: number;
@@ -108,4 +122,28 @@ export interface PurchaseTermType {
 export interface CompositePurchaseTermType {
   purchaseTerms: PurchaseTermType[];
   type: string; //AND OR XOR
+}
+
+export interface ConditionalPurchaseTermType {
+  ifPurchaseTerm: PurchaseTermType;
+  thenPurchaseTerm: PurchaseTermType;
+}
+
+export interface AllPurchaseTermType {
+  termId: string;
+  termType: string;
+  rule?: PurchaseRuleType;
+  atLeast?: boolean;
+  quantity?: number;
+  purchaseTerms?: PurchaseTermType[];
+  type?: string; //AND OR XOR
+  ifPurchaseTerm?: PurchaseTermType;
+  thenPurchaseTerm?: PurchaseTermType;
+}
+
+export interface OwnerPetitionsType {
+  appointeeId: string;
+  appointer: string;
+  ownersList: string[];
+  storeId: string;
 }

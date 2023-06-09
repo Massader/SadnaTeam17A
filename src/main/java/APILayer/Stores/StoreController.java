@@ -247,12 +247,12 @@ public class StoreController {
     }
 
     @GetMapping(path = "/num-of-stores")
-    public Response<Integer> numOfStores(){
+    public Response<Long> numOfStores(){
         return service.numOfStores();
     }
 
     @GetMapping(path = "/num-of-items/storeId={storeId}")
-    public Response<Integer> numOfItems(@PathVariable(name = "storeId", required = false) UUID storeId){
+    public Response<Long> numOfItems(@PathVariable(name = "storeId", required = false) UUID storeId){
         return service.numOfItems(storeId);
     }
 

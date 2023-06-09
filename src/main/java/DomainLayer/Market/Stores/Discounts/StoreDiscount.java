@@ -3,12 +3,20 @@ package DomainLayer.Market.Stores.Discounts;
 import DomainLayer.Market.Stores.PurchaseRule.CompositePurchaseTerm;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "StoreDiscounts")
 public class StoreDiscount {
     /**
      * ManageDiscount is a class that manages the discounts of a shop.
      * It stores discount and provides methods for adding and removing them.
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    private Long id;
+    @Transient
     private NumericalAssemblyOfDiscount discountsAssembly;
 
     public StoreDiscount(NumericalAssemblyOfDiscount discountsAssembly) {

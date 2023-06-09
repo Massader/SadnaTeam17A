@@ -1,20 +1,33 @@
-import { Button, Input, Select, Stack, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Select,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
 import { ClientCredentialsContext } from "../../App";
 import axios from "axios";
-import { Item } from "../../types";
+import { DiscountType, Item } from "../../types";
 
 interface Props {
   storeId: string;
+  discountTerm: DiscountType;
+  onUpdateDiscountTerm: (updatedDiscountTerm: DiscountType) => void;
 }
 
-const Discount = ({ storeId }: Props) => {
-  const { clientCredentials } = useContext(ClientCredentialsContext);
+const Discount = ({ discountTerm, onUpdateDiscountTerm, storeId }: Props) => {
+  const [type, setType] = useState(discountTerm.type);
+  const [itemIdOrCategory, setItemIdOrCategory] = useState(
+    discountTerm.itemIdOrCategoryOrNull
+  );
+  const [discountPercentage, setDiscountPercentage] = useState(
+    discountTerm.discountPercentage
+  );
 
-  const [selectedOption, setSelectedOption] = useState("");
   const [items, setItems] = useState<Item[]>([]);
-  const [selectedItem, setSelectedItem] = useState("");
-  const [percent, setPercent] = useState("");
 
   const fetchItems = async () => {
     const response = await axios.get(
@@ -31,40 +44,67 @@ const Discount = ({ storeId }: Props) => {
     fetchItems();
   }, []);
 
+  const handleUpdateDiscountTerm = (eventType: string, event: string) => {
+    const updatedDiscountTerm: DiscountType = {
+      id: discountTerm.id,
+      type: eventType === "selectType" ? event : type,
+      itemIdOrCategoryOrNull:
+        eventType === "selectType"
+          ? ""
+          : eventType === "itemIdOrCategory"
+          ? event
+          : itemIdOrCategory,
+      discountPercentage:
+        eventType === "selectType"
+          ? 0
+          : eventType === "discountPercentage"
+          ? parseInt(event) / 100
+          : discountPercentage,
+    };
+
+    onUpdateDiscountTerm(updatedDiscountTerm);
+  };
+
   return (
     <Stack>
       <Select
         bg="white"
         colorScheme="white"
         placeholder="Select option"
-        value={selectedOption}
+        value={type}
         onChange={(event) => {
-          setPercent("");
-          setSelectedOption(event.target.value);
+          setDiscountPercentage(0);
+          setType(event.target.value);
+          setItemIdOrCategory("");
+          handleUpdateDiscountTerm("selectType", event.target.value);
         }}
       >
-        <option value="Shopping busket">Shopping busket</option>
-        <option value="Item">Item</option>
-        <option value="Category">Category</option>
+        <option value="BASKET">Shopping basket</option>
+        <option value="ITEM">Item</option>
+        <option value="CATEGORY">Category</option>
       </Select>
-      {selectedOption === "Shopping busket" && (
-        <Input
-          bg="white"
-          placeholder="how many percent?"
-          type="number"
-          value={percent}
-          onChange={(percent) => setPercent(percent.target.value)}
-        />
+      {type === "CATEGORY" && (
+        <>
+          <Input
+            bg="white"
+            placeholder="Category name"
+            onChange={(event) => {
+              setItemIdOrCategory(event.target.value);
+              handleUpdateDiscountTerm("itemIdOrCategory", event.target.value);
+            }}
+          />
+        </>
       )}
-      {selectedOption === "Item" && (
+      {type === "ITEM" && (
         <>
           <Select
             bg="white"
             colorScheme="white"
             placeholder="Select an item"
-            value={selectedItem}
+            value={itemIdOrCategory}
             onChange={(event) => {
-              setSelectedItem(event.target.value);
+              setItemIdOrCategory(event.target.value);
+              handleUpdateDiscountTerm("itemIdOrCategory", event.target.value);
             }}
           >
             {items.map((item) => (
@@ -73,20 +113,29 @@ const Discount = ({ storeId }: Props) => {
               </option>
             ))}
           </Select>
-          <Input
-            bg="white"
-            placeholder="how many percent?"
-            type="number"
-            value={percent}
-            onChange={(percent) => setPercent(percent.target.value)}
-          />
         </>
       )}
-      {selectedOption === "Item" && percent !== "" && selectedItem !== "" && (
-        <Button colorScheme="blue">Submit</Button>
-      )}
-      {selectedOption === "Shopping busket" && percent !== "" && (
-        <Button colorScheme="blue">Submit</Button>
+      {(type === "BASKET" || type === "ITEM" || type === "CATEGORY") && (
+        <InputGroup>
+          <InputLeftElement
+            pointerEvents="none"
+            color="gray"
+            fontSize="1.2em"
+            children="%"
+          />
+          <Input
+            bg="white"
+            placeholder="Discount Percentage?"
+            type="number"
+            onChange={(event) => {
+              setDiscountPercentage(parseInt(event.target.value));
+              handleUpdateDiscountTerm(
+                "discountPercentage",
+                event.target.value
+              );
+            }}
+          />
+        </InputGroup>
       )}
     </Stack>
   );

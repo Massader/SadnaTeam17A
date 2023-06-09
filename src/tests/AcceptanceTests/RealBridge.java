@@ -221,11 +221,11 @@ public class RealBridge implements Bridge {
         return service.numOfUsers();
     }
 
-    public Response<Integer> numOfStores() {
+    public Response<Long> numOfStores() {
         return service.numOfStores();
     }
 
-    public Response<Integer> numOfOpenStores() {
+    public Response<Long> numOfOpenStores() {
         return service.numOfOpenStores();
     }
 

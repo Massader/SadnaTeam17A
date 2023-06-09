@@ -24,36 +24,21 @@ import itemIcon from "../assets/item.png";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { Category, ReviewType } from "../types";
+import { Category, Item, ReviewType } from "../types";
 import { ClientCredentialsContext } from "../App";
 import Review from "./Review";
+import BidItem from "./BidItem";
 
 interface Props {
-  name: string;
-  id: string;
-  price: number;
-  storeId: string;
-  rating: number;
-  quantity: number;
-  description: string;
-  categories: Category[];
+  item: Item;
 }
 
-const ItemCard = ({
-  name,
-  id,
-  price,
-  storeId,
-  rating,
-  quantity,
-  description,
-  categories,
-}: Props) => {
+const ItemCard = ({ item }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
 
   const getStoreName = async () => {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/stores/store-info/id=${clientCredentials}&storeId=${storeId}`
+      `http://localhost:8080/api/v1/stores/store-info/id=${clientCredentials}&storeId=${item.storeId}`
     );
     if (!response.data.error) {
       setStoreName(response.data.value.name);
@@ -72,14 +57,14 @@ const ItemCard = ({
       "http://localhost:8080/api/v1/users/add-to-cart",
       {
         clientCredentials: clientCredentials,
-        itemId: id,
+        itemId: item.id,
         quantity: 1,
-        storeId: storeId,
+        storeId: item.storeId,
       }
     );
     if (!response.data.error) {
       toast({
-        title: `${name} added to your cart!`,
+        title: `${item.name} added to your cart!`,
         colorScheme: "blue",
         status: "success",
         duration: 3000,
@@ -97,7 +82,7 @@ const ItemCard = ({
 
   const getReviews = async () => {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/stores/get-item-reviews/storeId=${storeId}&itemId=${id}`
+      `http://localhost:8080/api/v1/stores/get-item-reviews/storeId=${item.storeId}&itemId=${item.id}`
     );
     if (!response.data.error) {
       setReviews(response.data.value);
@@ -108,7 +93,7 @@ const ItemCard = ({
 
   const getStoreReviews = async () => {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/stores/get-store-reviews/storeId=${storeId}`
+      `http://localhost:8080/api/v1/stores/get-store-reviews/storeId=${item.storeId}`
     );
     if (!response.data.error) {
       setReviewsStore(response.data.value);
@@ -126,6 +111,12 @@ const ItemCard = ({
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const {
+    isOpen: isOpenBid,
+    onOpen: onOpenBid,
+    onClose: onCloseBid,
+  } = useDisclosure();
+
   return (
     <Card maxW="sm">
       <CardBody>
@@ -133,15 +124,15 @@ const ItemCard = ({
           <Image src={itemIcon} borderRadius="lg" />
         </Flex>
         <Stack mt="6" spacing="3">
-          <Heading size="md">{name}</Heading>
+          <Heading size="md">{item.name}</Heading>
           <Text>{storeName}</Text>
-          <Text>{description}</Text>
+          <Text>{item.description}</Text>
           <Flex justifyContent="space-between" alignItems="center">
             <Text color="blue.600" fontSize="2xl">
-              ${price}
+              ${item.price}
             </Text>
             <Text color="blue.600" fontSize={22}>
-              Rating: {rating.toFixed(1)}
+              Rating: {item.rating.toFixed(1)}
             </Text>
           </Flex>
         </Stack>
@@ -149,17 +140,35 @@ const ItemCard = ({
       <Divider />
       <CardFooter>
         <Stack width="100%">
-          <Button
-            onClick={() => handleAddToCart()}
-            variant="solid"
-            colorScheme="blue"
-            width="100%"
-          >
-            <Box marginRight={2}>
-              <AiOutlineShoppingCart />
-            </Box>
-            Add to Cart
-          </Button>
+          {item.purchaseType === "Direct Purchase" && (
+            <Button
+              onClick={() => handleAddToCart()}
+              variant="solid"
+              colorScheme="blue"
+              width="100%"
+            >
+              <Box marginRight={2}>
+                <AiOutlineShoppingCart />
+              </Box>
+              Add to Cart
+            </Button>
+          )}
+          {item.purchaseType === "BID" && (
+            <Button
+              onClick={onOpenBid}
+              variant="solid"
+              colorScheme="blue"
+              width="100%"
+            >
+              <Box marginRight={2}>
+                <AiOutlineShoppingCart />
+              </Box>
+              Add Bid
+            </Button>
+          )}
+          {isOpenBid && (
+            <BidItem item={item} isOpen={isOpenBid} onClose={onCloseBid} />
+          )}
           <Button
             variant="outline"
             colorScheme="blue"
@@ -194,7 +203,7 @@ const ItemCard = ({
                 </Stack>
               </RadioGroup>
               <DrawerHeader borderBottomWidth="1px">
-                {reviewType === "item" ? name : storeName} Reviews:
+                {reviewType === "item" ? item.name : storeName} Reviews:
               </DrawerHeader>
               <DrawerBody>
                 {reviewType === "item" &&

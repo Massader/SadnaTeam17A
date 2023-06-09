@@ -207,9 +207,9 @@ public class ProxyBridge implements Bridge {
         return real == null ? null : real.numOfUsers();
     }
 
-    public Response<Integer> numOfStores() {
+    public Response<Long> numOfStores() {
         return real == null ? null : real.numOfStores();
-    }public Response<Integer> numOfOpenStores() {
+    }public Response<Long> numOfOpenStores() {
         return real == null ? null : real.numOfOpenStores();
     }
 

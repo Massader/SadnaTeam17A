@@ -1,6 +1,8 @@
 package DomainLayer.Market.Users;
 
+import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.Stores.Item;
+import DomainLayer.Market.UserController;
 import jakarta.persistence.*;
 
 import java.util.Map;

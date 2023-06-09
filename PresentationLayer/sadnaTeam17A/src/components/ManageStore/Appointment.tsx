@@ -38,7 +38,7 @@ const Appointment = ({ storeId, onBack, role }: Props) => {
       );
       if (!response.data.error) {
         setErrorMsg(false);
-        setMessage(username + " is now a manager!");
+        setMessage(response.data.message);
       } else {
         setErrorMsg(true);
         setMessage(response.data.message);
@@ -61,7 +61,10 @@ const Appointment = ({ storeId, onBack, role }: Props) => {
       );
       if (!response.data.error) {
         setErrorMsg(false);
-        setMessage(username + " is now an owner!");
+        setMessage(
+          username +
+            " is now waiting for all the owners to approve him as owner"
+        );
       } else {
         setErrorMsg(true);
         setMessage(response.data.message);

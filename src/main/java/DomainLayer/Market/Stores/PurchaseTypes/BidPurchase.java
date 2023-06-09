@@ -1,16 +1,22 @@
 package DomainLayer.Market.Stores.PurchaseTypes;
 
+import jakarta.persistence.*;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class BidPurchase extends PurchaseType{
-    
-    private final ConcurrentHashMap<UUID, Bid> bids;
-    
+@Entity
+@Table(name = "bid_purchases")
+public class BidPurchase extends PurchaseType {
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @MapKeyColumn(name = "client_credentials")
+    private ConcurrentHashMap<UUID, Bid> bids;
+
     public BidPurchase(String purchaseType) {
         super(purchaseType);
         bids = new ConcurrentHashMap<>();
     }
+    public BidPurchase(){super();}
     
     public ConcurrentHashMap<UUID, Bid> getBids() {
         return bids;

@@ -20,12 +20,11 @@ public class UserDalController {
     SecurityQuestionRepository securityQuestionRepository;
     private static UserDalController singleton = null;
 
-
     private UserDalController(RepositoryFactory repositoryFactory) {
         this.repositoryFactory = repositoryFactory;
         this.userRepository = repositoryFactory.userRepository; //high frequency use
         this.passwordRepository = repositoryFactory.passwordRepository;
-        securityQuestionRepository = repositoryFactory.securityQuestionRepository;
+        this.securityQuestionRepository = repositoryFactory.securityQuestionRepository;
     }
 
     public static synchronized UserDalController getInstance(RepositoryFactory repositoryFactory) {
