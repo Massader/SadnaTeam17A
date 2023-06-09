@@ -25,10 +25,14 @@ public class ShoppingCart {
         this.userId = id;
     }
 
-    public Boolean addItemToCart(Item item, UUID storeId, int quantity) {
+    public Boolean addItemToCart(Item item, UUID storeId, int quantity) throws Exception {
         if (!shoppingBaskets.containsKey(storeId))
             shoppingBaskets.put(storeId, new ShoppingBasket(storeId));
-        return shoppingBaskets.get(storeId).addItem(item, quantity);
+        if (shoppingBaskets.get(storeId).addItem(item, quantity))
+            return true;
+        if (shoppingBaskets.get(storeId).getItems().isEmpty())
+            shoppingBaskets.remove(storeId);
+        return false;
     }
 
     public Boolean removeItemFromCart(Item item, UUID storeId, int quantity) {

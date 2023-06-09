@@ -37,14 +37,13 @@ public class ShoppingBasket {
         this.storeId = storeId;
     }
 
-    public boolean addItem(Item item, int quantity){
-        if(item.getQuantity()<quantity)
-            return false;
+    public boolean addItem(Item item, int quantity) throws Exception {
+        if(item.getQuantity() < quantity)
+            throw new Exception("Quantity of item is higher than the quantity in stock.");
         if (this.items.get(item.getId()) == null)
             items.put(item.getId(), 0);
         int oldQuantity = this.items.get(item.getId());
         items.put(item.getId(), oldQuantity + quantity);
-        //item.setQuantity(item.getQuantity() - quantity);
         return true;
     }
 

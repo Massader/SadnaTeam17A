@@ -184,12 +184,17 @@ public class UserController {
                 if (item.getPurchaseType().getType().equals(PurchaseType.BID_PURCHASE) &&
                         ((BidPurchase)item.getPurchaseType()).isBidAccepted(clientCredentials)) {
                     Bid bid = item.getBid(clientCredentials);
-                    item.removeBid(clientCredentials);
-                    item = new Item(item);
-                    item.setPrice(bid.getPrice());
+                    Item bidItem = new Item(item);
+                    bidItem.setPrice(bid.getPrice());
                     quantity = bid.getQuantity();
+                    if (shoppingCart.addItemToCart(bidItem, storeId, quantity)) {
+                        item.removeBid(clientCredentials);
+                        return Response.getSuccessResponse(true);
+                    }
+                    else return Response.getFailResponse("Failed to add item to cart");
                 }
-                if (shoppingCart.addItemToCart(item, storeId, quantity)) {
+                else if (item.getPurchaseType().getType().equals(PurchaseType.DIRECT_PURCHASE) &&
+                        shoppingCart.addItemToCart(item, storeId, quantity)) {
                     return Response.getSuccessResponse(true);
                 } else {
                     return Response.getFailResponse("Cannot add item to cart");
