@@ -3,6 +3,7 @@ package APILayer.Users;
 import APILayer.Alerts.AlertController;
 import APILayer.Requests.*;
 import DomainLayer.Market.Notification;
+import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.User;
 import ServiceLayer.Response;
@@ -161,5 +162,10 @@ public class UserController {
     @GetMapping(path = "/get-user-by-username/username={username}")
     public Response<ServiceUser> getUserByUsername(@PathVariable(name = "username") String username) {
         return service.getUserByUsername(username);
+    }
+    
+    @GetMapping(path = "/get-user-bids/id={id}")
+    public Response<List<Bid>> getUserBids(@PathVariable(name = "id") UUID clientCredentials) {
+        return service.getUserBids(clientCredentials);
     }
 }

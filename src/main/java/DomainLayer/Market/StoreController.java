@@ -1008,4 +1008,31 @@ public class StoreController {
             return Response.getFailResponse(e.getMessage());
         }
     }
+    
+    private List<Bid> getStoreBids(UUID storeId) throws Exception {
+        if (!storeExist(storeId))
+            throw new Exception("Store does not exist.");
+        Store store = getStore(storeId);
+        List<Bid> bids = new ArrayList<>();
+        for (Item item : store.getItems().values()) {
+            bids.addAll(item.getBids());
+        }
+        return bids;
+    }
+    
+    public Response<List<Bid>> getUserBids(UUID clientCredentials) {
+        try {
+            User user = userController.getUserById(clientCredentials);
+            if (user == null)
+                return Response.getFailResponse("User does not exist.");
+            List<Bid> userBids = new ArrayList<>();
+            for (Store store : storeMap.values()) {
+                List<Bid> storeBids = getStoreBids(store.getStoreId());
+                userBids.addAll(storeBids.stream().filter(bid -> bid.getBidderId().equals(clientCredentials)).toList());
+            }
+            return Response.getSuccessResponse(userBids);
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
+        }
+    }
 }

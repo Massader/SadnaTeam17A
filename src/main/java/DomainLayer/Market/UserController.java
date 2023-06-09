@@ -184,6 +184,7 @@ public class UserController {
                 if (item.getPurchaseType().getType().equals(PurchaseType.BID_PURCHASE) &&
                         ((BidPurchase)item.getPurchaseType()).isBidAccepted(clientCredentials)) {
                     Bid bid = item.getBid(clientCredentials);
+                    item.removeBid(clientCredentials);
                     item = new Item(item);
                     item.setPrice(bid.getPrice());
                     quantity = bid.getQuantity();

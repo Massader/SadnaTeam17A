@@ -183,12 +183,12 @@ public class Item {
         categories.add(category);
     }
     
-    public boolean addBid(UUID clientCredentials, double amount, int quantity) {
+    public boolean addBid(UUID clientCredentials, double bidPrice, int quantity) {
         if (!getPurchaseType().getType().equals(PurchaseType.BID_PURCHASE))
             throw new RuntimeException("Bidding is only available on Bid Purchase type items.");
-        if (amount * quantity < price)
+        if (bidPrice * quantity < price)
             throw new RuntimeException("Bidding price can only be equal or larger than item base price.");
-        ((BidPurchase)purchaseType).addBid(clientCredentials, this.id, amount, quantity);
+        ((BidPurchase)purchaseType).addBid(clientCredentials, this.id, bidPrice, quantity);
         return true;
     }
     
@@ -220,6 +220,6 @@ public class Item {
         if (purchaseType.getType().equals(PurchaseType.BID_PURCHASE)) {
             return ((BidPurchase) purchaseType).getBids().values().stream().toList();
         }
-        throw new RuntimeException("This item is not a bid purchase type item.");
+        return new ArrayList<>();
     }
 }

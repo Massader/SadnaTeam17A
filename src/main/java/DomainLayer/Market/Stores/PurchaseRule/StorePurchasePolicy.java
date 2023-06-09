@@ -36,35 +36,10 @@ public class StorePurchasePolicy {
         if (purchasePolicies.contains(term))
             throw new Exception("the purchase Term is already exist, please put valid purchaseTerm");
 
-        if (term instanceof CompositePurchaseTerm) {
+        if (term instanceof CompositePurchaseTerm compositeTerm) {
             // If the new term is a CompositePurchaseTerm, remove any existing terms in the purchasePolicies
             // that are equal to it (using the equals() method)
-            CompositePurchaseTerm compositeTerm = (CompositePurchaseTerm) term;
-            purchasePolicies.removeIf(p -> p.equals(term));
-        }
-        if (term.getPurchaseRule() instanceof ShoppingBasketPurchaseRule) {
-            for (PurchaseTerm purchaseTerm : purchasePolicies) {
-                if (purchaseTerm.getPurchaseRule() instanceof ShoppingBasketPurchaseRule)
-                    throw new Exception("Only one shopping basket purchase term can exist at one time.");
-            }
-        }
-    
-        if (term.getPurchaseRule() instanceof CategoryPurchaseRule) {
-            for (PurchaseTerm purchaseTerm : purchasePolicies) {
-                if (purchaseTerm.getPurchaseRule() instanceof CategoryPurchaseRule &&
-                ((CategoryPurchaseRule) purchaseTerm.getPurchaseRule()).getCategory().getCategoryName()
-                        .equals(((CategoryPurchaseRule) term.getPurchaseRule()).getCategory().getCategoryName()))
-                    throw new Exception("Only one purchase term per category can exist at one time.");
-            }
-        }
-    
-        if (term.getPurchaseRule() instanceof ItemPurchaseRule) {
-            for (PurchaseTerm purchaseTerm : purchasePolicies) {
-                if (purchaseTerm.getPurchaseRule() instanceof ItemPurchaseRule &&
-                ((ItemPurchaseRule) purchaseTerm.getPurchaseRule()).getItemId()
-                        .equals(((ItemPurchaseRule) term.getPurchaseRule()).getItemId()))
-                    throw new Exception("Only one purchase term per item can exist at one time.");
-            }
+            purchasePolicies.removeIf(p -> p.equals(compositeTerm));
         }
         purchasePolicies.add(term);
     }
