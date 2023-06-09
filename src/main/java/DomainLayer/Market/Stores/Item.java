@@ -4,9 +4,11 @@ import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Stores.PurchaseTypes.BidPurchase;
 import DomainLayer.Market.Stores.PurchaseTypes.DirectPurchase;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
-import ServiceLayer.Response;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -188,7 +190,7 @@ public class Item {
             throw new RuntimeException("Bidding is only available on Bid Purchase type items.");
         if (bidPrice * quantity < price)
             throw new RuntimeException("Bidding price can only be equal or larger than item base price.");
-        ((BidPurchase)purchaseType).addBid(clientCredentials, this.id, bidPrice, quantity);
+        ((BidPurchase)purchaseType).addBid(clientCredentials, this.storeId, this.id, bidPrice, quantity);
         return true;
     }
     
