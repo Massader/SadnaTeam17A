@@ -14,10 +14,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class Discount {
     private UUID id;
     private CalculateDiscount optionCalculateDiscount;//basket/item/category
-    private Double discountPercentage;
+    private double discountPercentage;
     private PurchaseTerm purchaseTerm;
 
-    public Discount(CalculateDiscount optionCalculateDiscount, Double discountPercentage, PurchaseTerm purchaseTerm) throws Exception {
+    public Discount(CalculateDiscount optionCalculateDiscount, double discountPercentage, PurchaseTerm purchaseTerm) throws Exception {
         if (optionCalculateDiscount == null)
             throw new Exception("the discount is null, please put valid discount");
         this.optionCalculateDiscount = optionCalculateDiscount;
@@ -30,7 +30,7 @@ public class Discount {
     
     public Discount(ServiceDiscount serviceDiscount) throws Exception {
         this.id = serviceDiscount.getId() == null ? UUID.randomUUID() : serviceDiscount.getId();
-        if (discountPercentage >= 100 || discountPercentage <= 0)
+        if (serviceDiscount.getDiscountPercentage() >= 100 || serviceDiscount.getDiscountPercentage() <= 0)
             throw new Exception("discount Percentage have to be between 0 to 1");
         this.discountPercentage = serviceDiscount.getDiscountPercentage() / 100;
         if (serviceDiscount.getPurchaseTerm() != null) {

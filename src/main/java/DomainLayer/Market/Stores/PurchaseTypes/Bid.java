@@ -16,6 +16,7 @@ public class Bid {
         this.bidderId = bidderId;
         this.itemId = itemId;
         this.price = price;
+        this.quantity = quantity;
         ownersAccepted = new ArrayList<>();
         accepted = false;
     }
