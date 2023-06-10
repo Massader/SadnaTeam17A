@@ -20,10 +20,11 @@ export interface Item {
   purchaseType: string;
 }
 
-// export interface PurchaseType {
-//   DIRECT_PURCHASE: string;
-//   BID_PURCHASE: string;
-// }
+export interface CartItemType {
+  item: Item;
+  quantity: number;
+  price: number;
+}
 
 export interface PurchasedItemType {
   date: Date;
@@ -57,7 +58,8 @@ export interface User {
 }
 
 export interface Basket {
-  items: Map<string, number>;
+  // items: Map<string, number>;
+  items: Map<string, CartItemType>;
   storeId: string;
 }
 
@@ -145,5 +147,15 @@ export interface OwnerPetitionsType {
   appointeeId: string;
   appointer: string;
   ownersList: string[];
+  storeId: string;
+}
+
+export interface Bid {
+  accepted: boolean;
+  bidderId: string;
+  itemId: string;
+  ownersAccepted: string[];
+  price: number;
+  quantity: number;
   storeId: string;
 }

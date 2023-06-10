@@ -42,7 +42,7 @@ const MyStoreCard = ({ role, onManageStore }: Props) => {
 
   return (
     <Card direction="row" overflow="hidden" variant="outline">
-      <Flex alignItems="center">
+      <Flex alignItems="center" ml={3}>
         <Image objectFit="contain" maxH="200px" maxW="200px" src={storeIcon} />
       </Flex>
 

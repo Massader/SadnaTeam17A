@@ -109,6 +109,7 @@ function App() {
   const [roles, setRoles] = useState<Role[]>([]);
 
   const [storeManage, setStoreManage] = useState("");
+  const [permissions, setPermmisions] = useState<string[]>([]);
 
   const [page, setPage] = useState(pages[0]);
 
@@ -130,6 +131,7 @@ function App() {
     setLeftPage(leftPages[1]);
     setRightPage(rightPages[0]);
     setStoreManage("");
+    setPermmisions([]);
   };
 
   const onSpecStore = (storeId: string) => {
@@ -146,6 +148,7 @@ function App() {
   const onSignOut = () => {
     setLogged(false);
     setStoreManage("");
+    setPermmisions([]);
     setLeftPage(leftPages[1]);
     setPage(pages[0]);
     setNotifications([]);
@@ -182,9 +185,10 @@ function App() {
   const [notifications, setNotifications] = useState<string[]>([]);
   const [notificationAlert, setNotificationAlert] = useState(false);
 
-  const onManageStore = (id: string) => {
+  const onManageStore = (id: string, permissions: string[]) => {
     setLeftPage(leftPages[2]);
     setStoreManage(id);
+    setPermmisions(permissions);
   };
 
   const onCreateStore = () => {
@@ -272,6 +276,7 @@ function App() {
           {leftPage === "manageStore" && (
             <ManageStore
               storeId={storeManage}
+              permissions={permissions}
               pages={pages}
               setPage={setPage}
             />
@@ -279,6 +284,7 @@ function App() {
           {leftPage === "filters" && (
             <Filters
               setItemRating={setItemRating}
+              setStoreRating={setStoreRating}
               setMinPrice={setMinPrice}
               setMaxPrice={setMaxPrice}
               setCategory={setCategory}
@@ -294,6 +300,7 @@ function App() {
               minPrice={minPrice}
               maxPrice={maxPrice}
               itemRating={itemRating}
+              storeRating={storeRating}
               storeId={storeManage}
             />
           )}
@@ -328,7 +335,9 @@ function App() {
           {page === "myStores" && (
             <MyStores
               onCreateStore={onCreateStore}
-              onManageStore={(id: string) => onManageStore(id)}
+              onManageStore={(id: string, permissions: string[]) =>
+                onManageStore(id, permissions)
+              }
             />
           )}
           {page === "saleHistory" && (
@@ -367,6 +376,7 @@ function App() {
               storeId={storeManage}
               setPage={setPage}
               pages={pages}
+              permissions={permissions}
             />
           )}
           {page === "myCart" && <MyCart />}

@@ -18,12 +18,15 @@ const MyCart = () => {
   const [credit, setCredit] = useState("");
   const [errorMsg, setErrorMsg] = useState(false);
   const [message, setMessage] = useState("");
+  const [errorMsgPrice, setErrorMsgPrice] = useState(false);
+  const [messagePrice, setMessagePrice] = useState("");
 
   const getCart = async () => {
     const response = await axios.get(
       `http://localhost:8080/api/v1/users/get-cart/id=${clientCredentials}`
     );
     if (!response.data.error) {
+      console.log(response.data.value);
       setCart(response.data.value);
     } else {
       console.log(response.data.error);
@@ -36,8 +39,12 @@ const MyCart = () => {
     );
     if (!response.data.error) {
       setCartPrice(response.data.value);
+      setErrorMsgPrice(false);
+      setMessagePrice("");
     } else {
       setCartPrice(0);
+      setErrorMsgPrice(true);
+      setMessagePrice(response.data.message);
     }
   };
 
@@ -96,6 +103,13 @@ const MyCart = () => {
                   Buy Cart
                 </Button>
               )}
+              <Flex justifyContent="center">
+                {errorMsgPrice ? (
+                  <Text color="red">{messagePrice}</Text>
+                ) : (
+                  <Text>{messagePrice}</Text>
+                )}
+              </Flex>
             </Stack>
           </Flex>
         </Stack>

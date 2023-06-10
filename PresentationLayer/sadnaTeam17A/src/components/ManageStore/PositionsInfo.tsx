@@ -1,17 +1,9 @@
-import {
-  Button,
-  Box,
-  Select,
-  Stack,
-  Flex,
-  Text,
-  Checkbox,
-  Heading,
-} from "@chakra-ui/react";
+import { Button, Box, Heading, SimpleGrid } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
 import { ClientCredentialsContext } from "../../App";
 import axios from "axios";
 import { User } from "../../types";
+import PositionInfoCard from "./PositionInfoCard";
 
 interface Props {
   storeId: string;
@@ -39,20 +31,6 @@ const PositionsInfo = ({ storeId, setPage, pages }: Props) => {
   }, []);
 
   const [users, setUsers] = useState<User[]>([]);
-  const [errorMsg, setErrorMsg] = useState(false);
-  const [message, setMessage] = useState("");
-
-  const formatRoles = (roles: string[]) => {
-    return roles
-      .map((role) => {
-        const words = role.split("_");
-        const formattedWords = words.map(
-          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-        );
-        return formattedWords.join(" ");
-      })
-      .join(", ");
-  };
 
   return (
     <>
@@ -68,24 +46,29 @@ const PositionsInfo = ({ storeId, setPage, pages }: Props) => {
         <Heading padding={5} textAlign="center">
           Store's Positions Information
         </Heading>
-        <Flex padding={10} justifyContent="center" alignItems="center">
-          <Stack spacing={4} w="80%" px={4}>
-            {users.map((user) =>
-              Object.entries(user.roles).map(([id, roles]) => (
-                <>
-                  {id === storeId ? (
-                    <>
-                      <Text fontWeight="bold" fontSize="xl">
-                        {user.username + ": "}
-                      </Text>
-                      <div key={id}>{formatRoles(roles)}</div>
-                    </>
-                  ) : null}
-                </>
-              ))
-            )}
-          </Stack>
-        </Flex>
+        <SimpleGrid
+          columns={{ sm: 1, md: 2, lg: 3, xl: 3, "2xl": 4 }}
+          padding="10px"
+          spacing={6}
+        >
+          {users.map((user) =>
+            Object.entries(user.roles).map(([id, roles]) => (
+              <>
+                {id === storeId ? (
+                  <>
+                    <Box borderRadius={10} overflow="hidden">
+                      <PositionInfoCard
+                        key={id}
+                        roles={roles}
+                        username={user.username}
+                      />
+                    </Box>
+                  </>
+                ) : null}
+              </>
+            ))
+          )}
+        </SimpleGrid>
       </Box>
     </>
   );

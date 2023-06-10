@@ -3,6 +3,7 @@ import { useState } from "react";
 import ChangePassword from "./CustomerService/ChangePassword";
 import AddSecurityQuestion from "./CustomerService/AddSecurityQuestion";
 import PurchaseHistory from "./CustomerService/PurchaseHistory";
+import MyBids from "./CustomerService/MyBids";
 
 export const CustomerService = () => {
   const pages = [
@@ -10,6 +11,7 @@ export const CustomerService = () => {
     "purchaseHistory",
     "changePassword",
     "securityQuestion",
+    "myBids",
   ];
   const [page, setPage] = useState(pages[0]);
 
@@ -19,6 +21,12 @@ export const CustomerService = () => {
         <Stack spacing={4} w="100%" maxW="400px" px={4}>
           {page === "home" && (
             <>
+              <Button
+                onClick={() => setPage(pages[4])}
+                colorScheme="blackAlpha"
+              >
+                My Bids
+              </Button>
               <Button
                 onClick={() => setPage(pages[1])}
                 colorScheme="blackAlpha"
@@ -45,7 +53,7 @@ export const CustomerService = () => {
           {page === "securityQuestion" && (
             <AddSecurityQuestion pages={pages} setPage={setPage} />
           )}
-          {page === "purchaseHistory" && (
+          {(page === "purchaseHistory" || page === "myBids") && (
             <Button
               colorScheme="blackAlpha"
               size="lg"
@@ -59,6 +67,7 @@ export const CustomerService = () => {
       {page === "purchaseHistory" && (
         <PurchaseHistory pages={pages} setPage={setPage} />
       )}
+      {page === "myBids" && <MyBids pages={pages} setPage={setPage} />}
     </>
   );
 };

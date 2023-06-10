@@ -19,7 +19,7 @@ interface Props {
   minPrice: number;
   maxPrice: number;
   itemRating: number;
-  storeRating?: number;
+  storeRating: number;
 }
 
 const ItemGrid = ({
@@ -29,6 +29,7 @@ const ItemGrid = ({
   keyword,
   itemRating,
   category,
+  storeRating,
 }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
 
@@ -49,7 +50,7 @@ const ItemGrid = ({
   const fetchItems = async () => {
     if (clientCredentials !== "") {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/stores/search-item/keyword=${keyword}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}&itemRating=${itemRating}&storeRating=&storeId=${storeId}&number=${number}&page=${page}`
+        `http://localhost:8080/api/v1/stores/search-item/keyword=${keyword}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}&itemRating=${itemRating}&storeRating=${storeRating}&storeId=${storeId}&number=${number}&page=${page}`
       );
       if (!response.data.error) {
         console.log(response.data.value);
@@ -63,7 +64,7 @@ const ItemGrid = ({
   const getItemsNumber = async () => {
     if (clientCredentials !== "") {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/stores/search-item-num/keyword=${keyword}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}&itemRating=${itemRating}&storeRating=&storeId=${storeId}&number=&page=`
+        `http://localhost:8080/api/v1/stores/search-item-num/keyword=${keyword}&category=${category}&minPrice=${minPrice}&maxPrice=${maxPrice}&itemRating=${itemRating}&storeRating=${storeRating}&storeId=${storeId}&number=&page=`
       );
       if (!response.data.error) {
         setPagesNum(response.data.value / number);

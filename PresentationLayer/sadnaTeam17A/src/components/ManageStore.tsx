@@ -9,11 +9,12 @@ import OwnerPetitions from "./ManageStore/OwnerPetitions";
 
 interface Props {
   storeId: string;
+  permissions: string[];
   setPage: React.Dispatch<React.SetStateAction<string>>;
   pages: string[];
 }
 
-const ManageStore = ({ storeId, setPage, pages }: Props) => {
+const ManageStore = ({ storeId, setPage, pages, permissions }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
 
   const onBack = () => {
@@ -112,83 +113,116 @@ const ManageStore = ({ storeId, setPage, pages }: Props) => {
       <Stack marginTop={3} paddingLeft={2} paddingRight={2}>
         {leftPage === "manage" && (
           <>
-            <Button
-              onClick={() => setLeftPage(leftPages[1])}
-              whiteSpace="normal"
-            >
-              Add Item
-            </Button>
-            <Button onClick={() => setPage(pages[11])} whiteSpace="normal">
-              Inventory Management
-            </Button>
-            <Button onClick={() => {}} whiteSpace="normal">
-              View Bids
-            </Button>
-            <Button onClick={() => setPage(pages[14])} whiteSpace="normal">
-              Purchase and Discount Policy
-            </Button>
-            <Button
-              onClick={() => setLeftPage(leftPages[2])}
-              whiteSpace="normal"
-            >
-              Appointment of Store Owner
-            </Button>
-            <Button
-              onClick={() => setLeftPage(leftPages[5])}
-              whiteSpace="normal"
-            >
-              Owner Petitions
-            </Button>
-            <Button
-              onClick={() => setLeftPage(leftPages[3])}
-              whiteSpace="normal"
-            >
-              Appointment of Store Manager
-            </Button>
-            <Button
-              onClick={() => setLeftPage(leftPages[4])}
-              whiteSpace="normal"
-            >
-              Removing a Store Role Appointment
-            </Button>
-            <Button onClick={() => setPage(pages[12])} whiteSpace="normal">
-              Set Store Manager Permissions
-            </Button>
-            {!store?.isClosed && (
-              <Button
-                onClick={() => setCloseStoreSure(!closeStoreSure)}
-                whiteSpace="normal"
-              >
-                Close Store
-              </Button>
-            )}
-            {store?.isClosed && (
-              <Button onClick={handleReopenStore} whiteSpace="normal">
-                Reopen Store
-              </Button>
-            )}
-            {closeStoreSure && (
-              <Flex alignItems="center" justifyContent="center" padding={3}>
-                <Text>Sure? </Text>
+            {(permissions.includes("STORE_FOUNDER") ||
+              permissions.includes("STORE_OWNER") ||
+              permissions.includes("STORE_ITEM_MANAGEMENT")) && (
+              <>
                 <Button
-                  onClick={handleCloseStore}
-                  marginLeft={3}
-                  colorScheme="blackAlpha"
+                  onClick={() => setLeftPage(leftPages[1])}
                   whiteSpace="normal"
                 >
-                  V
+                  Add Item
                 </Button>
-              </Flex>
+                <Button onClick={() => setPage(pages[11])} whiteSpace="normal">
+                  Inventory Management
+                </Button>
+
+                <Button onClick={() => setPage(pages[16])} whiteSpace="normal">
+                  View Bids
+                </Button>
+              </>
             )}
-            <Button onClick={() => setPage(pages[13])} whiteSpace="normal">
-              Information on Store Positions
-            </Button>
-            <Button onClick={() => setPage(pages[15])} whiteSpace="normal">
-              Store Messages
-            </Button>
-            <Button onClick={() => setPage(pages[10])} whiteSpace="normal">
-              Purchase History in Store
-            </Button>
+            {(permissions.includes("STORE_FOUNDER") ||
+              permissions.includes("STORE_OWNER") ||
+              permissions.includes("STORE_POLICY_MANAGEMENT") ||
+              permissions.includes("STORE_DISCOUNT_MANAGEMENT")) && (
+              <Button onClick={() => setPage(pages[14])} whiteSpace="normal">
+                Purchase and Discount Policy
+              </Button>
+            )}
+            {(permissions.includes("STORE_FOUNDER") ||
+              permissions.includes("STORE_OWNER")) && (
+              <>
+                <Button
+                  onClick={() => setLeftPage(leftPages[2])}
+                  whiteSpace="normal"
+                >
+                  Appointment of Store Owner
+                </Button>
+                <Button
+                  onClick={() => setLeftPage(leftPages[5])}
+                  whiteSpace="normal"
+                >
+                  Owner Petitions
+                </Button>
+                <Button
+                  onClick={() => setLeftPage(leftPages[3])}
+                  whiteSpace="normal"
+                >
+                  Appointment of Store Manager
+                </Button>
+                <Button
+                  onClick={() => setLeftPage(leftPages[4])}
+                  whiteSpace="normal"
+                >
+                  Removing a Store Role Appointment
+                </Button>
+                <Button onClick={() => setPage(pages[12])} whiteSpace="normal">
+                  Set Store Manager Permissions
+                </Button>
+              </>
+            )}
+            {permissions.includes("STORE_FOUNDER") && (
+              <>
+                {!store?.isClosed && (
+                  <Button
+                    onClick={() => setCloseStoreSure(!closeStoreSure)}
+                    whiteSpace="normal"
+                  >
+                    Close Store
+                  </Button>
+                )}
+                {store?.isClosed && (
+                  <Button onClick={handleReopenStore} whiteSpace="normal">
+                    Reopen Store
+                  </Button>
+                )}
+                {closeStoreSure && (
+                  <Flex alignItems="center" justifyContent="center" padding={3}>
+                    <Text>Sure? </Text>
+                    <Button
+                      onClick={handleCloseStore}
+                      marginLeft={3}
+                      colorScheme="blackAlpha"
+                      whiteSpace="normal"
+                    >
+                      V
+                    </Button>
+                  </Flex>
+                )}
+              </>
+            )}
+            {(permissions.includes("STORE_FOUNDER") ||
+              permissions.includes("STORE_OWNER") ||
+              permissions.includes("STORE_MANAGEMENT_INFORMATION")) && (
+              <Button onClick={() => setPage(pages[13])} whiteSpace="normal">
+                Information on Store Positions
+              </Button>
+            )}
+            {(permissions.includes("STORE_FOUNDER") ||
+              permissions.includes("STORE_OWNER") ||
+              permissions.includes("STORE_COMMUNICATION")) && (
+              <Button onClick={() => setPage(pages[15])} whiteSpace="normal">
+                Store Messages
+              </Button>
+            )}
+            {(permissions.includes("STORE_FOUNDER") ||
+              permissions.includes("STORE_OWNER") ||
+              permissions.includes("STORE_SALE_HISTORY")) && (
+              <Button onClick={() => setPage(pages[10])} whiteSpace="normal">
+                Purchase History in Store
+              </Button>
+            )}
           </>
         )}
         {leftPage === "addItem" && (

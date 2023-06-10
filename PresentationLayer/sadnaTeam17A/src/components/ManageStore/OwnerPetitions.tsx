@@ -22,6 +22,7 @@ const OwnerPetitions = ({ storeId, onBack }: Props) => {
       `http://localhost:8080/api/v1/stores/role/get-store-owner-appointments/id=${clientCredentials}&storeId=${storeId}`
     );
     if (!response.data.error) {
+      console.log(response.data.value);
       setOwnerPetitions(response.data.value);
     } else {
       console.log(response.data.error);
@@ -46,10 +47,6 @@ const OwnerPetitions = ({ storeId, onBack }: Props) => {
       }
     );
     if (!response.data.error) {
-      // setErrorMsg(false);
-      // setMessage(
-      //     " is now waiting for all the owners to approve him as owner"
-      // );
       getOwnerPetitions();
     } else {
       setErrorMsg(true);
@@ -69,8 +66,6 @@ const OwnerPetitions = ({ storeId, onBack }: Props) => {
       }
     );
     if (!response.data.error) {
-      //   setErrorMsg(false);
-      //   setMessage(username + " role removed.");
       getOwnerPetitions();
     } else {
       setErrorMsg(true);
@@ -88,7 +83,7 @@ const OwnerPetitions = ({ storeId, onBack }: Props) => {
           return (
             <Stack key={index}>
               <Flex alignItems="center">
-                <Text mr={2}>Appointee username:</Text>
+                <Text mr={1}>Appointee username:</Text>
                 <UsernameFromId userId={ownerPetition.appointeeId} />
               </Flex>
               {!ownerPetition.ownersList.includes(clientCredentials) && (

@@ -7,7 +7,7 @@ import { ClientCredentialsContext } from "../App";
 
 interface Props {
   onCreateStore: () => void;
-  onManageStore: (storeId: string) => void;
+  onManageStore: (storeId: string, permissions: string[]) => void;
 }
 
 const MyStores = ({ onManageStore, onCreateStore }: Props) => {
@@ -45,7 +45,7 @@ const MyStores = ({ onManageStore, onCreateStore }: Props) => {
           <MyStoreCard
             key={role.storeId}
             role={role}
-            onManageStore={() => onManageStore(role.storeId)}
+            onManageStore={() => onManageStore(role.storeId, role.permissions)}
           />
         ))}
       </SimpleGrid>
