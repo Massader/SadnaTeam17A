@@ -37,7 +37,6 @@ public class ShoppingBasket {
         this.storeId = storeId;
     }
 
-
     public boolean addItem(CartItem cartItem, int quantity) throws Exception {
         if(cartItem.getItem().getQuantity() < quantity)
             throw new Exception("Quantity of cart item is higher than the quantity in stock.");

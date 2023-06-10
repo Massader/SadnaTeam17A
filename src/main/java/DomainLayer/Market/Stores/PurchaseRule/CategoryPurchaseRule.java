@@ -41,10 +41,7 @@ public class CategoryPurchaseRule implements PurchaseRule {
             return false;
         }
         final CategoryPurchaseRule other = (CategoryPurchaseRule) obj;
-        if (!Objects.equals(this.category, other.category)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.category, other.category);
     }
 
 

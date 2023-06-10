@@ -184,9 +184,9 @@ public class UserController {
                 if (item.getPurchaseType().getType().equals(PurchaseType.BID_PURCHASE) &&
                         ((BidPurchase)item.getPurchaseType()).isBidAccepted(clientCredentials)) {
                     Bid bid = item.getBid(clientCredentials);
-
                     CartItem bidItem = new CartItem(item, bid.getQuantity(), bid.getPrice());
                     if (shoppingCart.addItemToCart(bidItem, storeId, bidItem.getQuantity())) {
+
                         item.removeBid(clientCredentials);
                         return Response.getSuccessResponse(true);
                     }

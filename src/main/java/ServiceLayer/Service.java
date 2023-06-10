@@ -1295,5 +1295,12 @@ public class Service {
             errorLogger.log(Level.WARNING, response.getMessage());
         return response;
     }
+    
+    public Response<List<Bid>> getUserBids(UUID clientCredentials) {
+        Response<List<Bid>> response = storeController.getUserBids(clientCredentials);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
+    }
 }
 

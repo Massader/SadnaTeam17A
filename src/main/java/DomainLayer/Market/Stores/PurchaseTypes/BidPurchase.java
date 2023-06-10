@@ -16,8 +16,8 @@ public class BidPurchase extends PurchaseType{
         return bids;
     }
     
-    public void addBid(UUID clientCredentials, UUID itemId, double bidAmount, int quantity) {
-        bids.put(clientCredentials, new Bid(clientCredentials, itemId, bidAmount, quantity));
+    public void addBid(UUID clientCredentials, UUID storeId, UUID itemId, double bidPrice, int quantity) {
+        bids.put(clientCredentials, new Bid(clientCredentials, storeId, itemId, bidPrice, quantity));
     }
     
     public void removeBid(UUID clientCredentials) {

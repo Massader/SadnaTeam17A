@@ -6,18 +6,29 @@ import java.util.UUID;
 
 public class Bid {
     private UUID bidderId;
+    private UUID storeId;
     private UUID itemId;
     private double price;
     private List<UUID> ownersAccepted;
     private int quantity;
     private boolean accepted;
     
-    public Bid(UUID bidderId, UUID itemId, double price, int quantity) {
+    public Bid(UUID bidderId, UUID storeId, UUID itemId, double price, int quantity) {
         this.bidderId = bidderId;
+        this.storeId = storeId;
         this.itemId = itemId;
         this.price = price;
+        this.quantity = quantity;
         ownersAccepted = new ArrayList<>();
         accepted = false;
+    }
+    
+    public UUID getStoreId() {
+        return storeId;
+    }
+    
+    public void setStoreId(UUID storeId) {
+        this.storeId = storeId;
     }
     
     public UUID getBidderId() {

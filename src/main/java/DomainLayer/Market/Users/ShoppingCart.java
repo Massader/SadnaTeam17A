@@ -24,7 +24,7 @@ public class ShoppingCart {
     public void setId(UUID id) {
         this.userId = id;
     }
-    
+
     public Boolean addItemToCart(CartItem cartItem, UUID storeId, int quantity) throws Exception {
         if (!shoppingBaskets.containsKey(storeId))
             shoppingBaskets.put(storeId, new ShoppingBasket(storeId));
