@@ -558,6 +558,19 @@ public class Store {
         petition.removeApproval(owner);
         return true;
     }
+
+    public boolean hasRole(UUID userId) {
+        return roles.stream().anyMatch(role -> role.getUser().getId().equals(userId));
+    }
+
+    public Role getRoleByUserId(UUID userId) {
+        for (Role role : roles) {
+            if (role.getUser().getId().equals(userId)) {
+                return role;
+            }
+        }
+        return null;
+    }
 }
 
 

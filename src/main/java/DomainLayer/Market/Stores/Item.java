@@ -40,7 +40,10 @@ public class Item {
     private Collection<Category> categories;
 
     @OneToMany(mappedBy = "item", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Map<UUID, ItemReview> reviews;
+    private Map<UUID, ItemReview> reviewsMap;
+
+    @OneToMany(mappedBy = "item", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Collection<ItemReview> reviews;
 
     public Item(String name, double price, Store store, double rating, int quantity, String description) {
         this.name = name;
@@ -51,7 +54,8 @@ public class Item {
         this.description = description;
         purchaseType = new DirectPurchase(PurchaseType.DIRECT_PURCHASE);
         categories = new ConcurrentLinkedQueue<>();
-        reviews = new ConcurrentHashMap<>();
+        //reviewsMap = new ConcurrentHashMap<>();
+        reviews = new ConcurrentLinkedQueue<>();
     }
 
     public Item(Item otherItem) {
@@ -64,12 +68,14 @@ public class Item {
         this.description = otherItem.getDescription();
         purchaseType = otherItem.getPurchaseType();
         categories = otherItem.getCategories();
-        reviews = otherItem.getReviewsMap();
+        //reviewsMap = otherItem.getReviewsMap();
+        reviews = otherItem.getReviews();
     }
     public Item(){
         purchaseType = new DirectPurchase(PurchaseType.DIRECT_PURCHASE);
         categories = new ConcurrentLinkedQueue<>();
-        reviews = new ConcurrentHashMap<>();
+        //reviewsMap = new ConcurrentHashMap<>();
+        reviews = new ConcurrentLinkedQueue<>();
     }
     
     public void setPurchaseType(PurchaseType purchaseType) {
@@ -158,18 +164,30 @@ public class Item {
     }
 
     public List<ItemReview> getReviews() {
-        List<ItemReview> output = new ArrayList<>(reviews.values());
+        List<ItemReview> output = new ArrayList<>(reviews);
         output.sort(Comparator.comparing(ItemReview::getTimestamp));
         return output;
     }
-    
+
+    /*
     private Map<UUID, ItemReview> getReviewsMap() {
-        return this.reviews;
+        return this.reviewsMap;
     }
+     */
+
+    /*
+    public UUID addReview(UUID clientCredentials, String body, int rating) {
+        ItemReview itemReview = new ItemReview(this, body, clientCredentials, rating);
+        reviewsMap.put(itemReview.getId(), itemReview);
+        addRating(rating);
+        return itemReview.getId();
+    }
+
+     */
 
     public UUID addReview(UUID clientCredentials, String body, int rating) {
         ItemReview itemReview = new ItemReview(this, body, clientCredentials, rating);
-        reviews.put(itemReview.getId(), itemReview);
+        reviews.add(itemReview);
         addRating(rating);
         return itemReview.getId();
     }

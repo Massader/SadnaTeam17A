@@ -1,7 +1,6 @@
 package DomainLayer.Market;
 
 import DataAccessLayer.RepositoryFactory;
-import DataAccessLayer.UserRepository;
 import DataAccessLayer.controllers.StoreDalController;
 import DataAccessLayer.controllers.UserDalController;
 import DomainLayer.Market.Stores.*;

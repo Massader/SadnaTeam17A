@@ -261,7 +261,7 @@ public class UserController {
                 return Response.getFailResponse(response2.getMessage());
             if (!loggedInUsers.containsKey(clientCredentials))
                 return Response.getFailResponse("Appointing user is not logged in.");
-            if(storeController.getStore(storeId).getRolesMap().containsKey(appointee) &&
+            if(storeController.getStore(storeId).hasRole(appointee) &&
                     storeController.getStore(storeId).checkPermission(appointee, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("User already owner of the shop.");
             User user = response2.getValue();
@@ -309,7 +309,7 @@ public class UserController {
                 return Response.getFailResponse("User does not exist.");
             if (!loggedInUsers.containsKey(clientCredentials))
                 return Response.getFailResponse("Appointing user is not logged in.");
-            if(storeController.getStore(storeId).getRolesMap().containsKey(appointee))
+            if(storeController.getStore(storeId).hasRole(appointee))
                 return Response.getFailResponse("User already manager in the shop.");
             StoreManager storeManager = new StoreManager(storeId);
             User user = response2.getValue();
@@ -334,7 +334,7 @@ public class UserController {
             Response<User> response2 = this.getUser(roleToRemove);
             if(response2.isError())
                 return Response.getFailResponse("User does not exist.");
-            if(!store.getRolesMap().containsKey(roleToRemove))
+            if(!store.hasRole(roleToRemove))
                 return Response.getFailResponse("User does not have role in the shop.");
             if(!store.getOwner(clientCredentials).getAppointees().contains(roleToRemove))
                 return Response.getFailResponse("Staff member was not appointed by this owner.");
@@ -365,9 +365,9 @@ public class UserController {
                 return Response.getFailResponse("User doesn't have permission.");
             if (!userDalController.userExists(manager))
                 return Response.getFailResponse("Manager does not exist.");
-            if(!storeController.getStore(storeId).getRolesMap().containsKey(manager))
+            if(!storeController.getStore(storeId).hasRole(manager))
                 return Response.getFailResponse("User is not store manager.");
-            storeController.getStore(storeId).getRolesMap().get(manager).setPermissions(permissions);
+            storeController.getStore(storeId).getRoleByUserId(manager).setPermissions(permissions);
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception){
