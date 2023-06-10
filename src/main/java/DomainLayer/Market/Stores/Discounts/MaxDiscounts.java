@@ -46,6 +46,6 @@ public class MaxDiscounts extends NumericalAssemblyOfDiscount {
                     itemDiscount = Math.max(itemDiscount, discount.getDiscountPercentage());
             }
         }
-        return itemDiscount;
+        return Math.min(itemDiscount, 1);
     }
 }

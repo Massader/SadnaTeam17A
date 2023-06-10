@@ -50,6 +50,6 @@ public class CombiningDiscounts extends NumericalAssemblyOfDiscount {
                     itemDiscount += discount.getDiscountPercentage();
             }
         }
-        return Math.min(100, itemDiscount);
+        return Math.min(1, itemDiscount);
     }
 }
