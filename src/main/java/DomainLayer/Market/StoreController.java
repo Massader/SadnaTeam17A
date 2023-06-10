@@ -86,11 +86,25 @@ public class StoreController {
         return storeDalController.isStoreExists(storeId);
     }
 
+    /*
     public Response<Store> getStoreInformation(UUID clientCredentials, UUID storeId) {
         try {
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
             if (getStore(storeId).isClosed() && !getStore(storeId).getRolesMap().containsKey(clientCredentials))
+                return Response.getFailResponse("Store is closed.");
+            return Response.getSuccessResponse(getStore(storeId));
+        } catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+     */
+
+    public Response<Store> getStoreInformation(UUID clientCredentials, UUID storeId) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            if (getStore(storeId).isClosed() && !getStore(storeId).getRoles().stream().anyMatch(role -> role.getUser().getId().equals(clientCredentials)))
                 return Response.getFailResponse("Store is closed.");
             return Response.getSuccessResponse(getStore(storeId));
         } catch (Exception exception) {
@@ -111,6 +125,7 @@ public class StoreController {
         }
     }
 
+    /*
     public Response<Boolean> closeStore(UUID clientCredentials, UUID storeId) {
         try {
             if (!storeExist(storeId))
@@ -137,6 +152,34 @@ public class StoreController {
             return Response.getFailResponse(exception.getMessage());
         }
     }
+     */
+
+    public Response<Boolean> closeStore(UUID clientCredentials, UUID storeId) {
+        try {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist");
+            Store store = getStore(storeId);
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_FOUNDER))
+                return Response.getFailResponse("User doesn't have permission.");
+            if (!userController.isUserLoggedIn(clientCredentials))
+                return Response.getFailResponse("Appointing user is not logged in.");
+            if (store.closeStore()) {
+                for (Role role : store.getRoles()) {
+                    List<StorePermissions> rolePermissions = role.getPermissions();
+                    if (rolePermissions.contains(StorePermissions.STORE_OWNER)
+                            && !rolePermissions.contains(StorePermissions.STORE_FOUNDER)) {
+                        User user = userController.getUserById(role.getUser().getId());
+                        if (user != null) notificationController.sendNotification(user.getId(),
+                                "Owned store " + store.getName() + " has been closed by founder.");
+                    }
+                }
+                return Response.getSuccessResponse(true);
+            }
+            return Response.getFailResponse("Store already closed.");
+        } catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
 
     public Response<Boolean> reopenStore(UUID clientCredentials, UUID storeId) {
         try {
@@ -146,11 +189,11 @@ public class StoreController {
             if (!store.checkPermission(clientCredentials, StorePermissions.STORE_FOUNDER))
                 return Response.getFailResponse("User doesn't have permission.");
             if (store.reopenStore()) {
-                for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
-                    List<StorePermissions> rolePermissions = role.getValue().getPermissions();
+                for (Role role : store.getRoles()) {
+                    List<StorePermissions> rolePermissions = role.getPermissions();
                     if (rolePermissions.contains(StorePermissions.STORE_OWNER)
                             && !rolePermissions.contains(StorePermissions.STORE_FOUNDER)) {
-                        User user = userController.getUserById(role.getKey());
+                        User user = userController.getUserById(role.getUser().getId());
                         if (user != null) notificationController.sendNotification(user.getId(),
                                 "Owned store " + store.getName() + " has been reopened by founder.");
                     }
@@ -174,11 +217,11 @@ public class StoreController {
             if (!user.isAdmin())
                 return Response.getFailResponse("Only admins can shutdown stores.");
             if (getStore(storeId).shutdownStore()) {
-                for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
-                    List<StorePermissions> rolePermissions = role.getValue().getPermissions();
+                for (Role role : store.getRoles()) {
+                    List<StorePermissions> rolePermissions = role.getPermissions();
                     if (rolePermissions.contains(StorePermissions.STORE_OWNER)
                             && !rolePermissions.contains(StorePermissions.STORE_FOUNDER)) {
-                        user = userController.getUserById(role.getKey());
+                        user = userController.getUserById(role.getUser().getId());
                         if (user != null) {
                             notificationController.sendNotification(user.getId(),
                                     "Owned store " + store.getName() + " has been shut down by admin.");
@@ -372,7 +415,7 @@ public class StoreController {
             if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("User doesn't have permission.");
             List<User> staffList = new ArrayList<User>();
-            for (UUID id : getStore(storeId).getRolesMap().keySet())
+            for (UUID id : getStore(storeId).getRoles().stream().map(role -> role.getUser().getId()).toList())
                 staffList.add(userController.getUser(id).getValue());
             return Response.getSuccessResponse(staffList);
         } catch (Exception exception) {
