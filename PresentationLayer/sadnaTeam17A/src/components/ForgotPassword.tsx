@@ -59,9 +59,11 @@ const ForgotPassword = ({
     );
     if (!response.data.error) {
       setQuestion(response.data.value);
+      setAnswerView(true);
     } else {
       setErrorMsg(true);
       setMessage(response.data.message);
+      setAnswerView(false);
     }
   };
 
@@ -90,6 +92,7 @@ const ForgotPassword = ({
   const [userId, setUserId] = useState("");
   const [answer, setAnswer] = useState("");
   const [question, setQuestion] = useState("");
+  const [answerView, setAnswerView] = useState(false);
   const [errorMsg, setErrorMsg] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -112,7 +115,7 @@ const ForgotPassword = ({
         <Button colorScheme="blue" size="lg" onClick={getUserId}>
           Get question
         </Button>
-        {userId !== "" && (
+        {userId !== "" && answerView && (
           <>
             <Text>{question}</Text>
             <Input

@@ -140,7 +140,7 @@ const ItemCard = ({ item }: Props) => {
       <Divider />
       <CardFooter>
         <Stack width="100%">
-          {item.purchaseType === "Direct Purchase" && (
+          {item.purchaseType === "DIRECT" && (
             <Button
               onClick={() => handleAddToCart()}
               variant="solid"

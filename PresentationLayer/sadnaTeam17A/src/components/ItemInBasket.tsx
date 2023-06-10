@@ -16,39 +16,24 @@ import itemIcon from "../assets/item.png";
 import axios from "axios";
 import { ClientCredentialsContext } from "../App";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { CartItemType } from "../types";
 
 interface Props {
   itemId: string;
-  quantity: number;
+  cartItem: CartItemType;
   storeId: string;
   getCart: () => {};
   getCartPrice: () => {};
 }
 
-const ItemInBusket = ({
+const ItemInBasket = ({
   itemId,
-  quantity,
+  cartItem,
   storeId,
   getCart,
   getCartPrice,
 }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
-
-  const getItemInfo = async () => {
-    const response = await axios.get(
-      `http://localhost:8080/api/v1/stores/item-info/storeId=${storeId}&itemId=${itemId}`
-    );
-    if (!response.data.error) {
-      setItemName(response.data.value.name);
-      setItemPrice(response.data.value.price);
-    } else {
-      console.log(response.data.error);
-    }
-  };
-
-  useEffect(() => {
-    getItemInfo();
-  }, [quantity]);
 
   const handleRemoveFromCart = async (quantityToRemove: number) => {
     const response = await axios.delete(
@@ -94,8 +79,23 @@ const ItemInBusket = ({
     }
   };
 
-  const [itemName, setItemName] = useState("");
-  const [itemPrice, setItemPrice] = useState(0);
+  const getitemDiscount = async () => {
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/users/get-item-discount/id=${clientCredentials}&storeId=${storeId}&itemId=${itemId}`
+    );
+    if (!response.data.error) {
+      console.log(response.data.value);
+      setItemDiscount(response.data.value);
+    } else {
+      setItemDiscount(0);
+    }
+  };
+
+  const [itemDiscount, setItemDiscount] = useState(0);
+
+  useEffect(() => {
+    getitemDiscount();
+  }, []);
 
   const [errorMsg, setErrorMsg] = useState(false);
   const [message, setMessage] = useState("");
@@ -107,28 +107,44 @@ const ItemInBusket = ({
           <Image src={itemIcon} borderRadius="lg" />
         </Flex>
         <Stack mt="6" spacing="3">
-          <Heading size="md">{itemName}</Heading>
+          <Heading size="md">{cartItem.item.name}</Heading>
           <Flex alignItems="center">
-            <Text>quantity: {quantity}</Text>
-            <Button
-              onClick={() => handleAddToCart()}
-              colorScheme="blackAlpha"
-              marginLeft={2}
-            >
-              +
-            </Button>
-            <Button
-              onClick={() => handleRemoveFromCart(1)}
-              colorScheme="blackAlpha"
-              marginLeft={2}
-            >
-              -
-            </Button>
+            <Text>quantity: {cartItem.quantity}</Text>
+            {cartItem.item.purchaseType !== "BID" && (
+              <>
+                <Button
+                  onClick={() => handleAddToCart()}
+                  colorScheme="blackAlpha"
+                  marginLeft={2}
+                >
+                  +
+                </Button>
+                <Button
+                  onClick={() => handleRemoveFromCart(1)}
+                  colorScheme="blackAlpha"
+                  marginLeft={2}
+                >
+                  -
+                </Button>
+              </>
+            )}
           </Flex>
-          <Flex justifyContent="space-between" alignItems="center">
-            <Text color="blue.600" fontSize="2xl">
-              ${itemPrice * quantity}
-            </Text>
+          <Flex alignItems="center">
+            {itemDiscount === 0 && (
+              <Text color="blue.600" fontSize="2xl">
+                ${cartItem.price * cartItem.quantity}
+              </Text>
+            )}
+            {itemDiscount !== 0 && (
+              <>
+                <Text as="del" color="gray" fontSize="2xl">
+                  ${cartItem.price * cartItem.quantity}
+                </Text>
+                <Text color="blue.600" fontSize="2xl" ml={3}>
+                  ${cartItem.price * cartItem.quantity * (itemDiscount / 100)}
+                </Text>
+              </>
+            )}
           </Flex>
         </Stack>
       </CardBody>
@@ -136,7 +152,7 @@ const ItemInBusket = ({
       <CardFooter>
         <Stack width="100%">
           <Button
-            onClick={() => handleRemoveFromCart(quantity)}
+            onClick={() => handleRemoveFromCart(cartItem.quantity)}
             variant="solid"
             colorScheme="blue"
             width="100%"
@@ -159,4 +175,4 @@ const ItemInBusket = ({
   );
 };
 
-export default ItemInBusket;
+export default ItemInBasket;

@@ -5,9 +5,11 @@ import React, { useEffect, useState } from "react";
 interface Props {
   storeId: string;
   itemId?: string;
+  mr?: number;
+  ml?: number;
 }
 
-const ItemNameFromId = ({ storeId, itemId }: Props) => {
+const ItemNameFromId = ({ ml, mr, storeId, itemId }: Props) => {
   const [itemName, setItemName] = useState("");
 
   const getItemInfo = async () => {
@@ -23,8 +25,12 @@ const ItemNameFromId = ({ storeId, itemId }: Props) => {
 
   useEffect(() => {
     getItemInfo();
-  }, []);
-  return <Text>{itemName}</Text>;
+  }, [itemId]);
+  return (
+    <Text ml={ml} mr={mr}>
+      {itemName}
+    </Text>
+  );
 };
 
 export default ItemNameFromId;

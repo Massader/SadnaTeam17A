@@ -16,6 +16,7 @@ interface Props {
   setMinPrice: React.Dispatch<React.SetStateAction<number>>;
   setMaxPrice: React.Dispatch<React.SetStateAction<number>>;
   setItemRating: React.Dispatch<React.SetStateAction<number>>;
+  setStoreRating: React.Dispatch<React.SetStateAction<number>>;
   setCategory: React.Dispatch<React.SetStateAction<string>>;
 }
 
@@ -23,15 +24,17 @@ const Filters = ({
   setMinPrice,
   setMaxPrice,
   setItemRating,
+  setStoreRating,
   setCategory,
 }: Props) => {
   const [submittedItem, setSubmittedItem] = useState(0);
-  const [storeRating, setStoreRating] = useState(0);
   const [itemRatingView, setItemRatingView] = useState(0);
   const [submittedStore, setSubmittedStore] = useState(0);
+  const [storeRatingView, setStoreRatingView] = useState(0);
 
   useEffect(() => {
     setItemRating(0);
+    setStoreRating(0);
   }, []);
 
   const handleMouseEnterItem = (index: number) => {
@@ -55,15 +58,23 @@ const Filters = ({
   };
 
   const handleMouseEnterStore = (index: number) => {
-    setStoreRating(index + 1);
+    setStoreRatingView(index + 1);
   };
 
   const handleMouseLeaveStore = () => {
-    submittedStore !== 0 ? setStoreRating(submittedStore) : setStoreRating(0);
+    submittedStore !== 0
+      ? setStoreRatingView(submittedStore)
+      : setStoreRatingView(0);
   };
 
-  const handleClickstoreRating = (index: number) => {
-    setSubmittedStore(index + 1);
+  const handleClickStoreRating = (index: number) => {
+    if (submittedStore === index + 1) {
+      setSubmittedStore(0);
+      setStoreRating(0);
+    } else {
+      setSubmittedStore(index + 1);
+      setStoreRating(index + 1);
+    }
   };
 
   return (
@@ -106,7 +117,6 @@ const Filters = ({
               marginRight={2}
             />
           </InputGroup>
-          {/* <Button>V</Button> */}
         </Flex>
         <Text>Item rating:</Text>
         <Flex>
@@ -133,12 +143,6 @@ const Filters = ({
             setCategory(category.target.value);
           }}
         />
-        {/* <Text>Category:</Text>
-        <Select placeholder="Select Category">
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
-          <option value="option3">Option 3</option>
-        </Select>
         <Text>Store rating:</Text>
         <Flex>
           {[...Array(5)].map((_, index) => (
@@ -146,16 +150,16 @@ const Filters = ({
               key={index}
               onMouseEnter={() => handleMouseEnterStore(index)}
               onMouseLeave={() => handleMouseLeaveStore()}
-              onClick={() => handleClickstoreRating(index)}
+              onClick={() => handleClickStoreRating(index)}
             >
-              {index < storeRating ? (
+              {index < storeRatingView ? (
                 <AiFillStar color="ffb703" size={30} />
               ) : (
                 <AiOutlineStar size={30} />
               )}
             </span>
           ))}
-        </Flex> */}
+        </Flex>
       </Stack>
     </>
   );

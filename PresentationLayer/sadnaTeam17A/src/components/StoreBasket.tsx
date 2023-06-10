@@ -2,7 +2,7 @@ import { SimpleGrid, Text } from "@chakra-ui/react";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Basket } from "../types";
-import ItemInBusket from "./ItemInBusket";
+import ItemInBasket from "./ItemInBasket";
 import { ClientCredentialsContext } from "../App";
 
 interface Props {
@@ -40,13 +40,13 @@ const StoreBasket = ({ basket, getCart, getCartPrice }: Props) => {
         padding="10px"
         spacing={6}
       >
-        {Object.entries(basket.items).map(([itemId, quantity]) => (
+        {Object.entries(basket.items).map(([itemId, cartItem]) => (
           <div key={itemId}>
-            <ItemInBusket
+            <ItemInBasket
               getCart={getCart}
               getCartPrice={getCartPrice}
               itemId={itemId}
-              quantity={quantity}
+              cartItem={cartItem}
               storeId={basket.storeId}
             />
           </div>
