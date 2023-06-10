@@ -64,13 +64,12 @@ public class StorePurchasePolicy {
 
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store){
         for (PurchaseTerm purchaseTerm: getPurchasePolicies()) {
-            if(!purchaseTerm.purchaseRuleOccurs(shoppingBasket,store)){
-                return  false;}}
-            return  true;
+            if(!purchaseTerm.purchaseRuleOccurs(shoppingBasket, store)) {
+                return false;
+            }
         }
-
-
-
+        return true;
+    }
 }
 
 

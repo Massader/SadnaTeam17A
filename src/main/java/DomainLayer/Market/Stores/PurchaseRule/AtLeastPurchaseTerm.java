@@ -26,10 +26,8 @@ public class AtLeastPurchaseTerm extends PurchaseTerm {
         return quantity;
     }
 
-
-
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store) {
-        return purchaseRule.purchaseRuleOccurs(shoppingBasket,store,quantity,true);
+        return purchaseRule.purchaseRuleOccurs(shoppingBasket, store, quantity, true);
     }
 
 
