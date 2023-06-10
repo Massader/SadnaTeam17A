@@ -13,6 +13,13 @@ interface Props {
 const MyStores = ({ onManageStore, onCreateStore }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
 
+  function scrollToTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+
   const [roles, setRoles] = useState<Role[]>([]);
 
   const fetchRoles = async () => {
@@ -46,6 +53,7 @@ const MyStores = ({ onManageStore, onCreateStore }: Props) => {
             key={role.storeId}
             role={role}
             onManageStore={() => onManageStore(role.storeId, role.permissions)}
+            scrollToTop={scrollToTop}
           />
         ))}
       </SimpleGrid>

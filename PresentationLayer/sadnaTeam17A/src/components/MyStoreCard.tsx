@@ -18,9 +18,10 @@ import axios from "axios";
 interface Props {
   role: Role;
   onManageStore: () => void;
+  scrollToTop: () => void;
 }
 
-const MyStoreCard = ({ role, onManageStore }: Props) => {
+const MyStoreCard = ({ role, onManageStore, scrollToTop }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
 
   const [store, setStore] = useState<Store>();
@@ -64,7 +65,14 @@ const MyStoreCard = ({ role, onManageStore }: Props) => {
         </CardBody>
         <CardFooter justifyContent="space-between">
           <Text>Rating: {store?.rating}</Text>
-          <Button onClick={onManageStore} variant="solid" colorScheme="blue">
+          <Button
+            onClick={() => {
+              onManageStore();
+              scrollToTop();
+            }}
+            variant="solid"
+            colorScheme="blue"
+          >
             Manage store
           </Button>
         </CardFooter>

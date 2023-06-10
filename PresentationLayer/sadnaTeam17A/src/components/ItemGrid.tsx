@@ -76,7 +76,15 @@ const ItemGrid = ({
 
   useEffect(() => {
     setPage(1);
-  }, [clientCredentials, keyword, minPrice, maxPrice, itemRating, category]);
+  }, [
+    clientCredentials,
+    keyword,
+    minPrice,
+    maxPrice,
+    itemRating,
+    storeRating,
+    category,
+  ]);
 
   useEffect(() => {
     fetchItems();
@@ -89,6 +97,7 @@ const ItemGrid = ({
     minPrice,
     maxPrice,
     itemRating,
+    storeRating,
     category,
   ]);
 
@@ -102,6 +111,7 @@ const ItemGrid = ({
     keyword,
     minPrice,
     maxPrice,
+    storeRating,
     itemRating,
     category,
   ]);
