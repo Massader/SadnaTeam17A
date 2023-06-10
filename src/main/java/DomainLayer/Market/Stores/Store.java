@@ -199,7 +199,7 @@ public class Store {
         if (policy.purchaseRuleOccurs(shoppingBasket, this)) {
             return discounts.calculateShoppingBasket(shoppingBasket, this);
         }
-        throw new Exception("The shopping Basket is not accepted by Store Policy");
+        throw new Exception("The shopping basket for store " + name + " is not accepted by store policy");
     }
 
 
@@ -313,27 +313,6 @@ public class Store {
     public int numOfItems() {
         return items.size();
     }
-
-    public PurchaseTerm creatingPurchaseTerm(int rule, Boolean atLeast, int quantity, UUID itemId, Category category) throws Exception {
-        PurchaseRule purchaseRule;
-        switch (rule){
-            case 1://Item
-                if(itemId==null){ throw new Exception("can't Creating Purchase Term of Item Purchase Rule if item id is null");}
-                purchaseRule = new ItemPurchaseRule(itemId);
-                break;
-            case  2://ShoppingBasket
-                purchaseRule = new ShoppingBasketPurchaseRule();
-                break;
-            case  3://category
-                purchaseRule = new CategoryPurchaseRule(category);
-            default:
-            { throw new Exception("can't Creating Purchase Term which is not a shopping basket item or category");}
-        }
-        if (atLeast){
-            return new AtLeastPurchaseTerm(purchaseRule,quantity);
-        }
-        else return new AtMostPurchaseTerm(purchaseRule,quantity);
-    }
     
     public List<UUID> getStoreManagers() {
         List<UUID> managersIds = new ArrayList<>();
@@ -381,6 +360,10 @@ public class Store {
         if (petition.getOwnersList().isEmpty())
             ownerPetitions.remove(petition);
         return true;
+    }
+    
+    public double calculateItemDiscount(ShoppingBasket shoppingBasket, UUID itemId) {
+        return discounts.calculateItemDiscount(shoppingBasket, this, itemId);
     }
 }
 

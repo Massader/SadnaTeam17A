@@ -1,8 +1,11 @@
 package DomainLayer.Market.Stores.Discounts;
 
+import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
+import DomainLayer.Market.Users.CartItem;
 import DomainLayer.Market.Users.ShoppingBasket;
 
+import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MaxDiscounts extends NumericalAssemblyOfDiscount {
@@ -21,7 +24,28 @@ public class MaxDiscounts extends NumericalAssemblyOfDiscount {
             Double pricePerDiscount = discount.calculateDiscount(shoppingBasket,store);
             discountOption.add(pricePerDiscount);
         }
-        Double maxDiscount = discountOption.stream().max(Double::compare).orElse(0.0);
-        return  maxDiscount;
+        return discountOption.stream().max(Double::compare).orElse(0.0);
+    }
+    
+    @Override
+    public double calculateItemDiscount(ShoppingBasket shoppingBasket, Store store, UUID itemId) {
+        double itemDiscount = 0;
+        CartItem cartItem = shoppingBasket.getItems().get(itemId);
+        Item item = cartItem.getItem();
+        for (Discount discount: discounts) {
+            if (discount.getPurchaseTerm() == null || discount.getPurchaseTerm().purchaseRuleOccurs(shoppingBasket, store)) {
+                if (discount.getOptionCalculateDiscount() instanceof ItemCalculateDiscount &&
+                ((ItemCalculateDiscount) discount.getOptionCalculateDiscount()).getItemId().equals(itemId)) {
+                    itemDiscount = Math.max(itemDiscount, discount.getDiscountPercentage());
+                }
+                else if (discount.getOptionCalculateDiscount() instanceof CategoryCalculateDiscount &&
+                        item.getCategories().contains(((CategoryCalculateDiscount) discount.getOptionCalculateDiscount()).getCategory())) {
+                    itemDiscount = Math.max(itemDiscount, discount.getDiscountPercentage());
+                }
+                else if (discount.getOptionCalculateDiscount() instanceof ShoppingBasketCalculateDiscount)
+                    itemDiscount = Math.max(itemDiscount, discount.getDiscountPercentage());
+            }
+        }
+        return itemDiscount;
     }
 }

@@ -3,7 +3,6 @@ package DomainLayer.Market;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
@@ -635,6 +634,25 @@ public class UserController {
                     return Response.getSuccessResponse(user);
             }
             return Response.getFailResponse("User not found.");
+        } catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+    
+    public Response<Double> getItemDiscount(UUID clientCredentials, UUID storeId, UUID itemId) {
+        try {
+            if (!isRegisteredUser(clientCredentials) && !isNonRegisteredClient(clientCredentials))
+                throw new Exception("User does not exist");
+            Client client = getClientOrUser(clientCredentials);
+            if (!storeController.storeExist(storeId))
+                throw new Exception("Store does not exist.");
+            if (!storeController.itemExist(itemId))
+                throw new Exception("Item does not exist");
+            Store store = storeController.getStore(storeId);
+            ShoppingBasket shoppingBasket = client.getCart().getShoppingBaskets().get(storeId);
+            if (!shoppingBasket.getItems().containsKey(itemId))
+                throw new Exception("No such item in the user's shopping cart.");
+            return Response.getSuccessResponse(store.calculateItemDiscount(shoppingBasket, itemId));
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }

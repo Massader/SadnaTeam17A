@@ -60,10 +60,9 @@ public class Discount {
     }
 
     public Double calculateDiscount(ShoppingBasket shoppingBasket, Store store) {
-        ConcurrentLinkedQueue<Double> discountOption = new ConcurrentLinkedQueue<>();
         Double discount = 0.0;
         if (purchaseTerm == null || purchaseTerm.purchaseRuleOccurs(shoppingBasket,store))
-            discount = getOptionCalculateDiscount().calculateDiscount(shoppingBasket,store,discountPercentage);
+            discount = getOptionCalculateDiscount().calculateDiscount(shoppingBasket, store, discountPercentage);
         return discount;
     }
     

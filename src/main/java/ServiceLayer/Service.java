@@ -1302,5 +1302,12 @@ public class Service {
             errorLogger.log(Level.WARNING, response.getMessage());
         return response;
     }
+    
+    public Response<Double> getItemDiscount(UUID clientCredentials, UUID storeId, UUID itemId) {
+        Response<Double> response = userController.getItemDiscount(clientCredentials, storeId, itemId);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
+    }
 }
 

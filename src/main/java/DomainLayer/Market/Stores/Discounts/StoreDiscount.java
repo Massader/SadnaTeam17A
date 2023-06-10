@@ -2,6 +2,7 @@ package DomainLayer.Market.Stores.Discounts;
 
 import DomainLayer.Market.Stores.PurchaseRule.CompositePurchaseTerm;
 import DomainLayer.Market.Stores.Store;
+import DomainLayer.Market.Users.CartItem;
 import DomainLayer.Market.Users.ShoppingBasket;
 
 import java.util.List;
@@ -72,14 +73,8 @@ public class StoreDiscount {
         }
         else this.discountsAssembly = new CombiningDiscounts(getDiscountsAssembly().getDiscounts());
     }
-
-
-
-
-
-
-
-
-
-
+    
+    public double calculateItemDiscount(ShoppingBasket shoppingBasket, Store store, UUID itemId) {
+        return this.discountsAssembly.calculateItemDiscount(shoppingBasket, store, itemId);
+    }
 }

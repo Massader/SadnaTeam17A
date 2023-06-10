@@ -5,7 +5,6 @@ import APILayer.Requests.*;
 import DomainLayer.Market.Notification;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Users.Roles.Role;
-import DomainLayer.Market.Users.User;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.ServiceMessage;
@@ -14,7 +13,6 @@ import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
 import ServiceLayer.ServiceObjects.ServiceUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.UUID;
@@ -127,6 +125,13 @@ public class UserController {
     public Response<Boolean> removeItemFromCart(@RequestBody CartItemRequest request) {
         return service.removeItemFromCart(request.getClientCredentials(), request.getItemId(), request.getQuantity(),
                 request.getStoreId());
+    }
+    
+    @GetMapping(path = "/get-item-discount/id={id}&storeId={storeId}&itemId={itemId}")
+    public Response<Double> getItemDiscount(@PathVariable(name = "id") UUID clientCredentials,
+                                                      @PathVariable(name = "storeId") UUID storeId,
+                                                      @PathVariable(name = "itemId") UUID itemId) {
+        return service.getItemDiscount(clientCredentials, storeId, itemId);
     }
     
     @PostMapping(path = "/messages/send-message")

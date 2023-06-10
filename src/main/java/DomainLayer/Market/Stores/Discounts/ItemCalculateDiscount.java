@@ -30,7 +30,6 @@ public class ItemCalculateDiscount implements CalculateDiscount {
             int quantity = items.get(itemId).getQuantity();
             discount = items.get(getItemId()).getPrice() * quantity * discountPercentage;
         }
-       // discountOption.add(discount);
         return discount;
     }
 
