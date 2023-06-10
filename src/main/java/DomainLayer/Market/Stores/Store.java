@@ -66,11 +66,20 @@ public class Store {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Sale> sales;
 
+    /*
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Map<UUID, Role> rolesMap;
+     */
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Collection<Role> roles;
 
+    /*
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Map<UUID, StoreReview> reviews;
+     */
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Collection<StoreReview> reviews;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<OwnerPetition> ownerPetitions;
@@ -91,8 +100,9 @@ public class Store {
         discounts = new StoreDiscount(true);// always max until change
         policy = new StorePurchasePolicy();
         sales = new ConcurrentLinkedQueue<>();
-        rolesMap = new ConcurrentHashMap<>();
-        reviews = new ConcurrentHashMap<>();
+//        rolesMap = new ConcurrentHashMap<>();
+        roles = new ConcurrentLinkedQueue<>();
+        reviews = new ConcurrentLinkedQueue<>();
         storeDalController = StoreDalController.getInstance(UserController.repositoryFactory);
         ownerPetitions = new ArrayList<>();
     }
@@ -104,7 +114,7 @@ public class Store {
 //        sales = new ConcurrentLinkedQueue<>();
 //        rolesMap = new ConcurrentHashMap<>();
 //        storeDalController = StoreDalController.getInstance(UserController.repositoryFactory);
-//
+//        roles = new ConcurrentLinkedQueue<>();
 
     }
 
@@ -115,21 +125,46 @@ public class Store {
     public StorePurchasePolicy getPolicy() {
         return policy;
     }
+
+    /*
     public Map<UUID, Role> getRolesMap() {
         return rolesMap;
     }
 
+     */
+
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    /*
     public StoreOwner getOwner(UUID owner) {
         if (rolesMap.containsKey(owner))
             if (rolesMap.get(owner).getPermissions().contains(StorePermissions.STORE_OWNER))
                 return (StoreOwner) rolesMap.get(owner);
         return null;
     }
+     */
 
+    public StoreOwner getOwner(UUID ownerId) {
+        for (Role role : roles) {
+            if (role.getUser().getId().equals(ownerId) && role.getPermissions().contains(StorePermissions.STORE_OWNER)) {
+                return (StoreOwner) role;
+            }
+        }
+        return null;
+    }
+
+    /*
     public boolean checkPermission(UUID clientCredentials, StorePermissions permission) {
         if (!rolesMap.containsKey(clientCredentials))
             return false;
         return (rolesMap.get(clientCredentials).getPermissions().contains(permission));
+    }
+     */
+
+    public boolean checkPermission(UUID clientCredentials, StorePermissions permission) {
+        return roles.stream().anyMatch(role -> role.getUser().getId().equals(clientCredentials) && role.getPermissions().contains(permission));
     }
 
     public Collection<Item> getItems() {
@@ -174,6 +209,7 @@ public class Store {
         return description;
     }
 
+    /*
     public void addRole(User user, Role role) throws Exception {
         if (rolesMap.containsKey(user.getId())) {
             Role existingRole = rolesMap.get(user.getId());
@@ -187,12 +223,37 @@ public class Store {
         }
 //        user.addStoreRole(role);
         rolesMap.put(user.getId(), role);
+    }
+     */
 
-
+    public void addRole(User user, Role role) throws Exception {
+        if (roles.stream().anyMatch(r -> r.getUser().getId().equals(user.getId()))) {
+            if (roles.stream().anyMatch(
+                    r -> r.getUser().getId().equals(user.getId()) &&
+                    !r.getPermissions().contains(StorePermissions.STORE_OWNER) &&
+                    role.getPermissions().contains(StorePermissions.STORE_OWNER))) {
+                roles.add(role);
+                return;
+            } else {
+                throw new Exception("User is already a member of store staff.");
+            }
+        }
+        roles.add(role);
     }
 
+    /*
     public void removeRole(UUID idToRemove) {
         rolesMap.remove(idToRemove);
+    }
+     */
+
+    public void removeRole(UUID userId) {
+        for (Role role : roles) {
+            if (role.getUser().getId().equals(userId)) {
+                roles.remove(role);
+                return;
+            }
+        }
     }
 
     public boolean isClosed() {
@@ -238,8 +299,17 @@ public class Store {
         return storeDalController.isItemExists(itemId);
     }
 
+    /*
     public Collection<Sale> getSales(UUID clientCredentials) throws Exception {
         if (rolesMap.containsKey(clientCredentials)) {
+            return sales;
+        }
+        throw new Exception("the user is not have permissions to get sale history of store " + this.name);
+    }
+     */
+
+    public Collection<Sale> getSales(UUID clientCredentials) throws Exception {
+        if (roles.stream().anyMatch(role -> role.getUser().getId().equals(clientCredentials))) {
             return sales;
         }
         throw new Exception("the user is not have permissions to get sale history of store " + this.name);
@@ -431,7 +501,8 @@ public class Store {
         Discount discount = new Discount(OptioncalculateDiscount,discountPercentage,purchaseTerm);
         return discount;
     }
-    
+
+    /*
     public List<UUID> getStoreManagers() {
         List<UUID> managersIds = new ArrayList<>();
         for (Map.Entry<UUID, Role> entry : rolesMap.entrySet()) {
@@ -441,7 +512,13 @@ public class Store {
         }
         return managersIds;
     }
-    
+     */
+
+    public List<UUID> getStoreManagers() {
+        return roles.stream().filter(role -> !role.getPermissions().contains(StorePermissions.STORE_OWNER)).map(role -> role.getUser().getId()).toList();
+    }
+
+    /*
     public List<UUID> getStoreOwners() {
         List<UUID> ownersIds = new ArrayList<>();
         for (Map.Entry<UUID, Role> entry : rolesMap.entrySet()) {
@@ -451,16 +528,21 @@ public class Store {
         }
         return ownersIds;
     }
+     */
+
+    public List<UUID> getStoreOwners() {
+        return roles.stream().filter(role -> role.getPermissions().contains(StorePermissions.STORE_OWNER)).map(role -> role.getUser().getId()).toList();
+    }
     
     public List<StoreReview> getReviews() {
-        List<StoreReview> output = new ArrayList<>(reviews.values());
+        List<StoreReview> output = new ArrayList<>(reviews);
         output.sort(Comparator.comparing(StoreReview::getTimestamp));
         return output;
     }
     
     public UUID addReview(UUID clientCredentials, String body, int rating) {
         StoreReview review = new StoreReview(storeId, body, clientCredentials, rating);
-        reviews.put(review.getId(), review);
+        reviews.add(review);
         addRating(rating);
         return review.getId();
     }
