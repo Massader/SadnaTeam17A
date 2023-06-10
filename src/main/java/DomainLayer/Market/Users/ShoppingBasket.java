@@ -8,9 +8,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ShoppingBasket {
     private UUID id;
     private UUID storeId;
-    private ConcurrentHashMap<UUID,Integer> items;//UUID itemId, int quantity
+    private final ConcurrentHashMap<UUID, CartItem> items;//UUID itemId, int quantity
 
-    public ConcurrentHashMap<UUID, Integer> getItems() {
+    public ConcurrentHashMap<UUID, CartItem> getItems() {
         return items;
     }
 
@@ -37,27 +37,30 @@ public class ShoppingBasket {
         this.storeId = storeId;
     }
 
-    public boolean addItem(Item item, int quantity) throws Exception {
-        if(item.getQuantity() < quantity)
-            throw new Exception("Quantity of item is higher than the quantity in stock.");
-        if (this.items.get(item.getId()) == null)
-            items.put(item.getId(), 0);
-        int oldQuantity = this.items.get(item.getId());
-        items.put(item.getId(), oldQuantity + quantity);
+    public boolean addItem(CartItem cartItem, int quantity) throws Exception {
+        if(cartItem.getItem().getQuantity() < quantity)
+            throw new Exception("Quantity of cart item is higher than the quantity in stock.");
+        if (this.items.get(cartItem.getItemId()) == null) {
+            items.put(cartItem.getItemId(), cartItem);
+        }
+        else {
+            int oldQuantity = items.get(cartItem.getItemId()).getQuantity();
+            items.get(cartItem.getItemId()).setQuantity(oldQuantity + quantity);
+        }
         return true;
     }
 
-    public boolean removeItem(Item item, int quantity){
+    public boolean removeItem(UUID itemId, int quantity) throws Exception {
         synchronized (this) {
-            int oldQuantity = items.get(item.getId());
-            if (oldQuantity < quantity)
-                return false;
-            if (oldQuantity == quantity) {
-                items.remove(item.getId());
+            if(items.get(itemId) == null)
+                throw new Exception("Item is not in the cart");
+            int oldQuantity = items.get(itemId).getQuantity();
+            if (oldQuantity <= quantity) {
+                items.remove(itemId);
                 return true;
             }
-            items.put(item.getId(), oldQuantity - quantity);
-           // item.setQuantity(item.getQuantity() + quantity);
+            else
+                items.get(itemId).setQuantity(oldQuantity - quantity);
             return true;
         }
     }
@@ -66,6 +69,6 @@ public class ShoppingBasket {
         items.clear();
     }
 
-    public int quantityOf(UUID itemId){return items.get(itemId);}
+    public int quantityOf(UUID itemId){return items.get(itemId).getQuantity();}
 
 }

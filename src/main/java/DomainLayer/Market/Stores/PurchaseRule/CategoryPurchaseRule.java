@@ -3,6 +3,7 @@ package DomainLayer.Market.Stores.PurchaseRule;
 import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
+import DomainLayer.Market.Users.CartItem;
 import DomainLayer.Market.Users.ShoppingBasket;
 
 import java.util.Objects;
@@ -23,13 +24,9 @@ public class CategoryPurchaseRule implements PurchaseRule {
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity, Boolean atLeast) {
         int categoryQuantity = 0;
-        ConcurrentHashMap<UUID,Item> storeItems = store.getItems();
-         ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
-        for (UUID itemId : items.keySet()) {
-            Item item=  storeItems.get(itemId);
-            if (item!=null&&item.containsCategory(category.getCategoryName())) {
-                categoryQuantity+=items.get(itemId);
-            }
+         ConcurrentHashMap<UUID, CartItem> items = shoppingBasket.getItems();
+        for (CartItem cartItem : items.values()) {
+            categoryQuantity += cartItem.getQuantity();
         }
         boolean moreThenQuantity = categoryQuantity >= quantity;
         return (quantity == categoryQuantity || atLeast && moreThenQuantity || (!atLeast && !moreThenQuantity));

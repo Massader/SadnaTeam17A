@@ -62,7 +62,7 @@ public class StoreDiscount {
     }
 
     public synchronized double calculateShoppingBasket(ShoppingBasket shoppingBasket, Store store){
-        double originalPrice= store.calculatePriceOfBasket(shoppingBasket.getItems());
+        double originalPrice = store.calculatePriceOfBasket(shoppingBasket.getItems());
         double discount = this.calculateDiscount(shoppingBasket,store);
         return  Math.max(0.0, originalPrice - discount);
     }

@@ -11,6 +11,7 @@ import DomainLayer.Market.Stores.PurchaseRule.ShoppingBasketPurchaseRule;
 import DomainLayer.Market.Stores.PurchaseRule.*;
 //import DomainLayer.Market.Stores.PurchaseRule.ShopingBasketPurchaseRule;
 import DomainLayer.Market.Stores.Store;
+import DomainLayer.Market.Users.CartItem;
 import DomainLayer.Market.Users.ShoppingBasket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,8 +48,9 @@ public class StoreDiscountTest {
         Discount discount = new Discount(itemDiscount,0.5,null);
         store.addDiscount(discount);
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato,10);
-        Double price =store.calculatePriceOfBasketWithPolicyAndDiscount(shoppingBasket1);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
+        Double price = store.calculatePriceOfBasketWithPolicyAndDiscount(shoppingBasket1);
         assertEquals(price,25);
     }
     @Test
@@ -57,7 +59,8 @@ public class StoreDiscountTest {
         Discount discount = new Discount(calculateDiscount,0.5,null);
         store.addDiscount(discount);
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato,10);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
         Double price =store.calculatePriceOfBasketWithPolicyAndDiscount(shoppingBasket1);
         assertEquals(25,price);
     }
@@ -68,7 +71,8 @@ public class StoreDiscountTest {
         Discount discount = new Discount(shoppingBasketDiscount,0.5,null);
         store.addDiscount(discount);
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato,10);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
         Double price =store.calculatePriceOfBasketWithPolicyAndDiscount(shoppingBasket1);
         assertEquals(price,25);
     }
@@ -99,33 +103,36 @@ public class StoreDiscountTest {
         }
 
     }
-@Test
+    @Test
     void addItemDiscountWithCondition() throws Exception {
-    ItemCalculateDiscount itemDiscount = new ItemCalculateDiscount(tomato.getId());
-    ShoppingBasketPurchaseRule shopingBasketPurchaseRule = new ShoppingBasketPurchaseRule();
-    AtLeastPurchaseTerm BasketAtLeastPurchaseRule = new AtLeastPurchaseTerm(shopingBasketPurchaseRule, 49);
-    Discount discount = new Discount(itemDiscount, 0.5, BasketAtLeastPurchaseRule);
-    store.addDiscount(discount);
-    ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-    shoppingBasket1.addItem(tomato, 10);
-    Double price = store.calculatePriceOfBasketWithPolicyAndDiscount(shoppingBasket1);
-    assertEquals(25, price);
-}
-@Test
-        void addItemDiscountWithFailCondition() throws Exception {
+        ItemCalculateDiscount itemDiscount = new ItemCalculateDiscount(tomato.getId());
+        ShoppingBasketPurchaseRule shopingBasketPurchaseRule = new ShoppingBasketPurchaseRule();
+        AtLeastPurchaseTerm BasketAtLeastPurchaseRule = new AtLeastPurchaseTerm(shopingBasketPurchaseRule, 49);
+        Discount discount = new Discount(itemDiscount, 0.5, BasketAtLeastPurchaseRule);
+        store.addDiscount(discount);
+        ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
+        Double price = store.calculatePriceOfBasketWithPolicyAndDiscount(shoppingBasket1);
+        assertEquals(25, price);
+    }
+    
+    @Test
+    void addItemDiscountWithFailCondition() throws Exception {
         ItemCalculateDiscount itemDiscount = new ItemCalculateDiscount(tomato.getId());
         ItemPurchaseRule tomatoPurchaseRule = new ItemPurchaseRule(tomato.getId());
-    AtLeastPurchaseTerm tomatoAtLeastPurchaseRule= new AtLeastPurchaseTerm(tomatoPurchaseRule,20);
+        AtLeastPurchaseTerm tomatoAtLeastPurchaseRule= new AtLeastPurchaseTerm(tomatoPurchaseRule,20);
         Discount discount = new Discount(itemDiscount,0.5,tomatoAtLeastPurchaseRule);
-       store.addDiscount(discount);
-       ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-       shoppingBasket1.addItem(tomato, 10);
-       Double price = store.calculatePriceOfBasketWithPolicyAndDiscount(shoppingBasket1);
+        store.addDiscount(discount);
+        ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
+        Double price = store.calculatePriceOfBasketWithPolicyAndDiscount(shoppingBasket1);
         assertEquals(50, price);
     }
 
     @Test
- void  MaxDiscounts() throws Exception {
+    void MaxDiscounts() throws Exception {
         ItemCalculateDiscount itemDiscount = new ItemCalculateDiscount(tomato.getId());
         ShoppingBasketPurchaseRule shopingBasketPurchaseRule = new ShoppingBasketPurchaseRule();
         AtLeastPurchaseTerm BasketAtLeastPurchaseRule = new AtLeastPurchaseTerm(shopingBasketPurchaseRule, 49);
@@ -135,7 +142,8 @@ public class StoreDiscountTest {
         Discount discount2 = new Discount(calculateDiscount,0.7,null);
         store.addDiscount(discount2);
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato, 10);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
         Double price = store.calculatePriceOfBasketWithPolicyAndDiscount(shoppingBasket1);
         assertEquals(15, price);
     }
@@ -152,7 +160,8 @@ public class StoreDiscountTest {
         Discount discount2 = new Discount(calculateDiscount,0.2,null);
         store.addDiscount(discount2);
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato, 10);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
         Double price = store.calculatePriceOfBasketWithPolicyAndDiscount(shoppingBasket1);
         assertEquals(32.5, price);
     }
@@ -169,7 +178,8 @@ public class StoreDiscountTest {
         Discount discount2 = new Discount(calculateDiscount,0.6,null);
         store.addDiscount(discount2);
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato, 10);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
         Double price = store.calculatePriceOfBasketWithPolicyAndDiscount(shoppingBasket1);
         assertEquals(0.0, price);
     }
@@ -197,10 +207,9 @@ public class StoreDiscountTest {
         try {
             Discount discount = new Discount(null, 0.5, null);
             store.addDiscount(discount);
-        }catch (Exception exception){
+        } catch (Exception exception) {
             assertEquals("the discount is null, please put valid discount",exception.getMessage());
         }
-
         ItemCalculateDiscount itemDiscount = new ItemCalculateDiscount(tomato.getId());
         ShoppingBasketPurchaseRule shopingBasketPurchaseRule = new ShoppingBasketPurchaseRule();
         AtLeastPurchaseTerm BasketAtLeastPurchaseRule = new AtLeastPurchaseTerm(shopingBasketPurchaseRule, 49);
@@ -209,14 +218,9 @@ public class StoreDiscountTest {
         try{store.addDiscount(discount);}
         catch (Exception exception){
             assertEquals("the discount is already exist, please put valid discount",exception.getMessage());
-
         }
-
-
     }
-
-
-    }
+}
 
 
 

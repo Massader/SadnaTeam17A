@@ -359,7 +359,8 @@ public class StoreController {
         try {
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist");
-            if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
+            if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER) &&
+                    !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_MANAGEMENT_INFORMATION))
                 return Response.getFailResponse("User doesn't have permission.");
             List<User> staffList = new ArrayList<User>();
             for (UUID id : getStore(storeId).getRolesMap().keySet())
@@ -473,44 +474,6 @@ public class StoreController {
         }
     }
 
-    public Response<Boolean> removeItemQuantity(UUID storeId, UUID itemId, int quantity) {
-        try {
-            if (!storeMap.containsKey(storeId))
-                return Response.getFailResponse("Store does not exist.");
-            Store store = storeMap.get(storeId);
-            Item item = store.getItem(itemId);
-            if (item == null) return Response.getFailResponse("Item does not exist.");
-            synchronized (item) {
-                if (item.removeFromQuantity(quantity))
-                    return Response.getSuccessResponse(true);
-                else return Response.getFailResponse("Failed to remove quantity from item.");
-            }
-        } catch (Exception exception) {
-            return Response.getFailResponse(exception.getMessage());
-
-        }
-    }
-
-    public Response<Boolean> addItemQuantity(UUID clientId, UUID itemId, int quantity) {
-        try {
-            if (!itemExist(itemId))
-                return Response.getFailResponse("item not exist");
-            Response<Item> itemResponse = getItem(itemId);
-            if (itemResponse.isError())
-                return Response.getFailResponse(itemResponse.getMessage());
-            synchronized (itemResponse.getValue()) {
-                if (itemResponse.getValue().addQuantity(quantity)) {
-                    return Response.getSuccessResponse(true);
-                }
-            }
-        } catch (Exception exception) {
-            return Response.getFailResponse(exception.getMessage());
-
-        }
-        return Response.getFailResponse("cant remove item quantity");
-    }
-
-
     public Response<Double> getCartTotal(UUID clientCredentials) {
         try {
             double price = 0;
@@ -571,7 +534,8 @@ public class StoreController {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
-            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT) && !(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT) &&
+                    !store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("User does not have item management permissions for this store.");
             Item item = store.getItem(itemId);
             if (item == null)
@@ -626,14 +590,15 @@ public class StoreController {
     }
 
 
-    public Response<Boolean> addPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
+    public Response<Boolean> addPolicyTerm(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
         try {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
-            if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) &&
+                    !store.checkPermission(clientCredentials, StorePermissions.STORE_POLICY_MANAGEMENT))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            store.addPolicyTermByStoreOwner(term);
+            store.addPolicyTerm(term);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -645,7 +610,8 @@ public class StoreController {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
-            if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) &&
+                    !store.checkPermission(clientCredentials, StorePermissions.STORE_POLICY_MANAGEMENT))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
             return Response.getSuccessResponse(store.removePolicyTerm(termId));
         } catch(Exception exception) {
@@ -658,7 +624,8 @@ public class StoreController {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
-            if (!(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) &&
+                    !store.checkPermission(clientCredentials, StorePermissions.STORE_DISCOUNT_MANAGEMENT))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
             Discount discount = new Discount(serviceDiscount);
             store.addDiscount(discount);
@@ -673,7 +640,8 @@ public class StoreController {
             if (!storeMap.containsKey(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = storeMap.get(storeId);
-            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) && !store.checkPermission(clientCredentials, StorePermissions.STORE_DISCOUNT_MANAGEMENT))
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) &&
+                    !store.checkPermission(clientCredentials, StorePermissions.STORE_DISCOUNT_MANAGEMENT))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
             store.removeDiscount(discountId);
             return Response.getSuccessResponse(true);

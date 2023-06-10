@@ -57,7 +57,8 @@ public class SearchController {
         instance = new SearchController();
     }
 
-    public Response<List<Item>> searchItem(String keyword, String category, Double minPrice, Double maxPrice, Integer itemRating, Integer storeRating, Integer number, Integer page, UUID storeId) {
+    public Response<List<Item>> searchItem(String keyword, String category, Double minPrice, Double maxPrice,
+                                           Integer itemRating, Integer storeRating, Integer number, Integer page, UUID storeId) {
         List<Item> items = new ArrayList<>();
         if(storeId != null){
             Store store = storeController.getStore(storeId);
@@ -89,7 +90,7 @@ public class SearchController {
             items = items.stream().filter(item -> item.getRating() >= itemRating).toList();
         }
         if(storeRating != null){
-            items = items.stream().filter(item -> item.getRating() >= storeRating).toList();
+            items = items.stream().filter(item -> storeController.getStore(item.getStoreId()).getRating() >= storeRating).toList();
         }
         if (number != null && page != null){
             int start = (page - 1) * number;
