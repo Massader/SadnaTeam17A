@@ -24,13 +24,7 @@ public class ShoppingCart {
     public void setId(UUID id) {
         this.userId = id;
     }
-
-<<<<<<< Updated upstream
-    public Boolean addItemToCart(Item item, UUID storeId, int quantity) {
-        if (!shoppingBaskets.containsKey(storeId))
-            shoppingBaskets.put(storeId, new ShoppingBasket(storeId));
-        return shoppingBaskets.get(storeId).addItem(item, quantity);
-=======
+    
     public Boolean addItemToCart(CartItem cartItem, UUID storeId, int quantity) throws Exception {
         if (!shoppingBaskets.containsKey(storeId))
             shoppingBaskets.put(storeId, new ShoppingBasket(storeId));
@@ -39,7 +33,6 @@ public class ShoppingCart {
         if (shoppingBaskets.get(storeId).getItems().isEmpty())
             shoppingBaskets.remove(storeId);
         return false;
->>>>>>> Stashed changes
     }
 
     public Boolean removeItemFromCart(UUID itemId, UUID storeId, int quantity) throws Exception {

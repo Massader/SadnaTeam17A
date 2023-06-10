@@ -37,16 +37,7 @@ public class ShoppingBasket {
         this.storeId = storeId;
     }
 
-<<<<<<< Updated upstream
-    public boolean addItem(Item item, int quantity){
-        if(item.getQuantity()<quantity)
-            return false;
-        if (this.items.get(item.getId()) == null)
-            items.put(item.getId(), 0);
-        int oldQuantity = this.items.get(item.getId());
-        items.put(item.getId(), oldQuantity + quantity);
-        //item.setQuantity(item.getQuantity() - quantity);
-=======
+
     public boolean addItem(CartItem cartItem, int quantity) throws Exception {
         if(cartItem.getItem().getQuantity() < quantity)
             throw new Exception("Quantity of cart item is higher than the quantity in stock.");
@@ -57,7 +48,6 @@ public class ShoppingBasket {
             int oldQuantity = items.get(cartItem.getItemId()).getQuantity();
             items.get(cartItem.getItemId()).setQuantity(oldQuantity + quantity);
         }
->>>>>>> Stashed changes
         return true;
     }
 

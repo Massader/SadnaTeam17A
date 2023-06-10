@@ -184,13 +184,7 @@ public class UserController {
                 if (item.getPurchaseType().getType().equals(PurchaseType.BID_PURCHASE) &&
                         ((BidPurchase)item.getPurchaseType()).isBidAccepted(clientCredentials)) {
                     Bid bid = item.getBid(clientCredentials);
-<<<<<<< Updated upstream
-                    item = new Item(item);
-                    item.setPrice(bid.getPrice());
-                    quantity = bid.getQuantity();
-                }
-                if (shoppingCart.addItemToCart(item, storeId, quantity)) {
-=======
+
                     CartItem bidItem = new CartItem(item, bid.getQuantity(), bid.getPrice());
                     if (shoppingCart.addItemToCart(bidItem, storeId, bidItem.getQuantity())) {
                         item.removeBid(clientCredentials);
@@ -200,7 +194,6 @@ public class UserController {
                 }
                 else if (item.getPurchaseType().getType().equals(PurchaseType.DIRECT_PURCHASE) &&
                         shoppingCart.addItemToCart(new CartItem(item, quantity, item.getPrice()), storeId, quantity)) {
->>>>>>> Stashed changes
                     return Response.getSuccessResponse(true);
                 } else {
                     return Response.getFailResponse("Cannot add item to cart");
