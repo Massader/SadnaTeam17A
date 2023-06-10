@@ -4,6 +4,7 @@ import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Stores.Store;
+import DomainLayer.Market.Users.CartItem;
 import DomainLayer.Market.Users.ShoppingBasket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,16 +47,18 @@ public class StorePurchasePolicyTest {
     //SimplePolicy, ShoppingBasketPurchaseRule, AtLeast
     void addSimplePolicyAtLeastShoppingBasketPurchaseRule() throws Exception {
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato,10);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
 
         ShoppingBasketPurchaseRule shoppingBasketPurchaseRule = new ShoppingBasketPurchaseRule();
         AtLeastPurchaseTerm basketAtLeastPurchaseTerm = new AtLeastPurchaseTerm(shoppingBasketPurchaseRule,49);
-        store.addPolicyTermByStoreOwner(basketAtLeastPurchaseTerm);
+        store.addPolicyTerm(basketAtLeastPurchaseTerm);
 
         assertTrue(basketAtLeastPurchaseTerm.purchaseRuleOccurs(shoppingBasket1,store));
 
         ShoppingBasket shoppingBasket2= new ShoppingBasket(store.getStoreId());
-        shoppingBasket2.addItem(tomato,1);
+        cartTomato = new CartItem(tomato, 1, tomato.getPrice());
+        shoppingBasket2.addItem(cartTomato,1);
         assertFalse(basketAtLeastPurchaseTerm.purchaseRuleOccurs(shoppingBasket2,store));
     }
 
@@ -63,16 +66,18 @@ public class StorePurchasePolicyTest {
         //SimplePolicy, ShoppingBasketPurchaseRule, AtMost
     void addSimplePolicyAtMostShoppingBasketPurchaseRule() throws Exception {
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato,10);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
 
         ShoppingBasketPurchaseRule shoppingBasketPurchaseRule = new ShoppingBasketPurchaseRule();
         AtMostPurchaseTerm BasketAtLeastPurchaseRule= new AtMostPurchaseTerm(shoppingBasketPurchaseRule,49);
-        store.addPolicyTermByStoreOwner(BasketAtLeastPurchaseRule);
+        store.addPolicyTerm(BasketAtLeastPurchaseRule);
 
         assertFalse(BasketAtLeastPurchaseRule.purchaseRuleOccurs(shoppingBasket1,store));
 
         ShoppingBasket shoppingBasket2= new ShoppingBasket(store.getStoreId());
-        shoppingBasket2.addItem(tomato,1);
+        cartTomato = new CartItem(tomato, 1, tomato.getPrice());
+        shoppingBasket2.addItem(cartTomato,1);
         assertTrue(BasketAtLeastPurchaseRule.purchaseRuleOccurs(shoppingBasket2,store));
     }
 
@@ -80,14 +85,16 @@ public class StorePurchasePolicyTest {
         //SimplePolicy, ItemPurchaseRule, AtLeast
     void addSimplePolicyAtLeastItemPurchaseRule() throws Exception {
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato,10);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
         ItemPurchaseRule tomatoPurchaseRule = new ItemPurchaseRule(tomato.getId());
         AtLeastPurchaseTerm tomatoAtLeastPurchaseTerm = new AtLeastPurchaseTerm(tomatoPurchaseRule,2);
-        store.addPolicyTermByStoreOwner(tomatoAtLeastPurchaseTerm);
+        store.addPolicyTerm(tomatoAtLeastPurchaseTerm);
         assertTrue(tomatoAtLeastPurchaseTerm.purchaseRuleOccurs(shoppingBasket1,store));
 
         ShoppingBasket shoppingBasket2= new ShoppingBasket(store.getStoreId());
-        shoppingBasket2.addItem(tomato,1);
+        cartTomato = new CartItem(tomato, 1, tomato.getPrice());
+        shoppingBasket2.addItem(cartTomato,1);
         assertFalse(tomatoAtLeastPurchaseTerm.purchaseRuleOccurs(shoppingBasket2,store));
     }
 
@@ -95,13 +102,15 @@ public class StorePurchasePolicyTest {
         //SimplePolicy, ItemPurchaseRule, AtMost
     void addSimplePolicyAtMostItemPurchaseRule() throws Exception {
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato,10);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
         ItemPurchaseRule tomatoPurchaseRule = new ItemPurchaseRule(tomato.getId());
         AtMostPurchaseTerm tomatoAtLeastPurchaseRule= new AtMostPurchaseTerm(tomatoPurchaseRule,2);
-        store.addPolicyTermByStoreOwner(tomatoAtLeastPurchaseRule);
+        store.addPolicyTerm(tomatoAtLeastPurchaseRule);
         assertFalse(tomatoAtLeastPurchaseRule.purchaseRuleOccurs(shoppingBasket1,store));
         ShoppingBasket shoppingBasket2= new ShoppingBasket(store.getStoreId());
-        shoppingBasket2.addItem(tomato,1);
+        cartTomato = new CartItem(tomato, 1, tomato.getPrice());
+        shoppingBasket2.addItem(cartTomato,1);
         assertTrue(tomatoAtLeastPurchaseRule.purchaseRuleOccurs(shoppingBasket2,store));
 
     }
@@ -111,14 +120,16 @@ public class StorePurchasePolicyTest {
     void addSimplePolicyAtLeastCategoryPurchaseRule() throws Exception {
 
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato,10);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
         CategoryPurchaseRule vegetableCategoryPurchaseRule= new CategoryPurchaseRule(vegetable);
         AtLeastPurchaseTerm vegetableAtLeastPurchaseTerm = new AtLeastPurchaseTerm(vegetableCategoryPurchaseRule,2);
-        store.addPolicyTermByStoreOwner(vegetableAtLeastPurchaseTerm);
+        store.addPolicyTerm(vegetableAtLeastPurchaseTerm);
         assertTrue(vegetableAtLeastPurchaseTerm.purchaseRuleOccurs(shoppingBasket1,store));
 
         ShoppingBasket shoppingBasket2= new ShoppingBasket(store.getStoreId());
-        shoppingBasket2.addItem(tomato,1);
+        cartTomato = new CartItem(tomato, 1, tomato.getPrice());
+        shoppingBasket2.addItem(cartTomato,1);
         assertFalse(vegetableAtLeastPurchaseTerm.purchaseRuleOccurs(shoppingBasket2,store));
     }
 
@@ -127,14 +138,16 @@ public class StorePurchasePolicyTest {
     void addSimplePolicyAtMostCategoryPurchaseRule() throws Exception {
 
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato,10);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
         CategoryPurchaseRule vegetableCategoryPurchaseRule= new CategoryPurchaseRule(vegetable);
         AtMostPurchaseTerm vegetableAtMostPurchaseTerm = new AtMostPurchaseTerm(vegetableCategoryPurchaseRule,2);
-        store.addPolicyTermByStoreOwner(vegetableAtMostPurchaseTerm);
+        store.addPolicyTerm(vegetableAtMostPurchaseTerm);
         assertFalse(vegetableAtMostPurchaseTerm.purchaseRuleOccurs(shoppingBasket1,store));
 
         ShoppingBasket shoppingBasket2= new ShoppingBasket(store.getStoreId());
-        shoppingBasket2.addItem(tomato,1);
+        cartTomato = new CartItem(tomato, 1, tomato.getPrice());
+        shoppingBasket2.addItem(cartTomato,1);
         assertTrue(vegetableAtMostPurchaseTerm.purchaseRuleOccurs(shoppingBasket2,store));
     }
 
@@ -142,7 +155,8 @@ public class StorePurchasePolicyTest {
         //CompositePurchaseTermOr,
     void addCompositePolicyOr() throws Exception {
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato,10);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
         ShoppingBasketPurchaseRule shoppingBasketPurchaseRule = new ShoppingBasketPurchaseRule();
         AtLeastPurchaseTerm basketAtLeastPurchaseTerm = new AtLeastPurchaseTerm(shoppingBasketPurchaseRule,49);
 
@@ -159,14 +173,15 @@ public class StorePurchasePolicyTest {
         purchaseTerm.add(vegetableAtMostPurchaseTerm);
 
         CompositePurchaseTermOr purchaseTermOr = new CompositePurchaseTermOr(shoppingBasketPurchaseRule,purchaseTerm);
-        store.addPolicyTermByStoreOwner(purchaseTermOr);
+        store.addPolicyTerm(purchaseTermOr);
         assertTrue(purchaseTermOr.purchaseRuleOccurs(shoppingBasket1,store));
 
     }
 @Test
     void addCompositePolicyAnd() throws Exception {
         ShoppingBasket shoppingBasket1 = new ShoppingBasket(store.getStoreId());
-        shoppingBasket1.addItem(tomato,10);
+        CartItem cartTomato = new CartItem(tomato, 10, tomato.getPrice());
+        shoppingBasket1.addItem(cartTomato,10);
         ShoppingBasketPurchaseRule shoppingBasketPurchaseRule = new ShoppingBasketPurchaseRule();
         AtLeastPurchaseTerm basketAtLeastPurchaseTerm = new AtLeastPurchaseTerm(shoppingBasketPurchaseRule,49);
 
@@ -178,7 +193,7 @@ public class StorePurchasePolicyTest {
         purchaseTerm.add(tomatoAtLeastPurchaseTerm);
 
         CompositePurchaseTermAnd purchaseTermAnd = new CompositePurchaseTermAnd(shoppingBasketPurchaseRule,purchaseTerm);
-        store.addPolicyTermByStoreOwner(purchaseTermAnd);
+        store.addPolicyTerm(purchaseTermAnd);
         assertTrue(purchaseTermAnd.purchaseRuleOccurs(shoppingBasket1,store));
 
 

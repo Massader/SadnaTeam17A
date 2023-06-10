@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ShoppingCart {
     private UUID userId;
-    private ConcurrentHashMap<UUID,ShoppingBasket> shoppingBaskets;// store id,
+    private final ConcurrentHashMap<UUID,ShoppingBasket> shoppingBaskets;// store id,
 
     public ShoppingCart(UUID userId){
         this.userId = userId;
@@ -25,17 +25,28 @@ public class ShoppingCart {
         this.userId = id;
     }
 
+<<<<<<< Updated upstream
     public Boolean addItemToCart(Item item, UUID storeId, int quantity) {
         if (!shoppingBaskets.containsKey(storeId))
             shoppingBaskets.put(storeId, new ShoppingBasket(storeId));
         return shoppingBaskets.get(storeId).addItem(item, quantity);
+=======
+    public Boolean addItemToCart(CartItem cartItem, UUID storeId, int quantity) throws Exception {
+        if (!shoppingBaskets.containsKey(storeId))
+            shoppingBaskets.put(storeId, new ShoppingBasket(storeId));
+        if (shoppingBaskets.get(storeId).addItem(cartItem, quantity))
+            return true;
+        if (shoppingBaskets.get(storeId).getItems().isEmpty())
+            shoppingBaskets.remove(storeId);
+        return false;
+>>>>>>> Stashed changes
     }
 
-    public Boolean removeItemFromCart(Item item, UUID storeId, int quantity) {
+    public Boolean removeItemFromCart(UUID itemId, UUID storeId, int quantity) throws Exception {
         if(!shoppingBaskets.containsKey(storeId))
             return false;
         ShoppingBasket shoppingBasket = shoppingBaskets.get(storeId);
-        boolean removalSuccess = shoppingBasket.removeItem(item,quantity);
+        boolean removalSuccess = shoppingBasket.removeItem(itemId,quantity);
         if (removalSuccess && shoppingBasket.getItems().isEmpty()) {
             shoppingBaskets.remove(storeId);
         }

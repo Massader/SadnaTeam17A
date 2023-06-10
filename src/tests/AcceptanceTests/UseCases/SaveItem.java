@@ -89,7 +89,7 @@ public class SaveItem extends ProjectTest {
 
         assertTrue(save.getValue(), "bridge.addItemToCart(user1Id, item11Id, 10, store1Id) failed");
         assertEquals(1, cart1.getValue().size() - cart0.getValue().size(), "cart size did not increased by 1");
-        assertTrue(cart1.getValue().stream().anyMatch(basket -> basket.getStoreId().equals(store1Id) && basket.getItems().get(item11Id) != null && basket.getItems().get(item11Id) == 10), "cart does not contain a basket with item11");
+        assertTrue(cart1.getValue().stream().anyMatch(basket -> basket.getStoreId().equals(store1Id) && basket.getItems().get(item11Id) != null && basket.getItems().get(item11Id).getQuantity() == 10), "cart does not contain a basket with item11");
     }
 
     @Test
@@ -139,7 +139,7 @@ public class SaveItem extends ProjectTest {
             assertFalse(saves[i].isError(), String.format("bridge.addItemToCart(ids[%d], item22Id, 1, store2Id) => %s", i, saves[i].getMessage()));
             assertTrue(saves[i].getValue(), String.format("bridge.addItemToCart(ids[%d], item22Id, 1, store2Id) failed", i));
             assertEquals(1, carts1[i].size() - carts0[i].size(), String.format("cart[%d] size did not increased by 1", i));
-            assertTrue(carts1[i].stream().anyMatch(basket -> basket.getStoreId().equals(store1Id) && basket.getItems().get(item22Id) != null && basket.getItems().get(item22Id) == 1), String.format("cart[%d] does not contain a basket with item22", i));
+            assertTrue(carts1[i].stream().anyMatch(basket -> basket.getStoreId().equals(store1Id) && basket.getItems().get(item22Id) != null && basket.getItems().get(item22Id).getQuantity() == 1), String.format("cart[%d] does not contain a basket with item22", i));
         }
     }
 }

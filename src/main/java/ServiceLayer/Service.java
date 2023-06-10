@@ -2,10 +2,7 @@ package ServiceLayer;
 
 import DomainLayer.Market.*;
 import DomainLayer.Market.Stores.*;
-import DomainLayer.Market.Stores.Discounts.CategoryCalculateDiscount;
 import DomainLayer.Market.Stores.Discounts.Discount;
-import DomainLayer.Market.Stores.Discounts.ItemCalculateDiscount;
-import DomainLayer.Market.Stores.Discounts.ShoppingBasketCalculateDiscount;
 import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Users.*;
@@ -803,7 +800,7 @@ public class Service {
     }
 
     public Response<Boolean> addItemPolicyTermByStoreOwner(UUID clientCredentials, UUID storeId, PurchaseTerm term) {
-        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, term);
+        Response<Boolean> response = storeController.addPolicyTerm(clientCredentials, storeId, term);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
@@ -1017,7 +1014,7 @@ public class Service {
     public Response<Boolean> addItemPolicyTerm(UUID clientCredentials, UUID storeId, UUID itemId, int quantity, boolean atLeast) {
         ItemPurchaseRule rule = new ItemPurchaseRule(itemId);
         PurchaseTerm term = atLeast ? new AtLeastPurchaseTerm(rule, quantity) : new AtMostPurchaseTerm(rule, quantity);
-        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, term);
+        Response<Boolean> response = storeController.addPolicyTerm(clientCredentials, storeId, term);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
@@ -1029,7 +1026,7 @@ public class Service {
     public Response<Boolean> addCategoryPolicyTerm(UUID clientCredentials, UUID storeId, String category, int quantity, boolean atLeast) {
         CategoryPurchaseRule rule = new CategoryPurchaseRule(new Category(category));
         PurchaseTerm term = atLeast ? new AtLeastPurchaseTerm(rule, quantity) : new AtMostPurchaseTerm(rule, quantity);
-        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, term);
+        Response<Boolean> response = storeController.addPolicyTerm(clientCredentials, storeId, term);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
@@ -1041,7 +1038,7 @@ public class Service {
     public Response<Boolean> addBasketPolicyTerm(UUID clientCredentials, UUID storeId, int quantity, boolean atLeast) {
         ShoppingBasketPurchaseRule rule = new ShoppingBasketPurchaseRule();
         PurchaseTerm term = atLeast ? new AtLeastPurchaseTerm(rule, quantity) : new AtMostPurchaseTerm(rule, quantity);
-        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, term);
+        Response<Boolean> response = storeController.addPolicyTerm(clientCredentials, storeId, term);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return response;
@@ -1112,7 +1109,7 @@ public class Service {
         ConditionalPurchaseTerm termToAdd = createConditionalPurchaseTerm(term);
         if (termToAdd == null)
             return Response.getFailResponse("Failed to create conditional purchase term");
-        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, termToAdd);
+        Response<Boolean> response = storeController.addPolicyTerm(clientCredentials, storeId, termToAdd);
         if (response.isError()) {
             errorLogger.log(Level.SEVERE, response.getMessage());
         }
@@ -1168,7 +1165,7 @@ public class Service {
         CompositePurchaseTerm termToAdd = createCompositePurchaseTerm(term);
         if (termToAdd == null)
             return Response.getFailResponse("Failed to create composite purchase term.");
-        Response<Boolean> response = storeController.addPolicyTermByStoreOwner(clientCredentials, storeId, termToAdd);
+        Response<Boolean> response = storeController.addPolicyTerm(clientCredentials, storeId, termToAdd);
         if (response.isError()) {
             errorLogger.log(Level.SEVERE, response.getMessage());
         }

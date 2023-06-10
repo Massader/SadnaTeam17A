@@ -166,7 +166,7 @@ public class UserController {
         UUID storeId = shoppingBasket.getStoreId();
         Store store = storeController.getStore(storeId);
         for(UUID itemId : shoppingBasket.getItems().keySet()){
-            store.getItem(itemId).addQuantity(shoppingBasket.getItems().get(itemId));
+            store.getItem(itemId).addQuantity(shoppingBasket.getItems().get(itemId).getQuantity());
         }
         shoppingBasket.getItems().clear();
     }
@@ -184,11 +184,23 @@ public class UserController {
                 if (item.getPurchaseType().getType().equals(PurchaseType.BID_PURCHASE) &&
                         ((BidPurchase)item.getPurchaseType()).isBidAccepted(clientCredentials)) {
                     Bid bid = item.getBid(clientCredentials);
+<<<<<<< Updated upstream
                     item = new Item(item);
                     item.setPrice(bid.getPrice());
                     quantity = bid.getQuantity();
                 }
                 if (shoppingCart.addItemToCart(item, storeId, quantity)) {
+=======
+                    CartItem bidItem = new CartItem(item, bid.getQuantity(), bid.getPrice());
+                    if (shoppingCart.addItemToCart(bidItem, storeId, bidItem.getQuantity())) {
+                        item.removeBid(clientCredentials);
+                        return Response.getSuccessResponse(true);
+                    }
+                    else return Response.getFailResponse("Failed to add item to cart");
+                }
+                else if (item.getPurchaseType().getType().equals(PurchaseType.DIRECT_PURCHASE) &&
+                        shoppingCart.addItemToCart(new CartItem(item, quantity, item.getPrice()), storeId, quantity)) {
+>>>>>>> Stashed changes
                     return Response.getSuccessResponse(true);
                 } else {
                     return Response.getFailResponse("Cannot add item to cart");
@@ -208,10 +220,8 @@ public class UserController {
             if (itemResponse.isError())
                 return Response.getFailResponse(itemResponse.getMessage());
             synchronized (itemResponse.getValue()) {
-                //Response<Boolean> response = storeController.addItemQuantity(storeId, itemId, quantity);
-                //if (response.isError()) return response;
                 ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
-                if (shoppingCart.removeItemFromCart(itemResponse.getValue(), storeId, quantity))
+                if (shoppingCart.removeItemFromCart(itemId, storeId, quantity))
                     return Response.getSuccessResponse(true);
                 else
                     return Response.getFailResponse("Cannot remove item quantity from cart.");

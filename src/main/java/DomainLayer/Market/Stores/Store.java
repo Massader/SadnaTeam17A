@@ -3,14 +3,11 @@ package DomainLayer.Market.Stores;
 import DomainLayer.Market.Stores.Discounts.*;
 import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Stores.PurchaseRule.StorePurchasePolicy;
-import DomainLayer.Market.Users.Client;
-import DomainLayer.Market.Users.Purchase;
+import DomainLayer.Market.Users.*;
 import DomainLayer.Market.Users.Roles.OwnerPetition;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
-import DomainLayer.Market.Users.ShoppingBasket;
-import DomainLayer.Market.Users.User;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -190,17 +187,15 @@ public class Store {
         return sales;
     }
 
-    public double calculatePriceOfBasket(ConcurrentHashMap<UUID, Integer> items) { // Map of Item ID -> Quantity
+    public double calculatePriceOfBasket(ConcurrentHashMap<UUID, CartItem> items) {
         double price = 0;
-        for (UUID key : items.keySet()) {
-            int quantity = items.get(key);
-            double basePrice = getItem(key).getPrice() * quantity;
-            price += basePrice;
+        for (CartItem cartItem : items.values()) {
+            price += cartItem.getPrice() * cartItem.getQuantity();
         }
         return price;
     }
 
-    public  double calculatePriceOfBasketWithPolicyAndDiscount(ShoppingBasket shoppingBasket) throws Exception { // Map of Item ID -> Quantity)
+    public  double calculatePriceOfBasketWithPolicyAndDiscount(ShoppingBasket shoppingBasket) throws Exception {
         if (policy.purchaseRuleOccurs(shoppingBasket, this)) {
             return discounts.calculateShoppingBasket(shoppingBasket, this);
         }
@@ -223,11 +218,11 @@ public class Store {
     }
 
     public ConcurrentLinkedQueue<Item> getUnavailableItems(ShoppingBasket shoppingBasket){
-        ConcurrentHashMap<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
+        ConcurrentHashMap<UUID, CartItem> shoppingBasketItems = shoppingBasket.getItems();
         ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
         synchronized (items) {
             for (UUID itemId : shoppingBasketItems.keySet()) {
-                int quantityToRemove = shoppingBasketItems.get(itemId);
+                int quantityToRemove = shoppingBasketItems.get(itemId).getQuantity();
                 int oldQuantity = items.get(itemId).getQuantity();
                 if (oldQuantity < quantityToRemove)
                     missingItems.add(items.get(itemId));
@@ -237,10 +232,10 @@ public class Store {
     }
 
     public void purchaseBasket(Client client, ShoppingBasket shoppingBasket) throws Exception {
-        ConcurrentHashMap<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
+        ConcurrentHashMap<UUID, CartItem> shoppingBasketItems = shoppingBasket.getItems();
         synchronized (items) {
             for (UUID itemId : shoppingBasketItems.keySet()) {
-                int quantityToRemove = shoppingBasketItems.get(itemId);
+                int quantityToRemove = shoppingBasketItems.get(itemId).getQuantity();
                 int oldQuantity = items.get(itemId).getQuantity();
                 if (quantityToRemove <= oldQuantity){
                 //update Store, history Sale Store, User purchase
@@ -259,7 +254,7 @@ public class Store {
     public void unPurchaseBasket(Client client, ShoppingBasket shoppingBasket) throws Exception {
         synchronized (items) {
             for (UUID itemId : shoppingBasket.getItems().keySet()) {
-                int quantityToRestore = shoppingBasket.getItems().get(itemId);
+                int quantityToRestore = shoppingBasket.getItems().get(itemId).getQuantity();
                 int oldQuantity = items.get(itemId).getQuantity() + quantityToRestore;
                 items.get(itemId).setQuantity(oldQuantity);
 
@@ -295,7 +290,7 @@ public class Store {
         }
     }
 
-    public Boolean addPolicyTermByStoreOwner( PurchaseTerm term) throws Exception {
+    public Boolean addPolicyTerm(PurchaseTerm term) throws Exception {
         this.policy.addPurchaseTerm(term);
         return true;
     }
@@ -338,26 +333,6 @@ public class Store {
             return new AtLeastPurchaseTerm(purchaseRule,quantity);
         }
         else return new AtMostPurchaseTerm(purchaseRule,quantity);
-    }
-
-    public Discount creatingDiscountTerm(int PurchaseRule,int DiscountRule, Boolean atLeast, int quantity, UUID itemId, Category category,Double discountPercentage,UUID DiscountItemId,Category discountCategory) throws Exception {
-        PurchaseTerm purchaseTerm = creatingPurchaseTerm(PurchaseRule,  atLeast,  quantity,  itemId,  category);
-        CalculateDiscount OptioncalculateDiscount;
-        switch (DiscountRule){
-            case 1://Item
-                if(DiscountItemId==null){ throw new Exception("can't Creating discount Term of Item discount Rule if item id is null");}
-                OptioncalculateDiscount = new ItemCalculateDiscount(itemId);
-                break;
-            case  2://ShoppingBasket
-                OptioncalculateDiscount = new ShoppingBasketCalculateDiscount();
-                break;
-            case  3://category
-                OptioncalculateDiscount = new CategoryCalculateDiscount(discountCategory);
-            default:
-                throw new Exception("can't Creating Discount Term which is not a shopping basket item or category");
-        }
-        Discount discount = new Discount(OptioncalculateDiscount,discountPercentage,purchaseTerm);
-        return discount;
     }
     
     public List<UUID> getStoreManagers() {

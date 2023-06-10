@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import DomainLayer.Market.Stores.Discounts.Discount;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
+import DomainLayer.Market.Users.CartItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ public class StoreTest {
     private Item item2;
     private Discount discount1;
     private Discount discount2;
-    ConcurrentHashMap<UUID,Integer> items;
+    ConcurrentHashMap<UUID, CartItem> items;
 
     @BeforeEach
     public void setUp() {
@@ -29,8 +30,10 @@ public class StoreTest {
             store.addItem(item2);
         } catch (Exception ignored) {}
         items = new ConcurrentHashMap<>();
-        items.put(item1.getId(), 2);
-        items.put(item2.getId(), 1);
+        CartItem cartItem1 = new CartItem(item1, 2, item1.getPrice());
+        CartItem cartItem2 = new CartItem(item2, 1, item2.getPrice());
+        items.put(item1.getId(), cartItem1);
+        items.put(item2.getId(), cartItem2);
     }
 
     @Test

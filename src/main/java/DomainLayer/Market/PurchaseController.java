@@ -74,7 +74,10 @@ public class PurchaseController {
                     }
                     ConcurrentLinkedQueue<Item> storeMissingItems = store.getUnavailableItems(basket);
                     for (Item item : storeMissingItems) {
-                        missingItemList.append("\nItem Name: ").append(item.getName()).append(" - Store Name: ").append(store.getName());
+                        missingItemList.append("\nItem Name: ")
+                                .append(item.getName())
+                                .append(" - Store Name: ")
+                                .append(store.getName());
                     }
                     missingItems.addAll(storeMissingItems);
                 }
