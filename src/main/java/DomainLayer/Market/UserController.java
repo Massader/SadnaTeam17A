@@ -652,7 +652,7 @@ public class UserController {
             ShoppingBasket shoppingBasket = client.getCart().getShoppingBaskets().get(storeId);
             if (!shoppingBasket.getItems().containsKey(itemId))
                 throw new Exception("No such item in the user's shopping cart.");
-            return Response.getSuccessResponse(store.calculateItemDiscount(shoppingBasket, itemId));
+            return Response.getSuccessResponse(store.calculateItemDiscount(shoppingBasket, itemId) * 100); // 0.X to X as it is presented in the client
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
