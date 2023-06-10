@@ -80,7 +80,7 @@ const MyCart = () => {
   return (
     <>
       {page === "myCart" && (
-        <Stack>
+        <Stack ml={3}>
           {cart.map((basket) => (
             <StoreBasket
               getCart={getCart}

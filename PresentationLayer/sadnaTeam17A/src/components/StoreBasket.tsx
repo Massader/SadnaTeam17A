@@ -32,7 +32,7 @@ const StoreBasket = ({ basket, getCart, getCartPrice }: Props) => {
 
   return (
     <>
-      <Text fontWeight="bold" margin={3}>
+      <Text fontWeight="bold" marginTop={3}>
         {storeName}:
       </Text>
       <SimpleGrid
