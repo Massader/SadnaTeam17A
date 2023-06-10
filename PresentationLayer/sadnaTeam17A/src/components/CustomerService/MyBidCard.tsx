@@ -29,8 +29,6 @@ interface Props {
 const MyBidCard = ({ bid, refreshBids }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
 
-  const itemName = <ItemNameFromId storeId={bid.storeId} itemId={bid.itemId} />;
-
   const toast = useToast();
 
   const handleAddToCart = async () => {
@@ -45,7 +43,12 @@ const MyBidCard = ({ bid, refreshBids }: Props) => {
     );
     if (!response.data.error) {
       toast({
-        title: `${itemName} added to your cart!`,
+        title: (
+          <Flex alignItems="center">
+            <ItemNameFromId storeId={bid.storeId} itemId={bid.itemId} mr={1} />{" "}
+            added to your cart!
+          </Flex>
+        ),
         colorScheme: "blue",
         status: "success",
         duration: 3000,
