@@ -200,29 +200,6 @@ function App() {
     onSpecStore(storeId);
   };
 
-  //when page refresh
-  const handleSignOutOnRefresh = async () => {
-    const response = await axios.post(
-      "http://localhost:8080/api/v1/users/logout",
-      {
-        clientCredentials,
-      }
-    );
-    if (response.data.error) console.log(response.data.message);
-  };
-
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      handleSignOutOnRefresh();
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
-
   return (
     <ClientCredentialsContext.Provider
       value={{
