@@ -220,11 +220,11 @@ public class StoreController {
                 request.getStoreId(), request.getItemId());
     }
 
-    @PutMapping(path = "/purchase-cart")
-    public Response<Boolean> purchaseCart(@RequestBody PurchaseCartRequest request){
-        return service.purchaseCart(request.getClientCredentials(),
-                request.getExpectedPrice(), request.getAddress(), request.getCredit());
-    }
+   // @PutMapping(path = "/purchase-cart")
+//    public Response<Boolean> purchaseCart(@RequestBody PurchaseCartRequest request){
+//        return service.purchaseCart(request.getClientCredentials(),
+//                request.getExpectedPrice(), request.getAddress(), request.getCredit());
+   // }//need to add String address, String city, String country, int zip,String card_number, String month, String year, String holder, String ccv, String idCard
 
     @GetMapping(path = "/get-items-page/number={number}&page={page}&storeId={storeId}")
     public Response<List<ServiceItem>> getItemsPage(@PathVariable(name = "number") int number,

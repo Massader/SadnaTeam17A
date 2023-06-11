@@ -6,24 +6,22 @@ public class PaymentProxy implements PaymentBridge{
         if(real==null){
             real = new PaymentReal();}
     }
+
     @Override
-    public Boolean pay(double price, String credit) {
-        return real == null ? false : real.pay(price, credit);
+    public String handshake() {
+        return real == null ? "false" : real.handshake();
     }
 
     @Override
-    public Boolean validatePaymentDetails() {
-        return real == null ? null : real.validatePaymentDetails();}
-
-
-
-    @Override
-    public Boolean cancelPay(double nowPrice, String credit) {
-        return real == null ? false : real.cancelPay(nowPrice,credit);
+    public Integer pay(String card_number, String month, String year, String holder, String ccv, String id) {
+        return real == null ? -1 : real.pay( card_number, month, year, holder, ccv, id);
     }
 
     @Override
-    public Integer requestPayment() {
-        return real == null ? 0 : real.requestPayment();
+    public Integer cancel_Pay(int transactionId) {
+        return real == null ? -1 : real.cancel_Pay(transactionId);
     }
+
+
+
 }

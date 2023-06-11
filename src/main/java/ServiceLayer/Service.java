@@ -739,13 +739,13 @@ public class Service {
         return response;
     }
 
-    public Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, String credit){
+    public Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, String city, String country, int zip,String card_number, String month, String year, String holder, String ccv, String idCard){
         Response<ShoppingCart> response1 = userController.getCart(clientCredentials);
         if(response1.isError()){
             errorLogger.log(Level.WARNING, response1.getMessage());
             return Response.getFailResponse(response1.getMessage());
         }
-        Response<Boolean> response2 = purchaseController.purchaseCart(userController.getClientOrUser(clientCredentials),response1.getValue(),expectedPrice,address,credit);
+        Response<Boolean> response2 = purchaseController.purchaseCart(userController.getClientOrUser(clientCredentials),response1.getValue(),expectedPrice,address, city, country, zip, card_number, month, year, holder, ccv, idCard);
         if(response2.isError()){
             errorLogger.log(Level.WARNING, response2.getMessage());
             return Response.getFailResponse(response2.getMessage());

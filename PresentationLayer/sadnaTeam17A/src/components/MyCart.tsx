@@ -15,7 +15,7 @@ const MyCart = () => {
   const [cartPurchased, setCartPurchased] = useState(false);
 
   const [address, setAddress] = useState("");
-  const [credit, setCredit] = useState("");
+  const [creditCard, setCredit] = useState("");
   const [errorMsg, setErrorMsg] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -48,7 +48,7 @@ const MyCart = () => {
         clientCredentials: clientCredentials,
         expectedPrice: cartPrice,
         address: address,
-        credit: credit,
+        creditCard: creditCard,
       }
     );
     if (!response.data.error) {
@@ -118,8 +118,8 @@ const MyCart = () => {
                 <Input
                   bg="white"
                   placeholder="Credit"
-                  value={credit}
-                  onChange={(credit) => setCredit(credit.target.value)}
+                  value={creditCard}
+                  onChange={(creditCard) => setCredit(creditCard.target.value)}
                 />
                 <Button colorScheme="blue" size="lg" onClick={purchaseCart}>
                   Buy Cart
