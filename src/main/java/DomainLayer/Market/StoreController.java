@@ -999,7 +999,7 @@ public class StoreController {
                     !store.checkPermission(clientCredentials, StorePermissions.STORE_POLICY_MANAGEMENT))
                 return Response.getFailResponse("User does not have permission to see item bids.");
             StorePurchasePolicy policy = store.getPolicy();
-            if (policy == null)
+            if (policy == null)git 
                 return Response.getFailResponse("Store policy was null");
             List<PurchaseTerm> terms = policy.getPurchasePolicies().stream().toList();
             if (terms == null)
