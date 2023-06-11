@@ -20,7 +20,6 @@ import DomainLayer.Supply.SupplyProxy;
 import ServiceLayer.Loggers.ErrorLogger;
 import ServiceLayer.Loggers.EventLogger;
 import ServiceLayer.ServiceObjects.*;
-import jakarta.transaction.Transactional;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -383,7 +382,7 @@ public class Service {
         if(response.isError())
             return Response.getFailResponse(response.getMessage());
         List<ServiceShoppingBasket> cart = new ArrayList<>();
-        for (ShoppingBasket basket : response.getValue().getShoppingBaskets().values()) {
+        for (ShoppingBasket basket : response.getValue().getShoppingBaskets()) {
             cart.add(new ServiceShoppingBasket(basket));
         }
         return Response.getSuccessResponse(cart);

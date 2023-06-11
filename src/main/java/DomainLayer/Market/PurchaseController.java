@@ -63,9 +63,8 @@ public class PurchaseController {
             synchronized (instanceLock) {
                 StringBuilder missingItemList = new StringBuilder();
                 //check items are Available
-                for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
-                    UUID storeId = entry.getKey();
-                    ShoppingBasket basket = entry.getValue();
+                for (ShoppingBasket basket : shoppingCart.getShoppingBaskets()) {
+                    UUID storeId = basket.getStoreId();
                     Store store = storeController.getStore(storeId);
                     if(store==null){
                         return Response.getFailResponse("The store is not exist "+storeId);
@@ -89,9 +88,8 @@ public class PurchaseController {
                 }
 
                 //purchase all Basket -> cart
-                for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
-                    UUID storeId = entry.getKey();
-                    ShoppingBasket basket = entry.getValue();
+                for (ShoppingBasket basket : shoppingCart.getShoppingBaskets()) {
+                    UUID storeId = basket.getStoreId();
                     Store store = storeController.getStore(storeId);
                     User user = store.purchaseBasket(client,basket);
                     if (user != null)
@@ -121,9 +119,8 @@ public class PurchaseController {
     }
 
     public void unPurchaseCart(Client client, ShoppingCart shoppingCart) throws Exception {
-         for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
-            UUID storeId = entry.getKey();
-            ShoppingBasket basket = entry.getValue();
+         for (ShoppingBasket basket : shoppingCart.getShoppingBaskets()) {
+            UUID storeId = basket.getStoreId();
             Store store = storeController.getStore(storeId);
             store.unPurchaseBasket(client,basket);
     }}}
