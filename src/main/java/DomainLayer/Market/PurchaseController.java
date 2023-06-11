@@ -13,10 +13,7 @@ import DomainLayer.Payment.PaymentProxy;
 import DomainLayer.Supply.SupplyProxy;
 import ServiceLayer.Response;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class PurchaseController {
@@ -99,9 +96,9 @@ public class PurchaseController {
                     User user = store.purchaseBasket(client,basket);
                     if (user != null)
                         repositoryFactory.userRepository.save(user);
-                    for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
-                        if (role.getValue().getPermissions().contains(StorePermissions.STORE_OWNER))
-                        notificationController.sendNotification(role.getKey(), "A purchase from "
+                    for (Role role : store.getRoles()) {
+                        if (role.getPermissions().contains(StorePermissions.STORE_OWNER))
+                        notificationController.sendNotification(role.getUser().getId(), "A purchase from "
                                 + store.getName() + " has been made.");
                     }
                 }
