@@ -583,9 +583,9 @@ public class StoreController {
             if (client == null)
                 return Response.getFailResponse("User does not exist.");
             ShoppingCart cart = client.getCart();
-            for (UUID storeId : cart.getShoppingBaskets().keySet()) {// iterator on the storeId
+            for (UUID storeId : cart.getShoppingBaskets().stream().map(ShoppingBasket::getStoreId).toList()) {// iterator on the storeId
                 price += storeDalController.getStore(storeId)
-                        .calculatePriceOfBasketWithPolicyAndDiscount(cart.getShoppingBaskets().get(storeId));
+                        .calculatePriceOfBasketWithPolicyAndDiscount(cart.getBasketByStoreId(storeId));
             }
             return Response.getSuccessResponse(price);
         } catch (Exception exception) {
@@ -595,9 +595,9 @@ public class StoreController {
 
     public double verifyCartPrice(ShoppingCart shoppingCart) throws Exception {
         double price = 0;
-        for (UUID storeId : shoppingCart.getShoppingBaskets().keySet()) {// iterator on the storeId
+        for (UUID storeId : shoppingCart.getShoppingBaskets().stream().map(ShoppingBasket::getStoreId).toList()) {// iterator on the storeId
             price += storeDalController.getStore(storeId)
-                    .calculatePriceOfBasketWithPolicyAndDiscount(shoppingCart.getShoppingBaskets().get(storeId));
+                    .calculatePriceOfBasketWithPolicyAndDiscount(shoppingCart.getBasketByStoreId(storeId));
         }
         return price;
 

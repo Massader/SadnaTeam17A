@@ -171,7 +171,7 @@ public class UserController {
     }
 
     public void deleteShoppingCart(ShoppingCart shoppingCart){
-        for(ShoppingBasket shoppingBasket : shoppingCart.getShoppingBaskets().values())
+        for(ShoppingBasket shoppingBasket : shoppingCart.getShoppingBaskets())
             deleteShoppingBasket(shoppingBasket);
     }
 
@@ -524,16 +524,31 @@ public class UserController {
     }
 
     // On remove item from store, goes over all the users with the item in their carts and removes it
+    /*
     public void removeItemFromCarts(UUID storeId, Item item) {
         for (Client client : clients.values()) {
-            Map<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
+            Map<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBasketsMap();
             if (!baskets.containsKey(storeId)) continue;
             baskets.get(storeId).getItems().remove(item.getId());
         }
         for (Client client : userDalController.getAllUsers()) {
-            Map<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
+            Map<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBasketsMap();
             if (!baskets.containsKey(storeId)) continue;
             baskets.get(storeId).getItems().remove(item.getId());
+        }
+    }
+     */
+
+    public void removeItemFromCarts(UUID storeId, Item item) {
+        for (Client client : clients.values()) {
+            Collection<ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
+            if (baskets.stream().noneMatch(basket -> basket.validateStore(storeId))) continue;
+            client.getCart().getBasketByStoreId(storeId).getItems().remove(item.getId());
+        }
+        for (Client client : userDalController.getAllUsers()) {
+            Collection<ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
+            if (baskets.stream().noneMatch(basket -> basket.validateStore(storeId))) continue;
+            client.getCart().getBasketByStoreId(storeId).getItems().remove(item.getId());
         }
     }
 

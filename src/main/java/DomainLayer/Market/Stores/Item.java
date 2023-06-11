@@ -7,7 +7,6 @@ import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
 import jakarta.persistence.*;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 @Entity
 @Table(name = "Items")
@@ -119,7 +118,7 @@ public class Item {
     public double getPrice(UUID clientCredentials) {
         if (purchaseType.getType().equals(PurchaseType.BID_PURCHASE) &&
                 ((BidPurchase)purchaseType).isBidAccepted(clientCredentials))
-            return ((BidPurchase)purchaseType).getBids().get(clientCredentials).getPrice();
+            return ((BidPurchase)purchaseType).getBidByBidderId(clientCredentials).getPrice();
         return price;
     }
 
@@ -248,8 +247,8 @@ public class Item {
     
     public Bid getBid(UUID clientCredentials) {
         if (purchaseType.getType().equals(PurchaseType.BID_PURCHASE) &&
-                ((BidPurchase) purchaseType).getBids().containsKey(clientCredentials)) {
-            return ((BidPurchase) purchaseType).getBids().get(clientCredentials);
+                ((BidPurchase) purchaseType).hasBid(clientCredentials)) {
+            return ((BidPurchase) purchaseType).getBidByBidderId(clientCredentials);
         }
         else if (!purchaseType.getType().equals(PurchaseType.BID_PURCHASE))
             throw new RuntimeException("This item is not a bid purchase type item.");
@@ -258,7 +257,7 @@ public class Item {
     
     public List<Bid> getBids() {
         if (purchaseType.getType().equals(PurchaseType.BID_PURCHASE)) {
-            return ((BidPurchase) purchaseType).getBids().values().stream().toList();
+            return ((BidPurchase) purchaseType).getBids().stream().toList();
         }
         throw new RuntimeException("This item is not a bid purchase type item.");
     }

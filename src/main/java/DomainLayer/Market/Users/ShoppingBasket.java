@@ -84,4 +84,9 @@ public class ShoppingBasket {
 
     public int quantityOf(UUID itemId){return items.get(itemId);}
 
+    public boolean validateStore(UUID storeId) {
+        return storeId.equals(this.storeId);
+    }
+
+
 }
