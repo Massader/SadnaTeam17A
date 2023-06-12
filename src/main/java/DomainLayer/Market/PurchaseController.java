@@ -90,7 +90,7 @@ public class PurchaseController {
                try {
                    nowPrice = storeController.verifyCartPrice(shoppingCart);
                } catch (Exception e) {
-                   throw new RuntimeException(e);
+                   return Response.getFailResponse("verify Cart Price fail now price is "+nowPrice+ ", your expected Price is "+expectedPrice);
                }
                if(expectedPrice!=nowPrice){
                    return Response.getFailResponse("Price for shopping cart has changed, it's " + nowPrice);
@@ -104,7 +104,7 @@ public class PurchaseController {
                    try {
                        store.purchaseBasket(client,basket);
                    } catch (Exception e) {
-                       throw new Exception(e);
+                       return Response.getFailResponse(e.getMessage());
                    }
                    for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
                        if (role.getValue().getPermissions().contains(StorePermissions.STORE_OWNER))
