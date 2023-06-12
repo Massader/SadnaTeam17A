@@ -50,6 +50,19 @@ public class SupplyController {
         return Response.getFailResponse("handshake has failed.");
 
     }
+
+    public Response<Boolean> cancelSupply(int transactionId) {
+        try {
+            int cancellation = supplyProxy.cancel_supply(transactionId);
+            if (cancellation == 1) {
+                return Response.getSuccessResponse(true);
+            }
+        } catch (Exception e) {
+            return Response.getFailResponse("cancel Supply has failed.");
+        }
+
+        return Response.getFailResponse("cancel Supply has failed.");
+    }
     public void resetController() {
         instance = new SupplyController();
         supplyProxy.setReal();
