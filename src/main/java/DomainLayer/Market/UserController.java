@@ -179,12 +179,11 @@ private StoreDalController storeDalController;
             deleteShoppingBasket(shoppingBasket);
     }
 
-
     private void deleteShoppingBasket(ShoppingBasket shoppingBasket){
         UUID storeId = shoppingBasket.getStoreId();
         Store store = storeController.getStore(storeId);
         for(UUID itemId : shoppingBasket.getItems().keySet()){
-            store.getItem(itemId).addQuantity(shoppingBasket.getItems().get(itemId));
+            storeDalController.getItem(itemId).addQuantity(shoppingBasket.getItems().get(itemId));
         }
         shoppingBasket.getItems().clear();
     }
@@ -374,9 +373,20 @@ private StoreDalController storeDalController;
                 return Response.getFailResponse("User doesn't have permission.");
             if (!userDalController.userExists(manager))
                 return Response.getFailResponse("Manager does not exist.");
-            if(!storeController.getStore(storeId).hasRole(manager))
+//            if(!storeController.getStore(storeId).hasRole(manager))
+
+//            List<Role> roles = userDalController.getRoles(manager);
+            Role role =  storeController.getStore(storeId).getRoleByUserId(manager);
+//            boolean found = false;
+//            for(Role role : roles) {
+//                if (role.getStore().getStoreId().equals(storeId))
+//                    found = true;
+//            }
+//            if(!found)
+            if(role == null)
                 return Response.getFailResponse("User is not store manager.");
-            storeController.getStore(storeId).getRoleByUserId(manager).setPermissions(permissions);
+            role.setPermissions(permissions);
+            userDalController.saveRole(role);
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception){

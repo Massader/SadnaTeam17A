@@ -122,14 +122,14 @@ public class UserDalController {
     }
 
 
-//    public Role getRole(UUID clientCredentials) {
-//        List<Role> roles = roleRepository.;
-//        if(usersFromDb.isEmpty())
-//            return null;
-//        else return usersFromDb.get(0);
-//    }
+    public List<Role> getRoles(User user) {
+        List<Role> roles = roleRepository.findByUser(user);
+        return roles;
+    }
+//    public boolean
 
     public void saveRole(Role role ){
         roleRepository.save(role);
     }
+
 }

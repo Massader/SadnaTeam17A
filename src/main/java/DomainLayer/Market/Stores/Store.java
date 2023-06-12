@@ -128,6 +128,9 @@ public class Store {
 //        rolesMap = new ConcurrentHashMap<>();
 //        storeDalController = StoreDalController.getInstance(UserController.repositoryFactory);
         roles = new ConcurrentLinkedQueue<>();
+        reviews = new ConcurrentLinkedQueue<>();
+//        storeDalController = StoreDalController.getInstance(UserController.repositoryFactory);
+        ownerPetitions = new ArrayList<>();
 
 
     }

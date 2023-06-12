@@ -129,7 +129,7 @@ public class StoreController {
         try {
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
-            Item item = getStore(storeId).getItem(itemId);
+            Item item = storeDalController.getItem(itemId);;
             if (item != null)
                 return Response.getSuccessResponse(item);
             return Response.getFailResponse("Item does not exist.");
@@ -212,6 +212,7 @@ public class StoreController {
                                 "Owned store " + store.getName() + " has been reopened by founder.");
                     }
                 }
+                storeDalController.saveStore(store);
                 return Response.getSuccessResponse(true);
             }
             return Response.getFailResponse("can not reopen store");
@@ -230,7 +231,7 @@ public class StoreController {
                 return Response.getFailResponse("User does not exist.");
             if (!user.isAdmin())
                 return Response.getFailResponse("Only admins can shutdown stores.");
-            if (getStore(storeId).shutdownStore()) {
+            if (store.shutdownStore()) {
                 for (Role role : store.getRoles()) {
                     List<StorePermissions> rolePermissions = role.getPermissions();
                     if (rolePermissions.contains(StorePermissions.STORE_OWNER)
@@ -244,6 +245,7 @@ public class StoreController {
                         }
                     }
                 }
+                storeDalController.saveStore(store);
                 return Response.getSuccessResponse(true);
             }
             return Response.getFailResponse("Cannot shutdown store.");
@@ -330,6 +332,7 @@ public class StoreController {
                         .isEmpty()
                         && userController.hasUserPurchasedItem(clientCredentials, itemId)) {
                     UUID reviewId = item.addReview(clientCredentials, reviewBody, rating);
+                    storeDalController.saveItem(item);
                     return Response.getSuccessResponse(reviewId);
                 }
             }
@@ -341,9 +344,11 @@ public class StoreController {
     
     public Response<List<ItemReview>> getItemReviews(UUID storeId, UUID itemId) {
         try {
-            if (!storeExist(storeId))
+            Store store = storeDalController.getStore(storeId);
+            if (store == null) {
                 return Response.getFailResponse("Store does not exist.");
-            Item item = getStore(storeId).getItem(itemId);
+            }
+            Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
             return Response.getSuccessResponse(item.getReviews());
@@ -634,7 +639,7 @@ public class StoreController {
             }
             if (!store.checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT) && !(store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)))
                 return Response.getFailResponse("User does not have item management permissions for this store.");
-            Item item = store.getItem(itemId);
+            Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
             itemCategories.putIfAbsent(category, new Category(category));
@@ -894,7 +899,7 @@ public class StoreController {
         try {
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
-            Item item = getStore(storeId).getItem(itemId);
+            Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
             PurchaseType purchaseType = item.getPurchaseType();
@@ -915,7 +920,7 @@ public class StoreController {
             if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT) &&
                 !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("User does not have permission to change item purchase type.");
-            Item item = getStore(storeId).getItem(itemId);
+            Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
             item.setPurchaseType(purchaseType);
@@ -932,7 +937,7 @@ public class StoreController {
                 return Response.getFailResponse("User does not exist.");
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
-            Item item = getStore(storeId).getItem(itemId);
+            Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
             return Response.getSuccessResponse(item.addBid(clientCredentials, bidPrice, quantity));
@@ -947,7 +952,7 @@ public class StoreController {
                 return Response.getFailResponse("User does not exist.");
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
-            Item item = getStore(storeId).getItem(itemId);
+            Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
             return Response.getSuccessResponse(item.removeBid(clientCredentials));
@@ -964,7 +969,7 @@ public class StoreController {
             Store store = getStore(storeId);
             if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("Only store owners can accept bids");
-            Item item = store.getItem(itemId);
+            Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
             if (item.getQuantity() <= 0)
@@ -989,7 +994,7 @@ public class StoreController {
             if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) &&
                 !store.checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
                 return Response.getFailResponse("User does not have permission to see item bids.");
-            Item item = store.getItem(itemId);
+            Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
             List<Bid> output = item.getBids();
