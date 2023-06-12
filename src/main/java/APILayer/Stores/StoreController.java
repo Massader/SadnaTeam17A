@@ -236,6 +236,7 @@ public class StoreController {
     public Response<Boolean> purchaseCart(@RequestBody PurchaseCartRequest request){
         return service.purchaseCart(request.getClientCredentials(),
                 request.getExpectedPrice(), request.getAddress(),request.getCity(),request.getCountry(),request.getZip(),request.getCard_number(),request.getMonth(),request.getYear(),request.getHolder(),request.getCcv(),request.getIdCard());
+
     }
 
     @GetMapping(path = "/get-items-page/number={number}&page={page}&storeId={storeId}")
