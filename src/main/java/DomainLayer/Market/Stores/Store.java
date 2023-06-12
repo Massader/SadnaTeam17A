@@ -83,18 +83,18 @@ public class Store {
 //    @Transient
 //    UserDalController userDalController;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+
     public StoreDiscount getDiscounts() {
         return discounts;
     }
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+
     public StorePurchasePolicy getPolicy() {
         return policy;
     }
 
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+
     public Collection<Role> getRoles() {
         return roles;
     }

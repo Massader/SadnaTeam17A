@@ -4,21 +4,41 @@ import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Entity
+@Table(name = "Market_Stores_Discounts_CategoryCalculateDiscount")
 public class CategoryCalculateDiscount implements CalculateDiscount {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
     Category category;
+
 
     public CategoryCalculateDiscount(Category category) {
         this.category = category;
     }
 
+    public CategoryCalculateDiscount() {
+
+    }
+
     public Category getCategory() {
         return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     @Override
@@ -41,6 +61,4 @@ public class CategoryCalculateDiscount implements CalculateDiscount {
 
         return categoryDiscount;
     }
-
-
 }
