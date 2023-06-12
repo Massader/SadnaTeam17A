@@ -31,17 +31,22 @@ public class SupplyController {
     }
 
     public Response<Integer> supply(String name , String address, String city, String country, int zip){
+        try{
         int transactionId=supplyProxy.supply(name, address, city, country, zip);
         if(transactionId!=-1){
             return Response.getSuccessResponse(transactionId);}
+    } catch (Exception e) {
         return Response.getFailResponse("transaction supply has failed.");
-
     }
+        return Response.getFailResponse("transaction supply has failed.");}
 
     public  Response<Boolean> handshake(){
+        try{
         String message =supplyProxy.handshake();
         if(message.equals("OK")){
             return Response.getSuccessResponse(true);}
+        } catch (Exception e) {
+            return Response.getFailResponse("handshake has failed.");}
         return Response.getFailResponse("handshake has failed.");
 
     }
