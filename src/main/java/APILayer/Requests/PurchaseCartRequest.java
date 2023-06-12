@@ -8,7 +8,7 @@ public class PurchaseCartRequest extends Request {
     private String city;
     private String country;
     private int zip;
-    private String card_number;
+    private String cardNumber;
     private String month;
     private String year;
     private String holder;
@@ -16,14 +16,14 @@ public class PurchaseCartRequest extends Request {
     private String idCard;
 
 
-    public PurchaseCartRequest(UUID clientCredentials, double expectedPrice, String address, String city, String country, int zip, String card_number, String month, String year, String holder, String ccv, String idCard) {
+    public PurchaseCartRequest(UUID clientCredentials, double expectedPrice, String address, String city, String country, int zip, String cardNumber, String month, String year, String holder, String ccv, String idCard) {
         super(clientCredentials);
         this.expectedPrice = expectedPrice;
         this.address = address;
         this.city = city;
         this.country = country;
         this.zip = zip;
-        this.card_number = card_number;
+        this.cardNumber = cardNumber;
         this.month = month;
         this.year = year;
         this.holder = holder;
@@ -71,12 +71,12 @@ public class PurchaseCartRequest extends Request {
         this.zip = zip;
     }
 
-    public String getCard_number() {
-        return card_number;
+    public String getCardNumber() {
+        return cardNumber;
     }
 
-    public void setCard_number(String card_number) {
-        this.card_number = card_number;
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
     }
 
     public String getMonth() {
