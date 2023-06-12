@@ -235,7 +235,8 @@ public class StoreController {
     @PutMapping(path = "/purchase-cart")
     public Response<Boolean> purchaseCart(@RequestBody PurchaseCartRequest request){
         return service.purchaseCart(request.getClientCredentials(),
-                request.getExpectedPrice(), request.getAddress(),request.getCity(),request.getCountry(),request.getZip(),request.getCardNumber(),request.getMonth(),request.getYear(),request.getHolder(),request.getCvv(),request.getIdCard());
+                request.getExpectedPrice(), request.getAddress(),request.getCity(),request.getCountry(),request.getZip(),request.getCard_number(),request.getMonth(),request.getYear(),request.getHolder(),request.getCcv(),request.getIdCard());
+
     }
 
     @GetMapping(path = "/get-items-page/number={number}&page={page}&storeId={storeId}")
