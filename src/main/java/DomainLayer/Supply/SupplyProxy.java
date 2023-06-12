@@ -8,7 +8,7 @@ public class SupplyProxy implements SupplyBridge{
 
     @Override
     public String handshake() {
-        return null;
+        return real == null ? null : real.handshake();
     }
 
     @Override
