@@ -1,5 +1,6 @@
 package DomainLayer.Market.Users.Roles;
 
+import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.User;
 import jakarta.persistence.*;
 
@@ -16,18 +17,19 @@ import jakarta.persistence.*;
 public abstract class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "store_id")
-    private UUID storeId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "store_id")
+    private Store store;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Role(UUID storeId){
-        this.storeId = storeId;
+    public Role(Store store){
+        this.store = store;
     }
 
     public Role(){
@@ -39,13 +41,23 @@ public abstract class Role {
 
     public abstract void addPermission(StorePermissions permission);
 
-    public UUID getStoreId() {
-        return storeId;
+    public Store getStore() {
+        return store;
     }
 
     public User getUser() {
         return user;
     }
+
+    public void setUser(User user){
+        this.user = user;
+    }
+
+    public void setStore(Store store)
+    {
+        this.store = store;
+    }
+//    public long getId
 
 //    public void addUser(User user) {
 //        users.add(user);

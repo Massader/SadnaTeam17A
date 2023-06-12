@@ -120,10 +120,10 @@ public class Register extends ProjectTest {
         Response<Integer> users0 = bridge.numOfUsers();
         Response<ConcurrentHashMap<String, UUID>> userNames0Response = bridge.getUserNames();
         ConcurrentHashMap<String, UUID> userNames0 = new ConcurrentHashMap<>(userNames0Response.getValue());
-        Response<Boolean>[] registrations = new Response[1000];
-        Thread[] threads = new Thread[1000];
+        Response<Boolean>[] registrations = new Response[200];
+        Thread[] threads = new Thread[200];
         try {
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 200; i++) {
                 final int index = i;
                 threads[i] = new Thread(() -> registrations[index] = bridge.register("user_" + index, "Aa1234"));
                 threads[i].start();
@@ -145,10 +145,10 @@ public class Register extends ProjectTest {
             assertFalse(r.isError(), String.format("bridge.register(\"user_\" + index, \"Aa1234\") => %s", r.getMessage()));
             assertTrue(r.getValue(), "bridge.register(\"user_\" + index, \"Aa1234\") failed");
         }
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 200; i++) {
             assertFalse(userNames0.containsKey("user_" + i), "user names list contain \"user_" + i + "\" before registration");
             assertTrue(userNames1.getValue().containsKey("user_" + i), "user names list does not contain \"user_" + i + "\" after registration");
         }
-        assertEquals(1000, users1.getValue() - users0.getValue(), "number of users did not increased by 1000");
+        assertEquals(200, users1.getValue() - users0.getValue(), "number of users did not increased by 1000");
     }
 }

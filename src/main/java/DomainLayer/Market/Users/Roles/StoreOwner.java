@@ -1,23 +1,22 @@
 package DomainLayer.Market.Users.Roles;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import DomainLayer.Market.Stores.Store;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 @Entity
 @Table(name = "store_owners")
 public class StoreOwner extends Role {
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "appointee_id")
-    private List<UUID> appointees;
+    private Collection<UUID> appointees;
 
-    public StoreOwner(UUID storeId) {
-        super(storeId);
+    public StoreOwner(Store store) {
+        super(store);
         appointees = new ArrayList<UUID>();
     }
     public StoreOwner(){
@@ -41,7 +40,7 @@ public class StoreOwner extends Role {
     
     }
     
-    public List<UUID> getAppointees() {
+    public Collection<UUID> getAppointees() {
         return appointees;
     }
 

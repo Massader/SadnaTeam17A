@@ -11,9 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ShoppingBasket {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "uuid", nullable = false)
-    private Long uuid;
-
     @Column(name = "id")
     private UUID id; //id of the shopping basket
 
@@ -21,8 +18,10 @@ public class ShoppingBasket {
     private UUID storeId;
 
 //    @OneToMany
+    @Transient
     private ConcurrentHashMap<UUID,Integer> items;//UUID itemId, int quantity
 
+    @Transient
     public ConcurrentHashMap<UUID, Integer> getItems() {
         return items;
     }

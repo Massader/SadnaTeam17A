@@ -1,5 +1,7 @@
 package DomainLayer.Market.Users;
 
+import DataAccessLayer.controllers.UserDalController;
+import DomainLayer.Market.UserController;
 import DomainLayer.Market.Users.Roles.OwnerPetition;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StorePermissions;
@@ -30,11 +32,13 @@ public class User extends Client{
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Role> roles;
 
-
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Purchase> purchases;
     @Column
     protected boolean isAdmin;
+
+//    @Transient
+//    UserDalController userDalController;
 
     public User(String username, UUID id){
         super(id);
@@ -43,6 +47,8 @@ public class User extends Client{
 
         purchases = new ConcurrentLinkedQueue<>();
         isAdmin=false;
+
+//        userDalController = UserDalController.getInstance(UserController.repositoryFactory);
     }
 
     public User(String username){
@@ -52,12 +58,14 @@ public class User extends Client{
 
         purchases = new ConcurrentLinkedQueue<>();
         isAdmin=false;
+//        userDalController = UserDalController.getInstance(UserController.repositoryFactory);
     }
 
     public User()
     {
         purchases = new ConcurrentLinkedQueue<>();
         roles = new ConcurrentLinkedQueue<>();
+//        userDalController = UserDalController.getInstance(UserController.repositoryFactory);
     }
     public String getUsername() {
         return username;
@@ -84,25 +92,27 @@ public class User extends Client{
 
     @Transactional
     public void addStoreRole(Role role) throws Exception {
-        Collection<Role> currRoles = getRoles();
-        for (Role existingRole : currRoles) {
-            if (existingRole.getStoreId().equals(role.getStoreId())) {
-                if (role.getPermissions().contains(StorePermissions.STORE_OWNER)
-                        && !existingRole.getPermissions().contains(StorePermissions.STORE_OWNER)) {
-                    roles.add(role);
-                    roles.remove(existingRole);
-                    return;
-                } else {
-                    throw new Exception("User is already a member of store staff.");
-                }
-            }
-        }
+//        Collection<Role> currRoles = getRoles();
+//        for (Role existingRole : currRoles) {
+//            if (existingRole.getStore().getStoreId().equals(role.getStore().getStoreId())) {
+//                if (role.getPermissions().contains(StorePermissions.STORE_OWNER)
+//                        && !existingRole.getPermissions().contains(StorePermissions.STORE_OWNER)) {
+//                    roles.add(role);
+//                    roles.remove(existingRole);
+//                    return;
+//                } else {
+//                    throw new Exception("User is already a member of store staff.");
+//                }
+//            }
+//        }
         roles.add(role);
+        role.setUser(this);
+//        userDalController.saveUser(this);
     }
 
     public void removeStoreRole(UUID storeId){
         for (Role role : roles)
-            if (role.getStoreId().equals(storeId)) {
+            if (role.getStore().getStoreId().equals(storeId)) {
                 roles.remove(role);
                 return;
             }

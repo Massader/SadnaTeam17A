@@ -56,7 +56,8 @@ public class Store {
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Collection<Item> items;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Transient
     private StoreDiscount discounts;
 
 //    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -66,29 +67,38 @@ public class Store {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Sale> sales;
 
-    /*
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Map<UUID, Role> rolesMap;
-     */
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Role> roles;
-
-    /*
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Map<UUID, StoreReview> reviews;
-     */
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<StoreReview> reviews;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<OwnerPetition> ownerPetitions;
+    private Collection<OwnerPetition> ownerPetitions;
 
     @Transient
     StoreDalController storeDalController;
+//
+//    @Transient
+//    UserDalController userDalController;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    public StoreDiscount getDiscounts() {
+        return discounts;
+    }
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    public StorePurchasePolicy getPolicy() {
+        return policy;
+    }
 
 
-    
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
     public Store(String name, String description) {
         this.name = name;
         this.description = description;
@@ -105,7 +115,10 @@ public class Store {
         reviews = new ConcurrentLinkedQueue<>();
         storeDalController = StoreDalController.getInstance(UserController.repositoryFactory);
         ownerPetitions = new ArrayList<>();
+//        userDalController = UserDalController.getInstance(UserController.repositoryFactory);
     }
+
+
 
     public Store(){
 //        items = new ConcurrentLinkedQueue<>();
@@ -114,28 +127,12 @@ public class Store {
 //        sales = new ConcurrentLinkedQueue<>();
 //        rolesMap = new ConcurrentHashMap<>();
 //        storeDalController = StoreDalController.getInstance(UserController.repositoryFactory);
-//        roles = new ConcurrentLinkedQueue<>();
+        roles = new ConcurrentLinkedQueue<>();
+
 
     }
 
-    public StoreDiscount getDiscounts() {
-        return discounts;
-    }
 
-    public StorePurchasePolicy getPolicy() {
-        return policy;
-    }
-
-    /*
-    public Map<UUID, Role> getRolesMap() {
-        return rolesMap;
-    }
-
-     */
-
-    public Collection<Role> getRoles() {
-        return roles;
-    }
 
     /*
     public StoreOwner getOwner(UUID owner) {
@@ -163,8 +160,15 @@ public class Store {
     }
      */
 
-    public boolean checkPermission(UUID clientCredentials, StorePermissions permission) {
-        return roles.stream().anyMatch(role -> role.getUser().getId().equals(clientCredentials) && role.getPermissions().contains(permission));
+    public boolean checkPermission(UUID userId, StorePermissions permission) {
+        User user = UserController.getInstance().getUserById(userId);
+        Collection<Role> roles = user.getRoles();
+        for(Role role : roles){
+            if  (role.getPermissions().contains(permission) && role.getStore().getStoreId().equals(this.storeId))
+                return true;
+        }
+        return false;
+//        return roles.stream().anyMatch(role -> role.getUser().getId().equals(clientCredentials) && role.getPermissions().contains(permission));
     }
 
     public Collection<Item> getItems() {
@@ -239,6 +243,8 @@ public class Store {
             }
         }
         roles.add(role);
+        user.addStoreRole(role);
+//        userDalController.saveUser(user);
     }
 
     /*
@@ -546,8 +552,9 @@ public class Store {
         addRating(rating);
         return review.getId();
     }
-    
-    public List<OwnerPetition> getOwnerPetitions() {
+
+
+    public Collection<OwnerPetition> getOwnerPetitions() {
         return ownerPetitions;
     }
     

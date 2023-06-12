@@ -1,9 +1,7 @@
 package DataAccessLayer.controllers;
 
-import DataAccessLayer.PasswordRepository;
-import DataAccessLayer.RepositoryFactory;
-import DataAccessLayer.SecurityQuestionRepository;
-import DataAccessLayer.UserRepository;
+import DataAccessLayer.*;
+import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.User;
 import DomainLayer.Security.Password;
 import DomainLayer.Security.SecurityQuestion;
@@ -18,6 +16,7 @@ public class UserDalController {
     UserRepository userRepository;
     PasswordRepository passwordRepository;
     SecurityQuestionRepository securityQuestionRepository;
+    RoleRepository roleRepository;
     private static UserDalController singleton = null;
 
     private UserDalController(RepositoryFactory repositoryFactory) {
@@ -25,6 +24,7 @@ public class UserDalController {
         this.userRepository = repositoryFactory.userRepository; //high frequency use
         this.passwordRepository = repositoryFactory.passwordRepository;
         this.securityQuestionRepository = repositoryFactory.securityQuestionRepository;
+        this.roleRepository = repositoryFactory.roleRepository;
     }
 
     public static synchronized UserDalController getInstance(RepositoryFactory repositoryFactory) {
@@ -122,4 +122,14 @@ public class UserDalController {
     }
 
 
+//    public Role getRole(UUID clientCredentials) {
+//        List<Role> roles = roleRepository.;
+//        if(usersFromDb.isEmpty())
+//            return null;
+//        else return usersFromDb.get(0);
+//    }
+
+    public void saveRole(Role role ){
+        roleRepository.save(role);
+    }
 }

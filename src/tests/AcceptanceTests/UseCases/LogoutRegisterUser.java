@@ -3,6 +3,7 @@ import AcceptanceTests.*;
 
 import java.util.UUID;
 
+import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.UserController;
 import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.ServiceUser;
@@ -22,6 +23,7 @@ public class LogoutRegisterUser extends ProjectTest {
         bridge.register("user", "Aa1234");
         userId = bridge.login(bridge.createClient().getValue(), "user", "Aa1234").getValue().getId();
         bridge.logout(userId);
+
     }
 
     @BeforeEach

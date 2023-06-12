@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import DataAccessLayer.RepositoryFactory;
+import DataAccessLayer.controllers.StoreDalController;
 import DataAccessLayer.controllers.UserDalController;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
@@ -29,7 +30,7 @@ public class UserController {
     private NotificationController notificationController;
     public static RepositoryFactory repositoryFactory;
     private UserDalController userDalController;
-
+private StoreDalController storeDalController;
     private UserController() {
     }
 
@@ -43,20 +44,23 @@ public class UserController {
     public void init(RepositoryFactory repositoryFactory) {
 //        users = new ConcurrentHashMap<>();
 //        usernames = new ConcurrentHashMap<>();
+        this.repositoryFactory = repositoryFactory;
+        userDalController = UserDalController.getInstance(repositoryFactory);
         loggedInUsers = new ConcurrentHashMap<>();
         securityController = SecurityController.getInstance();
         clients = new ConcurrentHashMap<>();
         storeController = StoreController.getInstance();
         notificationController = NotificationController.getInstance();
-        this.repositoryFactory = repositoryFactory;
-        userDalController = UserDalController.getInstance(repositoryFactory);
+        storeDalController = StoreDalController.getInstance(repositoryFactory);
         registerDefaultAdmin();
     }
 
-    public Response<Boolean> setAsFounder(User user, UUID storeId){
+    public Response<Boolean> setAsFounder(User user, UUID storeId, Role role){
         try {
-            user.addStoreRole(new StoreFounder(storeId));
+            user.addStoreRole(role);
             userDalController.saveUser(user);
+            userDalController.saveRole(role);
+
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception) {
@@ -276,20 +280,22 @@ public class UserController {
             if (petitions.isEmpty()) {
                 petition = new OwnerPetition(user.getId(), clientCredentials, storeId);
                 store.getOwnerPetitions().add(petition);
+                storeDalController.saveStore(store);
             }
             else {
                 petition = petitions.get(0);
                 petition.approveAppointment(clientCredentials);
             }
             if (petition.getOwnersList().containsAll(storeController.getStore(storeId).getStoreOwners())) {
-                StoreOwner storeOwner = new StoreOwner(storeId);
-                user.addStoreRole(storeOwner);
-                userDalController.saveUser(user);
+                StoreOwner storeOwner = new StoreOwner(storeController.getStore(storeId));
+//                user.addStoreRole(storeOwner);
+//                userDalController.saveUser(user);
                 store.addRole(getUserById(appointee), storeOwner);
                 store.getOwner(clientCredentials).addAppointee(appointee);
                 notificationController.sendNotification(appointee,
                         "Your appointment as a store owner for " + store.getName() + " has been approved by all owners.");
                 store.getOwnerPetitions().remove(petition);
+                storeDalController.saveStore(store);
             }
             return Response.getSuccessResponse(true);
         }
@@ -311,12 +317,15 @@ public class UserController {
                 return Response.getFailResponse("Appointing user is not logged in.");
             if(storeController.getStore(storeId).hasRole(appointee))
                 return Response.getFailResponse("User already manager in the shop.");
-            StoreManager storeManager = new StoreManager(storeId);
+            Store store = storeController.getStore(storeId);
+            StoreManager storeManager = new StoreManager(store);
             User user = response2.getValue();
-            user.addStoreRole(storeManager);
-            userDalController.saveUser(user);
-            storeController.getStore(storeId).addRole(getUserById(appointee), storeManager);
-            storeController.getStore(storeId).getOwner(clientCredentials).addAppointee(appointee);
+//            user.addStoreRole(storeManager);
+            store.addRole(user, storeManager);
+            store.getOwner(clientCredentials).addAppointee(appointee);
+//            userDalController.saveUser(user);
+//            userDalController.saveRole(storeManager);
+            storeDalController.saveStore(store);
             return Response.getSuccessResponse(true);
         }
         catch(Exception exception){
@@ -396,9 +405,9 @@ public class UserController {
 //            usernames.remove(user2.getUsername());
             //remove roles
             for (Role role: user2.getRoles()) {
-                removeStoreRole(clientCredentials, userId, role.getStoreId());
+                removeStoreRole(clientCredentials, userId, role.getStore().getStoreId());
                 if (role.getPermissions().contains(StorePermissions.STORE_FOUNDER))
-                    storeController.shutdownStore(clientCredentials, role.getStoreId());
+                    storeController.shutdownStore(clientCredentials, role.getStore().getStoreId());
             }
             securityController.removePassword(userId);
             return Response.getSuccessResponse(true);
@@ -605,7 +614,7 @@ public class UserController {
 
     public Response<Integer> numOfUsers() {
         try {
-            int users = this.userDalController.getAllUsers().size();
+            int users = (int) repositoryFactory.userRepository.count();
             return Response.getSuccessResponse(users);
         }
         catch (Exception exception) {

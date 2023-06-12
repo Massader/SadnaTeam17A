@@ -1,5 +1,6 @@
 package DomainLayer.Market.Users.Roles;
 
+import DomainLayer.Market.Stores.Store;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -12,8 +13,8 @@ public class StoreManager extends Role {
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private List<StorePermissions> permissionsList;
-    public StoreManager(UUID storeId) {
-        super(storeId);
+    public StoreManager(Store store) {
+        super(store);
         permissionsList = new ArrayList<StorePermissions>();
         permissionsList.add(StorePermissions.STORE_MANAGEMENT_INFORMATION);
         permissionsList.add(StorePermissions.STORE_COMMUNICATION);

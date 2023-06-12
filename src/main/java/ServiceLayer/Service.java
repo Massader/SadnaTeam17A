@@ -98,7 +98,7 @@ public class Service {
 //        storeController.init(repositoryFactory);
 
         //Add Supply and Payment JSON config file read here
-        loadObjects();
+//        loadObjects();
         eventLogger.log(Level.INFO, "System boot successful.");
         return true;
     }
@@ -127,6 +127,7 @@ public class Service {
 //        }
             UUID clientCredentials = response.getValue();
             UUID userCredentials = userController.login(clientCredentials, "Nitzan", "Nitzan1").getValue().getId();
+            addSecurityQuestion(clientCredentials, "sup?", "good");
             Response<User> u = userController.getUser(userCredentials);
             Response<Store> storeResponse = storeController.createStore(userCredentials, "Nitzan's Kitchen Store", "");
             storeController.addItemToStore(userCredentials, "Knife", 10.0, storeResponse.getValue().getStoreId(), 10, "");
@@ -1363,8 +1364,8 @@ public class Service {
         return Response.getSuccessResponse(output);
     }
     
-    public Response<List<OwnerPetition>> getStoreOwnerPetitions(UUID clientCredentials, UUID storeId) {
-        Response<List<OwnerPetition>> response = storeController.getStoreOwnerPetitions(clientCredentials, storeId);
+    public Response<Collection<OwnerPetition>> getStoreOwnerPetitions(UUID clientCredentials, UUID storeId) {
+        Response<Collection<OwnerPetition>> response = storeController.getStoreOwnerPetitions(clientCredentials, storeId);
         if (response.isError())
             errorLogger.log(Level.WARNING, response.getMessage());
         return response;

@@ -36,12 +36,12 @@ public class UserController {
         service.init(repositoryFactory);
         this.alertController = alertController;
     }
-    
+    //DB
     @PostMapping(path = "/register")
     public Response<Boolean> register(@RequestBody LoginRegisterRequest request) {
         return service.register(request.getUsername(), request.getPassword());
     }
-    
+    //DB
     @PostMapping(path = "/login")
     public Response<ServiceUser> login(@RequestBody LoginRegisterRequest request) {
         Response<ServiceUser> response = service.login(request.getClientCredentials(), request.getUsername(),
@@ -50,7 +50,8 @@ public class UserController {
             alertController.createNotifier(response.getValue().getId());
         return response;
     }
-    
+
+
     @PostMapping(path = "/create-client")
     public Response<UUID> createClient() {
         return service.createClient();
@@ -83,12 +84,14 @@ public class UserController {
     public Response<ServiceUser> getUserInfo(@PathVariable(name = "id") UUID clientCredentials) {
         return service.getUserInfo(clientCredentials);
     }
-    
+
+    //DB
     @PostMapping(path = "/security/add-question")
     public Response<Boolean> addSecurityQuestion(@RequestBody SecurityQuestionRequest request) {
         return service.addSecurityQuestion(request.getClientCredentials(), request.getQuestion(), request.getAnswer());
     }
-    
+
+
     @GetMapping(path = "/security/validate-question/id={id}&answer={answer}")
     public Response<Boolean> validateSecurityQuestion(@PathVariable(name = "id") UUID clientCredentials,
                                                       @PathVariable(name = "answer") String answer) {

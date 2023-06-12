@@ -1,5 +1,6 @@
 package DomainLayer.Market.Users.Roles;
 
+import DomainLayer.Market.Stores.Store;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
@@ -10,8 +11,8 @@ import java.util.UUID;
 @Table(name = "store_founders")
 public class StoreFounder extends StoreOwner {
 
-    public StoreFounder(UUID storeId){
-        super(storeId);
+    public StoreFounder(Store store){
+        super(store);
     }
 
     public StoreFounder(){

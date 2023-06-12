@@ -10,6 +10,7 @@ import ServiceLayer.ServiceObjects.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -98,8 +99,8 @@ public class StoreController {
     }
     
     @GetMapping(path = "/get-store-owner-appointments/id={id}&storeId={storeId}")
-    public Response<List<OwnerPetition>> getStoreOwnerPetitions(@PathVariable(name = "id") UUID clientCredentials,
-                                                                @PathVariable(name = "storeId") UUID storeId) {
+    public Response<Collection<OwnerPetition>> getStoreOwnerPetitions(@PathVariable(name = "id") UUID clientCredentials,
+                                                                      @PathVariable(name = "storeId") UUID storeId) {
         return service.getStoreOwnerPetitions(clientCredentials, storeId);
     }
     

@@ -1,6 +1,7 @@
 package DomainLayer.Market;
 
 import DataAccessLayer.RepositoryFactory;
+import DataAccessLayer.UserRepository;
 import DataAccessLayer.controllers.StoreDalController;
 import DataAccessLayer.controllers.UserDalController;
 import DomainLayer.Market.Stores.*;
@@ -103,7 +104,20 @@ public class StoreController {
         try {
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
-            if (getStore(storeId).isClosed() && !getStore(storeId).getRoles().stream().anyMatch(role -> role.getUser().getId().equals(clientCredentials)))
+            Response<Boolean> response =userController.isLoggedInUser(clientCredentials);
+            if(response.isError())
+                return Response.getFailResponse("user does not logged in");
+//            boolean found = false;
+//            Store store = getStore(storeId);
+//            if (store.isClosed())
+//                for (Role role : store.getRoles())
+//                    if (role.getUser().getId().equals(clientCredentials)) {
+//                        found = true;
+//
+//                    }
+//            if(!found)
+            Store store =getStore(storeId);
+            if (store.isClosed() && !getStore(storeId).getRoles().stream().anyMatch(role -> role.getUser().getId().equals(clientCredentials)))
                 return Response.getFailResponse("Store is closed.");
             return Response.getSuccessResponse(getStore(storeId));
         } catch (Exception exception) {
@@ -172,6 +186,7 @@ public class StoreController {
                                 "Owned store " + store.getName() + " has been closed by founder.");
                     }
                 }
+                storeDalController.saveStore(store);
                 return Response.getSuccessResponse(true);
             }
             return Response.getFailResponse("Store already closed.");
@@ -445,13 +460,14 @@ public class StoreController {
             if (storeDalController.isStoreExists(storeName))
                     return Response.getFailResponse("A Store with this name already exists.");
             Store store = new Store(storeName, storeDescription);
-//            storeDalController.saveStore(store);
+            Role role = new StoreFounder();
             User user = userController.getUserById(clientCredentials);
-            store.addRole(user, new StoreFounder(clientCredentials));
-            Response<Boolean> response = userController.setAsFounder(user, store.getStoreId());
+            store.addRole(user, role);
+//            Response<Boolean> response = userController.setAsFounder(user, store.getStoreId(), role);
+            role.setStore(store);
             storeDalController.saveStore(store);
-            if (response.isError())
-                return Response.getFailResponse(response.getMessage());
+//            if (response.isError())
+//                return Response.getFailResponse(response.getMessage());
 //            storeMap.put(store.getStoreId(), store);
 //            storeDalController.saveStore(store);
             return Response.getSuccessResponse(store);
@@ -999,7 +1015,7 @@ public class StoreController {
                     !store.checkPermission(clientCredentials, StorePermissions.STORE_POLICY_MANAGEMENT))
                 return Response.getFailResponse("User does not have permission to see item bids.");
             StorePurchasePolicy policy = store.getPolicy();
-            if (policy == null)git 
+            if (policy == null)
                 return Response.getFailResponse("Store policy was null");
             List<PurchaseTerm> terms = policy.getPurchasePolicies().stream().toList();
             if (terms == null)
@@ -1024,7 +1040,7 @@ public class StoreController {
         }
     }
     
-    public Response<List<OwnerPetition>> getStoreOwnerPetitions(UUID clientCredentials, UUID storeId) {
+    public Response<Collection<OwnerPetition>> getStoreOwnerPetitions(UUID clientCredentials, UUID storeId) {
         try {
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
@@ -1048,5 +1064,8 @@ public class StoreController {
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }
+    }
+
+    public void OwnerPetitions(OwnerPetition petition) {
     }
 }
