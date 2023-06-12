@@ -37,39 +37,43 @@ public class StoreController {
         return service.closeStore(request.getClientCredentials(), request.getTargetId());
     }
 
+    //DB
     @PutMapping(path = "/reopen-store")
     public Response<Boolean> reopenStore(@RequestBody TargetRequest request) {
         return service.reopenStore(request.getClientCredentials(), request.getTargetId());
     }
-
+    //DB
     @PutMapping(path = "/admin/shutdown-store")
     public Response<Boolean> shutdownStore(@RequestBody TargetRequest request) {
         return service.shutdownStore(request.getClientCredentials(), request.getTargetId());
     }
-
+//DB
     @GetMapping(path = "/store-info/id={id}&storeId={storeId}")
     public Response<ServiceStore> getStoreInfo(@PathVariable(name = "id") UUID clientCredentials,
                                                @PathVariable(name = "storeId") UUID storeId) {
         return service.getStoreInformation(clientCredentials, storeId);
     }
 
+//DB
     @GetMapping(path = "/item-info/storeId={storeId}&itemId={itemId}")
     public Response<ServiceItem> getItemInfo(@PathVariable(name = "storeId") UUID storeId,
                                              @PathVariable(name = "itemId") UUID itemId) {
         return service.getItemInformation(storeId, itemId);
     }
 
+    //DB
     @PostMapping(path = "/post-item-review")
     public Response<UUID> postItemReview(@RequestBody ReviewRequest request) {
         return service.postItemReview(request.getClientCredentials(), request.getTargetId(), request.getBody(), request.getRating());
     }
-    
+    //DB
     @GetMapping(path = "/get-item-reviews/storeId={storeId}&itemId={itemId}")
     public Response<List<ServiceItemReview>> getReviews(@PathVariable(name = "storeId") UUID storeId,
                                                         @PathVariable(name = "itemId") UUID itemId) {
         return service.getItemReviews(storeId, itemId);
     }
-    
+
+
     @GetMapping(path = "/item-is-reviewable-by-user/id={id}&storeId={storeId}&itemId={itemId}")
     public Response<Boolean> isReviewableByUser(@PathVariable(name = "id") UUID clientCredentials,
                                                 @PathVariable(name = "storeId") UUID storeId,
@@ -77,11 +81,13 @@ public class StoreController {
         return service.isReviewableByUser(clientCredentials, storeId, itemId);
     }
 
+    //DB
     @PutMapping(path = "/role/set-manager-permissions")
     public Response<Boolean> setManagerPermissions(@RequestBody SetManagerPermissionsRequest request) {
         return service.setManagerPermissions(request.getClientCredentials(), request.getManagerId(),
                 request.getStoreId(), request.getPermissions());
     }
+
 
     @GetMapping(path = "/store-staff/id={id}&storeId={storeId}")
     public Response<List<ServiceUser>> getStoreStaff(@PathVariable(name = "id") UUID clientCredentials,
@@ -89,6 +95,7 @@ public class StoreController {
         return service.getStoreStaff(clientCredentials, storeId);
     }
 
+    //DB
     @PostMapping(path = "/role/appoint-manager")
     public Response<Boolean> appointStoreManager(@RequestBody RoleRequest request) {
         return service.appointStoreManager(request.getClientCredentials(), request.getAppointee(), request.getStoreId());
