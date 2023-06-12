@@ -3,22 +3,36 @@ package DomainLayer.Market.Stores.Discounts;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Entity
+@Table(name = "Market_Stores_Discounts_ItemCalculateDiscount")
 public class ItemCalculateDiscount implements CalculateDiscount {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "itemId", nullable = false, unique = true)
     private UUID itemId;
 
-    public ItemCalculateDiscount( UUID itemId) {
+    public ItemCalculateDiscount(UUID itemId) {
         this.itemId = itemId;
+    }
+
+    public ItemCalculateDiscount() {
+
     }
 
     public UUID getItemId() {
         return itemId;
+    }
+
+    public void setItemId(UUID itemId) {
+        this.itemId = itemId;
     }
     
     @Override

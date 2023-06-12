@@ -6,7 +6,7 @@ import DomainLayer.Market.Users.ShoppingBasket;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "StoreDiscounts")
+@Table(name = "Market_Stores_Discounts_StoreDiscounts")
 public class StoreDiscount {
     /**
      * ManageDiscount is a class that manages the discounts of a shop.
