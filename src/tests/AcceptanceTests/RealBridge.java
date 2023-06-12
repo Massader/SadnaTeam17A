@@ -98,9 +98,9 @@ public class RealBridge implements Bridge {
         return service.getCart(clientCredentials);
     }
 
-    public Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, String credit) {
-        return service.purchaseCart(clientCredentials, expectedPrice, address, credit);
-    }
+//    public Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, String credit) {
+//        return service.purchaseCart(clientCredentials, expectedPrice, address, credit);
+//    }
 
 
     public Response<UUID> logout(UUID clientCredentials) {
