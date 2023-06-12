@@ -26,11 +26,12 @@ public class StoreController {
         service.init(repositoryFactory);
     }
 
+    //DB
     @PostMapping(path = "/create-store")
     public Response<ServiceStore> createStore(@RequestBody CreateStoreRequest request) {
         return service.createStore(request.getClientCredentials(), request.getName(), request.getDescription());
     }
-
+    //DB
     @PutMapping(path = "/close-store")
     public Response<Boolean> closeStore(@RequestBody TargetRequest request) {
         return service.closeStore(request.getClientCredentials(), request.getTargetId());

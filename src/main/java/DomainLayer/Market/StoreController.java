@@ -463,13 +463,8 @@ public class StoreController {
             Role role = new StoreFounder();
             User user = userController.getUserById(clientCredentials);
             store.addRole(user, role);
-//            Response<Boolean> response = userController.setAsFounder(user, store.getStoreId(), role);
             role.setStore(store);
             storeDalController.saveStore(store);
-//            if (response.isError())
-//                return Response.getFailResponse(response.getMessage());
-//            storeMap.put(store.getStoreId(), store);
-//            storeDalController.saveStore(store);
             return Response.getSuccessResponse(store);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
