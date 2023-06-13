@@ -51,17 +51,15 @@ public class PurchaseController {
    public Response<Boolean> purchaseCart(Client client, ShoppingCart shoppingCart, double expectedPrice,
                                          String address, String city, String country, int zip,String card_number, String month, String year, String holder, String ccv, String id) {
        try {//check
+
            if (shoppingCart.getShoppingBaskets().isEmpty()){
                return Response.getFailResponse("shopping cart is empty");}
            if(!paymentController.handshake().getValue())
                return Response.getFailResponse("the payment service is not available");
            if(supplyController.handshake().getValue())
                return Response.getFailResponse("the supply service is not available");
-           if(validateOrder( address, city, country, zip))
-               return Response.getFailResponse("the address is not available for supply");
-           if (!card_number.matches("\\d+")){  // check if the credit card number is all numbers
-               return Response.getFailResponse("Credit card number must consist only of numbers");}
-
+               validateOrder(address, city, country, zip);
+               validatePayment(card_number, month, year, holder, ccv, id);
            ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
            synchronized (instanceLock) {
                StringBuilder missingItemList = new StringBuilder();
@@ -137,18 +135,34 @@ public class PurchaseController {
        }
    }
 
-    private boolean validateOrder(String address, String city, String country, int zip) {
+    private boolean validatePayment(String cardNumber, String month, String year, String holder, String ccv, String id) throws Exception {
+        String[] intProperties = {cardNumber, month, year, ccv, id};
+
+        for (String property : intProperties) {
+            if (property == null || property.isEmpty()) {
+                throw new Exception(property + " can not be empty");
+            }
+            if(!property.matches("\\d+")){  throw new Exception(property + " have to be numbers only");}
+        }
+        if(holder==null||holder.isEmpty()){return false;}
+        if(ccv.length()!=3){throw new Exception( "ccv need to be 3 numbers");}
+        return true;
+    }
+
+    private boolean validateOrder(String address, String city, String country, int zip) throws Exception {
 
         String[] properties = {address ,city,country};
 
         for (String property : properties) {
             if (property == null || property.isEmpty()) {
-                return false;
+                throw new Exception(property + " can not be empty");
             }
+
         }
         if (zip <= 0) {
-            return false; // Invalid zip code
+            throw new Exception("zip can not be empty");
         }
+
         return true;
     }
 
