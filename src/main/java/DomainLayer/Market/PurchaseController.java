@@ -8,13 +8,9 @@ import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.ShoppingBasket;
 import DomainLayer.Market.Users.ShoppingCart;
 import DomainLayer.Payment.PaymentController;
-import DomainLayer.Payment.PaymentProxy;
 import DomainLayer.Supply.SupplyController;
-import DomainLayer.Supply.SupplyProxy;
 import ServiceLayer.Response;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -48,18 +44,20 @@ public class PurchaseController {
 
 
 
-   public Response<Boolean> purchaseCart(Client client, ShoppingCart shoppingCart, double expectedPrice,
-                                         String address, String city, String country, int zip,String card_number, String month, String year, String holder, String ccv, String id) {
+   public Response<Boolean> purchaseCart(UUID clientCredentials, ShoppingCart shoppingCart, double expectedPrice,
+                                         String address, String city, String country, int zip, String cardNumber, String month, String year, String holder, String cvv, String id) {
        try {//check
-
+           if (!userController.isNonRegisteredClient(clientCredentials) && !userController.isRegisteredUser(clientCredentials))
+               return Response.getFailResponse("User does not exist.");
+           Client client = userController.getClientOrUser(clientCredentials);
            if (shoppingCart.getShoppingBaskets().isEmpty()){
-               return Response.getFailResponse("shopping cart is empty");}
-           if(!paymentController.handshake().getValue())
-               return Response.getFailResponse("the payment service is not available");
-           if(!supplyController.handshake().getValue())
-               return Response.getFailResponse("the supply service is not available");
-               validateOrder(address, city, country, zip);
-               validatePayment(card_number, month, year, holder, ccv, id);
+               return Response.getFailResponse("Shopping Cart is empty");}
+           if(paymentController.handshake().isError())
+               return Response.getFailResponse("The payment service is not available");
+           if(supplyController.handshake().isError())
+               return Response.getFailResponse("The supply service is not available");
+           validateOrder(address, city, country, zip);
+           validatePayment(cardNumber, month, year, holder, cvv, id);
            ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
            synchronized (instanceLock) {
                StringBuilder missingItemList = new StringBuilder();
@@ -110,7 +108,7 @@ public class PurchaseController {
                                    + store.getName() + " has been made.");
                    }
                }
-               int transactionId= paymentController.pay(nowPrice, card_number, month, year, holder, ccv, id).getValue();
+               int transactionId= paymentController.pay(nowPrice, cardNumber, month, year, holder, cvv, id).getValue();
                if(transactionId==-1){
                    unPurchaseCart(client,shoppingCart);
                    return Response.getFailResponse("There was a problem with your payment");
@@ -118,7 +116,7 @@ public class PurchaseController {
                //get user name
                String clientName="client";
                if(userController.isUser(client.getId()).getValue()){
-                   clientName= userController.getUser(client.getId()).getValue().getUsername();}
+                   clientName = userController.getUser(client.getId()).getValue().getUsername();}
                if(supplyController.supply(clientName, address, city, country, zip) == null){
                    unPurchaseCart(client,shoppingCart);
                    if(!paymentController.cancelPay(transactionId).getValue()){
@@ -137,43 +135,51 @@ public class PurchaseController {
 
     private boolean validatePayment(String cardNumber, String month, String year, String holder, String ccv, String id) throws Exception {
         String[] intProperties = {cardNumber, month, year, ccv, id};
-        String[] PropertiesName = {"cardNumber", "month", "year", "ccv", "id"};
+        String[] propertiesName = {"cardNumber", "month", "year", "cvv", "id"};
 
-        for (int i=0;i<intProperties.length;i++) {
-            String property =intProperties[i];
+        for (int i = 0; i < intProperties.length; i++) {
+            String property = intProperties[i];
             if (property == null || property.isEmpty()) {
-                throw new Exception(PropertiesName[i] + " can not be empty");
+                throw new Exception(propertiesName[i] + " can not be empty");
             }
-            if(!property.matches("\\d+")){  throw new Exception(property + " have to be numbers only");}
+            if(!property.matches("\\d+")){
+                throw new Exception(property + " has to be numbers only");
+            }
         }
-        if(holder==null||holder.isEmpty()){return false;}
-        if(ccv.length()!=3){throw new Exception( "ccv need to be 3 numbers");}
+        if(holder == null || holder.isEmpty()){
+            return false;
+        }
+        if(ccv.length()!=3){
+            throw new Exception("CVV needs to be 3 numbers");
+        }
         return true;
     }
 
     private boolean validateOrder(String address, String city, String country, int zip) throws Exception {
 
         String[] properties = {address ,city,country};
-        String[] PropertiesName = {"address" ,"city","country"};
+        String[] propertiesName = {"address" ,"city","country"};
 
-        for (int i=0;i<properties.length;i++) {
+        for (int i = 0; i < properties.length; i++) {
             String property =properties[i];
             if (property == null || property.isEmpty()) {
-                throw new Exception(PropertiesName[i] + " can not be empty");
+                throw new Exception(propertiesName[i] + " can not be empty");
             }
 
         }
         if (zip <= 0) {
-            throw new Exception("zip can not be empty");
+            throw new Exception("ZIP can not be empty");
         }
 
         return true;
     }
 
     public void unPurchaseCart(Client client, ShoppingCart shoppingCart) throws Exception {
-         for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
+        for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
             UUID storeId = entry.getKey();
             ShoppingBasket basket = entry.getValue();
             Store store = storeController.getStore(storeId);
             store.unPurchaseBasket(client,basket);
-    }}}
+        }
+    }
+}

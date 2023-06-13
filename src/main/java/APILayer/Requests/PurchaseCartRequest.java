@@ -12,11 +12,11 @@ public class PurchaseCartRequest extends Request {
     private String month;
     private String year;
     private String holder;
-    private String ccv;
+    private String cvv;
     private String idCard;
 
 
-    public PurchaseCartRequest(UUID clientCredentials, double expectedPrice, String address, String city, String country, int zip, String cardNumber, String month, String year, String holder, String ccv, String idCard) {
+    public PurchaseCartRequest(UUID clientCredentials, double expectedPrice, String address, String city, String country, int zip, String cardNumber, String month, String year, String holder, String cvv, String idCard) {
         super(clientCredentials);
         this.expectedPrice = expectedPrice;
         this.address = address;
@@ -27,7 +27,7 @@ public class PurchaseCartRequest extends Request {
         this.month = month;
         this.year = year;
         this.holder = holder;
-        this.ccv = ccv;
+        this.cvv = cvv;
         this.idCard = idCard;
     }
 
@@ -103,12 +103,12 @@ public class PurchaseCartRequest extends Request {
         this.holder = holder;
     }
 
-    public String getCcv() {
-        return ccv;
+    public String getCvv() {
+        return cvv;
     }
 
-    public void setCcv(String ccv) {
-        this.ccv = ccv;
+    public void setCvv(String cvv) {
+        this.cvv = cvv;
     }
 
     public String getIdCard() {
