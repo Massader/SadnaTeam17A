@@ -137,7 +137,7 @@ public class PurchaseController {
 
     private boolean validatePayment(String cardNumber, String month, String year, String holder, String ccv, String id) throws Exception {
         String[] intProperties = {cardNumber, month, year, ccv, id};
-        String[] propertiesName = {"Card number", "Month", "Year", "CVV", "ID Card"};
+        String[] propertiesName = {"Card number", "Month", "Year", "CVV", "ID"};
 
         for (int i = 0; i < intProperties.length; i++) {
             String property = intProperties[i];
@@ -149,7 +149,7 @@ public class PurchaseController {
             }
         }
         if(holder == null || holder.isEmpty()){
-            return false;
+            throw new Exception("Holder name can not be empty.");
         }
         if(ccv.length()!=3){
             throw new Exception("CVV needs to be 3 numbers");
