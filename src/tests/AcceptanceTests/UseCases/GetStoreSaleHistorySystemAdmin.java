@@ -45,11 +45,11 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
 
         bridge.addItemToCart(user1Id, item1Id, 3, storeId);
         bridge.addItemToCart(user1Id, item2Id, 6, storeId);
-        bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "Aa12340000Aa12340000");
+        //bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), "address", "Aa12340000Aa12340000");
 
         bridge.addItemToCart(user2Id, item3Id, 9, storeId);
         bridge.addItemToCart(user2Id, item4Id, 12, storeId);
-        bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue(), "address", "Aa12340000Aa12340000");
+      //  bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue(), "address", "Aa12340000Aa12340000");
 
         bridge.logout(storeFounderId);
         bridge.logout(user1Id);

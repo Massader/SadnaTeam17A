@@ -32,7 +32,7 @@ public interface Bridge {
     Response<List<ServiceItem>> searchItem(String keyword, String category, Double minPrice, Double maxPrice, Integer itemRating, Integer storeRating, Integer number, Integer page, UUID storeId);
     Response<Boolean> addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId);
     Response<List<ServiceShoppingBasket>> getCart(UUID clientCredentials);
-    Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, String credit);
+    Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, String city, String country, int zip,String card_number, String month, String year, String holder, String ccv, String idCard);
     Response<UUID> logout(UUID clientCredentials);
     Response<ServiceStore> createStore(UUID clientCredentials , String storeName , String storeDescription);
     Response<ServiceItem> addItemToStore(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description);
