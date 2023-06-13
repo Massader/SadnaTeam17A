@@ -135,7 +135,7 @@ public class PurchaseController {
 
     private boolean validatePayment(String cardNumber, String month, String year, String holder, String ccv, String id) throws Exception {
         String[] intProperties = {cardNumber, month, year, ccv, id};
-        String[] propertiesName = {"cardNumber", "month", "year", "cvv", "id"};
+        String[] propertiesName = {"Card number", "Month", "Year", "CVV", "ID Card"};
 
         for (int i = 0; i < intProperties.length; i++) {
             String property = intProperties[i];
@@ -158,7 +158,7 @@ public class PurchaseController {
     private boolean validateOrder(String address, String city, String country, int zip) throws Exception {
 
         String[] properties = {address ,city,country};
-        String[] propertiesName = {"address" ,"city","country"};
+        String[] propertiesName = {"Address" ,"City","Country"};
 
         for (int i = 0; i < properties.length; i++) {
             String property =properties[i];
