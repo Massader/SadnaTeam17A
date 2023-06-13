@@ -137,10 +137,12 @@ public class PurchaseController {
 
     private boolean validatePayment(String cardNumber, String month, String year, String holder, String ccv, String id) throws Exception {
         String[] intProperties = {cardNumber, month, year, ccv, id};
+        String[] PropertiesName = {"cardNumber", "month", "year", "ccv", "id"};
 
-        for (String property : intProperties) {
+        for (int i=0;i<intProperties.length;i++) {
+            String property =intProperties[i];
             if (property == null || property.isEmpty()) {
-                throw new Exception(property + " can not be empty");
+                throw new Exception(PropertiesName[i] + " can not be empty");
             }
             if(!property.matches("\\d+")){  throw new Exception(property + " have to be numbers only");}
         }
@@ -152,10 +154,12 @@ public class PurchaseController {
     private boolean validateOrder(String address, String city, String country, int zip) throws Exception {
 
         String[] properties = {address ,city,country};
+        String[] PropertiesName = {"address" ,"city","country"};
 
-        for (String property : properties) {
+        for (int i=0;i<properties.length;i++) {
+            String property =properties[i];
             if (property == null || property.isEmpty()) {
-                throw new Exception(property + " can not be empty");
+                throw new Exception(PropertiesName[i] + " can not be empty");
             }
 
         }
