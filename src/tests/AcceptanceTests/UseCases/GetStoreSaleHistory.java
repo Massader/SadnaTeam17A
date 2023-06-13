@@ -11,7 +11,7 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class GetStoreSaleHistory extends ProjectTest {//TODO: update purchase
+public class GetStoreSaleHistory extends ProjectTest {
 
     UUID storeFounderId;
     UUID storeOwnerId;
@@ -79,7 +79,7 @@ public class GetStoreSaleHistory extends ProjectTest {//TODO: update purchase
 
         bridge.addItemToCart(user1Id, item1Id, 3, storeId);
         bridge.addItemToCart(user1Id, item2Id, 6, storeId);
-        bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(), address, city, country, zip, cardNumber, month, year, holder, ccv, idCard);
+        bridge.purchaseCart(user1Id, bridge.getCartTotal(user1Id).getValue(),
 
         bridge.addItemToCart(user2Id, item3Id, 9, storeId);
         bridge.addItemToCart(user2Id, item4Id, 12, storeId);
