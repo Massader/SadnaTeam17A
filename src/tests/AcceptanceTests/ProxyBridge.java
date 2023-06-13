@@ -93,8 +93,8 @@ public class ProxyBridge implements Bridge {
         return real == null ? null : real.getCart(clientCredentials);
     }
 
-    public Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, String credit) {
-        return real == null ? null : real.purchaseCart(clientCredentials, expectedPrice, address, credit);
+    public Response<Boolean> purchaseCart(UUID clientCredentials, double expectedPrice, String address, String city, String country, int zip,String card_number, String month, String year, String holder, String ccv, String idCard) {
+        return real == null ? null : real.purchaseCart(clientCredentials, expectedPrice,address, city, country, zip, card_number, month, year, holder, ccv, idCard);
     }
 
 
