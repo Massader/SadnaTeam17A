@@ -55,7 +55,7 @@ public class PurchaseController {
                return Response.getFailResponse("shopping cart is empty");}
            if(!paymentController.handshake().getValue())
                return Response.getFailResponse("the payment service is not available");
-           if(supplyController.handshake().getValue())
+           if(!supplyController.handshake().getValue())
                return Response.getFailResponse("the supply service is not available");
            if(validateOrder( address, city, country, zip))
                return Response.getFailResponse("the address is not available for supply");
