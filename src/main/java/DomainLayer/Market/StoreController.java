@@ -376,6 +376,9 @@ public class StoreController {
             if (!userController.isRegisteredUser(clientCredentials)) {
                 return Response.getFailResponse("this client not user doesn't have the permissions ");
             }
+            if(!userController.isUserLoggedIn(clientCredentials)){
+                return Response.getFailResponse("this client not user doesn't login ");
+            }
             if (userController.getUser(clientCredentials).getValue().isAdmin()) {
                 return Response.getSuccessResponse(new ArrayList<>(getStore(storeId).getSales()));
             }
