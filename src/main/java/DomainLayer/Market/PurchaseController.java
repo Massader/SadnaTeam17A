@@ -7,6 +7,7 @@ import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.ShoppingBasket;
 import DomainLayer.Market.Users.ShoppingCart;
+import DomainLayer.Market.Users.User;
 import DomainLayer.Payment.PaymentController;
 import DomainLayer.Supply.SupplyController;
 import ServiceLayer.Response;
@@ -66,7 +67,7 @@ public class PurchaseController {
                    UUID storeId = entry.getKey();
                    ShoppingBasket basket = entry.getValue();
                    Store store = storeController.getStore(storeId);
-                   if(store==null){
+                   if(store == null){
                        return Response.getFailResponse("The store is not exist "+storeId);
                    }
                    if(store.isClosed()){
@@ -88,7 +89,7 @@ public class PurchaseController {
                } catch (Exception e) {
                    return Response.getFailResponse("verify Cart Price fail now price is "+nowPrice+ ", your expected Price is "+expectedPrice);
                }
-               if(expectedPrice!=nowPrice){
+               if(expectedPrice != nowPrice){
                    return Response.getFailResponse("Price for shopping cart has changed, it's " + nowPrice);
                }
 
@@ -108,19 +109,20 @@ public class PurchaseController {
                                    + store.getName() + " has been made.");
                    }
                }
-               int transactionId= paymentController.pay(nowPrice, cardNumber, month, year, holder, cvv, id).getValue();
-               if(transactionId==-1){
-                   unPurchaseCart(client,shoppingCart);
+               Response<Integer> transactionResponse = paymentController.pay(nowPrice, cardNumber, month, year, holder, cvv, id);
+               if(transactionResponse.isError() || transactionResponse.getValue() == -1){
+                   unPurchaseCart(client, shoppingCart);
                    return Response.getFailResponse("There was a problem with your payment");
                }
                //get user name
                String clientName="client";
-               if(userController.isUser(client.getId()).getValue()){
-                   clientName = userController.getUser(client.getId()).getValue().getUsername();}
-               if(supplyController.supply(clientName, address, city, country, zip) == null){
+               if(userController.isRegisteredUser(clientCredentials)){
+                   clientName = ((User)client).getUsername();
+               }
+               if(supplyController.supply(clientName, address, city, country, zip).isError()){
                    unPurchaseCart(client,shoppingCart);
-                   if(!paymentController.cancelPay(transactionId).getValue()){
-                       return Response.getFailResponse("There was a problem with cancel payment");
+                   if(paymentController.cancelPay(transactionResponse.getValue()).isError()){
+                       return Response.getFailResponse("There was a problem with the payment cancellation");
                    }
                    return Response.getFailResponse("Supply request failed");
                }
