@@ -208,7 +208,7 @@ public class Service {
             storeController.addItemToStore(founderId, "Guy's Balls", 10.0, storeResponse.getValue().getStoreId(), 10, "");
             clientCredentials = userController.logout(founderId).getValue();
 
-            founderId = userController.login(clientCredentials, "Roei", "Roei1").getValue().getId();
+//            founderId = userController.login(clientCredentials, "Roei", "Roei1").getValue().getId();
             storeResponse = storeController.createStore(founderId, "Roei's Color Store", "");
             storeController.addItemToStore(founderId, "Kelev", 10.0, storeResponse.getValue().getStoreId(), 10, "");
             storeController.addItemToStore(founderId, "Pink", 10.0, storeResponse.getValue().getStoreId(), 10, "");

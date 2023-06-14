@@ -107,4 +107,11 @@ public class ShoppingBasket {
         }
         return null;
     }
+    public boolean hasItem(UUID itemId){
+        for(CartItem cartItem : items){
+            if (cartItem.getItem().getId().equals(itemId))
+                return true;
+        }
+        return false;
+    }
 }

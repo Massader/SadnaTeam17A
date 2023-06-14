@@ -102,7 +102,7 @@ public class SearchController {
             items = items.stream().filter(item -> item.getRating() >= itemRating).toList();
         }
         if(storeRating != null){
-            items = items.stream().filter(item -> storeController.getStore(item.getStoreId()).getRating() >= storeRating).toList();
+            items = items.stream().filter(item -> storeController.getStore(item.getStore().getStoreId()).getRating() >= storeRating).toList();
         }
         if (number != null && page != null){
             int start = (page - 1) * number;
