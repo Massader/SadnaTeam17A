@@ -1,5 +1,6 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import DomainLayer.Market.Users.ShoppingCart;
 import ServiceLayer.ServiceObjects.*;
 
 import java.util.List;

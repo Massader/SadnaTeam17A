@@ -6,20 +6,28 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 
 import java.util.UUID;
-@MappedSuperclass
+
+@Entity
+//@MappedSuperclass
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "client_credentials", nullable = false, unique = true)
     private UUID clientCredentials;
 
-    @OneToOne  (fetch = FetchType.EAGER, cascade = CascadeType.ALL)// cascade
+//    @OneToOne  (fetch = FetchType.EAGER, cascade = CascadeType.ALL)// cascade
 //@JoinColumn(name = "shopping_cart_id")
+//    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "client_id")
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "cart_id")
     private ShoppingCart cart;
 
     public Client(UUID id){
         this.clientCredentials = id;
-        cart = new ShoppingCart(id);
+//        cart = new ShoppingCart(id);
 
     }
 

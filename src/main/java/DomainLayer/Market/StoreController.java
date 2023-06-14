@@ -68,14 +68,14 @@ public class StoreController {
     public Response<List<Store>> getStoresPage(int number, int page) {
         try {
             if (number <= 0) return Response.getFailResponse("Number of stores per page can't be lower than 1.");
-//            List<Store> stores = getStores();
-//            if (storeMap == null || storeMap.size() == 0) return Response.getSuccessResponse(new ArrayList<Store>());
-//            List<Store> stores = new ArrayList<>(storeMap.values().stream().filter(store -> !store.isClosed() && !store.isShutdown()).toList());
-//            if (page == 0 || page > (stores.size() / number) + 1) {
-//                return Response.getFailResponse("Page number can't be 0 or larger than available stores.");
-//            }
-            List<Store> stores = storeDalController.getStoresPage(number, page);
-            return Response.getSuccessResponse(stores);
+            List<Store> stores = new ArrayList<>(storeDalController.getAllStores().stream().filter(store -> !store.isClosed() && !store.isShutdown()).toList());
+            if (stores.isEmpty()) return Response.getSuccessResponse(new ArrayList<Store>());
+            if (page == 0 || page > (stores.size() / number) + 1) {
+                return Response.getFailResponse("Page number can't be 0 or larger than available stores.");
+            }
+            int start = (page - 1) * number;
+            int end = Math.min(start + number, stores.size());
+            return Response.getSuccessResponse(stores.subList(start, end));
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }
@@ -396,7 +396,9 @@ public class StoreController {
     public Response<Double> addStoreRating(UUID storeId, int rating) {
         try {
             Store store = getStore(storeId);
-            return Response.getSuccessResponse(store.addRating(rating));
+            double d  = store.addRating(rating);
+            storeDalController.saveStore(store);
+            return Response.getSuccessResponse(d);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }
@@ -417,6 +419,7 @@ public class StoreController {
                         return Response.getFailResponse("Item has already been rated by user.");
                     item.addRating(rating);
                     purchase.setRated(true);
+                    storeDalController.saveItem(item);
                     return Response.getSuccessResponse(true);
                 }
             }
@@ -678,11 +681,7 @@ public class StoreController {
         try {
             List<Item> output = new ArrayList<>();
             if (storeId == null) {
-                List<Item> allItems = new ArrayList<>();
-                for (Store store : getStores()) {
-                    if (!store.isClosed() && !store.isShutdown())
-                        allItems.addAll(store.getItems());
-                }
+                List<Item> allItems = repositoryFactory.itemRepository.findAll();
                 int start = (page - 1) * number;
                 int end = Math.min(start + number, allItems.size());
                 output.addAll(allItems.subList(start, end));
@@ -692,7 +691,7 @@ public class StoreController {
                     return Response.getFailResponse("Store does not exist");
                 if (store.isClosed())
                     return Response.getFailResponse("Store is temporarily closed.");
-                List<Item> allItems = new ArrayList<>(store.getItems());
+                List<Item> allItems = repositoryFactory.itemRepository.findAllByStore(storeId);
                 int start = (page - 1) * number;
                 int end = Math.min(start + number, allItems.size());
                 output.addAll(allItems.subList(start, end));

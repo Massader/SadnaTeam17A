@@ -27,7 +27,7 @@ public class ShoppingBasketPurchaseRule implements PurchaseRule {
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity, Boolean atLeast) {
             int price = 0;
             Collection<Item> storeItems = store.getItems();
-            ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
+            Map<UUID,Integer> items = shoppingBasket.getItems();
             for (UUID itemID : items.keySet()) {
                 if(store.hasItem(itemID)){
                  price+=store.getItem(itemID).getPrice()*items.get(itemID);}

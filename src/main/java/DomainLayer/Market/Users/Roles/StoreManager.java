@@ -2,6 +2,7 @@ package DomainLayer.Market.Users.Roles;
 
 import DomainLayer.Market.Stores.Store;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.UUID;
 @Table(name = "store_managers")
 public class StoreManager extends Role {
     @ElementCollection(fetch = FetchType.EAGER)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Enumerated(EnumType.STRING)
     private List<StorePermissions> permissionsList;
     public StoreManager(Store store) {

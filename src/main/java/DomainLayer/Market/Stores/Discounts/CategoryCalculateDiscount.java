@@ -49,7 +49,7 @@ public class CategoryCalculateDiscount implements CalculateDiscount {
     //    ConcurrentLinkedQueue<Double> DiscountOption= new ConcurrentLinkedQueue<>();
         double categoryDiscount = 0.0;
         Collection<Item> storeItems = store.getItems();
-        ConcurrentHashMap<UUID, Integer> items = shoppingBasket.getItems();
+        Map<UUID, Integer> items = shoppingBasket.getItems();
         for (UUID itemId : items.keySet()) {
             Item item = store.getItem(itemId);
             if (item != null && item.containsCategory(category.getCategoryName())) {

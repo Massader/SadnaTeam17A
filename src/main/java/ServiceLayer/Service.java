@@ -153,8 +153,17 @@ public class Service {
             permissionsByFounder.add(3);
             Response<Boolean> as = appointStoreManager(founderId, userId, storeId);
             Response<Boolean> setManagerPermissionsResponse = setManagerPermissions(clientCredentials, userId, storeId, permissionsByFounder);
+            Response<List<ServiceUser>> getStoreStaffResponse = getStoreStaff(founderId, storeId);
 
+            Store store = storeController.getStore(storeId);
+            Role role = store.getRoleByUserId(userId);
+            Response<Boolean> removeStoreRoleResponse = removeStoreRole(founderId, userId,  storeId);
 
+            Response<Boolean> setItemQuantityResponse = setItemQuantity(founderId, storeId, itemId, 20);
+            Response<Boolean> setItemNameResponse = setItemName(founderId, storeId, itemId, "item name Changed");
+            Response<Boolean> setItemDescriptionResponse=  setItemDescription(founderId, storeId, itemId, "description changed");
+            Response<Boolean> setItemPriceResponse = setItemPrice(founderId, storeId, itemId, 12321);
+            Response<Boolean> addItemToCartResponse = addItemToCart(clientCredentials, itemId, 3, storeId);
 
 
 

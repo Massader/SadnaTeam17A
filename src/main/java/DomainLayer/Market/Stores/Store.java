@@ -256,13 +256,18 @@ public class Store {
     }
      */
 
-    public void removeRole(UUID userId) {
+    public Role removeRole(UUID userId, User user) {
+        Role ret = null;
         for (Role role : roles) {
             if (role.getUser().getId().equals(userId)) {
+                ret = role;
+                role.setPermissions(new ArrayList<>());
                 roles.remove(role);
-                return;
+                break;
             }
         }
+        user.removeStoreRole(storeId);
+        return ret;
     }
 
     public boolean isClosed() {
@@ -328,7 +333,7 @@ public class Store {
         return sales;
     }
 
-    public double calculatePriceOfBasket(ConcurrentHashMap<UUID, Integer> items) { // Map of Item ID -> Quantity
+    public double calculatePriceOfBasket(Map<UUID, Integer> items) { // Map of Item ID -> Quantity
         double price = 0;
         for (UUID key : items.keySet()) {
             int quantity = items.get(key);
@@ -361,7 +366,7 @@ public class Store {
     }
 
     public ConcurrentLinkedQueue<Item> getUnavailableItems(ShoppingBasket shoppingBasket){
-        ConcurrentHashMap<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
+        Map<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
         ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
         synchronized (items) {
             for (UUID itemId : shoppingBasketItems.keySet()) {
@@ -375,7 +380,7 @@ public class Store {
     }
 
     public User purchaseBasket(Client client, ShoppingBasket shoppingBasket) throws Exception {
-        ConcurrentHashMap<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
+        Map<UUID, Integer> shoppingBasketItems = shoppingBasket.getItems();
         synchronized (items) {
             for (UUID itemId : shoppingBasketItems.keySet()) {
                 int quantityToRemove = shoppingBasketItems.get(itemId);

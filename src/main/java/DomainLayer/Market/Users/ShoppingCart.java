@@ -14,15 +14,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class ShoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "uuid", nullable = false)
-    private Long uuid;
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-//    @OneToOne(mappedBy = "cart")
-    @Column(name = "userId")
-    private UUID userId;
-
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Map<UUID,ShoppingBasket> shoppingBasketsMap;// store id,
+    @OneToOne(mappedBy = "cart")
+    private Client client;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<ShoppingBasket> shoppingBaskets;
@@ -31,8 +27,9 @@ public class ShoppingCart {
        // this.shoppingBasketsMap = new ConcurrentHashMap<>();
         this.shoppingBaskets = new ConcurrentLinkedQueue<>();
     }
-    public ShoppingCart(UUID userId){
-        this.userId = userId;
+
+    public ShoppingCart(Client client){
+        this.client = client;
        // this.shoppingBasketsMap = new ConcurrentHashMap<>();
         this.shoppingBaskets = new ConcurrentLinkedQueue<>();
     }
@@ -46,14 +43,16 @@ public class ShoppingCart {
         return shoppingBaskets;
     }
 
-    public UUID getId() {
-        return userId;
+    public Long getId() {
+        return id;
     }
 
-    public void setId(UUID id) {
-        this.userId = id;
+    public void setId(Long id) {
+        this.id= id;
     }
-
+    public void setClient(Client client) {
+        this.client = client;
+    }
     /*
     public Boolean addItemToCart(Item item, UUID storeId, int quantity) {
         if (!shoppingBasketsMap.containsKey(storeId))

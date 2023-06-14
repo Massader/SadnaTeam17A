@@ -35,12 +35,6 @@ public class StoreDalController{
         return singleton;
     }
 
-//    public void init(RepositoryFactory repositoryFactory) {
-//        this.repositoryFactory = repositoryFactory;
-//        this.storeRepository = repositoryFactory.storeRepository;
-//        this.itemRepository = repositoryFactory.itemRepository;
-//    }
-
 //store
     public UUID saveStore(Store store){
         storeRepository.save(store);
