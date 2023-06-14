@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name = "store_reviews")
+@Table(name = "Market_Stores_StoreReview")
 public class StoreReview {
 
     @Id

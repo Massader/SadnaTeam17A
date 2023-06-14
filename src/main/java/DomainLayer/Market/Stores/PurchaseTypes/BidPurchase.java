@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Entity
-@Table(name = "bid_purchases")
+@Table(name = "Market_Stores_PurchaseTypes_BidPurchase")
 public class BidPurchase extends PurchaseType {
 
     /*

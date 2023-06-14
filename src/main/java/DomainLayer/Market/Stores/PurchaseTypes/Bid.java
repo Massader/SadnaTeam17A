@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Bids")
+@Table(name = "Market_Stores_PurchaseTypes_Bid")
 public class Bid {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "BidId", nullable = false, unique = true)
     private UUID bidderId;
     private UUID storeId;
