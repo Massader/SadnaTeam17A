@@ -5,19 +5,35 @@ package DomainLayer.Market.Stores.PurchaseRule;
 import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class PurchaseTerm {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
+    private Long id;
+    @Transient
     PurchaseRule purchaseRule;
 
     public PurchaseTerm(PurchaseRule purchaseRule) {
         this.purchaseRule = purchaseRule;
     }
 
+    public PurchaseTerm() {
+
+    }
+
     public PurchaseRule getPurchaseRule() {
         return purchaseRule;
+    }
+
+    public void setPurchaseRule(PurchaseRule purchaseRule) {
+        this.purchaseRule = purchaseRule;
     }
 
     public abstract Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store) ;
