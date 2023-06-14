@@ -3,7 +3,16 @@ import { useContext, useEffect, useState } from "react";
 import { ClientCredentialsContext } from "../App";
 import { Basket, Item } from "../types";
 import StoreBasket from "./StoreBasket";
-import { Button, Flex, Heading, Input, Stack, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Heading,
+  Input,
+  Select,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
+import { countries } from "../countries";
 
 const MyCart = () => {
   const pages = ["myCart", "buyCart"];
@@ -15,7 +24,16 @@ const MyCart = () => {
   const [cartPurchased, setCartPurchased] = useState(false);
 
   const [address, setAddress] = useState("");
-  const [credit, setCredit] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+  const [zip, setZip] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
+  const [holder, setHolder] = useState("");
+  const [cvv, setCvv] = useState("");
+  const [idCard, setIdCard] = useState("");
+
   const [errorMsg, setErrorMsg] = useState(false);
   const [message, setMessage] = useState("");
   const [errorMsgPrice, setErrorMsgPrice] = useState(false);
@@ -55,7 +73,15 @@ const MyCart = () => {
         clientCredentials: clientCredentials,
         expectedPrice: cartPrice,
         address: address,
-        credit: credit,
+        cardNumber: cardNumber,
+        month: month,
+        year: year,
+        cvv: cvv,
+        holder: holder,
+        zip: zip,
+        idCard: idCard,
+        city: city,
+        country: country,
       }
     );
     if (!response.data.error) {
@@ -131,9 +157,70 @@ const MyCart = () => {
                 />
                 <Input
                   bg="white"
-                  placeholder="Credit"
-                  value={credit}
-                  onChange={(credit) => setCredit(credit.target.value)}
+                  placeholder="ZIP"
+                  value={zip}
+                  type="number"
+                  onChange={(zip) => setZip(zip.target.value)}
+                />
+                <Input
+                  bg="white"
+                  placeholder="City"
+                  value={city}
+                  onChange={(city) => setCity(city.target.value)}
+                />
+                <Select
+                  bg="white"
+                  placeholder="Select Country"
+                  value={country}
+                  onChange={(event) => setCountry(event.target.value)}
+                >
+                  {countries.map((countryName) => (
+                    <option key={countryName} value={countryName}>
+                      {countryName}
+                    </option>
+                  ))}
+                </Select>
+                <Input
+                  bg="white"
+                  placeholder="Card Number"
+                  value={cardNumber}
+                  type="number"
+                  onChange={(cardNumber) =>
+                    setCardNumber(cardNumber.target.value)
+                  }
+                />
+                <Flex>
+                  <Input
+                    bg="white"
+                    placeholder="Select Date and Time"
+                    type="month"
+                    onChange={(event) => {
+                      const { value } = event.target;
+                      const [year, month] = value.split("-");
+                      setYear(year);
+                      setMonth(month);
+                    }}
+                  />
+                  <Input
+                    bg="white"
+                    placeholder="CVV"
+                    value={cvv}
+                    type="number"
+                    onChange={(cvv) => setCvv(cvv.target.value)}
+                  />
+                </Flex>
+                <Input
+                  bg="white"
+                  placeholder="Holder Name"
+                  value={holder}
+                  onChange={(holder) => setHolder(holder.target.value)}
+                />
+                <Input
+                  bg="white"
+                  placeholder="ID"
+                  value={idCard}
+                  type="number"
+                  onChange={(idCard) => setIdCard(idCard.target.value)}
                 />
                 <Button colorScheme="blue" size="lg" onClick={purchaseCart}>
                   Buy Cart
