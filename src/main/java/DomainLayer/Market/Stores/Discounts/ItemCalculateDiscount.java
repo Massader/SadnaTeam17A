@@ -42,12 +42,11 @@ public class ItemCalculateDiscount implements CalculateDiscount {
             return 0.0;
         double discount = 0;
 
-        Map<UUID, CartItem> items = shoppingBasket.getItems();
-        if (items.containsKey(getItemId())) {
-            int quantity = items.get(itemId).getQuantity();
-            discount = items.get(getItemId()).getPrice() * quantity * discountPercentage;
+        Collection<CartItem> items = shoppingBasket.getItems();
+        if (items.stream().anyMatch(item -> item.getItemId().equals(itemId))) {
+            int quantity = shoppingBasket.getCartItem(itemId).getQuantity();
+            discount = shoppingBasket.getCartItem(itemId).getPrice() * quantity * discountPercentage;
         }
         return discount;
     }
-
 }

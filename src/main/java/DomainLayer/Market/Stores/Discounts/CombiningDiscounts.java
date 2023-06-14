@@ -39,7 +39,7 @@ public class CombiningDiscounts extends NumericalAssemblyOfDiscount {
     @Override
     public double calculateItemDiscount(ShoppingBasket shoppingBasket, Store store, UUID itemId) {
         double itemDiscount = 0;
-        CartItem cartItem = shoppingBasket.getItems().get(itemId);
+        CartItem cartItem = shoppingBasket.getCartItem(itemId);
         Item item = cartItem.getItem();
         for (Discount discount: discounts) {
             if (discount.getPurchaseTerm() == null || discount.getPurchaseTerm().purchaseRuleOccurs(shoppingBasket, store)) {

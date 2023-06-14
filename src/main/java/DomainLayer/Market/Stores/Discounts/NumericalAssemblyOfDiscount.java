@@ -18,7 +18,7 @@ public abstract class NumericalAssemblyOfDiscount {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "numerical_assembly_of_discount_id")
-    private Collection<Discount> discounts;
+    protected Collection<Discount> discounts;
 
     public NumericalAssemblyOfDiscount(Collection<Discount> discounts) {
         this.discounts = discounts;

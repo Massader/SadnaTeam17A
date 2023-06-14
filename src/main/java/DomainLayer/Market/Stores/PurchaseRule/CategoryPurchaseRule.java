@@ -44,8 +44,8 @@ public class CategoryPurchaseRule implements PurchaseRule {
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity, Boolean atLeast) {
         int categoryQuantity = 0;
-        Map<UUID, CartItem> items = shoppingBasket.getItems();
-        for (CartItem cartItem : items.values()) {
+        Collection<CartItem> items = shoppingBasket.getItems();
+        for (CartItem cartItem : items) {
             if (cartItem!=null&&cartItem.getItem().containsCategory(category.getCategoryName())) {
                 categoryQuantity += cartItem.getQuantity();
             }

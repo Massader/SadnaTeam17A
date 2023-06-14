@@ -27,11 +27,11 @@ public class ShoppingBasketPurchaseRule implements PurchaseRule {
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store, int quantity, Boolean atLeast) {
             int price = 0;
-            Map<UUID, Item> storeItems = store.getItems();
-            Map<UUID, CartItem> items = shoppingBasket.getItems();
-            for (CartItem cartItem : items.values()) {
-                if(storeItems.containsKey(cartItem.getItemId())){
-                    price+= cartItem.getPrice() * cartItem.getQuantity();
+            Collection<Item> storeItems = store.getItems();
+            Collection<CartItem> cartItems = shoppingBasket.getItems();
+            for (CartItem cartItem : cartItems) {
+                if (storeItems.stream().anyMatch(item -> item.getId().equals(cartItem.getItemId()))) {
+                    price += cartItem.getPrice() * cartItem.getQuantity();
                 }
             }
             boolean moreThenQuantity = price >= quantity;
@@ -40,8 +40,8 @@ public class ShoppingBasketPurchaseRule implements PurchaseRule {
 
     public boolean equals(Object obj) {
         // Use default instanceof
-            if(obj instanceof ShoppingBasketPurchaseRule)
-                return true;
-            return false;
-        }
+        if(obj instanceof ShoppingBasketPurchaseRule)
+            return true;
+        return false;
+    }
 }
