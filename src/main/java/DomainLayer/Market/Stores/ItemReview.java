@@ -6,7 +6,7 @@ import java.util.Date;
 import java.time.Instant;
 import java.util.UUID;
 @Entity
-@Table(name = "Market_Stores_ItemReview")
+@Table(name = "Stores_ItemReview")
 public class ItemReview {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

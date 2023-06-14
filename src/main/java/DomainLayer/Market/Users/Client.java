@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.web.WebProperties;
 import java.util.UUID;
 
 @Entity
-//@MappedSuperclass
+@Table(name = "Users_Client")
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

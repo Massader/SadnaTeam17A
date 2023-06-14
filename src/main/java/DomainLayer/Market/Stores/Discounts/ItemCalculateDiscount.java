@@ -12,7 +12,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Entity
-@Table(name = "Market_Stores_Discounts_ItemCalculateDiscount")
+@Table(name = "Discounts_ItemCalculateDiscount")
 public class ItemCalculateDiscount implements CalculateDiscount {
 
     @Id

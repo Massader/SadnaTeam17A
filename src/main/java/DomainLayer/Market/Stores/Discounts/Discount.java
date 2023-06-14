@@ -13,7 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Entity
-@Table(name = "Market_Stores_Discounts_Discount")
+@Table(name = "Discounts_Discount")
 public class Discount {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

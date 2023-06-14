@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Market_Stores_PurchaseTypes_LotteryPurchase")
+@Table(name = "PurchaseTypes_LotteryPurchase")
 public class LotteryPurchase extends PurchaseType {
 
     public LotteryPurchase(String purchaseType) {

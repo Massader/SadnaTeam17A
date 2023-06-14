@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "CartItems")
+@Table(name = "Users_CartItem")
 public class CartItem {
 
 

@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 @Entity
-@Table(name = "store_owners")
+@Table(name = "Roles_StoreOwner")
 public class StoreOwner extends Role {
 
     @ElementCollection(fetch = FetchType.EAGER)

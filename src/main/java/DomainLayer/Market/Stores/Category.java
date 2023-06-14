@@ -4,7 +4,7 @@ import java.util.Objects;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Market_Stores_Category")
+@Table(name = "Stores_Category")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

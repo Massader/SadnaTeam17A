@@ -9,7 +9,7 @@ import jakarta.persistence.Transient;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Entity
-@Table(name = "Market_Stores_PurchaseRule_ConditionalPurchaseTerm")
+@Table(name = "PurchaseRule_ConditionalPurchaseTerm")
 public class ConditionalPurchaseTerm extends PurchaseTerm {
 
     @Transient

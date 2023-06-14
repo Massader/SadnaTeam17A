@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Entity
-@Table(name = "Market_Stores_PurchaseRule_CompositePurchaseTermXor")
+@Table(name = "PurchaseRule_CompositePurchaseTermXor")
 public class CompositePurchaseTermXor extends CompositePurchaseTerm {
 
     public CompositePurchaseTermXor(PurchaseRule purchaseRule, ConcurrentLinkedQueue<PurchaseTerm> purchaseTerm) {

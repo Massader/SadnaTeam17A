@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Entity
-@Table(name = "Market_Stores_PurchaseRule_CategoryPurchaseRule")
+@Table(name = "PurchaseRule_CategoryPurchaseRule")
 public class CategoryPurchaseRule implements PurchaseRule {
 
     @Id

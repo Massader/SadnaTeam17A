@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 @Entity
-@Table(name = "store_founders")
+@Table(name = "Roles_StoreFounder")
 public class StoreFounder extends StoreOwner {
 
     public StoreFounder(Store store){

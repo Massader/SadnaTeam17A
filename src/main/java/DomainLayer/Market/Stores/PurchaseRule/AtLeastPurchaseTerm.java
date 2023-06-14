@@ -11,7 +11,7 @@ import jakarta.persistence.Transient;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Market_Stores_PurchaseRule_AtLeastPurchaseTerm")
+@Table(name = "PurchaseRule_AtLeastPurchaseTerms")
 public class AtLeastPurchaseTerm extends PurchaseTerm {
 
     @Transient

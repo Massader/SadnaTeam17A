@@ -5,7 +5,7 @@ import DomainLayer.Market.Users.ShoppingBasket;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Market_Stores_Discounts_ShoppingBasketCalculateDiscount")
+@Table(name = "Discounts_ShoppingBasketCalculateDiscount")
 public class ShoppingBasketCalculateDiscount implements CalculateDiscount {
 
     @Id

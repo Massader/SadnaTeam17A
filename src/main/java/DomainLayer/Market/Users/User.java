@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "Users_User")
 public class User extends Client{
 
     @Column(unique = true)

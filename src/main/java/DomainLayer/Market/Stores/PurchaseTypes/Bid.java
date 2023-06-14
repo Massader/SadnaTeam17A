@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Market_Stores_PurchaseTypes_Bid")
+@Table(name = "PurchaseTypes_Bid")
 public class Bid {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

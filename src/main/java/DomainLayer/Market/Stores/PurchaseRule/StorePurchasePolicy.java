@@ -9,7 +9,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Entity
-@Table(name = "Market_Stores_PurchaseRule_StorePurchasePolicy")
+@Table(name = "PurchaseRule_StorePurchasePolicy")
 public class StorePurchasePolicy {
     /**
      * managePurchasePolicies is a class that manages the purchase policies of a shop.

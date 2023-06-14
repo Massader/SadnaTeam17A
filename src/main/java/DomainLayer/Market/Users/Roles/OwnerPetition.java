@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name = "owner_petitions")
+@Table(name = "Roles_OwnerPetition")
 public class OwnerPetition {
 
     @Id

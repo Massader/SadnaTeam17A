@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Entity
-@Table(name = "ShoppingCarts")
+@Table(name = "Users_ShoppingCart")
 public class ShoppingCart {
 
     @Id

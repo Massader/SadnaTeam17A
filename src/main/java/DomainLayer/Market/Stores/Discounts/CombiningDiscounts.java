@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Entity
-@Table(name = "Market_Stores_Discounts_CombiningDiscounts")
+@Table(name = "Discounts_CombiningDiscounts")
 public class CombiningDiscounts extends NumericalAssemblyOfDiscount {
 
     public CombiningDiscounts(Collection<Discount> discounts) {

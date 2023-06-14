@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Market_Stores_Discounts_StoreDiscounts")
+@Table(name = "Discounts_StoreDiscount")
 public class StoreDiscount {
     /**
      * ManageDiscount is a class that manages the discounts of a shop.
