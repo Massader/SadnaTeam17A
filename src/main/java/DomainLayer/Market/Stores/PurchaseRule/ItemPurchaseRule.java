@@ -2,9 +2,7 @@ package DomainLayer.Market.Stores.PurchaseRule;
 
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 
 import java.util.Map;
 import java.util.Objects;
@@ -14,6 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Entity
 @Table(name = "Market_Stores_PurchaseRule_ItemPurchaseRule")
 public class ItemPurchaseRule implements PurchaseRule {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
+    private Long id;
 
     @Transient
     UUID itemId;
