@@ -18,13 +18,20 @@ export interface Item {
   description: string;
   categories: Category[];
   purchaseType: string;
+
 }
 
 export interface CartItemType {
   item: Item;
   quantity: number;
   price: number;
+
 }
+
+// export interface PurchaseType {
+//   DIRECT_PURCHASE: string;
+//   BID_PURCHASE: string;
+// }
 
 export interface PurchasedItemType {
   date: Date;
@@ -150,6 +157,7 @@ export interface OwnerPetitionsType {
   storeId: string;
 }
 
+
 export interface Bid {
   accepted: boolean;
   bidderId: string;
@@ -159,3 +167,4 @@ export interface Bid {
   quantity: number;
   storeId: string;
 }
+

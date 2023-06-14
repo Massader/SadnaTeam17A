@@ -141,6 +141,7 @@ const ItemCard = ({ item }: Props) => {
       <CardFooter>
         <Stack width="100%">
           {item.purchaseType === "DIRECT" && (
+
             <Button
               onClick={() => handleAddToCart()}
               variant="solid"

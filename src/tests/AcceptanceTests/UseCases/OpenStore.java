@@ -39,9 +39,9 @@ public class OpenStore extends ProjectTest {
     @Test
     //tests if the createStore function works correctly by registering a founder, logging in, creating a store with valid credentials, and asserting that the returned store object is not null
     public void openStoreSuccess() {
-        Response<Integer> stores0 = bridge.numOfStores();
+        Response<Long> stores0 = bridge.numOfStores();
         Response<ServiceStore> open = bridge.createStore(storeFounderId, "store", "desc");
-        Response<Integer> stores1 = bridge.numOfStores();
+        Response<Long> stores1 = bridge.numOfStores();
 
         assertFalse(stores0.isError(), String.format("bridge.numOfStores() => %s", stores0.getMessage()));
         assertFalse(open.isError(), String.format("bridge.createStore(storeFounderId, \"store\", \"desc\") => %s", open.getMessage()));
@@ -54,11 +54,11 @@ public class OpenStore extends ProjectTest {
     @Test
     //tests if the createStore function handles the scenario where the founder is not logged in by attempting to create a store with invalid credentials and asserting that the returned store object is null.
     public void openStoreLoggedOutUserFail() {
-        Response<Integer> stores0 = bridge.numOfStores();
+        Response<Long> stores0 = bridge.numOfStores();
         Response<UUID> logout = bridge.logout(storeFounderId);
         Response<ServiceStore> open = bridge.createStore(storeFounderId, "store", "desc");
         Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
-        Response<Integer> stores1 = bridge.numOfStores();
+        Response<Long> stores1 = bridge.numOfStores();
 
         assertFalse(stores0.isError(), String.format("bridge.numOfStores() => %s", stores0.getMessage()));
         assertFalse(logout.isError(), String.format("bridge.logout(storeFounderId) => %s", logout.getMessage()));
@@ -72,9 +72,9 @@ public class OpenStore extends ProjectTest {
     @Test
     //tests if the createStore function handles the scenario where the founder is not logged in by attempting to create a store with invalid credentials and asserting that the returned store object is null.
     public void openStoreNotRegisteredUserFail() {
-        Response<Integer> stores0 = bridge.numOfStores();
+        Response<Long> stores0 = bridge.numOfStores();
         Response<ServiceStore> open = bridge.createStore(bridge.createClient().getValue(), "store", "desc");
-        Response<Integer> stores1 = bridge.numOfStores();
+        Response<Long> stores1 = bridge.numOfStores();
 
         assertFalse(stores0.isError(), String.format("bridge.numOfStores() => %s", stores0.getMessage()));
         assertTrue(open.isError(), "bridge.createStore(bridge.createClient().getValue(), \"store\", \"desc\") should have failed");

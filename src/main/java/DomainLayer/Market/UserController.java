@@ -4,6 +4,11 @@ package DomainLayer.Market;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import DataAccessLayer.PurchaseRepository;
+import DataAccessLayer.RepositoryFactory;
+import DataAccessLayer.controllers.PurchaseDalController;
+import DataAccessLayer.controllers.StoreDalController;
+import DataAccessLayer.controllers.UserDalController;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Stores.PurchaseTypes.BidPurchase;
@@ -14,30 +19,22 @@ import DomainLayer.Security.SecurityController;
 import ServiceLayer.Response;
 import DomainLayer.Market.Users.Roles.*;
 
+
 public class UserController {
 
     private static UserController singleton = null;
-    private ConcurrentHashMap<UUID, User> users;// for registered clients only!
-    private ConcurrentHashMap<String, UUID> usernames;    // for registered clients only!
+//    private ConcurrentHashMap<UUID, User> users;// for registered clients only!
+//    private ConcurrentHashMap<String, UUID> usernames;    // for registered clients only!
     private ConcurrentHashMap<UUID, User> loggedInUsers; // for logged-in users only!
     private SecurityController securityController;
     private ConcurrentHashMap<UUID, Client> clients;  // for non-registered clients only!
     private StoreController storeController;
     private NotificationController notificationController;
-
+    public static RepositoryFactory repositoryFactory;
+    private UserDalController userDalController;
+    private StoreDalController storeDalController;
+    private PurchaseDalController purchaseDalController;
     private UserController() {
-
-    }
-
-    public void init() {
-        users = new ConcurrentHashMap<>();
-        usernames = new ConcurrentHashMap<>();
-        loggedInUsers = new ConcurrentHashMap<>();
-        securityController = SecurityController.getInstance();
-        clients = new ConcurrentHashMap<>();
-        storeController = StoreController.getInstance();
-        notificationController = NotificationController.getInstance();
-        registerDefaultAdmin();
     }
 
     public static synchronized UserController getInstance() {
@@ -47,9 +44,27 @@ public class UserController {
         return singleton;
     }
 
-    public Response<Boolean> setAsFounder(UUID clientCredentials, UUID storeId){
+    public void init(RepositoryFactory repositoryFactory) {
+//        users = new ConcurrentHashMap<>();
+//        usernames = new ConcurrentHashMap<>();
+        this.repositoryFactory = repositoryFactory;
+        userDalController = UserDalController.getInstance(repositoryFactory);
+        loggedInUsers = new ConcurrentHashMap<>();
+        securityController = SecurityController.getInstance();
+        clients = new ConcurrentHashMap<>();
+        storeController = StoreController.getInstance();
+        notificationController = NotificationController.getInstance();
+        storeDalController = StoreDalController.getInstance(repositoryFactory);
+        purchaseDalController = PurchaseDalController.getInstance(repositoryFactory);
+        registerDefaultAdmin();
+    }
+
+    public Response<Boolean> setAsFounder(User user, UUID storeId, Role role){
         try {
-            getUser(clientCredentials).getValue().addStoreRole(new StoreFounder(storeId));
+            user.addStoreRole(role);
+            userDalController.saveUser(user);
+            userDalController.saveRole(role);
+
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception) {
@@ -69,19 +84,22 @@ public class UserController {
 
     public Response<User> login(UUID clientCredentials, String username, String password) {
         try {
-            if (loggedInUsers.contains(username))
-                return Response.getFailResponse("User is already logged in, please log out first.");
-            if (!usernames.containsKey(username) || !users.containsKey(usernames.get(username)))
+            User user = userDalController.getUser(username);
+            if(user == null)
                 return Response.getFailResponse("User is not registered in the system.");
+            if (loggedInUsers.containsKey(user.getId()))
+                return Response.getFailResponse("User is already logged in, please log out first.");
+//            if (!usernames.containsKey(username) || !users.containsKey(usernames.get(username)))
             //validate the password
             Response<Boolean> securityResponse = securityController.validatePassword(getId(username), password);
             if (securityResponse.isError()) return Response.getFailResponse(securityResponse.getMessage());
             if (securityResponse.getValue()) {
                 //transfer the client to the logged in users, and delete it from the non registered clients list
-                User user = users.get(getId(username));
+//                User user = users.get(getId(username));
                 loggedInUsers.put(user.getId(), user);
                 closeClient(clientCredentials);
-                return Response.getSuccessResponse(users.get(usernames.get(username)));
+//                return Response.getSuccessResponse(users.get(usernames.get(username)));
+                return Response.getSuccessResponse(user);
             }
             return Response.getFailResponse("Wrong password.");
         }
@@ -96,12 +114,12 @@ public class UserController {
                 return Response.getFailResponse("No username input.");
             if (password == null || password.length()==0)
                 return Response.getFailResponse("No password input.");
-            synchronized (usernames) {
-                if (usernames.containsKey(username))
-                    return Response.getFailResponse("This username is already in use.");
+//            synchronized (usernames) {
+            if (userDalController.userExists(username))
+                return Response.getFailResponse("This username is already in use.");
                 //add user
-                return loadUser(username, password, UUID.randomUUID());
-            }
+            return loadUser(username, password, UUID.randomUUID());
+//            }
         }
         catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -111,13 +129,12 @@ public class UserController {
     // add a new user to all the data structured
     private Response<Boolean> loadUser(String username, String password, UUID id) {
         try {
-            User user = new User(username, id);
-            users.put(id, user);
-            usernames.put(user.getUsername(), id);
-            Response<Boolean> response = securityController.encryptAndSavePassword(id, password);
+            User user = new User(username);
+            user.getCart().setClient(user);
+            userDalController.saveUser(user);
+            Response<Boolean> response = securityController.encryptAndSavePassword(user.getId(), password);
             if (response.isError()) {
-                users.remove(id);
-                usernames.remove(username);
+                userDalController.deleteUser(user);
             }
             return response;
         }
@@ -131,8 +148,13 @@ public class UserController {
         try {
             UUID id = UUID.randomUUID();
             Client client = new Client(id);
-            clients.put(id, client);
-            return Response.getSuccessResponse(id);
+            ShoppingCart shoppingCart = new ShoppingCart(client);
+            client.setCart(shoppingCart);
+//            ClientRepository clientRepository = repositoryFactory.getClientRepository();
+//            clientRepository.save(client);
+            clients.put(client.getId(), client);
+//            System.out.println(client.getId());
+            return Response.getSuccessResponse(client.getId());
         }
         catch(Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -156,16 +178,15 @@ public class UserController {
     }
 
     public void deleteShoppingCart(ShoppingCart shoppingCart){
-        for(ShoppingBasket shoppingBasket : shoppingCart.getShoppingBaskets().values())
+        for(ShoppingBasket shoppingBasket : shoppingCart.getShoppingBaskets())
             deleteShoppingBasket(shoppingBasket);
     }
-
 
     private void deleteShoppingBasket(ShoppingBasket shoppingBasket){
         UUID storeId = shoppingBasket.getStoreId();
         Store store = storeController.getStore(storeId);
         for(UUID itemId : shoppingBasket.getItems().keySet()){
-            store.getItem(itemId).addQuantity(shoppingBasket.getItems().get(itemId).getQuantity());
+            storeDalController.getItem(itemId).addQuantity(shoppingBasket.getItems().get(itemId));
         }
         shoppingBasket.getItems().clear();
     }
@@ -193,6 +214,7 @@ public class UserController {
                 }
                 else if (item.getPurchaseType().getType().equals(PurchaseType.DIRECT_PURCHASE) &&
                         shoppingCart.addItemToCart(new CartItem(item, quantity, item.getPrice()), storeId, quantity)) {
+                    purchaseDalController.saveCart(shoppingCart);
                     return Response.getSuccessResponse(true);
                 } else {
                     return Response.getFailResponse("Cannot add item to cart");
@@ -213,8 +235,10 @@ public class UserController {
                 return Response.getFailResponse(itemResponse.getMessage());
             synchronized (itemResponse.getValue()) {
                 ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
-                if (shoppingCart.removeItemFromCart(itemId, storeId, quantity))
+                if (shoppingCart.removeItemFromCart(itemId, storeId, quantity)) {
+                    purchaseDalController.saveCart(shoppingCart);
                     return Response.getSuccessResponse(true);
+                }
                 else
                     return Response.getFailResponse("Cannot remove item quantity from cart.");
             }
@@ -226,7 +250,8 @@ public class UserController {
 
     public Response<List<Purchase>> getPurchaseHistory(UUID clientCredentials, UUID userId) {
         try {
-            if (!users.containsKey(userId))
+//            if (!users.containsKey(userId))
+            if (!userDalController.userExists(clientCredentials))
                 return Response.getFailResponse("this user ID does not exist");
             if (clientCredentials!=userId)
                 return Response.getFailResponse("Cannot view purchase history of other users.");
@@ -248,7 +273,7 @@ public class UserController {
                 return Response.getFailResponse(response2.getMessage());
             if (!loggedInUsers.containsKey(clientCredentials))
                 return Response.getFailResponse("Appointing user is not logged in.");
-            if(storeController.getStore(storeId).getRolesMap().containsKey(appointee) &&
+            if(storeController.getStore(storeId).hasRole(appointee) &&
                     storeController.getStore(storeId).checkPermission(appointee, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("User already owner of the shop.");
             User user = response2.getValue();
@@ -257,25 +282,26 @@ public class UserController {
             Store store = storeController.getStore(storeId);
             List<OwnerPetition> petitions = store.getOwnerPetitions().stream()
                     .filter(element -> element.getAppointeeId().equals(user.getId()) &&
-                                       element.getStoreId().equals(storeId))
+                            element.getStoreId().equals(storeId))
                     .toList();
             OwnerPetition petition;
             if (petitions.isEmpty()) {
                 petition = new OwnerPetition(user.getId(), clientCredentials, storeId);
                 store.getOwnerPetitions().add(petition);
+                storeDalController.saveStore(store);
             }
             else {
                 petition = petitions.get(0);
                 petition.approveAppointment(clientCredentials);
             }
             if (petition.getOwnersList().containsAll(storeController.getStore(storeId).getStoreOwners())) {
-                StoreOwner storeOwner = new StoreOwner(storeId);
-                user.addStoreRole(storeOwner);
-                store.addRole(appointee, storeOwner);
+                StoreOwner storeOwner = new StoreOwner(store);
+                store.addRole(getUserById(appointee), storeOwner);
                 store.getOwner(clientCredentials).addAppointee(appointee);
                 notificationController.sendNotification(appointee,
                         "Your appointment as a store owner for " + store.getName() + " has been approved by all owners.");
                 store.getOwnerPetitions().remove(petition);
+                storeDalController.saveStore(store);
             }
             return Response.getSuccessResponse(true);
         }
@@ -295,12 +321,17 @@ public class UserController {
                 return Response.getFailResponse("User does not exist.");
             if (!loggedInUsers.containsKey(clientCredentials))
                 return Response.getFailResponse("Appointing user is not logged in.");
-            if(storeController.getStore(storeId).getRolesMap().containsKey(appointee))
+            if(storeController.getStore(storeId).hasRole(appointee))
                 return Response.getFailResponse("User already manager in the shop.");
-            StoreManager storeManager = new StoreManager(storeId);
-            response2.getValue().addStoreRole(storeManager);
-            storeController.getStore(storeId).addRole(appointee, storeManager);
-            storeController.getStore(storeId).getOwner(clientCredentials).addAppointee(appointee);
+            Store store = storeController.getStore(storeId);
+            StoreManager storeManager = new StoreManager(store);
+            User user = response2.getValue();
+//            user.addStoreRole(storeManager);
+            store.addRole(user, storeManager);
+            store.getOwner(clientCredentials).addAppointee(appointee);
+//            userDalController.saveUser(user);
+//            userDalController.saveRole(storeManager);
+            storeDalController.saveStore(store);
             return Response.getSuccessResponse(true);
         }
         catch(Exception exception){
@@ -318,17 +349,21 @@ public class UserController {
             Response<User> response2 = this.getUser(roleToRemove);
             if(response2.isError())
                 return Response.getFailResponse("User does not exist.");
-            if(!store.getRolesMap().containsKey(roleToRemove))
+            if(!store.hasRole(roleToRemove))
                 return Response.getFailResponse("User does not have role in the shop.");
             if(!store.getOwner(clientCredentials).getAppointees().contains(roleToRemove))
                 return Response.getFailResponse("Staff member was not appointed by this owner.");
-            response2.getValue().removeStoreRole(storeId);
+            User user = response2.getValue();
+//            user.removeStoreRole(storeId);
             if (store.getOwner(roleToRemove) != null) {
                 for (UUID appointee : store.getOwner(roleToRemove).getAppointees())
                     removeStoreRole(roleToRemove, appointee, storeId);
             }
-            store.removeRole(roleToRemove);
+            Role role = store.removeRole(roleToRemove, user);
+
             store.getOwner(clientCredentials).removeAppointee(roleToRemove);
+            storeDalController.saveStore(store);
+            repositoryFactory.roleRepository.delete(role);
             notificationController.sendNotification(roleToRemove, "Your role has been removed from "
                     + store.getName());
             return Response.getSuccessResponse(true);
@@ -347,11 +382,22 @@ public class UserController {
                 return Response.getFailResponse("Store does not exist.");
             if(!storeController.getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("User doesn't have permission.");
-            if(!users.containsKey(manager))
+            if (!userDalController.userExists(manager))
                 return Response.getFailResponse("Manager does not exist.");
-            if(!storeController.getStore(storeId).getRolesMap().containsKey(manager))
+//            if(!storeController.getStore(storeId).hasRole(manager))
+
+//            List<Role> roles = userDalController.getRoles(manager);
+            Role role =  storeController.getStore(storeId).getRoleByUserId(manager);
+//            boolean found = false;
+//            for(Role role : roles) {
+//                if (role.getStore().getStoreId().equals(storeId))
+//                    found = true;
+//            }
+//            if(!found)
+            if(role == null)
                 return Response.getFailResponse("User is not store manager.");
-            storeController.getStore(storeId).getRolesMap().get(manager).setPermissions(permissions);
+            role.setPermissions(permissions);
+            userDalController.saveRole(role);
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception){
@@ -361,26 +407,28 @@ public class UserController {
 
     public Response<Boolean> deleteUser(UUID clientCredentials, UUID userId) {
         try {
-            if (!users.containsKey(userId))
-                return Response.getFailResponse("User does not exist.");
-            if(!users.get(clientCredentials).isAdmin())
-                return Response.getFailResponse("Only admins can delete users.");
             if (clientCredentials.equals(userId))
                 return Response.getFailResponse("Admin can't delete himself.");
-            if (userId.equals(usernames.get("admin")))
+            User user1 = userDalController.getUser(clientCredentials);
+            User user2 = userDalController.getUser(userId);
+            if (user2 == null || user1 == null)
+                return Response.getFailResponse("User does not exist.");
+            if(!user1.isAdmin())
+                return Response.getFailResponse("Only admins can delete users.");
+            if (user2.isAdmin())
                 return Response.getFailResponse("Can't delete default admin.");
-            User user = users.get(userId);
-            if (loggedInUsers.containsKey(user.getId()))
+            if (loggedInUsers.containsKey(user2.getId()))
                 logout(userId);
             //remove from both HashMaps
-            user = users.remove(userId);
-            deleteShoppingCart(user.getCart());
-            usernames.remove(user.getUsername());
+//            user = users.remove(userId);
+            userDalController.deleteUser(user2);
+            deleteShoppingCart(user2.getCart());
+//            usernames.remove(user2.getUsername());
             //remove roles
-            for (Role role: user.getRoles()) {
-                removeStoreRole(clientCredentials, userId, role.getStoreId());
+            for (Role role: user2.getRoles()) {
+                removeStoreRole(clientCredentials, userId, role.getStore().getStoreId());
                 if (role.getPermissions().contains(StorePermissions.STORE_FOUNDER))
-                    storeController.shutdownStore(clientCredentials, role.getStoreId());
+                    storeController.shutdownStore(clientCredentials, role.getStore().getStoreId());
             }
             securityController.removePassword(userId);
             return Response.getSuccessResponse(true);
@@ -392,9 +440,9 @@ public class UserController {
 
     public Response<UUID> logout(UUID userId) {
         try {
-            if (!users.containsKey(userId))
+            User user = userDalController.getUser(userId);
+            if (user == null)
                 return Response.getFailResponse("this user ID does not exist");
-            User user = users.get(userId);
             if (!loggedInUsers.containsKey(user.getId()))
                 return Response.getFailResponse("this user is already logged out");
             loggedInUsers.remove(user.getId());
@@ -407,8 +455,8 @@ public class UserController {
 
     public Response<User> getUser(UUID userId) {
         try {
-            User user = users.get(userId);
-            if(user==null)
+            User user = userDalController.getUser(userId);
+            if(user == null)
                 return Response.getFailResponse("User does not exist.");
             return Response.getSuccessResponse(user);
         }
@@ -417,22 +465,23 @@ public class UserController {
         }
     }
 
-    public User getUserById(UUID id) {
-        return users.get(id);
+    public User getUserById(UUID userId) {
+        return userDalController.getUser(userId);
     }
 
     public UUID getId(String userName) {
-        return usernames.get(userName);
+        return userDalController.getUser(userName).getId();
     }
 
     // i made these methods to avoid confusion between clients and users.
     public boolean isRegisteredUser(UUID id){
-        return users.containsKey(id);
+        return userDalController.userExists(id);
     }
     public Response<Boolean> isLoggedInUser(UUID clientCredentials){
         try {
-            User user = users.get(clientCredentials);
-            if (user == null) return Response.getFailResponse("User does not exist.");
+            User user = userDalController.getUser(clientCredentials);
+            if(user == null)
+                return Response.getFailResponse("User does not exist.");
             if (!loggedInUsers.containsKey(user.getId())) return Response.getFailResponse("User is logged-out.");
             return Response.getSuccessResponse(true);
         }
@@ -446,7 +495,7 @@ public class UserController {
     }
     
     public Response<Boolean> isUser(UUID id){
-        if(!users.containsKey(id)){
+        if(!userDalController.userExists(id)){
             return Response.getFailResponse("The client does not have user permission  ");
         }
         return Response.getSuccessResponse(true);
@@ -458,8 +507,9 @@ public class UserController {
 
     // get client in all kind!
     public Client getClientOrUser(UUID id){
-        if (isRegisteredUser(id))
-            return users.get(id);
+        User user = userDalController.getUser(id);
+        if (user != null)
+            return user;
         if (isNonRegisteredClient(id))
             return clients.get(id);
         return null;
@@ -474,23 +524,28 @@ public class UserController {
 
     private void registerDefaultAdmin() {
         try {
-            if (!usernames.containsKey("admin")) {
-                UUID adminCredentials = UUID.randomUUID();
-                usernames.put("admin", adminCredentials);
-                users.put(adminCredentials, new Admin("admin", adminCredentials));
-                securityController.encryptAndSavePassword(adminCredentials, "Admin1");
+            if(!userDalController.userExists("admin")){
+                Admin admin = new Admin("admin");
+                userDalController.saveUser(admin);
+//                users.put(adminCredentials, new Admin("admin", adminCredentials));
+                securityController.encryptAndSavePassword(admin.getId(), "Admin1");
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+
+        }
     }
 
     public Response<Boolean> registerAsAdmin(UUID clientCredentials, String username, String password) {
-        if (!users.containsKey(clientCredentials)) return Response.getFailResponse("Passed client credentials do not correspond to an existing user.");
-        if (usernames.containsKey(username)) return Response.getFailResponse("A user by that username already exists.");
-        if (!users.get(clientCredentials).isAdmin()) return Response.getFailResponse("Only admins can register admins.");
+//        if (!users.containsKey(clientCredentials))
+        if(userDalController.userExists(clientCredentials))
+            return Response.getFailResponse("Passed client credentials do not correspond to an existing user.");
+        if (userDalController.userExists(username)) return Response.getFailResponse("A user by that username already exists.");
+        if (!userDalController.getUser(clientCredentials).isAdmin()) return Response.getFailResponse("Only admins can register admins.");
 
         User newAdmin = new Admin(username, UUID.randomUUID());
-        usernames.put(username, newAdmin.getId());
-        users.put(newAdmin.getId(), newAdmin);
+//        usernames.put(username, newAdmin.getId());
+//        users.put(newAdmin.getId(), newAdmin);
+        userDalController.saveUser(newAdmin);
         return securityController.encryptAndSavePassword(newAdmin.getId(), password);
     }
 
@@ -499,25 +554,40 @@ public class UserController {
     }
 
     // On remove item from store, goes over all the users with the item in their carts and removes it
+    /*
     public void removeItemFromCarts(UUID storeId, Item item) {
         for (Client client : clients.values()) {
-            ConcurrentHashMap<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
+            Map<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBasketsMap();
             if (!baskets.containsKey(storeId)) continue;
             baskets.get(storeId).getItems().remove(item.getId());
         }
-        for (Client client : users.values()) {
-            ConcurrentHashMap<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
+        for (Client client : userDalController.getAllUsers()) {
+            Map<UUID, ShoppingBasket> baskets = client.getCart().getShoppingBasketsMap();
             if (!baskets.containsKey(storeId)) continue;
             baskets.get(storeId).getItems().remove(item.getId());
+        }
+    }
+     */
+
+    public void removeItemFromCarts(UUID storeId, Item item) {
+        for (Client client : clients.values()) {
+            Collection<ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
+            if (baskets.stream().noneMatch(basket -> basket.validateStore(storeId))) continue;
+            client.getCart().getBasketByStoreId(storeId).getItems().remove(item.getId());
+        }
+        for (Client client : userDalController.getAllUsers()) {
+            Collection<ShoppingBasket> baskets = client.getCart().getShoppingBaskets();
+            if (baskets.stream().noneMatch(basket -> basket.validateStore(storeId))) continue;
+            client.getCart().getBasketByStoreId(storeId).getItems().remove(item.getId());
         }
     }
 
 
     public Response<List<User>> getAllLoggedInUsers(UUID clientCredentials) {
         try {
-            if (!users.containsKey(clientCredentials))
+            if (!userDalController.userExists(clientCredentials))
                 return Response.getFailResponse("User does not exist.");
-            if(!users.get(clientCredentials).isAdmin())
+            if(!userDalController.getUser(clientCredentials).isAdmin())
                 return Response.getFailResponse("Only admins can delete users.");
             return Response.getSuccessResponse(loggedInUsers.values().stream().toList());
         }
@@ -529,11 +599,11 @@ public class UserController {
 
     public Response<List<User>> getNotLoggedInUsers(UUID clientCredentials) {
         try {
-            if (!users.containsKey(clientCredentials))
+            if (!userDalController.userExists(clientCredentials))
                 return Response.getFailResponse("User does not exist.");
-            if(!users.get(clientCredentials).isAdmin())
+            if(!userDalController.getUser(clientCredentials).isAdmin())
                 return Response.getFailResponse("Only admins can delete users.");
-            return Response.getSuccessResponse(users.values().stream()
+            return Response.getSuccessResponse(userDalController.getAllUsers().stream()
                     .filter((user) -> !loggedInUsers.containsKey(user.getId())).toList());
         }
         catch(Exception exception) {
@@ -542,13 +612,13 @@ public class UserController {
     }
 
     public Response<Boolean> CancelSubscriptionNotRole(UUID adminCredentials, UUID clientCredentials){
-        if (!users.containsKey(clientCredentials))
+        if (!userDalController.userExists(clientCredentials))
             return Response.getFailResponse("User does not exist.");
-        if (!users.containsKey(adminCredentials))
+        if (!userDalController.userExists(adminCredentials))
             return Response.getFailResponse("this admin does not exist.");
-        if(!users.get(adminCredentials).isAdmin())
+        if(!userDalController.getUser(adminCredentials).isAdmin())
             return Response.getFailResponse("Only admins can delete users.");
-        User user = users.get(clientCredentials);
+        User user = userDalController.getUser(clientCredentials);
         if(user.getRoles().isEmpty()){
             return  deleteUser(adminCredentials,clientCredentials);
         }
@@ -565,7 +635,7 @@ public class UserController {
 
     public Response<Integer> numOfUsers() {
         try {
-            int users = this.users.size();
+            int users = (int) repositoryFactory.userRepository.count();
             return Response.getSuccessResponse(users);
         }
         catch (Exception exception) {
@@ -584,14 +654,16 @@ public class UserController {
     }
 
     public Response<UUID> getAdminCredentials() {
-        UUID admin = usernames.get("admin");
-        if (admin == null) return Response.getFailResponse("There is no admin");
-        return Response.getSuccessResponse(admin);
+        User user = userDalController.getAdmin();
+        if (user == null) return Response.getFailResponse("There is no admin");
+        return Response.getSuccessResponse(user.getId());
     }
 
-    public ConcurrentHashMap<String, UUID> getUsernames() {
-        return usernames;
-    }
+
+//    public ConcurrentHashMap<String, UUID> getUsernames() {
+//        Map
+//        for(User u : userDalController.getAllUsers())
+//    }
 
     public Response<Integer> numOfLoggedInUsers() {
         try {
@@ -604,21 +676,22 @@ public class UserController {
     }
     
     public void loginFromSecurityQuestion(UUID id) {    //For use from security controller only
-        loggedInUsers.put(id, users.get(id));
+        loggedInUsers.put(id, userDalController.getUser
+                (id));
     }
     
     public List<UUID> getAdminIds() {
         List<UUID> admins = new ArrayList<>();
-        for (User user : users.values()) {
+        for (User user : userDalController.getAllUsers()) {
             if (user.isAdmin()) admins.add(user.getId());
         }
         return admins;
     }
     
     public boolean hasUserPurchasedItem(UUID clientCredentials, UUID itemId) throws Exception {
-        if (!users.containsKey(clientCredentials))
+        if (!userDalController.userExists(clientCredentials))
             throw new Exception("User does not exist");
-        User user = users.get(clientCredentials);
+        User user = userDalController.getUser(clientCredentials);
         List<Purchase> purchases = user.getPurchases().stream().toList();
         return !purchases.stream()
                 .filter(purchase -> purchase.getItemId().equals(itemId))
@@ -628,12 +701,11 @@ public class UserController {
     
     public Response<User> getUserByUsername(String username) {
         try {
-            if (usernames.containsKey(username)) {
-                User user = users.get(usernames.get(username));
-                if (user != null)
-                    return Response.getSuccessResponse(user);
+            User user = userDalController.getUser(username);
+            if (user == null) {
+                return Response.getFailResponse("User not found.");
             }
-            return Response.getFailResponse("User not found.");
+           return Response.getSuccessResponse(user);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }

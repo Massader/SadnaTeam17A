@@ -7,14 +7,24 @@ import DomainLayer.Market.Stores.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 import ServiceLayer.ServiceObjects.ServiceDiscount;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Entity
+@Table(name = "Market_Stores_Discounts_Discount")
 public class Discount {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", nullable = false, unique = true)
     private UUID id;
-    private CalculateDiscount optionCalculateDiscount;//basket/item/category
-    private double discountPercentage;
+
+    @Transient
+    private CalculateDiscount optionCalculateDiscount;
+    @Transient
+    private Double discountPercentage;
+    @Transient
     private PurchaseTerm purchaseTerm;
 
     public Discount(CalculateDiscount optionCalculateDiscount, double discountPercentage, PurchaseTerm purchaseTerm) throws Exception {
@@ -27,7 +37,7 @@ public class Discount {
         this.purchaseTerm = purchaseTerm;
         this.id = UUID.randomUUID();
     }
-    
+
     public Discount(ServiceDiscount serviceDiscount) throws Exception {
         this.id = serviceDiscount.getId() == null ? UUID.randomUUID() : serviceDiscount.getId();
         if (serviceDiscount.getDiscountPercentage() >= 100 || serviceDiscount.getDiscountPercentage() <= 0)
@@ -45,6 +55,10 @@ public class Discount {
             this.optionCalculateDiscount = new CategoryCalculateDiscount(new Category(serviceDiscount.getItemIdOrCategoryOrNull()));
         else
             this.optionCalculateDiscount = new ShoppingBasketCalculateDiscount();
+    }
+
+    public Discount() {
+
     }
 
     public CalculateDiscount getOptionCalculateDiscount() {
@@ -65,23 +79,23 @@ public class Discount {
             discount = getOptionCalculateDiscount().calculateDiscount(shoppingBasket, store, discountPercentage);
         return discount;
     }
-    
+
     public UUID getId() {
         return id;
     }
-    
+
     public void setId(UUID id) {
         this.id = id;
     }
-    
+
     public void setOptionCalculateDiscount(CalculateDiscount optionCalculateDiscount) {
         this.optionCalculateDiscount = optionCalculateDiscount;
     }
-    
+
     public void setDiscountPercentage(Double discountPercentage) {
         this.discountPercentage = discountPercentage;
     }
-    
+
     public void setPurchaseTerm(PurchaseTerm purchaseTerm) {
         this.purchaseTerm = purchaseTerm;
     }

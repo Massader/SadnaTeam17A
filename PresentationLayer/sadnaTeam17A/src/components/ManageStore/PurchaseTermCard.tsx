@@ -8,6 +8,7 @@ import {
   Text,
   Heading,
   Flex,
+
   Image,
 } from "@chakra-ui/react";
 import simplePurchaseTermIcon from "../../assets/simplePurchaseTerm.png";
@@ -56,12 +57,15 @@ const PurchaseTermCard = ({ storeId, purchaseTerm, refreshCards }: Props) => {
         )}
         <Stack mt="6" spacing="3">
           {/* <Heading size="md">{purchaseTerm.termType}</Heading> */}
+
           {purchaseTerm.termType === "SIMPLE" && (
             <>
               <Text>Type: {purchaseTerm.rule?.type}</Text>
               {purchaseTerm.rule?.type === "ITEM" && (
                 <Flex alignItems="center">
+
                   <Text mr={1}>Item name:</Text>
+
                   <ItemNameFromId
                     storeId={storeId}
                     itemId={purchaseTerm.rule.itemIdOrCategoryOrNull}
@@ -86,6 +90,7 @@ const PurchaseTermCard = ({ storeId, purchaseTerm, refreshCards }: Props) => {
                     {term.rule?.type === "ITEM" && (
                       <Flex alignItems="center">
                         <Text mr={1}>Item name:</Text>
+
                         <ItemNameFromId
                           storeId={storeId}
                           itemId={term.rule.itemIdOrCategoryOrNull}
@@ -111,6 +116,7 @@ const PurchaseTermCard = ({ storeId, purchaseTerm, refreshCards }: Props) => {
           {purchaseTerm.termType === "CONDITIONAL" && (
             <>
               <Text fontWeight="bold">if:</Text>
+
               <Text>Type: {purchaseTerm.ifPurchaseTerm?.rule?.type}</Text>
               {purchaseTerm.ifPurchaseTerm?.rule?.type === "ITEM" && (
                 <Text>
@@ -133,7 +139,9 @@ const PurchaseTermCard = ({ storeId, purchaseTerm, refreshCards }: Props) => {
               <Text>
                 {purchaseTerm.ifPurchaseTerm?.atLeast ? "At least" : "At most"}
               </Text>
+
               <Text fontWeight="bold">then:</Text>
+
               <Text>Type: {purchaseTerm.thenPurchaseTerm?.rule?.type}</Text>
               {purchaseTerm.thenPurchaseTerm?.rule?.type === "ITEM" && (
                 <Text>

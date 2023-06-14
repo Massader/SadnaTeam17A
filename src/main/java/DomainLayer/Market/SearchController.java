@@ -1,5 +1,8 @@
 package DomainLayer.Market;
 
+import DataAccessLayer.RepositoryFactory;
+import DataAccessLayer.controllers.StoreDalController;
+import DataAccessLayer.controllers.UserDalController;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.User;
@@ -18,6 +21,9 @@ public class SearchController {
 
     private static SearchController instance = null;
     private static final Object instanceLock = new Object();
+    private RepositoryFactory repositoryFactory;
+    private UserDalController userDalController;
+    private StoreDalController storeDalController;
 
     public static SearchController getInstance() {
         synchronized(instanceLock) {
@@ -28,7 +34,13 @@ public class SearchController {
     }
 
     private SearchController() {
+    }
+    public void init(RepositoryFactory repositoryFactory) {
+        this.repositoryFactory = repositoryFactory;
+        userDalController = UserDalController.getInstance(repositoryFactory);
         storeController = StoreController.getInstance();
+        storeDalController = StoreDalController.getInstance(repositoryFactory);
+
     }
 
     public Response<List<Item>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating){
@@ -37,7 +49,7 @@ public class SearchController {
             List<Store> filteredStores = stores.stream().filter(store -> store.getRating() >= storeRating).toList();
             List<Item> items = new ArrayList<>();
             for (Store store : filteredStores) {
-                items.addAll(store.getItems().values().stream().filter(item ->
+                items.addAll(store.getItems().stream().filter(item ->
                         item.containsCategory(category) &
                                 priceRange(item, minPrice, maxPrice) &
                                 item.getRating() >= itemRating &
@@ -66,12 +78,12 @@ public class SearchController {
                 return Response.getFailResponse("Store does not exist");
             if (store.isClosed())
                 return Response.getFailResponse("Store is not open");
-            items = store.getItems().values().stream().filter(item -> item.getStoreId().equals(storeId)).toList();
+            items = repositoryFactory.itemRepository.findAllByStore(storeId);
         }
         else {
             for (Store store : storeController.getStores()) {
                 if (!store.isClosed())
-                    items.addAll(store.getItems().values());
+                    items = repositoryFactory.itemRepository.findAll();
             }
         }
         if (keyword != null && !keyword.isEmpty()){
@@ -101,19 +113,28 @@ public class SearchController {
         return Response.getSuccessResponse(items);
     }
 
-    public Response<List<User>> searchUser(String username) {
+//    public Response<List<User>> searchUser(String username) {
+//        try {
+//            UserController userController = UserController.getInstance();
+//            ConcurrentHashMap<String, UUID> usernames = userController.getUsernames();
+//            List<User> users = new ArrayList<>();
+//            for (Map.Entry<String, UUID> entry : usernames.entrySet()) {
+//                if (entry.getKey().toLowerCase().contains(username.toLowerCase()))
+//                    users.add(userController.getUserById(entry.getValue()));
+//            }
+//            return Response.getSuccessResponse(users);
+//        } catch (Exception e) {
+//            return Response.getFailResponse(e.getMessage());
+//        }
+//
+//    }
+
+    public Response<List<User>> searchUser(String keyrord) {
         try {
-            UserController userController = UserController.getInstance();
-            ConcurrentHashMap<String, UUID> usernames = userController.getUsernames();
-            List<User> users = new ArrayList<>();
-            for (Map.Entry<String, UUID> entry : usernames.entrySet()) {
-                if (entry.getKey().toLowerCase().contains(username.toLowerCase()))
-                    users.add(userController.getUserById(entry.getValue()));
-            }
-            return Response.getSuccessResponse(users);
+            return Response.getSuccessResponse(userDalController.serachUser(keyrord));
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }
-
     }
+
 }

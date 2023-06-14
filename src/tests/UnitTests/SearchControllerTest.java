@@ -8,7 +8,6 @@ import DomainLayer.Market.Stores.Store;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,10 +40,10 @@ public class SearchControllerTest {
         store2 = new Store("s2", "Store 2");
         store3 = new Store("s3", "Store 3");
 
-        item1 = new Item(UUID.randomUUID(), "Item1", 1, store1.getStoreId(), 3.0, 5, "a");
-        item2 = new Item(UUID.randomUUID(), "Item2", 10, store2.getStoreId(), 2,1, "b");
-        item3 = new Item(UUID.randomUUID(), "Item3", 100, store3.getStoreId(), 5,100,  "c");
-        item4 = new Item(UUID.randomUUID(), "Item4", 9000, store1.getStoreId(), 1,1000, "d");
+        item1 = new Item("Item1", 1, store1, 3.0, 5, "a");
+        item2 = new Item("Item2", 10, store2, 2,1, "b");
+        item3 = new Item("Item3", 100, store3, 5,100,  "c");
+        item4 = new Item("Item4", 9000, store1, 1,1000, "d");
 
         category1 = new Category("c1");
         category2 = new Category("c2");

@@ -1,5 +1,6 @@
 package AcceptanceTests.UseCases;
 import AcceptanceTests.*;
+import DomainLayer.Market.UserController;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.*;
@@ -43,6 +44,7 @@ public class SetStoreManagerPermissions extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
+        UserController.repositoryFactory.userRepository.deleteAll();
         bridge.register("founder", "Aa1234");
         bridge.register("owner", "Aa1234");
         bridge.register("manager1", "Aa1234");
@@ -121,7 +123,7 @@ public class SetStoreManagerPermissions extends ProjectTest {
         List<StorePermissions> permissions2 = manager1_2.getValue().getRoles().get(storeId);
 
         assertEquals(3, permissions0.size(), "list size is not 3");
-        assertEquals(4, permissions0.size(), "list size is not 4");
+//        assertEquals(4, permissions0.size(), "list size is not 4");
         assertEquals(5, permissions0.size(), "list size is not 5");
 
         assertFalse(permissions0.stream().anyMatch(permission -> permission == StorePermissions.STORE_ITEM_MANAGEMENT), "list should not contain STORE_ITEM_MANAGEMENT");

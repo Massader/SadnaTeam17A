@@ -15,7 +15,7 @@ public class ServiceItemReview {
     
     public ServiceItemReview(ItemReview itemReview) {
         this.id = itemReview.getId();
-        this.itemId = itemReview.getItemId();
+        this.itemId = itemReview.getItem().getId();
         this.text = itemReview.getText();
         this.reviewer = itemReview.getReviewer();
         this.timestamp = itemReview.getTimestamp();

@@ -4,59 +4,89 @@ import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Stores.PurchaseTypes.BidPurchase;
 import DomainLayer.Market.Stores.PurchaseTypes.DirectPurchase;
 import DomainLayer.Market.Stores.PurchaseTypes.PurchaseType;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import jakarta.persistence.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Entity
+@Table(name = "Items")
 public class Item {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "ItemId", nullable = false, unique = true)
     private UUID id;
+    @Column
     private String name;
+    @Column
     private double price;
-    private UUID storeId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "store_id")
+    private Store store;
+
+    @Column
     private double rating;
+    @Column
     private int ratesCount;
+    @Column
     private int quantity;
+    @Column
     private String description;
+    @OneToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)// cascade
     private PurchaseType purchaseType;
-    private ConcurrentLinkedQueue<Category> categories;
 
-    private ConcurrentHashMap<UUID, ItemReview> reviews;
 
-    public Item(UUID id, String name, double price, UUID storeId, double rating, int quantity, String description) {
-        this.id = id;
+    @Transient
+    private Collection<Category> categories;
+
+    @OneToMany(mappedBy = "item", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Map<UUID, ItemReview> reviewsMap;
+
+    @OneToMany(mappedBy = "item", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Collection<ItemReview> reviews;
+
+    public Item(String name, double price, Store store, double rating, int quantity, String description) {
         this.name = name;
         this.price = price;
-        this.storeId = storeId;
+        this.store = store;
         this.rating = rating;
         this.quantity = quantity;
         this.description = description;
         purchaseType = new DirectPurchase(PurchaseType.DIRECT_PURCHASE);
         categories = new ConcurrentLinkedQueue<>();
-        reviews = new ConcurrentHashMap<>();
+        //reviewsMap = new ConcurrentHashMap<>();
+        reviews = new ConcurrentLinkedQueue<>();
     }
 
     public Item(Item otherItem) {
         this.id = otherItem.getId();
         this.name = otherItem.getName();
         this.price = otherItem.getPrice();
-        this.storeId = otherItem.getStoreId();
+        this.store = otherItem.getStore();
         this.rating = otherItem.getRating();
         this.quantity = otherItem.getQuantity();
         this.description = otherItem.getDescription();
         purchaseType = otherItem.getPurchaseType();
         categories = otherItem.getCategories();
-        reviews = otherItem.getReviewsMap();
+        //reviewsMap = otherItem.getReviewsMap();
+        reviews = otherItem.getReviews();
+    }
+    public Item(){
+        purchaseType = new DirectPurchase(PurchaseType.DIRECT_PURCHASE);
+        categories = new ConcurrentLinkedQueue<>();
+        //reviewsMap = new ConcurrentHashMap<>();
+        reviews = new ConcurrentLinkedQueue<>();
     }
     
     public void setPurchaseType(PurchaseType purchaseType) {
         this.purchaseType = purchaseType;
     }
     
-    public ConcurrentLinkedQueue<Category> getCategories() {
+    public Collection<Category> getCategories() {
         return categories;
     }
 
@@ -93,7 +123,7 @@ public class Item {
     public double getPrice(UUID clientCredentials) {
         if (purchaseType.getType().equals(PurchaseType.BID_PURCHASE) &&
                 ((BidPurchase)purchaseType).isBidAccepted(clientCredentials))
-            return ((BidPurchase)purchaseType).getBids().get(clientCredentials).getPrice();
+            return ((BidPurchase)purchaseType).getBidByBidderId(clientCredentials).getPrice();
         return price;
     }
 
@@ -103,12 +133,12 @@ public class Item {
         this.price = price;
     }
 
-    public UUID getStoreId() {
-        return storeId;
+    public Store getStore() {
+        return store;
     }
 
-    public void setStoreId(UUID storeId) {
-        this.storeId = storeId;
+    public void setStoreId(Store store) {
+        this.store = store;
     }
 
     public double getRating() {
@@ -138,18 +168,30 @@ public class Item {
     }
 
     public List<ItemReview> getReviews() {
-        List<ItemReview> output = new ArrayList<>(reviews.values());
+        List<ItemReview> output = new ArrayList<>(reviews);
         output.sort(Comparator.comparing(ItemReview::getTimestamp));
         return output;
     }
-    
-    private ConcurrentHashMap<UUID, ItemReview> getReviewsMap() {
-        return this.reviews;
+
+    /*
+    private Map<UUID, ItemReview> getReviewsMap() {
+        return this.reviewsMap;
+    }
+     */
+
+    /*
+    public UUID addReview(UUID clientCredentials, String body, int rating) {
+        ItemReview itemReview = new ItemReview(this, body, clientCredentials, rating);
+        reviewsMap.put(itemReview.getId(), itemReview);
+        addRating(rating);
+        return itemReview.getId();
     }
 
+     */
+
     public UUID addReview(UUID clientCredentials, String body, int rating) {
-        ItemReview itemReview = new ItemReview(id, body, clientCredentials, rating);
-        reviews.put(itemReview.getId(), itemReview);
+        ItemReview itemReview = new ItemReview(this, body, clientCredentials, rating);
+        reviews.add(itemReview);
         addRating(rating);
         return itemReview.getId();
     }
@@ -190,7 +232,7 @@ public class Item {
             throw new RuntimeException("Bidding is only available on Bid Purchase type items.");
         if (bidPrice * quantity < price)
             throw new RuntimeException("Bidding price can only be equal or larger than item base price.");
-        ((BidPurchase)purchaseType).addBid(clientCredentials, this.storeId, this.id, bidPrice, quantity);
+        ((BidPurchase)purchaseType).addBid(clientCredentials, this.store.getStoreId(), this.id, bidPrice, quantity);
         return true;
     }
     
@@ -210,8 +252,8 @@ public class Item {
     
     public Bid getBid(UUID clientCredentials) {
         if (purchaseType.getType().equals(PurchaseType.BID_PURCHASE) &&
-                ((BidPurchase) purchaseType).getBids().containsKey(clientCredentials)) {
-            return ((BidPurchase) purchaseType).getBids().get(clientCredentials);
+                ((BidPurchase) purchaseType).hasBid(clientCredentials)) {
+            return ((BidPurchase) purchaseType).getBidByBidderId(clientCredentials);
         }
         else if (!purchaseType.getType().equals(PurchaseType.BID_PURCHASE))
             throw new RuntimeException("This item is not a bid purchase type item.");
@@ -220,8 +262,13 @@ public class Item {
     
     public List<Bid> getBids() {
         if (purchaseType.getType().equals(PurchaseType.BID_PURCHASE)) {
-            return ((BidPurchase) purchaseType).getBids().values().stream().toList();
+            return ((BidPurchase) purchaseType).getBids().stream().toList();
         }
         return new ArrayList<>();
+    }
+
+    public void setStore(Store store) {
+        this.store = store;
+
     }
 }

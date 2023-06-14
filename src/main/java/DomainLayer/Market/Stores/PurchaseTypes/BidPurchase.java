@@ -1,38 +1,111 @@
 package DomainLayer.Market.Stores.PurchaseTypes;
 
+import jakarta.persistence.*;
+
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class BidPurchase extends PurchaseType{
-    
-    private final ConcurrentHashMap<UUID, Bid> bids;
-    
+@Entity
+@Table(name = "bid_purchases")
+public class BidPurchase extends PurchaseType {
+
+    /*
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @MapKeyColumn(name = "client_credentials")
+    private ConcurrentHashMap<UUID, Bid> bidsMap;
+     */
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @MapKeyColumn(name = "client_credentials")
+    private Collection<Bid> bids;
+
+
     public BidPurchase(String purchaseType) {
         super(purchaseType);
-        bids = new ConcurrentHashMap<>();
+   //     bidsMap = new ConcurrentHashMap<>();
+        bids = new ConcurrentLinkedQueue<>();
     }
-    
-    public ConcurrentHashMap<UUID, Bid> getBids() {
+    public BidPurchase() {
+        super();
+    }
+
+    /*
+    public ConcurrentHashMap<UUID, Bid> getBidsMap() {
+        return bidsMap;
+    }
+     */
+
+    public Collection<Bid> getBids() {
         return bids;
     }
-    
+
+
     public void addBid(UUID clientCredentials, UUID storeId, UUID itemId, double bidPrice, int quantity) {
-        bids.put(clientCredentials, new Bid(clientCredentials, storeId, itemId, bidPrice, quantity));
+        if (hasBid(clientCredentials)) {
+            removeBid(clientCredentials);
+        }
+        bids.add(new Bid(clientCredentials, storeId, itemId, bidPrice, quantity));
     }
     
     public void removeBid(UUID clientCredentials) {
-        bids.remove(clientCredentials);
+        for (Bid bid : bids) {
+            if (bid.getBidderId().equals(clientCredentials)) {
+                bids.remove(bid);
+            }
+        }
     }
-    
+/*
     public Bid acceptBid(UUID clientCredentials, UUID bidderId, double bidPrice) {
-        if (bids.get(bidderId).getPrice() != bidPrice)
+        if (bidsMap.get(bidderId).getPrice() != bidPrice)
             throw new RuntimeException("Bid amount changed during processing.");
-        return bids.get(bidderId).acceptBid(clientCredentials);
+        return bidsMap.get(bidderId).acceptBid(clientCredentials);
     }
-    
+ */
+
+
+    public Bid acceptBid(UUID clientCredentials, UUID bidderId, double bidPrice) {
+        if (!hasBid(clientCredentials)) {
+            throw new RuntimeException("Client has no bid");
+        }
+        if (getBidByBidderId(clientCredentials).getPrice() != bidPrice) {
+            throw new RuntimeException("Bid amount changed during processing.");
+        }
+        return getBidByBidderId(clientCredentials).acceptBid(clientCredentials);
+    }
+
+    /*
     public boolean isBidAccepted(UUID clientCredentials) {
-        if (!bids.containsKey(clientCredentials))
+        if (!bidsMap.containsKey(clientCredentials))
             throw new RuntimeException("This item does not have a bid by this user.");
-        return bids.get(clientCredentials).isAccepted();
+        return bidsMap.get(clientCredentials).isAccepted();
+    }
+
+     */
+
+    public boolean isBidAccepted(UUID clientCredentials) {
+        if (!hasBid(clientCredentials)) {
+            throw new RuntimeException("This item does not have a bid by this user.");
+        }
+        return getBidByBidderId(clientCredentials).isAccepted();
+    }
+
+    public boolean hasBid(UUID clientCredentials) {
+        for (Bid bid : bids) {
+            if (bid.getBidderId().equals(clientCredentials)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Bid getBidByBidderId(UUID clientCredentials) {
+        for (Bid bid : bids) {
+            if (bid.getBidderId().equals(clientCredentials)) {
+                return bid;
+            }
+        }
+        return null;
     }
 }

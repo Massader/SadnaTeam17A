@@ -4,12 +4,13 @@ import React, { useEffect, useState } from "react";
 
 interface Props {
   storeId: string;
-  itemId?: string;
+  itemId?: string
   mr?: number;
   ml?: number;
 }
 
 const ItemNameFromId = ({ ml, mr, storeId, itemId }: Props) => {
+
   const [itemName, setItemName] = useState("");
 
   const getItemInfo = async () => {
@@ -31,6 +32,7 @@ const ItemNameFromId = ({ ml, mr, storeId, itemId }: Props) => {
       {itemName}
     </Text>
   );
+
 };
 
 export default ItemNameFromId;

@@ -4,16 +4,31 @@ import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.CartItem;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Entity
+@Table(name = "Market_Stores_PurchaseRule_ShoppingBasketPurchaseRule")
 public class ShoppingBasketPurchaseRule implements PurchaseRule {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    public ShoppingBasketPurchaseRule() {
+        super();
+    }
+
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store, int quantity, Boolean atLeast) {
             int price = 0;
-            ConcurrentHashMap<UUID, Item> storeItems = store.getItems();
-            ConcurrentHashMap<UUID, CartItem> items = shoppingBasket.getItems();
+            Map<UUID, Item> storeItems = store.getItems();
+            Map<UUID, CartItem> items = shoppingBasket.getItems();
             for (CartItem cartItem : items.values()) {
                 if(storeItems.containsKey(cartItem.getItemId())){
                     price+= cartItem.getPrice() * cartItem.getQuantity();
@@ -29,7 +44,4 @@ public class ShoppingBasketPurchaseRule implements PurchaseRule {
                 return true;
             return false;
         }
-
-
-
 }

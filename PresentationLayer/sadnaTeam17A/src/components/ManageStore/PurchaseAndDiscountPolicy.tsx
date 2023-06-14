@@ -17,12 +17,14 @@ const PurchaseAndDiscountPolicy = ({
   pages,
   permissions,
 }: Props) => {
+
   const purchaseAndDiscountPages = [
     "home",
     "addPurchaseRule",
     "addDiscount",
     "showTerms",
     "showDiscounts",
+
   ];
   const [purchaseAndDiscountPage, setPurchaseAndDiscountPage] = useState(
     purchaseAndDiscountPages[0]
@@ -33,6 +35,7 @@ const PurchaseAndDiscountPolicy = ({
   const [addDiscountOn, setAddDiscountOn] = useState(false);
 
   return (
+
     <>
       <Box padding="30px">
         <Button
@@ -54,6 +57,7 @@ const PurchaseAndDiscountPolicy = ({
               {(permissions.includes("STORE_FOUNDER") ||
                 permissions.includes("STORE_OWNER") ||
                 permissions.includes("STORE_POLICY_MANAGEMENT")) && (
+
                 <Button
                   onClick={() => {
                     setAddPurchaseRuleOn(!addPurchaseRuleOn);
@@ -61,6 +65,7 @@ const PurchaseAndDiscountPolicy = ({
                   colorScheme="blackAlpha"
                 >
                   Add a Purchase Term to the Store
+
                 </Button>
               )}
               {addPurchaseRuleOn && (
@@ -166,6 +171,7 @@ const PurchaseAndDiscountPolicy = ({
                 >
                   Show Store's Discounts
                 </Button>
+
               )}
             </>
           )}

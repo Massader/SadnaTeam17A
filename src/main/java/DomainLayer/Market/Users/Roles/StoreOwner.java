@@ -1,15 +1,26 @@
 package DomainLayer.Market.Users.Roles;
 
+import DomainLayer.Market.Stores.Store;
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-
+@Entity
+@Table(name = "store_owners")
 public class StoreOwner extends Role {
 
-    private List<UUID> appointees;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Column(name = "appointee_id")
+    private Collection<UUID> appointees;
 
-    public StoreOwner(UUID storeId) {
-        super(storeId);
+    public StoreOwner(Store store) {
+        super(store);
+        appointees = new ArrayList<UUID>();
+    }
+    public StoreOwner(){
+        super();
         appointees = new ArrayList<UUID>();
     }
 
@@ -29,7 +40,7 @@ public class StoreOwner extends Role {
     
     }
     
-    public List<UUID> getAppointees() {
+    public Collection<UUID> getAppointees() {
         return appointees;
     }
 

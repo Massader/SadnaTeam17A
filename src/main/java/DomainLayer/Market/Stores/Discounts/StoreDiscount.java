@@ -4,15 +4,23 @@ import DomainLayer.Market.Stores.PurchaseRule.CompositePurchaseTerm;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.CartItem;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@Entity
+@Table(name = "Market_Stores_Discounts_StoreDiscounts")
 public class StoreDiscount {
     /**
      * ManageDiscount is a class that manages the discounts of a shop.
      * It stores discount and provides methods for adding and removing them.
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    private Long id;
+    @Transient
     private NumericalAssemblyOfDiscount discountsAssembly;
 
     public StoreDiscount(NumericalAssemblyOfDiscount discountsAssembly) {
@@ -21,6 +29,10 @@ public class StoreDiscount {
     public StoreDiscount(Boolean max){
         if(max){this.discountsAssembly= new MaxDiscounts();}
             else{this.discountsAssembly= new CombiningDiscounts();}}
+
+    public StoreDiscount() {
+
+    }
 
 
     public NumericalAssemblyOfDiscount getDiscountsAssembly() {

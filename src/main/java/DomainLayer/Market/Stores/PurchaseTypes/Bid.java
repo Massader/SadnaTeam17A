@@ -1,16 +1,30 @@
 package DomainLayer.Market.Stores.PurchaseTypes;
 
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
+@Table(name = "Bids")
 public class Bid {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "BidId", nullable = false, unique = true)
     private UUID bidderId;
     private UUID storeId;
     private UUID itemId;
+    @Column
     private double price;
+    @ElementCollection
+    @CollectionTable(name = "owners_list",
+            joinColumns = @JoinColumn(name = "petition_id"))
+    @Column(name = "owner_id")
     private List<UUID> ownersAccepted;
+    @Column
     private int quantity;
+    @Column
     private boolean accepted;
     
     public Bid(UUID bidderId, UUID storeId, UUID itemId, double price, int quantity) {
@@ -22,7 +36,7 @@ public class Bid {
         ownersAccepted = new ArrayList<>();
         accepted = false;
     }
-    
+
     public UUID getStoreId() {
         return storeId;
     }
@@ -30,7 +44,9 @@ public class Bid {
     public void setStoreId(UUID storeId) {
         this.storeId = storeId;
     }
-    
+
+    public Bid() {}
+
     public UUID getBidderId() {
         return bidderId;
     }

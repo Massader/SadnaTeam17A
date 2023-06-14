@@ -2,14 +2,25 @@ package DomainLayer.Market.Stores.Discounts;
 
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class NumericalAssemblyOfDiscount {
-    ConcurrentLinkedQueue<Discount> discounts;
 
-    public NumericalAssemblyOfDiscount(ConcurrentLinkedQueue<Discount> discounts) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.TABLE)
+    private Long id;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "numerical_assembly_of_discount_id")
+    private Collection<Discount> discounts;
+
+    public NumericalAssemblyOfDiscount(Collection<Discount> discounts) {
         this.discounts = discounts;
     }
 
@@ -17,11 +28,20 @@ public abstract class NumericalAssemblyOfDiscount {
         this.discounts= new ConcurrentLinkedQueue<>();
     }
 
-    public ConcurrentLinkedQueue<Discount> getDiscounts() {
+    public Collection<Discount> getDiscounts() {
         return discounts;
     }
 
     public abstract Double calculateDiscount(ShoppingBasket shoppingBasket, Store store);
     
     public abstract double calculateItemDiscount(ShoppingBasket shoppingBasket, Store store, UUID itemId);
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
 }

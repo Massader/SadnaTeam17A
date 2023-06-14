@@ -4,12 +4,31 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
+import jakarta.persistence.*;
+import java.util.*;
+
+@Entity
+@Table(name = "sales")
 public class Sale {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "sale_id", nullable = false, unique = true)
     private UUID id;
+
+    @Column(name = "user_id")
     private UUID userId;
+
+    @Column(name = "store_id")
     private UUID storeId;
+
+    @Column(name = "item_id")
     private UUID itemId;
+
+    @Column
     private Date date;
+
+    @Column
     private int quantity;
 
 
@@ -21,6 +40,7 @@ public class Sale {
         this.userId = userId;
         this.quantity = quantity;
     }
+    public Sale(){}
 
     public UUID getId() {
         return id;

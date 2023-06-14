@@ -1,5 +1,6 @@
 package DomainLayer.Market;
 
+import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.Client;
@@ -11,9 +12,12 @@ import DomainLayer.Market.Users.User;
 import DomainLayer.Payment.PaymentController;
 import DomainLayer.Supply.SupplyController;
 import ServiceLayer.Response;
-
 import java.util.Map;
 import java.util.UUID;
+import DomainLayer.Payment.PaymentProxy;
+import DomainLayer.Supply.SupplyProxy;
+import ServiceLayer.Response;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class PurchaseController {
@@ -25,13 +29,15 @@ public class PurchaseController {
 
     SupplyController supplyController;
     NotificationController notificationController;
+    private RepositoryFactory repositoryFactory;
 
-    private PurchaseController() { }
+    private PurchaseController(RepositoryFactory repositoryFactory) { this.repositoryFactory = repositoryFactory;}
 
-    public static PurchaseController getInstance() {
+    public static PurchaseController getInstance(RepositoryFactory repositoryFactory) {
         synchronized(instanceLock) {
             if (instance == null)
-                instance = new PurchaseController();
+                instance = new PurchaseController(repositoryFactory);
+
         }
         return instance;
     }
@@ -42,8 +48,6 @@ public class PurchaseController {
         supplyController = SupplyController.getInstance();
         userController = UserController.getInstance();
     }
-
-
 
    public Response<Boolean> purchaseCart(UUID clientCredentials, ShoppingCart shoppingCart, double expectedPrice,
                                          String address, String city, String country, int zip, String cardNumber, String month, String year, String holder, String cvv, String id) {
@@ -82,7 +86,6 @@ public class PurchaseController {
                if (!missingItems.isEmpty()) {
                    return Response.getFailResponse("The following items are no longer available:" + missingItemList);
                }
-
                double nowPrice = 0;
                try {
                    nowPrice = storeController.verifyCartPrice(shoppingCart);
@@ -92,7 +95,6 @@ public class PurchaseController {
                if(expectedPrice != nowPrice){
                    return Response.getFailResponse("Price for shopping cart has changed, it's " + nowPrice);
                }
-
                //purchase all Basket -> cart
                for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
                    UUID storeId = entry.getKey();
@@ -126,7 +128,6 @@ public class PurchaseController {
                    }
                    return Response.getFailResponse("Supply request failed");
                }
-
                client.clearCart();
                return Response.getSuccessResponse(true);
            }
@@ -177,9 +178,8 @@ public class PurchaseController {
     }
 
     public void unPurchaseCart(Client client, ShoppingCart shoppingCart) throws Exception {
-        for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
-            UUID storeId = entry.getKey();
-            ShoppingBasket basket = entry.getValue();
+         for (ShoppingBasket basket : shoppingCart.getShoppingBaskets()) {
+            UUID storeId = basket.getStoreId();
             Store store = storeController.getStore(storeId);
             store.unPurchaseBasket(client,basket);
         }

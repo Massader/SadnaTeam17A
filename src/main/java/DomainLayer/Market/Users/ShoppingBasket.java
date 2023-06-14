@@ -1,24 +1,40 @@
 package DomainLayer.Market.Users;
 
 import DomainLayer.Market.Stores.Item;
+import jakarta.persistence.*;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Entity
+@Table(name = "ShoppingBaskets")
 public class ShoppingBasket {
-    private UUID id;
-    private UUID storeId;
-    private final ConcurrentHashMap<UUID, CartItem> items;//UUID itemId, int quantity
 
-    public ConcurrentHashMap<UUID, CartItem> getItems() {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private UUID id; //id of the shopping basket
+
+    @Column(name = "storeId")
+    private UUID storeId;
+
+    @Transient
+    private Collection<CartItem> items;//UUID itemId, int quantity
+
+
+    public Collection<CartItem> getItems() {
         return items;
     }
 
+    public ShoppingBasket() {}
 
     public ShoppingBasket(UUID storeId) {
         this.id = UUID.randomUUID();
         this.storeId = storeId;
-        this.items = new ConcurrentHashMap<>();
+        this.items = new ConcurrentLinkedQueue<>();
     }
 
     public UUID getId() {
@@ -71,4 +87,7 @@ public class ShoppingBasket {
 
     public int quantityOf(UUID itemId){return items.get(itemId).getQuantity();}
 
+    public boolean validateStore(UUID storeId) {
+        return storeId.equals(this.storeId);
+    }
 }

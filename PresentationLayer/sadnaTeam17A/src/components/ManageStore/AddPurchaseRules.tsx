@@ -14,6 +14,7 @@ import axios from "axios";
 import SimpleDiscount from "./SimpleDiscount";
 import ConditionalDiscount from "./ConditionalDiscount";
 
+
 interface Props {
   storeId: string;
   setPurchaseAndDiscountPage: React.Dispatch<React.SetStateAction<string>>;
@@ -76,6 +77,7 @@ const AddPurchaseRules = ({
         storeId: storeId,
         itemId: purchaseTerm.rule.itemIdOrCategoryOrNull,
         category: purchaseTerm.rule.itemIdOrCategoryOrNull,
+
         quantity: purchaseTerm.quantity,
         atLeast: purchaseTerm.atLeast,
       }
@@ -153,7 +155,9 @@ const AddPurchaseRules = ({
     }
   };
 
+
   const addDiscount = async (discountTerm: DiscountType) => {
+
     const response = await axios.post(
       "http://localhost:8080/api/v1/stores/add-discount",
       {
@@ -164,6 +168,7 @@ const AddPurchaseRules = ({
     );
     if (!response.data.error) {
       console.log(discountTerm.purchaseTerm);
+
       toast({
         title: "Discount added.",
         status: "success",
@@ -218,6 +223,7 @@ const AddPurchaseRules = ({
       )}
       {purchaseType === "conditionalDiscount" && (
         <ConditionalDiscount onSubmit={addDiscount} storeId={storeId} />
+
       )}
     </>
   );
