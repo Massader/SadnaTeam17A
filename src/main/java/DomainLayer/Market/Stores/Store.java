@@ -335,9 +335,9 @@ public class Store {
     }
 
 
-    public double calculatePriceOfBasket(Map<UUID, CartItem> items) {
+    public double calculatePriceOfBasket(Collection<CartItem> items) {
         double price = 0;
-        for (CartItem cartItem : items.values()) {
+        for (CartItem cartItem : items) {
             price += cartItem.getPrice() * cartItem.getQuantity();
         }
         return price;
@@ -366,32 +366,32 @@ public class Store {
     }
 
     public ConcurrentLinkedQueue<Item> getUnavailableItems(ShoppingBasket shoppingBasket){
-        Map<UUID, CartItem> shoppingBasketItems = shoppingBasket.getItems();
+        Collection<CartItem> shoppingBasketItems = shoppingBasket.getItems();
         ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
         synchronized (items) {
-            for (UUID itemId : shoppingBasketItems.keySet()) {
-                int quantityToRemove = shoppingBasketItems.get(itemId).getQuantity();
-                int oldQuantity = storeDalController.getItem(itemId).getQuantity();
+            for (CartItem cartItem : shoppingBasketItems) {
+                int quantityToRemove = cartItem.getQuantity();
+                int oldQuantity = storeDalController.getItem(cartItem.getItemId()).getQuantity();
                 if (oldQuantity < quantityToRemove)
-                    missingItems.add(storeDalController.getItem(itemId));
+                    missingItems.add(storeDalController.getItem(cartItem.getItemId()));
             }
             return missingItems;
         }
     }
 
-    public void purchaseBasket(Client client, ShoppingBasket shoppingBasket) throws Exception {
-        Map<UUID, CartItem> shoppingBasketItems = shoppingBasket.getItems();
+    public User purchaseBasket(Client client, ShoppingBasket shoppingBasket) throws Exception {
+        Collection<CartItem> shoppingBasketItems = shoppingBasket.getItems();
         synchronized (items) {
-            for (UUID itemId : shoppingBasketItems.keySet()) {
-                int quantityToRemove = shoppingBasketItems.get(itemId).getQuantity();
-                int oldQuantity =  storeDalController.getItem(itemId).getQuantity();
+            for (CartItem cartItem : shoppingBasketItems) {
+                int quantityToRemove = cartItem.getQuantity();
+                int oldQuantity =  storeDalController.getItem(cartItem.getItemId()).getQuantity();
                 if (quantityToRemove <= oldQuantity){
                 //update Store, history Sale Store, User purchase
-                    storeDalController.getItem(itemId).setQuantity(oldQuantity - quantityToRemove);
-                    Sale sale = new Sale(client.getId(),shoppingBasket.getStoreId(), itemId,quantityToRemove);
+                    storeDalController.getItem(cartItem.getItemId()).setQuantity(oldQuantity - quantityToRemove);
+                    Sale sale = new Sale(client.getId(),shoppingBasket.getStoreId(), cartItem.getItemId(),quantityToRemove);
                     sales.add(sale);
                     if(client instanceof User){
-                        Purchase purchase = new Purchase((User) client,itemId,quantityToRemove, shoppingBasket.getStoreId());
+                        Purchase purchase = new Purchase((User) client, cartItem.getItemId(), quantityToRemove, shoppingBasket.getStoreId());
                         ((User) client).addPurchase(purchase);
                         return (User) client;
                     }
@@ -404,16 +404,16 @@ public class Store {
 
     public void unPurchaseBasket(Client client, ShoppingBasket shoppingBasket) throws Exception {
         synchronized (items) {
-            for (UUID itemId : shoppingBasket.getItems().keySet()) {
-                int quantityToRestore = shoppingBasket.getItems().get(itemId).getQuantity();
-                int oldQuantity =  storeDalController.getItem(itemId).getQuantity() + quantityToRestore;
-                storeDalController.getItem(itemId).setQuantity(oldQuantity);
+            for (CartItem cartItem : shoppingBasket.getItems()) {
+                int quantityToRestore = cartItem.getQuantity();
+                int oldQuantity =  storeDalController.getItem(cartItem.getItemId()).getQuantity() + quantityToRestore;
+                storeDalController.getItem(cartItem.getItemId()).setQuantity(oldQuantity);
 
                 // Remove the sale from the sales history
                 Sale saleToRemove = null;
                 for (Sale sale : sales) {
                     if (sale.getUserId().equals(client.getId()) && sale.getStoreId().equals(shoppingBasket.getStoreId())
-                            && sale.getItemId().equals(itemId) && sale.getQuantity() == quantityToRestore) {
+                            && sale.getItemId().equals(cartItem.getItemId()) && sale.getQuantity() == quantityToRestore) {
                         saleToRemove = sale;
                         break;
                     }
@@ -427,7 +427,7 @@ public class Store {
                     User user = (User) client;
                     Purchase purchaseToRemove = null;
                     for (Purchase purchase : user.getPurchases()) {
-                        if (purchase.getItemId().equals(itemId) && purchase.getQuantity() == quantityToRestore
+                        if (purchase.getItemId().equals(cartItem.getItemId()) && purchase.getQuantity() == quantityToRestore
                                 && purchase.getStoreId().equals(shoppingBasket.getStoreId())) {
                             purchaseToRemove = purchase;
                             break;

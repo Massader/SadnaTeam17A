@@ -48,8 +48,8 @@ public class CategoryCalculateDiscount implements CalculateDiscount {
             return 0.0;
         }
         double categoryDiscount = 0.0;
-        Map<UUID, CartItem> items = shoppingBasket.getItems();
-        for (CartItem cartItem : items.values()) {
+        Collection<CartItem> items = shoppingBasket.getItems();
+        for (CartItem cartItem : items) {
             if (cartItem != null && cartItem.getItem() != null && cartItem.getItem().containsCategory(category.getCategoryName())) {
                 int quantity = cartItem.getQuantity();
                 categoryDiscount += cartItem.getPrice() * quantity * discountPercentage;
