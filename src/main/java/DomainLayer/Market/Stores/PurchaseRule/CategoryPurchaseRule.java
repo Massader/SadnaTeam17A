@@ -4,6 +4,7 @@ import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
 import java.util.Collection;
 import java.util.Map;
@@ -11,10 +12,27 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Entity
+@Table(name = "Market_Stores_PurchaseRule_CategoryPurchaseRule")
 public class CategoryPurchaseRule implements PurchaseRule {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @Transient
     Category category;
 
     public CategoryPurchaseRule(Category category) {
+        this.category = category;
+    }
+
+    public CategoryPurchaseRule() {
+
+    }
+
+    public void setCategory(Category category) {
         this.category = category;
     }
 

@@ -3,13 +3,26 @@ package DomainLayer.Market.Stores.PurchaseRule;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Entity
+@Table(name = "Market_Stores_PurchaseRule_ShoppingBasketPurchaseRule")
 public class ShoppingBasketPurchaseRule implements PurchaseRule {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    public ShoppingBasketPurchaseRule() {
+        super();
+    }
+
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity, Boolean atLeast) {
             int price = 0;
@@ -29,7 +42,4 @@ public class ShoppingBasketPurchaseRule implements PurchaseRule {
                 return true;
             return false;
         }
-
-
-
 }

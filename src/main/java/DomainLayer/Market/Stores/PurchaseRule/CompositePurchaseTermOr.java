@@ -2,14 +2,22 @@ package DomainLayer.Market.Stores.PurchaseRule;
 
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Entity
+@Table(name = "Market_Stores_PurchaseRule_CompositePurchaseTermOr")
 public class CompositePurchaseTermOr extends CompositePurchaseTerm {
 
 
     public CompositePurchaseTermOr(PurchaseRule purchaseRule, ConcurrentLinkedQueue<PurchaseTerm> purchaseTerm) {
         super(purchaseRule, purchaseTerm);
+    }
+
+    public CompositePurchaseTermOr() {
+        super();
     }
 
     @Override

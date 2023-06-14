@@ -2,16 +2,27 @@ package DomainLayer.Market.Stores.PurchaseRule;
 
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Entity
+@Table(name = "Market_Stores_PurchaseRule_StorePurchasePolicy")
 public class StorePurchasePolicy {
     /**
      * managePurchasePolicies is a class that manages the purchase policies of a shop.
      * It stores PurchaseTerm and provides methods for adding and removing them.
      */
-    private ConcurrentLinkedQueue<PurchaseTerm> purchasePolicies;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @Transient
+    private Collection<PurchaseTerm> purchasePolicies;
 
     public StorePurchasePolicy(ConcurrentLinkedQueue<PurchaseTerm> purchasePolicies) {
         this.purchasePolicies = purchasePolicies;
@@ -20,7 +31,7 @@ public class StorePurchasePolicy {
         this.purchasePolicies = new ConcurrentLinkedQueue<>();
     }
 
-    public ConcurrentLinkedQueue<PurchaseTerm> getPurchasePolicies() {
+    public Collection<PurchaseTerm> getPurchasePolicies() {
         return purchasePolicies;
     }
 
@@ -68,8 +79,6 @@ public class StorePurchasePolicy {
         }
         purchasePolicies.add(term);
     }
-
-
 
     public synchronized void removePurchaseTerm(UUID itemId) throws Exception {
         if (itemId == null) {
@@ -120,13 +129,12 @@ public class StorePurchasePolicy {
 
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store){
         for (PurchaseTerm purchaseTerm: getPurchasePolicies()) {
-            if(!purchaseTerm.purchaseRuleOccurs(shoppingBasket,store)){
-                return  false;}}
-            return  true;
+            if(!purchaseTerm.purchaseRuleOccurs(shoppingBasket,store)) {
+                return  false;
+            }
         }
-
-
-
+        return  true;
+    }
 }
 
 
