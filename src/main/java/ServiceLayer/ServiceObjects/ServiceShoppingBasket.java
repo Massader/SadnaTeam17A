@@ -14,7 +14,7 @@ public class ServiceShoppingBasket {
         this.id = basket.getId();
         this.storeId = basket.getStoreId();
         items = new HashMap<>();
-        basket.getItems().values().forEach(cartItem -> items.put(cartItem.getItemId(), new ServiceCartItem(cartItem)));
+        basket.getItems().forEach(cartItem -> items.put(cartItem.getItemId(), new ServiceCartItem(cartItem)));
     }
 
     public UUID getId() {

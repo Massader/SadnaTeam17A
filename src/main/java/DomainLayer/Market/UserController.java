@@ -727,8 +727,8 @@ public class UserController {
             if (!storeController.itemExist(itemId))
                 throw new Exception("Item does not exist");
             Store store = storeController.getStore(storeId);
-            ShoppingBasket shoppingBasket = client.getCart().getShoppingBaskets().get(storeId);
-            if (!shoppingBasket.getItems().containsKey(itemId))
+            ShoppingBasket shoppingBasket = client.getCart().getBasketByStoreId(storeId);
+            if (!shoppingBasket.hasItem(itemId))
                 throw new Exception("No such item in the user's shopping cart.");
             return Response.getSuccessResponse(store.calculateItemDiscount(shoppingBasket, itemId) * 100); // 0.X to X as it is presented in the client
         } catch (Exception exception) {

@@ -3,12 +3,9 @@ package DomainLayer.Market;
 import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
-import DomainLayer.Market.Users.Client;
+import DomainLayer.Market.Users.*;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StorePermissions;
-import DomainLayer.Market.Users.ShoppingBasket;
-import DomainLayer.Market.Users.ShoppingCart;
-import DomainLayer.Market.Users.User;
 import DomainLayer.Payment.PaymentController;
 import DomainLayer.Supply.SupplyController;
 import ServiceLayer.Response;
@@ -67,9 +64,8 @@ public class PurchaseController {
            synchronized (instanceLock) {
                StringBuilder missingItemList = new StringBuilder();
                //check items are Available
-               for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
-                   UUID storeId = entry.getKey();
-                   ShoppingBasket basket = entry.getValue();
+               for (ShoppingBasket basket : shoppingCart.getShoppingBaskets()) {
+                   UUID storeId = basket.getStoreId();
                    Store store = storeController.getStore(storeId);
                    if(store == null){
                        return Response.getFailResponse("The store is not exist "+storeId);
@@ -96,18 +92,17 @@ public class PurchaseController {
                    return Response.getFailResponse("Price for shopping cart has changed, it's " + nowPrice);
                }
                //purchase all Basket -> cart
-               for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
-                   UUID storeId = entry.getKey();
-                   ShoppingBasket basket = entry.getValue();
+               for (ShoppingBasket basket : shoppingCart.getShoppingBaskets()) {
+                   UUID storeId = basket.getStoreId();
                    Store store = storeController.getStore(storeId);
                    try {
                        store.purchaseBasket(client,basket);
                    } catch (Exception e) {
                        return Response.getFailResponse(e.getMessage());
                    }
-                   for (Map.Entry<UUID, Role> role : store.getRolesMap().entrySet()) {
-                       if (role.getValue().getPermissions().contains(StorePermissions.STORE_OWNER))
-                           notificationController.sendNotification(role.getKey(), "A purchase from "
+                   for (Role role : store.getRoles()) {
+                       if (role.getPermissions().contains(StorePermissions.STORE_OWNER))
+                           notificationController.sendNotification(role.getUser().getId(), "A purchase from "
                                    + store.getName() + " has been made.");
                    }
                }

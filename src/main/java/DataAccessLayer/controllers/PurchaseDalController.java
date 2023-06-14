@@ -60,15 +60,13 @@ public class PurchaseDalController {
 //        return cart.get(0);
 //    }
 
-    public Long saveCartItem(CartItem cartItem){
+    public UUID saveCartItem(CartItem cartItem){
         cartItemRepository.save(cartItem);
-        return cartItem.;
+        return cartItem.getItem().getId();
     }
 
     public List<CartItem> getCartItems(Item item){
         List<CartItem> cartItems= cartItemRepository.findByItem(item);
-//        if(cartItems.isEmpty())
-//            return null;
         return cartItems;
     }
 }
