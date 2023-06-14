@@ -34,12 +34,7 @@ public class ShoppingCart {
        // this.shoppingBasketsMap = new ConcurrentHashMap<>();
         this.shoppingBaskets = new ConcurrentLinkedQueue<>();
     }
-    /*
-    public Map<UUID,ShoppingBasket> getShoppingBasketsMap() {
-        return shoppingBasketsMap;
-    }
 
-     */
     public Collection<ShoppingBasket> getShoppingBaskets() {
         return shoppingBaskets;
     }

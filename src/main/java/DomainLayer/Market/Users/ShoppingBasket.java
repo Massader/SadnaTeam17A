@@ -3,11 +3,9 @@ package DomainLayer.Market.Users;
 import DomainLayer.Market.Stores.Item;
 import jakarta.persistence.*;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Entity
 @Table(name = "ShoppingBaskets")
@@ -21,11 +19,14 @@ public class ShoppingBasket {
     @Column(name = "storeId")
     private UUID storeId;
 
-    @Transient
-    private Collection<CartItem> items;//UUID itemId, int quantity
+    @ElementCollection
+    @CollectionTable(name = "BasketItems", joinColumns = @JoinColumn(name = "basket_id"))
+    @MapKeyColumn(name = "item_id")
+    @Column(name = "quantity")
+    private Map<UUID,Integer> items;//UUID itemId, int quantity
 
 
-    public Collection<CartItem> getItems() {
+    public Map<UUID, Integer> getItems() {
         return items;
     }
 
@@ -34,7 +35,7 @@ public class ShoppingBasket {
     public ShoppingBasket(UUID storeId) {
         this.id = UUID.randomUUID();
         this.storeId = storeId;
-        this.items = new ConcurrentLinkedQueue<>();
+        this.items = new ConcurrentHashMap<>();
     }
 
     public UUID getId() {
