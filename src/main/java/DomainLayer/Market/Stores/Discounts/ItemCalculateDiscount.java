@@ -43,7 +43,7 @@ public class ItemCalculateDiscount implements CalculateDiscount {
         double price = store.calculatePriceOfBasket(shoppingBasket.getItems());
         double discount = 0;
         Collection<Item> storeItems = store.getItems();
-        ConcurrentHashMap<UUID, Integer> items = shoppingBasket.getItems();
+        Map<UUID, Integer> items = shoppingBasket.getItems();
         if (items.containsKey(getItemId())) {
             int quantity = items.get(itemId);
             discount = store.getItem(itemId).getPrice() * quantity * discountPercentage;

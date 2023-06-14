@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +36,7 @@ public class ItemPurchaseRule implements PurchaseRule {
 
     @Override
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity,Boolean atLeast) {
-        ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
+        Map<UUID,Integer> items = shoppingBasket.getItems();
         int basketQuantity=0;
         if(items.containsKey(getItemId())){
             basketQuantity= items.get(getItemId());}

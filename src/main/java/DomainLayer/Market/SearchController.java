@@ -1,6 +1,7 @@
 package DomainLayer.Market;
 
 import DataAccessLayer.RepositoryFactory;
+import DataAccessLayer.controllers.StoreDalController;
 import DataAccessLayer.controllers.UserDalController;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
@@ -22,6 +23,7 @@ public class SearchController {
     private static final Object instanceLock = new Object();
     private RepositoryFactory repositoryFactory;
     private UserDalController userDalController;
+    private StoreDalController storeDalController;
 
     public static SearchController getInstance() {
         synchronized(instanceLock) {
@@ -37,6 +39,8 @@ public class SearchController {
         this.repositoryFactory = repositoryFactory;
         userDalController = UserDalController.getInstance(repositoryFactory);
         storeController = StoreController.getInstance();
+        storeDalController = StoreDalController.getInstance(repositoryFactory);
+
     }
 
     public Response<List<Item>> searchItem(String keyword, String category, double minPrice, double maxPrice, int itemRating, int storeRating){
@@ -73,12 +77,12 @@ public class SearchController {
                 return Response.getFailResponse("Store does not exist");
             if (store.isClosed())
                 return Response.getFailResponse("Store is not open");
-            items = store.getItems().stream().filter(item -> item.getStore().getStoreId().equals(storeId)).toList();
+            items = repositoryFactory.itemRepository.findAllByStore(storeId);
         }
         else {
             for (Store store : storeController.getStores()) {
                 if (!store.isClosed())
-                    items.addAll(store.getItems());
+                    items = repositoryFactory.itemRepository.findAll();
             }
         }
         if (keyword != null && !keyword.isEmpty()){

@@ -88,7 +88,7 @@ public class StoreController {
                 request.getStoreId(), request.getPermissions());
     }
 
-
+//DB
     @GetMapping(path = "/store-staff/id={id}&storeId={storeId}")
     public Response<List<ServiceUser>> getStoreStaff(@PathVariable(name = "id") UUID clientCredentials,
                                                      @PathVariable(name = "storeId") UUID storeId) {
@@ -105,7 +105,7 @@ public class StoreController {
     public Response<Boolean> appointStoreOwner(@RequestBody RoleRequest request) {
         return service.appointStoreOwner(request.getClientCredentials(), request.getAppointee(), request.getStoreId());
     }
-    
+
     @GetMapping(path = "/get-store-owner-appointments/id={id}&storeId={storeId}")
     public Response<Collection<OwnerPetition>> getStoreOwnerPetitions(@PathVariable(name = "id") UUID clientCredentials,
                                                                       @PathVariable(name = "storeId") UUID storeId) {
@@ -121,25 +121,25 @@ public class StoreController {
     public Response<Boolean> removeStoreRole(@RequestBody RoleRequest request) {
         return service.removeStoreRole(request.getClientCredentials(), request.getAppointee(), request.getStoreId());
     }
-
+    //DB
     @PutMapping(path = "/item/quantity")
     public Response<Boolean> setItemQuantity(@RequestBody ItemRequest request) {
         return service.setItemQuantity(request.getClientCredentials(), request.getStoreId(),
                 request.getId(), request.getQuantity());
     }
-
+    //DB
     @PutMapping(path = "/item/name")
     public Response<Boolean> setItemName(@RequestBody ItemRequest request) {
         return service.setItemName(request.getClientCredentials(), request.getStoreId(),
                 request.getId(), request.getName());
     }
-
+    //DB
     @PutMapping(path = "/item/description")
     public Response<Boolean> setItemDescription(@RequestBody ItemRequest request) {
         return service.setItemDescription(request.getClientCredentials(), request.getStoreId(),
                 request.getId(), request.getDescription());
     }
-
+//DB
     @PutMapping(path = "/item/price")
     public Response<Boolean> setItemPrice(@RequestBody ItemRequest request) {
         return service.setItemPrice(request.getClientCredentials(), request.getStoreId(),
@@ -152,12 +152,13 @@ public class StoreController {
         return service.getStoreSaleHistory(id, storeId);
     }
 
+    //DB
     @GetMapping(path = "/get-stores-page/number={number}&page={page}")
     public Response<List<ServiceStore>> getStoresPage(@PathVariable(name = "number") int number, @PathVariable(name = "page") int page) {
         return service.getStoresPage(number, page);
     }
 
-
+//DB
     @GetMapping(path = "/search-item/keyword={keyword}&category={category}&minPrice={minPrice}" +
                         "&maxPrice={maxPrice}&itemRating={itemRating}&storeRating={storeRating}" +
                         "&storeId={storeId}&number={number}&page={page}")
@@ -173,6 +174,7 @@ public class StoreController {
         return service.searchItem(keyword, category, minPrice, maxPrice, itemRating, storeRating, number, page, storeId);
     }
 
+    //DB
     @GetMapping(path = "/search-item-num/keyword={keyword}&category={category}&minPrice={minPrice}" +
             "&maxPrice={maxPrice}&itemRating={itemRating}&storeRating={storeRating}" +
             "&storeId={storeId}&number={number}&page={page}")
@@ -255,16 +257,19 @@ public class StoreController {
         return service.getItemsPage(number, page, storeId);
     }
 
+    //DB
     @GetMapping(path = "/num-of-stores")
     public Response<Long> numOfStores(){
         return service.numOfStores();
     }
 
+    //DB
     @GetMapping(path = "/num-of-items/storeId={storeId}")
     public Response<Long> numOfItems(@PathVariable(name = "storeId", required = false) UUID storeId){
         return service.numOfItems(storeId);
     }
 
+    //DB
     @PostMapping(path = "/rate-item")
     public Response<Boolean> rateItem(@RequestBody ItemRatingRequest request) {
         return service.addItemRating(request.getClientCredentials(), request.getItemId(), request.getStoreId(),

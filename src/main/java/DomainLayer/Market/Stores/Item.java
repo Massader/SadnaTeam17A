@@ -19,7 +19,7 @@ public class Item {
     private String name;
     @Column
     private double price;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "store_id")
     private Store store;
 

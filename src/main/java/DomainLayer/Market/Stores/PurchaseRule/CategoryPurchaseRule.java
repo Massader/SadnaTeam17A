@@ -44,7 +44,7 @@ public class CategoryPurchaseRule implements PurchaseRule {
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket,Store store, int quantity, Boolean atLeast) {
         int categoryQuantity = 0;
         Collection<Item> storeItems = store.getItems();
-         ConcurrentHashMap<UUID,Integer> items = shoppingBasket.getItems();
+         Map<UUID,Integer> items = shoppingBasket.getItems();
         for (UUID itemId : items.keySet()) {
             Item item = store.getItem(itemId);
             if (item!=null&&item.containsCategory(category.getCategoryName())) {

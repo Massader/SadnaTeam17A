@@ -4,7 +4,9 @@ package DomainLayer.Market;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import DataAccessLayer.PurchaseRepository;
 import DataAccessLayer.RepositoryFactory;
+import DataAccessLayer.controllers.PurchaseDalController;
 import DataAccessLayer.controllers.StoreDalController;
 import DataAccessLayer.controllers.UserDalController;
 import DomainLayer.Market.Stores.Item;
@@ -30,7 +32,8 @@ public class UserController {
     private NotificationController notificationController;
     public static RepositoryFactory repositoryFactory;
     private UserDalController userDalController;
-private StoreDalController storeDalController;
+    private StoreDalController storeDalController;
+    private PurchaseDalController purchaseDalController;
     private UserController() {
     }
 
@@ -52,6 +55,7 @@ private StoreDalController storeDalController;
         storeController = StoreController.getInstance();
         notificationController = NotificationController.getInstance();
         storeDalController = StoreDalController.getInstance(repositoryFactory);
+        purchaseDalController = PurchaseDalController.getInstance(repositoryFactory);
         registerDefaultAdmin();
     }
 
@@ -126,15 +130,12 @@ private StoreDalController storeDalController;
     private Response<Boolean> loadUser(String username, String password, UUID id) {
         try {
             User user = new User(username);
+            user.getCart().setClient(user);
             userDalController.saveUser(user);
             Response<Boolean> response = securityController.encryptAndSavePassword(user.getId(), password);
             if (response.isError()) {
-//                users.remove(id);
-//                usernames.remove(username);
                 userDalController.deleteUser(user);
             }
-//            users.put(id, user);
-//            usernames.put(user.getUsername(), id);
             return response;
         }
         catch(Exception exception) {
@@ -147,6 +148,8 @@ private StoreDalController storeDalController;
         try {
             UUID id = UUID.randomUUID();
             Client client = new Client(id);
+            ShoppingCart shoppingCart = new ShoppingCart(client);
+            client.setCart(shoppingCart);
 //            ClientRepository clientRepository = repositoryFactory.getClientRepository();
 //            clientRepository.save(client);
             clients.put(client.getId(), client);
@@ -206,6 +209,7 @@ private StoreDalController storeDalController;
                     quantity = bid.getQuantity();
                 }
                 if (shoppingCart.addItemToCart(item, storeId, quantity)) {
+                    purchaseDalController.saveCart(shoppingCart);
                     return Response.getSuccessResponse(true);
                 } else {
                     return Response.getFailResponse("Cannot add item to cart");
@@ -228,8 +232,10 @@ private StoreDalController storeDalController;
                 //Response<Boolean> response = storeController.addItemQuantity(storeId, itemId, quantity);
                 //if (response.isError()) return response;
                 ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
-                if (shoppingCart.removeItemFromCart(itemResponse.getValue(), storeId, quantity))
+                if (shoppingCart.removeItemFromCart(itemResponse.getValue(), storeId, quantity)) {
+                    purchaseDalController.saveCart(shoppingCart);
                     return Response.getSuccessResponse(true);
+                }
                 else
                     return Response.getFailResponse("Cannot remove item quantity from cart.");
             }
@@ -346,13 +352,17 @@ private StoreDalController storeDalController;
                 return Response.getFailResponse("User does not have role in the shop.");
             if(!store.getOwner(clientCredentials).getAppointees().contains(roleToRemove))
                 return Response.getFailResponse("Staff member was not appointed by this owner.");
-            response2.getValue().removeStoreRole(storeId);
+            User user = response2.getValue();
+//            user.removeStoreRole(storeId);
             if (store.getOwner(roleToRemove) != null) {
                 for (UUID appointee : store.getOwner(roleToRemove).getAppointees())
                     removeStoreRole(roleToRemove, appointee, storeId);
             }
-            store.removeRole(roleToRemove);
+            Role role = store.removeRole(roleToRemove, user);
+
             store.getOwner(clientCredentials).removeAppointee(roleToRemove);
+            storeDalController.saveStore(store);
+            repositoryFactory.roleRepository.delete(role);
             notificationController.sendNotification(roleToRemove, "Your role has been removed from "
                     + store.getName());
             return Response.getSuccessResponse(true);

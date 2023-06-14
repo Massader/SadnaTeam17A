@@ -51,12 +51,12 @@ public class UserController {
         return response;
     }
 
-
+//DB
     @PostMapping(path = "/create-client")
     public Response<UUID> createClient() {
         return service.createClient();
     }
-    
+    //DB
     @PostMapping(path = "/logout")
     public Response<UUID> logout(@RequestBody Request request) {
         Response<UUID> response = service.logout(request.getClientCredentials());
@@ -97,27 +97,32 @@ public class UserController {
                                                       @PathVariable(name = "answer") String answer) {
         return service.validateSecurityQuestion(clientCredentials, answer);
     }
-    
+
+    //DB
     @GetMapping(path = "/security/get-question/id={id}")
     public Response<String> getSecurityQuestion(@PathVariable(name = "id") UUID clientCredentials) {
         return service.getSecurityQuestion(clientCredentials);
     }
-    
+
+    //DB
     @PostMapping(path = "/admin/register")
     public Response<Boolean> registerAdmin(@RequestBody LoginRegisterRequest request) {
         return service.registerAdmin(request.getClientCredentials(), request.getUsername(), request.getPassword());
     }
-    
+
+    //DB
     @PutMapping(path = "/security/change-password")
     public Response<Boolean> changePassword(@RequestBody ChangePasswordRequest request) {
         return service.changePassword(request.getClientCredentials(), request.getOldPassword(), request.getNewPassword());
     }
-    
+
+    //DB
     @GetMapping(path = "/get-cart/id={id}")
     public Response<List<ServiceShoppingBasket>> getCart(@PathVariable(name = "id") UUID clientCredentials) {
         return service.getCart(clientCredentials);
     }
-    
+
+    //DB
     @PostMapping(path = "/add-to-cart")
     public Response<Boolean> addItemToCart(@RequestBody CartItemRequest request) {
         return service.addItemToCart(request.getClientCredentials(), request.getItemId(), request.getQuantity(),

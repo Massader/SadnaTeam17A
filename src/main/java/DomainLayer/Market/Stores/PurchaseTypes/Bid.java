@@ -31,7 +31,9 @@ public class Bid {
         ownersAccepted = new ArrayList<>();
         accepted = false;
     }
-    
+
+    public Bid() {}
+
     public UUID getBidderId() {
         return bidderId;
     }

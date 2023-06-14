@@ -3,6 +3,7 @@ package DomainLayer.Market.Users;
 import DomainLayer.Market.Stores.Item;
 import jakarta.persistence.*;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Table(name = "ShoppingBaskets")
 public class ShoppingBasket {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private UUID id; //id of the shopping basket
 
@@ -18,14 +19,18 @@ public class ShoppingBasket {
     private UUID storeId;
 
 //    @OneToMany
-    @Transient
-    private ConcurrentHashMap<UUID,Integer> items;//UUID itemId, int quantity
+//    @Transient
 
-    @Transient
-    public ConcurrentHashMap<UUID, Integer> getItems() {
+@ElementCollection
+@CollectionTable(name = "BasketItems", joinColumns = @JoinColumn(name = "basket_id"))
+@MapKeyColumn(name = "item_id")
+@Column(name = "quantity")
+    private Map<UUID,Integer> items;//UUID itemId, int quantity
+
+
+    public Map<UUID, Integer> getItems() {
         return items;
     }
-
 
     public ShoppingBasket() {}
 

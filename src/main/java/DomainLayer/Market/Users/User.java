@@ -24,11 +24,6 @@ public class User extends Client{
     @Column(unique = true)
     private String username;
 
-//    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    @JoinTable(name = "user_roles",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_id"))
-//    private Collection<Role> roles;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Role> roles;
 
@@ -37,8 +32,7 @@ public class User extends Client{
     @Column
     protected boolean isAdmin;
 
-//    @Transient
-//    UserDalController userDalController;
+
 
     public User(String username, UUID id){
         super(id);
@@ -55,7 +49,6 @@ public class User extends Client{
         super();
         this.username = username;
         roles = new ConcurrentLinkedQueue<>();
-
         purchases = new ConcurrentLinkedQueue<>();
         isAdmin=false;
 //        userDalController = UserDalController.getInstance(UserController.repositoryFactory);
