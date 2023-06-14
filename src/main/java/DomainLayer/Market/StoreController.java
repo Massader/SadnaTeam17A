@@ -970,7 +970,7 @@ public class StoreController {
                     !store.checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
                 return Response.getFailResponse("User does not have permission to see item bids.");
             List<Bid> bids = new ArrayList<>();
-            for (Item item : store.getItems().values()) {
+            for (Item item : store.getItems()) {
                 bids.addAll(item.getBids());
             }
             return Response.getSuccessResponse(bids);
@@ -1065,7 +1065,7 @@ public class StoreController {
             throw new Exception("Store does not exist.");
         Store store = getStore(storeId);
         List<Bid> bids = new ArrayList<>();
-        for (Item item : store.getItems().values()) {
+        for (Item item : store.getItems()) {
             bids.addAll(item.getBids());
         }
         return bids;
@@ -1086,4 +1086,12 @@ public class StoreController {
             return Response.getFailResponse(e.getMessage());
         }
     }
+
+//    public Response<List<CartItem>> getCartItem(UUID itemId) {
+//
+//    }
+
+//    public Response<CartItem> getCartItem(UUID itemId, ShoppingBasket shoppingBasket) {
+//
+//    }
 }
