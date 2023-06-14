@@ -59,8 +59,8 @@ public class ShoppingCart {
      */
 
     public Boolean removeItemFromCart(UUID itemId, UUID storeId, int quantity) throws Exception {
-        if (!shoppingBaskets.containsKey(storeId))
-            return false;
+        Item item = null;
+        for(Item item1 : shoppingBaskets.getItems();)
         ShoppingBasket shoppingBasket = shoppingBaskets.get(storeId);
         boolean removalSuccess = shoppingBasket.removeItem(itemId, quantity);
         if (removalSuccess && shoppingBasket.getItems().isEmpty()) {
@@ -69,7 +69,7 @@ public class ShoppingCart {
         return removalSuccess;
     }
 
-    public Boolean addItemToCart(CartItem cartItem, UUID storeId, int quantity) {
+    public Boolean addItemToCart(CartItem cartItem, UUID storeId, int quantity) throws Exception {
         ShoppingBasket basket = null;
         for (ShoppingBasket shoppingBasket : shoppingBaskets) {
             if (shoppingBasket.validateStore(storeId)) {
@@ -81,7 +81,7 @@ public class ShoppingCart {
             basket = new ShoppingBasket(storeId);
             shoppingBaskets.add(basket);
         }
-        return basket.addItem(cartItem, quantity);
+        return basket.addItem(cartItem, quantity);gi
     }
 
     public synchronized void clearCart() {

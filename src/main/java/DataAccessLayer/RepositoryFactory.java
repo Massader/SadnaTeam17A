@@ -17,6 +17,7 @@ public class RepositoryFactory {
     public final ItemReviewRepository itemReviewRepository;
     public final ShoppingCartRepository shoppingCartRepository;
     public final ShoppingBasketRepository shoppingBasketRepository;
+    public CartItemRepository cartItemRepository;
 
     @Autowired
     public RepositoryFactory(ClientRepository clientRepository,
@@ -28,7 +29,8 @@ public class RepositoryFactory {
                              RoleRepository roleRepository,
                              ItemReviewRepository itemReviewRepository,
                              ShoppingCartRepository shoppingCartRepository,
-                             ShoppingBasketRepository shoppingBasketRepository)
+                             ShoppingBasketRepository shoppingBasketRepository,
+                             CartItemRepository cartItemRepository)
     {
         this.clientRepository = clientRepository;
         this.userRepository = userRepository;
@@ -40,6 +42,7 @@ public class RepositoryFactory {
         this.itemReviewRepository = itemReviewRepository;
         this.shoppingCartRepository = shoppingCartRepository;
         this.shoppingBasketRepository = shoppingBasketRepository;
+        this.cartItemRepository = cartItemRepository;
 
     }
 

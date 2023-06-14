@@ -1,11 +1,17 @@
 package DomainLayer.Market.Users;
 
 import DomainLayer.Market.Stores.Item;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 
 public class CartItem {
-    
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "item_id")
     private Item item;
     private int quantity;
     private double price;
@@ -15,6 +21,8 @@ public class CartItem {
         this.quantity = quantity;
         this.price = price;
     }
+
+    public CartItem(){}
     
     public Item getItem() {
         return item;
