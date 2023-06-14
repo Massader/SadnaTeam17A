@@ -185,10 +185,13 @@ public class UserController {
     private void deleteShoppingBasket(ShoppingBasket shoppingBasket){
         UUID storeId = shoppingBasket.getStoreId();
         Store store = storeController.getStore(storeId);
-        for(UUID itemId : shoppingBasket.getItems().keySet()){
-            storeDalController.getItem(itemId).addQuantity(shoppingBasket.getItems().get(itemId));
+        for(CartItem cartItem : shoppingBasket.getItems()){
+            Item item = cartItem.getItem();
+            item.addQuantity(cartItem.getQuantity());
+            storeDalController.saveItem(item);
         }
         shoppingBasket.getItems().clear();
+        purchaseDalController.saveBasket(shoppingBasket);
     }
 
     public Response<Boolean> addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
@@ -228,13 +231,16 @@ public class UserController {
 
     public Response<Boolean> removeItemFromCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
         try{
-            if (getClientOrUser(clientCredentials)==null)
+            Client client = getClientOrUser(clientCredentials);
+            if (client==null)
                 return Response.getFailResponse("User does not exist");
-            Response<Item> itemResponse = storeController.getItem(itemId);
-            if (itemResponse.isError())
-                return Response.getFailResponse(itemResponse.getMessage());
-            synchronized (itemResponse.getValue()) {
-                ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
+            ShoppingCart shoppingCart = client.getCart();
+            ShoppingBasket shoppingBasket = shoppingCart.getBasketByStoreId(storeId);
+            CartItem cartItem = shoppingBasket.getCartItem(itemId);
+//            if (itemResponse.isError())
+//                return Response.getFailResponse(itemResponse.getMessage());
+            synchronized (cartItem) {
+//                ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
                 if (shoppingCart.removeItemFromCart(itemId, storeId, quantity)) {
                     purchaseDalController.saveCart(shoppingCart);
                     return Response.getSuccessResponse(true);

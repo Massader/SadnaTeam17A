@@ -56,7 +56,7 @@ public class ShoppingBasket {
     public boolean addItem(CartItem cartItem, int quantity) throws Exception {
         if(cartItem.getItem().getQuantity() < quantity)
             throw new Exception("Quantity of cart item is higher than the quantity in stock.");
-        if (!this.items.contains(cartItem.getItemId()) {
+        if (!this.items.contains(cartItem.getItemId())) {
             items.add( cartItem);
         }
         else {
@@ -68,15 +68,16 @@ public class ShoppingBasket {
 
     public boolean removeItem(UUID itemId, int quantity) throws Exception {
         synchronized (this) {
-            if(items.get(itemId) == null)
+            Item item = getItem(itemId);
+            if(item == null)
                 throw new Exception("Item is not in the cart");
-            int oldQuantity = items.get(itemId).getQuantity();
+            int oldQuantity = item.getQuantity();
             if (oldQuantity <= quantity) {
-                items.remove(itemId);
+                items.remove(getCartItem(itemId));
                 return true;
             }
             else
-                items.get(itemId).setQuantity(oldQuantity - quantity);
+                item.setQuantity(oldQuantity - quantity);
             return true;
         }
     }
@@ -85,9 +86,25 @@ public class ShoppingBasket {
         items.clear();
     }
 
-    public int quantityOf(UUID itemId){return items.get(itemId).getQuantity();}
+    public int quantityOf(UUID itemId){return getItem(itemId).getQuantity();}
 
     public boolean validateStore(UUID storeId) {
         return storeId.equals(this.storeId);
+    }
+
+    public CartItem getCartItem(UUID itemId){
+        for(CartItem cartItem : items){
+            if (cartItem.getItem().getId().equals(itemId))
+                return cartItem;
+        }
+        return null;
+    }
+
+    public Item getItem(UUID itemId){
+        for(CartItem cartItem : items){
+            if (cartItem.getItem().getId().equals(itemId))
+                return cartItem.getItem();
+        }
+        return null;
     }
 }
