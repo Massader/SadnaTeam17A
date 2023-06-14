@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Entity
-@Table(name = "Stores")
+@Table(name = "Market_Stores_Store")
 public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -4,10 +4,10 @@ import java.util.Objects;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Categories")
+@Table(name = "Market_Stores_Category")
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
     @Column
