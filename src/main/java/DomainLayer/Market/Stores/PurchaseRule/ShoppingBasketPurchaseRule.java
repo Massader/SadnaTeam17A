@@ -13,12 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Entity
 @Table(name = "PurchaseRule_ShoppingBasketPurchaseRule")
-public class ShoppingBasketPurchaseRule implements PurchaseRule {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private Long id;
+public class ShoppingBasketPurchaseRule extends PurchaseRule {
 
     public ShoppingBasketPurchaseRule() {
         super();

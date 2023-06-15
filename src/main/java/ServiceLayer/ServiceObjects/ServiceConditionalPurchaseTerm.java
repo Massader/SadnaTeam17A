@@ -2,7 +2,6 @@ package ServiceLayer.ServiceObjects;
 
 import DomainLayer.Market.Stores.PurchaseRule.ConditionalPurchaseTerm;
 
-import java.util.List;
 import java.util.UUID;
 
 public class ServiceConditionalPurchaseTerm {

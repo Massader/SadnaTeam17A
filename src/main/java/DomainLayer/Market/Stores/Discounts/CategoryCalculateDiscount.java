@@ -14,17 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Entity
 @Table(name = "Discounts_CategoryCalculateDiscount")
-public class CategoryCalculateDiscount implements CalculateDiscount {
+public class CategoryCalculateDiscount extends CalculateDiscount {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
-    private Long id;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Category category;
-
 
     public CategoryCalculateDiscount(Category category) {
         this.category = category;

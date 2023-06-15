@@ -17,23 +17,26 @@ public class StoreDiscount {
      * It stores discount and provides methods for adding and removing them.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
-    private Long id;
-    @Transient
+    private UUID id;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private NumericalAssemblyOfDiscount discountsAssembly;
 
     public StoreDiscount(NumericalAssemblyOfDiscount discountsAssembly) {
         this.discountsAssembly = discountsAssembly;
     }
-    public StoreDiscount(Boolean max){
-        if(max){this.discountsAssembly= new MaxDiscounts();}
-            else{this.discountsAssembly= new CombiningDiscounts();}}
+    public StoreDiscount(Boolean max) {
+        if(max) {
+            this.discountsAssembly = new MaxDiscounts();
+        } else {
+            this.discountsAssembly = new CombiningDiscounts();
+        }
+    }
 
     public StoreDiscount() {
 
     }
-
 
     public NumericalAssemblyOfDiscount getDiscountsAssembly() {
         return discountsAssembly;
@@ -88,5 +91,13 @@ public class StoreDiscount {
     
     public double calculateItemDiscount(ShoppingBasket shoppingBasket, Store store, UUID itemId) {
         return this.discountsAssembly.calculateItemDiscount(shoppingBasket, store, itemId);
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 }

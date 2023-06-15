@@ -5,7 +5,6 @@ package DomainLayer.Market.Stores.PurchaseRule;
 import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
-import ServiceLayer.ServiceObjects.ServicePurchaseRule;
 import ServiceLayer.ServiceObjects.ServicePurchaseTerm;
 import jakarta.persistence.*;
 
@@ -24,7 +23,6 @@ public abstract class PurchaseTerm {
     PurchaseRule purchaseRule;
 
     public PurchaseTerm(PurchaseRule purchaseRule) {
-        this.termId = UUID.randomUUID();
         this.purchaseRule = purchaseRule;
     }
     
@@ -106,6 +104,10 @@ public abstract class PurchaseTerm {
     
     public UUID getTermId() {
         return termId;
+    }
+
+    public void setTermId(UUID id) {
+        this.termId = id;
     }
 }
 

@@ -4,6 +4,7 @@ import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 import ServiceLayer.ServiceObjects.ServicePurchaseTerm;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -14,8 +15,7 @@ import java.util.UUID;
 @Table(name = "PurchaseRule_AtMostPurchaseTerm")
 public class AtMostPurchaseTerm extends PurchaseTerm {
 
-
-    @Transient
+    @Column
     private int quantity;
 
     public AtMostPurchaseTerm(PurchaseRule purchaseRule, int quantity) {
@@ -43,8 +43,6 @@ public class AtMostPurchaseTerm extends PurchaseTerm {
     public int getQuantity() {
         return quantity;
     }
-
-
 
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store) {
         return purchaseRule.purchaseRuleOccurs(shoppingBasket,store,this.quantity,false);

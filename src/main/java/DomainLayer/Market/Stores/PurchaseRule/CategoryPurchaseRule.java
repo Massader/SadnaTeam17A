@@ -15,14 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Entity
 @Table(name = "PurchaseRule_CategoryPurchaseRule")
-public class CategoryPurchaseRule implements PurchaseRule {
+public class CategoryPurchaseRule extends PurchaseRule {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
-    private Long id;
-
-    @Transient
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Category category;
 
     public CategoryPurchaseRule(Category category) {

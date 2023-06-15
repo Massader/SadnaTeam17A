@@ -13,10 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Entity
 @Table(name = "Discounts_ItemCalculateDiscount")
-public class ItemCalculateDiscount implements CalculateDiscount {
+public class ItemCalculateDiscount extends CalculateDiscount {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "itemId", nullable = false, unique = true)
     private UUID itemId;
 

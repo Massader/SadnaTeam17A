@@ -18,6 +18,7 @@ public class CombiningDiscounts extends NumericalAssemblyOfDiscount {
     public CombiningDiscounts(Collection<Discount> discounts) {
         super(discounts);
     }
+
     public CombiningDiscounts() {
         super();
     }
