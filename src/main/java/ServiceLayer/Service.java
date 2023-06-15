@@ -96,7 +96,7 @@ public class Service {
 //        storeController.init(repositoryFactory);
 
         //Add Supply and Payment JSON config file read here
-        loadObjects();
+//        loadObjects();
         eventLogger.log(Level.INFO, "System boot successful.");
         return true;
     }

@@ -95,7 +95,6 @@ public class Store {
     }
 
 
-
     public Collection<Role> getRoles() {
         return roles;
     }
