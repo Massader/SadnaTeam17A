@@ -252,7 +252,8 @@ public class UserController {
             synchronized (cartItem) {
 //                ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
                 if (shoppingCart.removeItemFromCart(itemId, storeId, quantity)) {
-                    purchaseDalController.saveCart(shoppingCart);
+                    if(client instanceof User)
+                        purchaseDalController.saveCart(shoppingCart);
                     return Response.getSuccessResponse(true);
                 }
                 else

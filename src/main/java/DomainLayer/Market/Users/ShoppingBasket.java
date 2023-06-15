@@ -67,7 +67,7 @@ public class ShoppingBasket {
 
     public boolean removeItem(UUID itemId, int quantity) throws Exception {
         synchronized (this) {
-            Item item = getItem(itemId);
+            CartItem item = getCartItem(itemId);
             if(item == null)
                 throw new Exception("Item is not in the cart");
             int oldQuantity = item.getQuantity();
