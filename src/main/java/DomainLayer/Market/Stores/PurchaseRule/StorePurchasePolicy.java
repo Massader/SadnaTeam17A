@@ -17,9 +17,9 @@ public class StorePurchasePolicy {
      */
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private UUID id;
 
     @Transient
     private Collection<PurchaseTerm> purchasePolicies;
@@ -78,6 +78,14 @@ public class StorePurchasePolicy {
             }
         }
         return true;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getId() {
+        return id;
     }
 }
 

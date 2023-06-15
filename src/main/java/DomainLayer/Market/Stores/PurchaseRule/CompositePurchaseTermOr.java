@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Table(name = "PurchaseRule_CompositePurchaseTermOr")
 public class CompositePurchaseTermOr extends CompositePurchaseTerm {
 
-
     public CompositePurchaseTermOr(PurchaseRule purchaseRule, ConcurrentLinkedQueue<PurchaseTerm> purchaseTerm) {
         super(purchaseRule, purchaseTerm);
     }

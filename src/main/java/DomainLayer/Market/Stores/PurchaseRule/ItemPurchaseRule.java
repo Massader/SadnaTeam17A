@@ -13,14 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Entity
 @Table(name = "PurchaseRule_ItemPurchaseRule")
-public class ItemPurchaseRule implements PurchaseRule {
+public class ItemPurchaseRule extends PurchaseRule {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private Long id;
-
-    @Transient
+    @Column
     UUID itemId;
 
     public ItemPurchaseRule(UUID itemId) {

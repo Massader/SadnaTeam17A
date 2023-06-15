@@ -6,12 +6,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Discounts_ShoppingBasketCalculateDiscount")
-public class ShoppingBasketCalculateDiscount implements CalculateDiscount {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
-    private Long id;
+public class ShoppingBasketCalculateDiscount extends CalculateDiscount {
 
     public ShoppingBasketCalculateDiscount() {
     }

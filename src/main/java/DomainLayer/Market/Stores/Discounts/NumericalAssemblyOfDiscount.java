@@ -13,8 +13,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public abstract class NumericalAssemblyOfDiscount {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "numerical_assembly_of_discount_id")
@@ -36,12 +36,15 @@ public abstract class NumericalAssemblyOfDiscount {
     
     public abstract double calculateItemDiscount(ShoppingBasket shoppingBasket, Store store, UUID itemId);
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
+    public void setDiscounts(Collection<Discount> discounts) {
+        this.discounts = discounts;
+    }
 }

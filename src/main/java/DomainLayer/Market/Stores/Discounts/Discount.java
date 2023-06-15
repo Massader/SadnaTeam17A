@@ -20,11 +20,11 @@ public class Discount {
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
 
-    @Transient
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private CalculateDiscount optionCalculateDiscount;
-    @Transient
+    @Column
     private Double discountPercentage;
-    @Transient
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private PurchaseTerm purchaseTerm;
 
     public Discount(CalculateDiscount optionCalculateDiscount, double discountPercentage, PurchaseTerm purchaseTerm) throws Exception {

@@ -4,6 +4,7 @@ import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
 import ServiceLayer.ServiceObjects.ServicePurchaseTerm;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -14,7 +15,7 @@ import java.util.UUID;
 @Table(name = "PurchaseRule_AtLeastPurchaseTerms")
 public class AtLeastPurchaseTerm extends PurchaseTerm {
 
-    @Transient
+    @Column
     private int quantity;
 
     public AtLeastPurchaseTerm(PurchaseRule purchaseRule, int quantity) {
