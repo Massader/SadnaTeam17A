@@ -14,13 +14,13 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
-    @Transient
+    @Column
     private String body;
-    @Transient
+    @Column
     private UUID sender;
-    @Transient
+    @Column
     private UUID recipient;
-    @Transient
+    @Column
     private Date timestamp;
 
     public Message(String body, UUID sender, UUID recipient){

@@ -110,6 +110,14 @@ public class ShoppingCart {
         }
         return null;
     }
+
+    public void setShoppingBaskets(Collection<ShoppingBasket> shoppingBaskets) {
+        this.shoppingBaskets = shoppingBaskets;
+    }
+
+    public Client getClient() {
+        return client;
+    }
 }
 
 

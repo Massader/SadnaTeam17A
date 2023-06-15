@@ -36,6 +36,7 @@ public class UserController {
     private StoreDalController storeDalController;
     private PurchaseDalController purchaseDalController;
     private UserController() {
+
     }
 
     public static synchronized UserController getInstance() {

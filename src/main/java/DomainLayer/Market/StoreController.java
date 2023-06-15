@@ -632,8 +632,10 @@ public class StoreController {
                 userController.removeItemFromCarts(storeId, item);
                 if (!store.removeItem(item))
                     return Response.getFailResponse("Failed to remove item.");
-                else
+                else {
+                    storeDalController.deleteItem(item);
                     storeDalController.saveStore(store);
+                }
                 return Response.getSuccessResponse(true);
             }
         } catch (Exception e) {
@@ -1044,7 +1046,7 @@ public class StoreController {
             if (!storeExist(storeId))
                 return Response.getFailResponse("Store does not exist.");
             Store store = getStore(storeId);
-            Item item = store.getItem(itemId);
+            Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist");
             if (!item.getPurchaseType().getType().equals(PurchaseType.BID_PURCHASE))

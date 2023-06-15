@@ -17,14 +17,10 @@ public class ShoppingBasket {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private UUID id; //id of the shopping basket
-
     @Column(name = "storeId")
     private UUID storeId;
-
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Collection<CartItem> items;//UUID itemId, int quantity
-
 
     public Collection<CartItem> getItems() {
         return items;
@@ -116,5 +112,9 @@ public class ShoppingBasket {
                 return true;
         }
         return false;
+    }
+
+    public void setItems(Collection<CartItem> items) {
+        this.items = items;
     }
 }

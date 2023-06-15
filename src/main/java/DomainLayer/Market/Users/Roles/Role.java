@@ -17,8 +17,8 @@ import jakarta.persistence.*;
 public abstract class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "store_id")
@@ -57,15 +57,12 @@ public abstract class Role {
     {
         this.store = store;
     }
-//    public long getId
 
-//    public void addUser(User user) {
-//        users.add(user);
-//        user.getRoles().add(this);
-//    }
-//
-//    public void removeUser(User user) {
-//        users.remove(user);
-//        user.getRoles().remove(this);
-//    }
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getId() {
+        return id;
+    }
 }

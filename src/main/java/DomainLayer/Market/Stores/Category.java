@@ -1,15 +1,18 @@
 package DomainLayer.Market.Stores;
 
 import java.util.Objects;
+import java.util.UUID;
+
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Stores_Category")
 public class Category {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private UUID id;
     @Column
     private String categoryName;
 
@@ -29,5 +32,17 @@ public class Category {
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
         return Objects.equals(categoryName, category.categoryName);
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }
