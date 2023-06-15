@@ -48,10 +48,8 @@ public class Store {
     private int ratingCounter;
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Collection<Item> items;
-    //a
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private StoreDiscount discounts;
-    //a
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private StorePurchasePolicy policy;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -90,8 +88,6 @@ public class Store {
         reviews = new ConcurrentLinkedQueue<>();
         ownerPetitions = new ArrayList<>();
     }
-
-
 
     public Store(){
         items = new ConcurrentLinkedQueue<>();
@@ -531,6 +527,3 @@ public class Store {
         this.shutdown = shutdown;
     }
 }
-
-
-
