@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Entity
 @Table(name = "Stores_Item")
 public class Item {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "ItemId", nullable = false, unique = true)
@@ -27,7 +28,6 @@ public class Item {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "store_id")
     private Store store;
-
     @Column
     private double rating;
     @Column
@@ -38,14 +38,8 @@ public class Item {
     private String description;
     @OneToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)// cascade
     private PurchaseType purchaseType;
-
-
-    @Transient
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Category> categories;
-
-    @OneToMany(mappedBy = "item", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Map<UUID, ItemReview> reviewsMap;
-
     @OneToMany(mappedBy = "item", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<ItemReview> reviews;
 
@@ -58,7 +52,6 @@ public class Item {
         this.description = description;
         purchaseType = new DirectPurchase(PurchaseType.DIRECT_PURCHASE);
         categories = new ConcurrentLinkedQueue<>();
-        //reviewsMap = new ConcurrentHashMap<>();
         reviews = new ConcurrentLinkedQueue<>();
     }
 
@@ -72,13 +65,11 @@ public class Item {
         this.description = otherItem.getDescription();
         purchaseType = otherItem.getPurchaseType();
         categories = otherItem.getCategories();
-        //reviewsMap = otherItem.getReviewsMap();
         reviews = otherItem.getReviews();
     }
     public Item(){
         purchaseType = new DirectPurchase(PurchaseType.DIRECT_PURCHASE);
         categories = new ConcurrentLinkedQueue<>();
-        //reviewsMap = new ConcurrentHashMap<>();
         reviews = new ConcurrentLinkedQueue<>();
     }
     
@@ -173,22 +164,6 @@ public class Item {
         return output;
     }
 
-    /*
-    private Map<UUID, ItemReview> getReviewsMap() {
-        return this.reviewsMap;
-    }
-     */
-
-    /*
-    public UUID addReview(UUID clientCredentials, String body, int rating) {
-        ItemReview itemReview = new ItemReview(this, body, clientCredentials, rating);
-        reviewsMap.put(itemReview.getId(), itemReview);
-        addRating(rating);
-        return itemReview.getId();
-    }
-
-     */
-
     public UUID addReview(UUID clientCredentials, String body, int rating) {
         ItemReview itemReview = new ItemReview(this, body, clientCredentials, rating);
         reviews.add(itemReview);
@@ -270,5 +245,25 @@ public class Item {
     public void setStore(Store store) {
         this.store = store;
 
+    }
+
+    public int getRatesCount() {
+        return ratesCount;
+    }
+
+    public void setCategories(Collection<Category> categories) {
+        this.categories = categories;
+    }
+
+    public void setRatesCount(int ratesCount) {
+        this.ratesCount = ratesCount;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public void setReviews(Collection<ItemReview> reviews) {
+        this.reviews = reviews;
     }
 }

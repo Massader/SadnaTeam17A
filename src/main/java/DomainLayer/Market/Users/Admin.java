@@ -13,14 +13,13 @@ public class Admin extends User {
 
     public Admin(String username, UUID id){
         super(username, id);
-        isAdmin=true;
+        isAdmin = true;
     }
     public Admin(){
         super();
     }
     public Admin(String username){
         super(username);
-        isAdmin=true;
+        isAdmin = true;
     }
-
 }

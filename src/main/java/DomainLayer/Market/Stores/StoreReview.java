@@ -78,4 +78,12 @@ public class StoreReview {
     public void setRating(int rating) {
         this.rating = rating;
     }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setStoreId(UUID storeId) {
+        this.storeId = storeId;
+    }
 }

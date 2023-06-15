@@ -68,4 +68,28 @@ public class OwnerPetition {
             throw new Exception("Owner has not approved of the appointment");
         ownersList.remove(ownerId);
     }
+
+    public void setStoreId(UUID storeId) {
+        this.storeId = storeId;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setOwnersList(List<UUID> ownersList) {
+        this.ownersList = ownersList;
+    }
+
+    public void setAppointeeId(UUID appointeeId) {
+        this.appointeeId = appointeeId;
+    }
+
+    public void setAppointer(UUID appointer) {
+        this.appointer = appointer;
+    }
 }

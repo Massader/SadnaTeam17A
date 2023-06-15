@@ -51,4 +51,8 @@ public class StoreOwner extends Role {
     public void removeAppointee(UUID appoint){
         appointees.remove(appoint);
     }
+
+    public void setAppointees(Collection<UUID> appointees) {
+        this.appointees = appointees;
+    }
 }

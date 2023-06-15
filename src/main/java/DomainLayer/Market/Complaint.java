@@ -7,15 +7,15 @@ import java.util.UUID;
 @Entity
 @Table(name = "Market_Complaint")
 public class Complaint extends Message {
-    @Transient
+    @Column
     private boolean open;
-    @Transient
+    @Column
     private UUID assignedAdmin;
-    @Transient
+    @Column
     private UUID purchaseId;
-    @Transient
+    @Column
     private UUID storeId;
-    @Transient
+    @Column
     private UUID itemId;
 
     public Complaint(String body, UUID sender, UUID purchaseId, UUID storeId, UUID itemId) {

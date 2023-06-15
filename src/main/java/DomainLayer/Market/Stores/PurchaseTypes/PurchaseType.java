@@ -2,13 +2,15 @@ package DomainLayer.Market.Stores.PurchaseTypes;
 
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class PurchaseType {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(name = "type")
     private String type;
