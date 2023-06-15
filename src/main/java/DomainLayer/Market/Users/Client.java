@@ -10,6 +10,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "Users_Client")
 public class Client {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "client_credentials", nullable = false, unique = true)
@@ -54,10 +55,4 @@ public class Client {
     public void clearCart(){
         cart.clearCart();
     }
-
-
-
-
-
-
 }

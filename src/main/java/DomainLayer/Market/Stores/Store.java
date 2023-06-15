@@ -2,7 +2,6 @@ package DomainLayer.Market.Stores;
 
 import DataAccessLayer.ItemRepository;
 import DataAccessLayer.StoreRepository;
-import DataAccessLayer.controllers.StoreDalController;
 import DomainLayer.Market.Stores.Discounts.*;
 import DomainLayer.Market.Stores.PurchaseRule.*;
 import DomainLayer.Market.Stores.PurchaseRule.StorePurchasePolicy;
@@ -30,6 +29,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Entity
 @Table(name = "Stores_Store")
 public class Store {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "storeId", nullable = false, unique = true)
@@ -46,55 +46,30 @@ public class Store {
     private boolean shutdown;
     @Column
     private int ratingCounter;
-
-//    @ElementCollection
-//    @CollectionTable(name = "store_items", joinColumns = @JoinColumn(name = "store_id"))
-//    @MapKeyColumn(name = "item_id")
-//    @JoinColumn(name = "item_id")
-//    @Column(name = "item")
-//    private Map<UUID, Item> items;
-
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Collection<Item> items;
-
-//    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @Transient
+    //a
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private StoreDiscount discounts;
-
-//    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @Transient
+    //a
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private StorePurchasePolicy policy;
-
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Sale> sales;
-
-
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Role> roles;
-
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<StoreReview> reviews;
-
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<OwnerPetition> ownerPetitions;
-
-    @Transient
-    StoreDalController storeDalController;
-//
-//    @Transient
-//    UserDalController userDalController;
-
 
     public StoreDiscount getDiscounts() {
         return discounts;
     }
 
-
     public StorePurchasePolicy getPolicy() {
         return policy;
     }
-
-
 
     public Collection<Role> getRoles() {
         return roles;
@@ -111,41 +86,20 @@ public class Store {
         discounts = new StoreDiscount(true);// always max until change
         policy = new StorePurchasePolicy();
         sales = new ConcurrentLinkedQueue<>();
-//        rolesMap = new ConcurrentHashMap<>();
         roles = new ConcurrentLinkedQueue<>();
         reviews = new ConcurrentLinkedQueue<>();
-        storeDalController = StoreDalController.getInstance(UserController.repositoryFactory);
         ownerPetitions = new ArrayList<>();
-//        userDalController = UserDalController.getInstance(UserController.repositoryFactory);
     }
 
 
 
     public Store(){
-//        items = new ConcurrentLinkedQueue<>();
-//        discounts = new StoreDiscount();
-//        policy = new StorePurchasePolicy();
-//        sales = new ConcurrentLinkedQueue<>();
-//        rolesMap = new ConcurrentHashMap<>();
-//        storeDalController = StoreDalController.getInstance(UserController.repositoryFactory);
+        items = new ConcurrentLinkedQueue<>();
+        sales = new ConcurrentLinkedQueue<>();
         roles = new ConcurrentLinkedQueue<>();
         reviews = new ConcurrentLinkedQueue<>();
-//        storeDalController = StoreDalController.getInstance(UserController.repositoryFactory);
         ownerPetitions = new ArrayList<>();
-
-
     }
-
-
-
-    /*
-    public StoreOwner getOwner(UUID owner) {
-        if (rolesMap.containsKey(owner))
-            if (rolesMap.get(owner).getPermissions().contains(StorePermissions.STORE_OWNER))
-                return (StoreOwner) rolesMap.get(owner);
-        return null;
-    }
-     */
 
     public StoreOwner getOwner(UUID ownerId) {
         for (Role role : roles) {
@@ -156,14 +110,6 @@ public class Store {
         return null;
     }
 
-    /*
-    public boolean checkPermission(UUID clientCredentials, StorePermissions permission) {
-        if (!rolesMap.containsKey(clientCredentials))
-            return false;
-        return (rolesMap.get(clientCredentials).getPermissions().contains(permission));
-    }
-     */
-
     public boolean checkPermission(UUID userId, StorePermissions permission) {
         User user = UserController.getInstance().getUserById(userId);
         Collection<Role> roles = user.getRoles();
@@ -172,7 +118,6 @@ public class Store {
                 return true;
         }
         return false;
-//        return roles.stream().anyMatch(role -> role.getUser().getId().equals(clientCredentials) && role.getPermissions().contains(permission));
     }
 
     public Collection<Item> getItems() {
@@ -217,23 +162,6 @@ public class Store {
         return description;
     }
 
-    /*
-    public void addRole(User user, Role role) throws Exception {
-        if (rolesMap.containsKey(user.getId())) {
-            Role existingRole = rolesMap.get(user.getId());
-            if (role.getPermissions().contains(StorePermissions.STORE_OWNER)
-                    && !existingRole.getPermissions().contains(StorePermissions.STORE_OWNER)) {
-                rolesMap.put(user.getId(), role);
-                return;
-            } else {
-                throw new Exception("User is already a member of store staff.");
-            }
-        }
-//        user.addStoreRole(role);
-        rolesMap.put(user.getId(), role);
-    }
-     */
-
     public void addRole(User user, Role role) throws Exception {
         if (roles.stream().anyMatch(r -> r.getUser().getId().equals(user.getId()))) {
             if (roles.stream().anyMatch(
@@ -248,14 +176,7 @@ public class Store {
         }
         roles.add(role);
         user.addStoreRole(role);
-//        userDalController.saveUser(user);
     }
-
-    /*
-    public void removeRole(UUID idToRemove) {
-        rolesMap.remove(idToRemove);
-    }
-     */
 
     public Role removeRole(UUID userId, User user) {
         Role ret = null;
@@ -307,21 +228,17 @@ public class Store {
     }
 
     public Item getItem(UUID itemId) {
-        return storeDalController.getItem(itemId);
+        for (Item item : items) {
+            if (item.getId().equals(itemId)) {
+                return item;
+            }
+        }
+        return null;
     }
 
     public boolean hasItem(UUID itemId) {
-        return storeDalController.isItemExists(itemId);
+        return items.stream().anyMatch(item -> item.getId().equals(itemId));
     }
-
-    /*
-    public Collection<Sale> getSales(UUID clientCredentials) throws Exception {
-        if (rolesMap.containsKey(clientCredentials)) {
-            return sales;
-        }
-        throw new Exception("the user is not have permissions to get sale history of store " + this.name);
-    }
-     */
 
     public Collection<Sale> getSales(UUID clientCredentials) throws Exception {
         if (roles.stream().anyMatch(role -> role.getUser().getId().equals(clientCredentials))) {
@@ -333,7 +250,6 @@ public class Store {
     public Collection<Sale> getSales() {
         return sales;
     }
-
 
     public double calculatePriceOfBasket(Collection<CartItem> items) {
         double price = 0;
@@ -350,7 +266,6 @@ public class Store {
         throw new Exception("The shopping basket for store " + name + " is not accepted by store policy");
     }
 
-
     public Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket){
         return policy.purchaseRuleOccurs(shoppingBasket, this) ;
     }
@@ -361,7 +276,7 @@ public class Store {
     public boolean removeItem(Item item) {
         items.remove(item);
         item.setStore(null); // Set the store reference in the item to null
-        storeDalController.deleteItem(item); // Delete the item from the database using the appropriate repository
+         // Delete the item from the database using the appropriate repository
         return true;
     }
 
@@ -371,9 +286,9 @@ public class Store {
         synchronized (items) {
             for (CartItem cartItem : shoppingBasketItems) {
                 int quantityToRemove = cartItem.getQuantity();
-                int oldQuantity = storeDalController.getItem(cartItem.getItemId()).getQuantity();
+                int oldQuantity = cartItem.getItem().getQuantity();
                 if (oldQuantity < quantityToRemove)
-                    missingItems.add(storeDalController.getItem(cartItem.getItemId()));
+                    missingItems.add(cartItem.getItem());
             }
             return missingItems;
         }
@@ -384,10 +299,10 @@ public class Store {
         synchronized (items) {
             for (CartItem cartItem : shoppingBasketItems) {
                 int quantityToRemove = cartItem.getQuantity();
-                int oldQuantity =  storeDalController.getItem(cartItem.getItemId()).getQuantity();
+                int oldQuantity =  cartItem.getItem().getQuantity();
                 if (quantityToRemove <= oldQuantity){
                 //update Store, history Sale Store, User purchase
-                    storeDalController.getItem(cartItem.getItemId()).setQuantity(oldQuantity - quantityToRemove);
+                    cartItem.getItem().setQuantity(oldQuantity - quantityToRemove);
                     Sale sale = new Sale(client.getId(),shoppingBasket.getStoreId(), cartItem.getItemId(),quantityToRemove);
                     sales.add(sale);
                     if(client instanceof User){
@@ -406,8 +321,8 @@ public class Store {
         synchronized (items) {
             for (CartItem cartItem : shoppingBasket.getItems()) {
                 int quantityToRestore = cartItem.getQuantity();
-                int oldQuantity =  storeDalController.getItem(cartItem.getItemId()).getQuantity() + quantityToRestore;
-                storeDalController.getItem(cartItem.getItemId()).setQuantity(oldQuantity);
+                int oldQuantity =  cartItem.getItem().getQuantity() + quantityToRestore;
+                cartItem.getItem().setQuantity(oldQuantity);
 
                 // Remove the sale from the sales history
                 Sale saleToRemove = null;
@@ -506,34 +421,10 @@ public class Store {
         return discount;
     }
 
-    /*
->>>>>>> masterDAL
-    public List<UUID> getStoreManagers() {
-        List<UUID> managersIds = new ArrayList<>();
-        for (Map.Entry<UUID, Role> entry : rolesMap.entrySet()) {
-            if (!entry.getValue().getPermissions().contains(StorePermissions.STORE_OWNER)) {
-                managersIds.add(entry.getKey());
-            }
-        }
-        return managersIds;
-    }
-     */
 
     public List<UUID> getStoreManagers() {
         return roles.stream().filter(role -> !role.getPermissions().contains(StorePermissions.STORE_OWNER)).map(role -> role.getUser().getId()).toList();
     }
-
-    /*
-    public List<UUID> getStoreOwners() {
-        List<UUID> ownersIds = new ArrayList<>();
-        for (Map.Entry<UUID, Role> entry : rolesMap.entrySet()) {
-            if (entry.getValue().getPermissions().contains(StorePermissions.STORE_OWNER)) {
-                ownersIds.add(entry.getKey());
-            }
-        }
-        return ownersIds;
-    }
-     */
 
     public List<UUID> getStoreOwners() {
         return roles.stream().filter(role -> role.getPermissions().contains(StorePermissions.STORE_OWNER)).map(role -> role.getUser().getId()).toList();
@@ -551,7 +442,6 @@ public class Store {
         addRating(rating);
         return review.getId();
     }
-
 
     public Collection<OwnerPetition> getOwnerPetitions() {
         return ownerPetitions;
@@ -583,6 +473,62 @@ public class Store {
             }
         }
         return null;
+    }
+
+    public void setStoreId(UUID storeId) {
+        this.storeId = storeId;
+    }
+
+    public void setReviews(Collection<StoreReview> reviews) {
+        this.reviews = reviews;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setDiscounts(StoreDiscount discounts) {
+        this.discounts = discounts;
+    }
+
+    public void setItems(Collection<Item> items) {
+        this.items = items;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setOwnerPetitions(Collection<OwnerPetition> ownerPetitions) {
+        this.ownerPetitions = ownerPetitions;
+    }
+
+    public void setPolicy(StorePurchasePolicy policy) {
+        this.policy = policy;
+    }
+
+    public void setRatingCounter(int ratingCounter) {
+        this.ratingCounter = ratingCounter;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
+    }
+
+    public void setSales(Collection<Sale> sales) {
+        this.sales = sales;
+    }
+
+    public void setShutdown(boolean shutdown) {
+        this.shutdown = shutdown;
     }
 }
 

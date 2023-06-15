@@ -9,6 +9,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "Users_Purchase")
 public class Purchase {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, unique = true)
@@ -67,12 +68,31 @@ public class Purchase {
         this.rated = rated;
     }
 
-
     public UUID getStoreId() {
         return storeId;
     }
 
     public void setStoreId(UUID storeId) {
         this.storeId = storeId;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setItemId(UUID itemId) {
+        this.itemId = itemId;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

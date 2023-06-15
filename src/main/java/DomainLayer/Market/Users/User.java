@@ -23,26 +23,19 @@ public class User extends Client{
 
     @Column(unique = true)
     private String username;
-
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Role> roles;
-
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Purchase> purchases;
     @Column
     protected boolean isAdmin;
 
-
-
     public User(String username, UUID id){
         super(id);
         this.username = username;
         roles = new ConcurrentLinkedQueue<>();
-
         purchases = new ConcurrentLinkedQueue<>();
-        isAdmin=false;
-
-//        userDalController = UserDalController.getInstance(UserController.repositoryFactory);
+        isAdmin = false;
     }
 
     public User(String username){
@@ -50,15 +43,12 @@ public class User extends Client{
         this.username = username;
         roles = new ConcurrentLinkedQueue<>();
         purchases = new ConcurrentLinkedQueue<>();
-        isAdmin=false;
-//        userDalController = UserDalController.getInstance(UserController.repositoryFactory);
+        isAdmin = false;
     }
 
-    public User()
-    {
+    public User() {
         purchases = new ConcurrentLinkedQueue<>();
         roles = new ConcurrentLinkedQueue<>();
-//        userDalController = UserDalController.getInstance(UserController.repositoryFactory);
     }
     public String getUsername() {
         return username;
@@ -77,7 +67,7 @@ public class User extends Client{
     }
 
     public void setRoles(ConcurrentLinkedQueue<Role> roles){
-        this.roles=roles;
+        this.roles = roles;
     }
     public void addRole(Role role ){
         roles.add(role);
@@ -118,6 +108,12 @@ public class User extends Client{
     public void setPurchases(ConcurrentLinkedQueue<Purchase> purchases){
         this.purchases=purchases;
     }
-    
-    
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
 }

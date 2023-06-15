@@ -65,4 +65,28 @@ public class Sale {
     public UUID getStoreId() {
         return storeId;
     }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setItemId(UUID itemId) {
+        this.itemId = itemId;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setStoreId(UUID storeId) {
+        this.storeId = storeId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
 }

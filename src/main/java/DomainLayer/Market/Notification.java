@@ -14,9 +14,9 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
-    @Transient
+    @Column
     private String message;
-    @Transient
+    @Column
     private Date timestamp;
 
     public Notification(String message) {

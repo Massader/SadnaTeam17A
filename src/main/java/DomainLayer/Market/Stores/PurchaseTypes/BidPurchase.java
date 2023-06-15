@@ -18,7 +18,6 @@ public class BidPurchase extends PurchaseType {
      */
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @MapKeyColumn(name = "client_credentials")
     private Collection<Bid> bids;
 
 

@@ -32,8 +32,7 @@ public class ItemReview {
         this.timestamp = Date.from(Instant.now());
         this.rating = rating;
     }
-    public ItemReview()
-    {
+    public ItemReview() {
 
     }
 
@@ -75,5 +74,13 @@ public class ItemReview {
     
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }
