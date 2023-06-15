@@ -21,7 +21,8 @@ public class ShoppingBasket {
     @Column(name = "storeId")
     private UUID storeId;
 
-    @Transient
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Collection<CartItem> items;//UUID itemId, int quantity
 
 
@@ -29,7 +30,8 @@ public class ShoppingBasket {
         return items;
     }
 
-    public ShoppingBasket() {}
+    public ShoppingBasket() {
+        this.items = new ConcurrentLinkedQueue<>();}
 
     public ShoppingBasket(UUID storeId) {
         this.id = UUID.randomUUID();
@@ -56,12 +58,13 @@ public class ShoppingBasket {
     public boolean addItem(CartItem cartItem, int quantity) throws Exception {
         if(cartItem.getItem().getQuantity() < quantity)
             throw new Exception("Quantity of cart item is higher than the quantity in stock.");
-        if (!this.items.contains(cartItem.getItemId())) {
+        CartItem cartItem1 = getCartItem(cartItem.getItemId());
+        if (cartItem1 == null) {
             items.add( cartItem);
         }
         else {
-            int oldQuantity = cartItem.getQuantity();
-            cartItem.setQuantity(oldQuantity + quantity);
+            int oldQuantity = cartItem1.getQuantity();
+            cartItem1.setQuantity(oldQuantity + quantity);
         }
         return true;
     }

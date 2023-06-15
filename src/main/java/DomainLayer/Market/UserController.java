@@ -18,6 +18,7 @@ import DomainLayer.Market.Users.*;
 import DomainLayer.Security.SecurityController;
 import ServiceLayer.Response;
 import DomainLayer.Market.Users.Roles.*;
+import jakarta.transaction.Transactional;
 
 
 public class UserController {
@@ -194,9 +195,11 @@ public class UserController {
         purchaseDalController.saveBasket(shoppingBasket);
     }
 
+    @Transactional
     public Response<Boolean> addItemToCart(UUID clientCredentials, UUID itemId, int quantity, UUID storeId) {
         try {
-            if (getClientOrUser(clientCredentials) == null)
+            Client client = getClientOrUser(clientCredentials);
+            if (client== null)
                 return Response.getFailResponse("User does not exist");
             ShoppingCart shoppingCart = getClientOrUser(clientCredentials).getCart();
             Response<Item> itemResponse = storeController.getItem(itemId);
@@ -215,10 +218,16 @@ public class UserController {
                     }
                     else return Response.getFailResponse("Failed to add item to cart");
                 }
-                else if (item.getPurchaseType().getType().equals(PurchaseType.DIRECT_PURCHASE) &&
-                        shoppingCart.addItemToCart(new CartItem(item, quantity, item.getPrice()), storeId, quantity)) {
-                    purchaseDalController.saveCart(shoppingCart);
-                    return Response.getSuccessResponse(true);
+                else if (item.getPurchaseType().getType().equals(PurchaseType.DIRECT_PURCHASE)){
+                    CartItem cartItem = new CartItem(item, quantity, item.getPrice());
+                   if (shoppingCart.addItemToCart(cartItem, storeId, quantity)) {
+                       if (client instanceof User) {
+                           purchaseDalController.saveCart(shoppingCart);
+//                            purchaseDalController.saveCartItem(cartItem);
+                       }
+                   }
+                        return Response.getSuccessResponse(true);
+
                 } else {
                     return Response.getFailResponse("Cannot add item to cart");
                 }
