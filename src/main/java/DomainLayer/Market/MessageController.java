@@ -67,12 +67,13 @@ public class MessageController {
                     if (store.checkPermission(manager, StorePermissions.STORE_COMMUNICATION))
                         rolesToNotify.add(manager);
                 }
-                repositoryFactory.messageRepository.save(message);
+//                repositoryFactory.messageRepository.save(message);
                 for (UUID roleToNotify : rolesToNotify) {
                     notificationController.sendNotification(roleToNotify,
                             "Store " + store.getName() + " has received a new message!");
                 }
             } else notificationController.sendNotification(recipient, "New message received!");
+            repositoryFactory.messageRepository.save(message);
             return Response.getSuccessResponse(message.getId());
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());

@@ -132,6 +132,7 @@ public class UserController {
         return service.addItemToCart(request.getClientCredentials(), request.getItemId(), request.getQuantity(),
                 request.getStoreId());
     }
+
     //DB
     @DeleteMapping(path = "/remove-from-cart")
     public Response<Boolean> removeItemFromCart(@RequestBody CartItemRequest request) {
