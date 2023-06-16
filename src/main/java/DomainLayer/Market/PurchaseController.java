@@ -60,7 +60,7 @@ public class PurchaseController {
            if(!supplyController.handshake().getValue())
                return Response.getFailResponse("the supply service is not available");
                validateOrder(address, city, country, zip);
-               validatePayment(card_number, month, year, holder, ccv, id);
+               validatePayment(cardNumber, month, year, holder, cvv, id);
            ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
            synchronized (instanceLock) {
                StringBuilder missingItemList = new StringBuilder();
