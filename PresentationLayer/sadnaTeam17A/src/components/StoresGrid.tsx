@@ -13,10 +13,13 @@ import { Store } from "../types";
 
 interface Props {
   onShop: (storeId: string) => void;
+  setPage: React.Dispatch<React.SetStateAction<string>>;
+  setStoreManage: React.Dispatch<React.SetStateAction<string>>;
+  pages: string[];
 }
 
-const StoresGrid = ({ onShop }: Props) => {
-  const [page, setPage] = useState(1);
+const StoresGrid = ({ onShop, setPage, pages, setStoreManage }: Props) => {
+  const [currPage, setCurrPage] = useState(1);
   const [pagesNum, setPagesNum] = useState(0);
   const [stores, setStores] = useState<Store[]>([]);
 
@@ -32,12 +35,12 @@ const StoresGrid = ({ onShop }: Props) => {
 
   const fetchStores = async () => {
     const response = await axios.get(
-      `http://localhost:8080/api/v1/stores/get-stores-page/number=${number}&page=${page}`
+      `http://localhost:8080/api/v1/stores/get-stores-page/number=${number}&page=${currPage}`
     );
     if (!response.data.error) {
       setStores(response.data.value);
     } else {
-      setPage(page - 1);
+      setCurrPage(currPage - 1);
     }
   };
 
@@ -54,7 +57,7 @@ const StoresGrid = ({ onShop }: Props) => {
 
   useEffect(() => {
     fetchStores();
-  }, [page, number]);
+  }, [currPage, number]);
 
   useEffect(() => {
     getStoresNumber();
@@ -76,6 +79,9 @@ const StoresGrid = ({ onShop }: Props) => {
               description={store.description}
               rating={store.rating}
               onShop={() => onShop(store.storeId)}
+              pages={pages}
+              setPage={setPage}
+              setStoreManage={setStoreManage}
             />
           </ItemCardContainer>
         ))}
@@ -87,13 +93,13 @@ const StoresGrid = ({ onShop }: Props) => {
         templateColumns="50% 50%"
       >
         <GridItem area="next">
-          {page !== 1 && (
+          {currPage !== 1 && (
             <Button
               w="95%"
               colorScheme="blackAlpha"
               marginRight={3}
               onClick={() => {
-                setPage(page - 1);
+                setCurrPage(currPage - 1);
                 fetchStores();
               }}
             >
@@ -102,12 +108,12 @@ const StoresGrid = ({ onShop }: Props) => {
           )}
         </GridItem>
         <GridItem area="previous">
-          {page < pagesNum && (
+          {currPage < pagesNum && (
             <Button
               w="95%"
               colorScheme="blackAlpha"
               onClick={() => {
-                setPage(page + 1);
+                setCurrPage(currPage + 1);
               }}
             >
               Next page
