@@ -54,8 +54,10 @@ public class PurchaseController {
 
            if (shoppingCart.getShoppingBaskets().isEmpty()){
                return Response.getFailResponse("shopping cart is empty");}
-           if(!paymentController.handshake().getValue())
-               return Response.getFailResponse("the payment service is not available");
+           try{
+           paymentController.handshake().getValue();}
+           catch (Exception exception){
+               return Response.getFailResponse("the payment service is not available");}
            if(!supplyController.handshake().getValue())
                return Response.getFailResponse("the supply service is not available");
                validateOrder(address, city, country, zip);
@@ -88,7 +90,9 @@ public class PurchaseController {
                try {
                    nowPrice = storeController.verifyCartPrice(shoppingCart);
                } catch (Exception e) {
-                   return Response.getFailResponse("verify Cart Price fail now price is "+nowPrice+ ", your expected Price is "+expectedPrice);
+                   if(e.getMessage()!=null){return Response.getFailResponse(e.getMessage());}
+                   else{
+                   return Response.getFailResponse("verify Cart Price fail now price is "+nowPrice+ ", your expected Price is "+expectedPrice);}
                }
                if(expectedPrice!=nowPrice){
                    return Response.getFailResponse("Price for shopping cart has changed, it's " + nowPrice);
