@@ -7,14 +7,11 @@ import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.ShoppingBasket;
 import DomainLayer.Market.Users.ShoppingCart;
+import DomainLayer.Market.Users.User;
 import DomainLayer.Payment.PaymentController;
-import DomainLayer.Payment.PaymentProxy;
 import DomainLayer.Supply.SupplyController;
-import DomainLayer.Supply.SupplyProxy;
 import ServiceLayer.Response;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -48,12 +45,14 @@ public class PurchaseController {
 
 
 
-   public Response<Boolean> purchaseCart(Client client, ShoppingCart shoppingCart, double expectedPrice,
-                                         String address, String city, String country, int zip,String card_number, String month, String year, String holder, String ccv, String id) {
+   public Response<Boolean> purchaseCart(UUID clientCredentials, ShoppingCart shoppingCart, double expectedPrice,
+                                         String address, String city, String country, int zip, String cardNumber, String month, String year, String holder, String cvv, String id) {
        try {//check
-
+           if (!userController.isNonRegisteredClient(clientCredentials) && !userController.isRegisteredUser(clientCredentials))
+               return Response.getFailResponse("User does not exist.");
+           Client client = userController.getClientOrUser(clientCredentials);
            if (shoppingCart.getShoppingBaskets().isEmpty()){
-               return Response.getFailResponse("shopping cart is empty");}
+                           return Response.getFailResponse("shopping cart is empty");}
            try{
            paymentController.handshake().getValue();}
            catch (Exception exception){
@@ -70,7 +69,7 @@ public class PurchaseController {
                    UUID storeId = entry.getKey();
                    ShoppingBasket basket = entry.getValue();
                    Store store = storeController.getStore(storeId);
-                   if(store==null){
+                   if(store == null){
                        return Response.getFailResponse("The store is not exist "+storeId);
                    }
                    if(store.isClosed()){
@@ -94,7 +93,7 @@ public class PurchaseController {
                    else{
                    return Response.getFailResponse("verify Cart Price fail now price is "+nowPrice+ ", your expected Price is "+expectedPrice);}
                }
-               if(expectedPrice!=nowPrice){
+               if(expectedPrice != nowPrice){
                    return Response.getFailResponse("Price for shopping cart has changed, it's " + nowPrice);
                }
 
@@ -114,19 +113,20 @@ public class PurchaseController {
                                    + store.getName() + " has been made.");
                    }
                }
-               int transactionId= paymentController.pay(nowPrice, card_number, month, year, holder, ccv, id).getValue();
-               if(transactionId==-1){
-                   unPurchaseCart(client,shoppingCart);
+               Response<Integer> transactionResponse = paymentController.pay(nowPrice, cardNumber, month, year, holder, cvv, id);
+               if(transactionResponse.isError() || transactionResponse.getValue() == -1){
+                   unPurchaseCart(client, shoppingCart);
                    return Response.getFailResponse("There was a problem with your payment");
                }
                //get user name
                String clientName="client";
-               if(userController.isUser(client.getId()).getValue()){
-                   clientName= userController.getUser(client.getId()).getValue().getUsername();}
-               if(supplyController.supply(clientName, address, city, country, zip) == null){
+               if(userController.isRegisteredUser(clientCredentials)){
+                   clientName = ((User)client).getUsername();
+               }
+               if(supplyController.supply(clientName, address, city, country, zip).isError()){
                    unPurchaseCart(client,shoppingCart);
-                   if(!paymentController.cancelPay(transactionId).getValue()){
-                       return Response.getFailResponse("There was a problem with cancel payment");
+                   if(paymentController.cancelPay(transactionResponse.getValue()).isError()){
+                       return Response.getFailResponse("There was a problem with the payment cancellation");
                    }
                    return Response.getFailResponse("Supply request failed");
                }
@@ -141,43 +141,51 @@ public class PurchaseController {
 
     private boolean validatePayment(String cardNumber, String month, String year, String holder, String ccv, String id) throws Exception {
         String[] intProperties = {cardNumber, month, year, ccv, id};
-        String[] PropertiesName = {"cardNumber", "month", "year", "ccv", "id"};
+        String[] propertiesName = {"Card number", "Month", "Year", "CVV", "ID"};
 
-        for (int i=0;i<intProperties.length;i++) {
-            String property =intProperties[i];
+        for (int i = 0; i < intProperties.length; i++) {
+            String property = intProperties[i];
             if (property == null || property.isEmpty()) {
-                throw new Exception(PropertiesName[i] + " can not be empty");
+                throw new Exception(propertiesName[i] + " can not be empty");
             }
-            if(!property.matches("\\d+")){  throw new Exception(property + " have to be numbers only");}
+            if(!property.matches("\\d+")){
+                throw new Exception(property + " has to be numbers only");
+            }
         }
-        if(holder==null||holder.isEmpty()){return false;}
-        if(ccv.length()!=3){throw new Exception( "ccv need to be 3 numbers");}
+        if(holder == null || holder.isEmpty()){
+            throw new Exception("Holder name can not be empty.");
+        }
+        if(ccv.length()!=3){
+            throw new Exception("CVV needs to be 3 numbers");
+        }
         return true;
     }
 
     private boolean validateOrder(String address, String city, String country, int zip) throws Exception {
 
         String[] properties = {address ,city,country};
-        String[] PropertiesName = {"address" ,"city","country"};
+        String[] propertiesName = {"Address" ,"City","Country"};
 
-        for (int i=0;i<properties.length;i++) {
+        for (int i = 0; i < properties.length; i++) {
             String property =properties[i];
             if (property == null || property.isEmpty()) {
-                throw new Exception(PropertiesName[i] + " can not be empty");
+                throw new Exception(propertiesName[i] + " can not be empty");
             }
 
         }
         if (zip <= 0) {
-            throw new Exception("zip can not be empty");
+            throw new Exception("ZIP can not be empty");
         }
 
         return true;
     }
 
     public void unPurchaseCart(Client client, ShoppingCart shoppingCart) throws Exception {
-         for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
+        for (Map.Entry<UUID, ShoppingBasket> entry : shoppingCart.getShoppingBaskets().entrySet()) {
             UUID storeId = entry.getKey();
             ShoppingBasket basket = entry.getValue();
             Store store = storeController.getStore(storeId);
             store.unPurchaseBasket(client,basket);
-    }}}
+        }
+    }
+}

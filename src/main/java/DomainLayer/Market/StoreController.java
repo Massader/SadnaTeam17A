@@ -374,15 +374,22 @@ public class StoreController {
     public Response<List<Sale>> getStoreSaleHistory(UUID clientCredentials, UUID storeId) {
         try {
             if (!userController.isRegisteredUser(clientCredentials)) {
-                return Response.getFailResponse("this client not user doesn't have the permissions ");
+                return Response.getFailResponse("Only registered users can view a store's sale history.");
             }
             if(!userController.isUserLoggedIn(clientCredentials)){
-                return Response.getFailResponse("this client not user doesn't login ");
+                return Response.getFailResponse("User is not logged in.");
             }
-            if (userController.getUser(clientCredentials).getValue().isAdmin()) {
+            if (!storeExist(storeId))
+                return Response.getFailResponse("Store does not exist.");
+            Store store = getStore(storeId);
+            User user = userController.getUserById(clientCredentials);
+            if (user != null && store != null
+                    && (user.isAdmin()
+                    || store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
+                    || store.checkPermission(clientCredentials,StorePermissions.STORE_SALE_HISTORY))) {
                 return Response.getSuccessResponse(new ArrayList<>(getStore(storeId).getSales()));
             }
-            return Response.getSuccessResponse(new ArrayList<>(getStore(storeId).getSales(clientCredentials)));
+            return Response.getFailResponse("Action failed.");
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
         }

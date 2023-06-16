@@ -176,13 +176,6 @@ public class Store {
         return items.containsKey(itemId);
     }
 
-    public ConcurrentLinkedQueue<Sale> getSales(UUID clientCredentials) throws Exception {
-        if (rolesMap.containsKey(clientCredentials)) {
-            return sales;
-        }
-        throw new Exception("the user is not have permissions to get sale history of store " + this.name);
-    }
-
     public ConcurrentLinkedQueue<Sale> getSales() {
         return sales;
     }
