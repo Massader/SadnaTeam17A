@@ -20,7 +20,9 @@ import DomainLayer.Market.Users.Roles.StoreOwner;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.ShoppingBasket;
 import DomainLayer.Market.Users.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -289,7 +291,7 @@ public class Store {
             return missingItems;
         }
     }
-
+//    @Transactional
     public User purchaseBasket(Client client, ShoppingBasket shoppingBasket) throws Exception {
         Collection<CartItem> shoppingBasketItems = shoppingBasket.getItems();
         synchronized (items) {
@@ -299,12 +301,13 @@ public class Store {
                 if (quantityToRemove <= oldQuantity){
                 //update Store, history Sale Store, User purchase
                     cartItem.getItem().setQuantity(oldQuantity - quantityToRemove);
-                    Sale sale = new Sale(client.getId(),shoppingBasket.getStoreId(), cartItem.getItemId(),quantityToRemove);
+                    Sale sale = new Sale(client.getId(),shoppingBasket.getStoreId(), cartItem.getItemId(),quantityToRemove, this);
                     sales.add(sale);
                     if(client instanceof User){
-                        Purchase purchase = new Purchase((User) client, cartItem.getItemId(), quantityToRemove, shoppingBasket.getStoreId());
-                        ((User) client).addPurchase(purchase);
-                        return (User) client;
+                        User user = ((User) client);
+                        Purchase purchase = new Purchase(user, cartItem.getItemId(), quantityToRemove, shoppingBasket.getStoreId());
+                        user.addPurchase(purchase);
+                        return user;
                     }
                 }
                 else throw new Exception("Quantity of item in store is lower than quantity to purchase.");
@@ -323,7 +326,7 @@ public class Store {
                 // Remove the sale from the sales history
                 Sale saleToRemove = null;
                 for (Sale sale : sales) {
-                    if (sale.getUserId().equals(client.getId()) && sale.getStoreId().equals(shoppingBasket.getStoreId())
+                    if (sale.getUserId().equals(client.getId()) && sale.getStore().getStoreId().equals(shoppingBasket.getStoreId())
                             && sale.getItemId().equals(cartItem.getItemId()) && sale.getQuantity() == quantityToRestore) {
                         saleToRemove = sale;
                         break;
@@ -432,11 +435,11 @@ public class Store {
         return output;
     }
     
-    public UUID addReview(UUID clientCredentials, String body, int rating) {
+    public StoreReview addReview(UUID clientCredentials, String body, int rating) {
         StoreReview review = new StoreReview(storeId, body, clientCredentials, rating);
         reviews.add(review);
         addRating(rating);
-        return review.getId();
+        return review;
     }
 
     public Collection<OwnerPetition> getOwnerPetitions() {
@@ -525,5 +528,10 @@ public class Store {
 
     public void setShutdown(boolean shutdown) {
         this.shutdown = shutdown;
+    }
+
+
+    public void addSale(Sale sale) {
+        sales.add(sale);
     }
 }

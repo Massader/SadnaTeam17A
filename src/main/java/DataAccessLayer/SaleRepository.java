@@ -1,13 +1,11 @@
 package DataAccessLayer;
 
-
-import DomainLayer.Market.Users.Purchase;
-import DomainLayer.Market.Users.ShoppingBasket;
+import DomainLayer.Market.Stores.Sale;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface PurchaseRepository extends JpaRepository<Purchase, UUID> {
+public interface SaleRepository extends JpaRepository<Sale, UUID> {
 }

@@ -18,6 +18,7 @@ import DomainLayer.Market.Users.*;
 import DomainLayer.Security.SecurityController;
 import ServiceLayer.Response;
 import DomainLayer.Market.Users.Roles.*;
+import jakarta.transaction.Transaction;
 import jakarta.transaction.Transactional;
 
 
@@ -58,7 +59,7 @@ public class UserController {
         notificationController = NotificationController.getInstance();
         storeDalController = StoreDalController.getInstance(repositoryFactory);
         purchaseDalController = PurchaseDalController.getInstance(repositoryFactory);
-        registerDefaultAdmin();
+//        registerDefaultAdmin();
     }
 
     public Response<Boolean> setAsFounder(User user, UUID storeId, Role role){
@@ -545,7 +546,10 @@ public class UserController {
                 Admin admin = new Admin("admin");
                 userDalController.saveUser(admin);
 //                users.put(adminCredentials, new Admin("admin", adminCredentials));
-                securityController.encryptAndSavePassword(admin.getId(), "Admin1");
+                Response<Boolean> res = securityController.encryptAndSavePassword(admin.getId(), "Admin1");
+                if(res.isError()){
+                    repositoryFactory.userRepository.deleteById(admin.getId());
+                }
             }
         } catch (Exception ignored) {
 
@@ -559,7 +563,7 @@ public class UserController {
         if (userDalController.userExists(username)) return Response.getFailResponse("A user by that username already exists.");
         if (!userDalController.getUser(clientCredentials).isAdmin()) return Response.getFailResponse("Only admins can register admins.");
 
-        User newAdmin = new Admin(username, UUID.randomUUID());
+        User newAdmin = new Admin(username);
 //        usernames.put(username, newAdmin.getId());
 //        users.put(newAdmin.getId(), newAdmin);
         userDalController.saveUser(newAdmin);

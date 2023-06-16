@@ -14,11 +14,12 @@ public class Purchase {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
     @Column
     private UUID itemId;
+    @Temporal(TemporalType.TIMESTAMP)
     @Column
     private Date date;
     @Column
@@ -30,7 +31,7 @@ public class Purchase {
 
 
     public Purchase(User user, UUID itemId, int quantity, UUID storeId) {
-        this.id = UUID.randomUUID();
+//        this.id = UUID.randomUUID();
         this.date = Date.from(Instant.now());
         this.itemId = itemId;
         this.user = user;

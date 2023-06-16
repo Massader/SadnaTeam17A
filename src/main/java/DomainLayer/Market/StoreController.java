@@ -611,6 +611,7 @@ public class StoreController {
                 return Response.getFailResponse("Item does not exist.");
             itemCategories.putIfAbsent(category, new Category(category));
             item.addCategory(itemCategories.get(category));
+            storeDalController.saveItem(item);
             return Response.getSuccessResponse(true);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
@@ -657,7 +658,7 @@ public class StoreController {
                     return Response.getFailResponse("Store does not exist");
                 if (store.isClosed())
                     return Response.getFailResponse("Store is temporarily closed.");
-                List<Item> allItems = repositoryFactory.itemRepository.findAllByStore(storeId);
+                List<Item> allItems = repositoryFactory.itemRepository.findAllByStore(store);
                 int start = (page - 1) * number;
                 int end = Math.min(start + number, allItems.size());
                 output.addAll(allItems.subList(start, end));
@@ -812,8 +813,9 @@ public class StoreController {
                         .stream().filter((storeReview) -> storeReview.getReviewer().equals(clientCredentials))
                         .toList()
                         .isEmpty()) {
-                    UUID reviewId = store.addReview(clientCredentials, body, rating);
-                    return Response.getSuccessResponse(reviewId);
+                    StoreReview storeReview = store.addReview(clientCredentials, body, rating);
+                    storeDalController.saveStore(store); //unatached entity
+                    return Response.getSuccessResponse(storeReview.getId());
                 }
             }
             return Response.getFailResponse("An item can only be reviewed once.");
