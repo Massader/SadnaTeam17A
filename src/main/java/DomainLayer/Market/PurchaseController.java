@@ -52,13 +52,15 @@ public class PurchaseController {
                return Response.getFailResponse("User does not exist.");
            Client client = userController.getClientOrUser(clientCredentials);
            if (shoppingCart.getShoppingBaskets().isEmpty()){
-               return Response.getFailResponse("Shopping Cart is empty");}
-           if(paymentController.handshake().isError())
-               return Response.getFailResponse("The payment service is not available");
-           if(supplyController.handshake().isError())
-               return Response.getFailResponse("The supply service is not available");
-           validateOrder(address, city, country, zip);
-           validatePayment(cardNumber, month, year, holder, cvv, id);
+                           return Response.getFailResponse("shopping cart is empty");}
+           try{
+           paymentController.handshake().getValue();}
+           catch (Exception exception){
+               return Response.getFailResponse("the payment service is not available");}
+           if(!supplyController.handshake().getValue())
+               return Response.getFailResponse("the supply service is not available");
+               validateOrder(address, city, country, zip);
+               validatePayment(card_number, month, year, holder, ccv, id);
            ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
            synchronized (instanceLock) {
                StringBuilder missingItemList = new StringBuilder();
@@ -87,7 +89,9 @@ public class PurchaseController {
                try {
                    nowPrice = storeController.verifyCartPrice(shoppingCart);
                } catch (Exception e) {
-                   return Response.getFailResponse("verify Cart Price fail now price is "+nowPrice+ ", your expected Price is "+expectedPrice);
+                   if(e.getMessage()!=null){return Response.getFailResponse(e.getMessage());}
+                   else{
+                   return Response.getFailResponse("verify Cart Price fail now price is "+nowPrice+ ", your expected Price is "+expectedPrice);}
                }
                if(expectedPrice != nowPrice){
                    return Response.getFailResponse("Price for shopping cart has changed, it's " + nowPrice);
