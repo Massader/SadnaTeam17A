@@ -14,7 +14,7 @@ public class PaymentReal implements PaymentBridge{
     public void setReal() {}
 
     @Override
-    public String handshake() {
+    public synchronized String handshake() {
         // Create a RestTemplate instance
         RestTemplate restTemplate = new RestTemplate();
 
@@ -41,7 +41,7 @@ public class PaymentReal implements PaymentBridge{
 
 
     @Override
-    public Integer pay(String cardNumber, String month, String year, String holder, String cvv, String id) {
+    public synchronized Integer pay(String cardNumber, String month, String year, String holder, String cvv, String id) {
         // Create a RestTemplate instance
         RestTemplate restTemplate = new RestTemplate();
 
@@ -73,7 +73,7 @@ public class PaymentReal implements PaymentBridge{
 
 
     @Override
-    public Integer cancel_Pay(int transactionId) {
+    public synchronized Integer cancel_Pay(int transactionId) {
         // Create a RestTemplate instance
         RestTemplate restTemplate = new RestTemplate();
 

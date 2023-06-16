@@ -220,68 +220,79 @@ public class PurchaseShoppingCart extends ProjectTest {
         assertEquals(100, item21.getValue().getQuantity(), "item quantity changed although purchase failed");
     }
 
-//    @Test void purchaseConcurrently() {
-//        cardNumber = "12345";
-//        month = "12";
-//        year = "2027";
-//        holder = "Lior Levy";
-//        ccv = "123";
-//        idCard = "123456789";
-//        name = "lior levy";
-//        address = "heshkolit";
-//        city = "beer sheva";
-//        country = "Israel";
-//        zip = 6092000;
-//        Response<ServiceItem> item22_0 = bridge.getItemInformation(store2Id, item22Id);
-//
-//        UUID[] ids = new UUID[1000];
-//        Response<List<ServiceShoppingBasket>>[] carts = new Response[1000];
-//        for (int i = 0; i < 1000; i++) {
-//            bridge.register("user_" + i, "Aa1234");
-//            ids[i] = bridge.login(bridge.createClient().getValue(), "user_" + i, "Aa1234").getValue().getId();
-//        }
-//
-//        Response<Boolean>[] purchases = new Response[1000];
-//        Thread[] threads = new Thread[1000];
-//        try {
-//            for (int i = 0; i < 1000; i++) {
-//                final int index = i;
-//                threads[i] = new Thread(() -> {
-//                    bridge.addItemToCart(ids[index], item22Id, 1, store2Id);
-//                    purchases[index] = bridge.purchaseCart(ids[index], bridge.getCartTotal(ids[index]).getValue(), address, city, country, zip, cardNumber, month, year, holder, ccv, idCard);
-//                    carts[index] = bridge.getCart(ids[index]);
-//                });
-//                threads[i].start();
-//            }
-//            for (Thread t : threads) {
-//                t.join();
-//            }
-//        }
-//        catch (Exception ignore) {}
-//
-//        Response<ServiceItem> item22_1 = bridge.getItemInformation(store2Id, item22Id);
-//
-//        int successPurchases = 0;
-//        int emptyCartsForSuccessPurchase = 0;
-//        for (int i = 0; i < 1000; i++) {
-//            if (purchases[i] != null && !purchases[i].isError() && purchases[i].getValue()) {
-//                successPurchases++;
-//                if (carts[i] != null && !carts[i].isError() && carts[i].getValue().isEmpty()) {
-//                    emptyCartsForSuccessPurchase++;
-//                }
-//            }
-//        }
-//
-//        assertFalse(item22_0.isError(), String.format("bridge.getItemInformation(store2Id, item22Id) => %s", item22_0.getMessage()));
-//        assertFalse(item22_1.isError(), String.format("bridge.getItemInformation(store2Id, item22Id) => %s", item22_1.getMessage()));
-//
-//        assertEquals(100, item22_0.getValue().getQuantity(), "item22 quantity is not equal 100 before purchases");
-//        assertEquals(0, item22_1.getValue().getQuantity(), "item22 quantity is not equal 0 after purchases");
-//        assertEquals(100, successPurchases, "there is no 100 successful purchases");
-//        assertEquals(100, emptyCartsForSuccessPurchase, "not all carts of successful purchases are empty");
-//    }
+    @Test void purchaseConcurrently() {
+        cardNumber = "12345";
+        month = "12";
+        year = "2027";
+        holder = "Lior Levy";
+        ccv = "123";
+        idCard = "123456789";
+        name = "lior levy";
+        address = "heshkolit";
+        city = "beer sheva";
+        country = "Israel";
+        zip = 6092000;
+        Response<ServiceItem> item22_0 = bridge.getItemInformation(store2Id, item22Id);
+
+        UUID[] ids = new UUID[1000];
+        Response<List<ServiceShoppingBasket>>[] carts = new Response[1000];
+        for (int i = 0; i < 1000; i++) {
+            bridge.register("user_" + i, "Aa1234");
+            ids[i] = bridge.login(bridge.createClient().getValue(), "user_" + i, "Aa1234").getValue().getId();
+        }
+
+        Response<Boolean>[] purchases = new Response[1000];
+        Thread[] threads = new Thread[1000];
+        try {
+            for (int i = 0; i < 1000; i++) {
+                final int index = i;
+                threads[i] = new Thread(() -> {
+                    bridge.addItemToCart(ids[index], item22Id, 1, store2Id);
+                    purchases[index] = bridge.purchaseCart(ids[index], bridge.getCartTotal(ids[index]).getValue(), address, city, country, zip, cardNumber, month, year, holder, ccv, idCard);
+                    carts[index] = bridge.getCart(ids[index]);
+                });
+                threads[i].start();
+            }
+            for (Thread t : threads) {
+                t.join();
+            }
+        }
+        catch (Exception ignore) {}
+
+        Response<ServiceItem> item22_1 = bridge.getItemInformation(store2Id, item22Id);
+
+        int successPurchases = 0;
+        int emptyCartsForSuccessPurchase = 0;
+        for (int i = 0; i < 1000; i++) {
+            if (purchases[i] != null && !purchases[i].isError() && purchases[i].getValue()) {
+                successPurchases++;
+                if (carts[i] != null && !carts[i].isError() && carts[i].getValue().isEmpty()) {
+                    emptyCartsForSuccessPurchase++;
+                }
+            }
+        }
+
+        assertFalse(item22_0.isError(), String.format("bridge.getItemInformation(store2Id, item22Id) => %s", item22_0.getMessage()));
+        assertFalse(item22_1.isError(), String.format("bridge.getItemInformation(store2Id, item22Id) => %s", item22_1.getMessage()));
+
+        assertEquals(100, item22_0.getValue().getQuantity(), "item22 quantity is not equal 100 before purchases");
+        assertEquals(0, item22_1.getValue().getQuantity(), "item22 quantity is not equal 0 after purchases");
+        assertEquals(100, successPurchases, "there is no 100 successful purchases");
+        assertEquals(100, emptyCartsForSuccessPurchase, "not all carts of successful purchases are empty");
+    }
 
 //    @Test void purchaseConcurrently2() {
+//    cardNumber = "12345";
+//    month = "12";
+//    year = "2027";
+//    holder = "Lior Levy";
+//    ccv = "123";
+//    idCard = "123456789";
+//    name = "lior levy";
+//    address = "heshkolit";
+//    city = "beer sheva";
+//    country = "Israel";
+//    zip = 6092000;
 //        Response<ServiceItem> item23_0 = bridge.getItemInformation(store2Id, item22Id);
 //
 //        UUID[] ids = new UUID[1000];
