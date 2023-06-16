@@ -1,5 +1,6 @@
 package DomainLayer.Market;
 
+import DataAccessLayer.RepositoryFactory;
 import ServiceLayer.Response;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class NotificationController {
     private static NotificationController instance = null;
     private static final Object instanceLock = new Object();
     private ConcurrentHashMap<UUID, BiConsumer<UUID, Notification>> notifiers;
+    private RepositoryFactory repositoryFactory;
 
     public static NotificationController getInstance() {
         synchronized (instanceLock) {
@@ -23,9 +25,12 @@ public class NotificationController {
         return instance;
     }
 
-    private NotificationController(){}
+    private NotificationController(){
 
-    public void init() {
+    }
+
+    public void init(RepositoryFactory repositoryFactory){
+        this.repositoryFactory = repositoryFactory;
         notifications = new ConcurrentHashMap<>();
         notifiers = new ConcurrentHashMap<>();
     }

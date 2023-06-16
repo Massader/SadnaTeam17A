@@ -5,19 +5,24 @@ package DomainLayer.Market.Stores.PurchaseRule;
 import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
-import ServiceLayer.ServiceObjects.ServicePurchaseRule;
 import ServiceLayer.ServiceObjects.ServicePurchaseTerm;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class PurchaseTerm {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
     UUID termId;
-    
+
+    @Transient
     PurchaseRule purchaseRule;
 
     public PurchaseTerm(PurchaseRule purchaseRule) {
-        this.termId = UUID.randomUUID();
         this.purchaseRule = purchaseRule;
     }
     
@@ -31,8 +36,16 @@ public abstract class PurchaseTerm {
             purchaseRule = new ShoppingBasketPurchaseRule();
     }
 
+    public PurchaseTerm() {
+
+    }
+
     public PurchaseRule getPurchaseRule() {
         return purchaseRule;
+    }
+
+    public void setPurchaseRule(PurchaseRule purchaseRule) {
+        this.purchaseRule = purchaseRule;
     }
 
     public abstract Boolean purchaseRuleOccurs(ShoppingBasket shoppingBasket, Store store) ;
@@ -91,6 +104,10 @@ public abstract class PurchaseTerm {
     
     public UUID getTermId() {
         return termId;
+    }
+
+    public void setTermId(UUID id) {
+        this.termId = id;
     }
 }
 

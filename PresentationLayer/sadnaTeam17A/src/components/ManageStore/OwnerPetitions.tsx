@@ -22,7 +22,9 @@ const OwnerPetitions = ({ storeId, onBack }: Props) => {
       `http://localhost:8080/api/v1/stores/role/get-store-owner-appointments/id=${clientCredentials}&storeId=${storeId}`
     );
     if (!response.data.error) {
+
       console.log(response.data.value);
+
       setOwnerPetitions(response.data.value);
     } else {
       console.log(response.data.error);
@@ -84,6 +86,7 @@ const OwnerPetitions = ({ storeId, onBack }: Props) => {
             <Stack key={index}>
               <Flex alignItems="center">
                 <Text mr={1}>Appointee username:</Text>
+
                 <UsernameFromId userId={ownerPetition.appointeeId} />
               </Flex>
               {!ownerPetition.ownersList.includes(clientCredentials) && (

@@ -2,6 +2,8 @@ package APILayer.Users;
 
 import APILayer.Alerts.AlertController;
 import APILayer.Requests.*;
+import DataAccessLayer.ClientRepository;
+import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.Notification;
 import DomainLayer.Market.Stores.PurchaseTypes.Bid;
 import DomainLayer.Market.Users.Roles.Role;
@@ -24,19 +26,21 @@ public class UserController {
     
     private final AlertController alertController;
     private final Service service;
+    private final RepositoryFactory repositoryFactory;
     
     @Autowired
-    public UserController(Service service, AlertController alertController) {
+    public UserController(Service service, AlertController alertController, RepositoryFactory repositoryFactory) {
+        this.repositoryFactory =repositoryFactory;
         this.service = service;
-        service.init();
+        service.init(repositoryFactory);
         this.alertController = alertController;
     }
-    
+    //DB
     @PostMapping(path = "/register")
     public Response<Boolean> register(@RequestBody LoginRegisterRequest request) {
         return service.register(request.getUsername(), request.getPassword());
     }
-    
+    //DB
     @PostMapping(path = "/login")
     public Response<ServiceUser> login(@RequestBody LoginRegisterRequest request) {
         Response<ServiceUser> response = service.login(request.getClientCredentials(), request.getUsername(),
@@ -45,12 +49,13 @@ public class UserController {
             alertController.createNotifier(response.getValue().getId());
         return response;
     }
-    
+
+//DB
     @PostMapping(path = "/create-client")
     public Response<UUID> createClient() {
         return service.createClient();
     }
-    
+    //DB
     @PostMapping(path = "/logout")
     public Response<UUID> logout(@RequestBody Request request) {
         Response<UUID> response = service.logout(request.getClientCredentials());
@@ -78,12 +83,14 @@ public class UserController {
     public Response<ServiceUser> getUserInfo(@PathVariable(name = "id") UUID clientCredentials) {
         return service.getUserInfo(clientCredentials);
     }
-    
+
+    //DB
     @PostMapping(path = "/security/add-question")
     public Response<Boolean> addSecurityQuestion(@RequestBody SecurityQuestionRequest request) {
         return service.addSecurityQuestion(request.getClientCredentials(), request.getQuestion(), request.getAnswer());
     }
-    
+
+
     @GetMapping(path = "/security/validate-question/id={id}&answer={answer}")
     public Response<Boolean> validateSecurityQuestion(@PathVariable(name = "id") UUID clientCredentials,
                                                       @PathVariable(name = "answer") String answer) {
@@ -94,33 +101,39 @@ public class UserController {
         }
         return Response.getFailResponse(response.getMessage());
     }
-    
+
+    //DB
     @GetMapping(path = "/security/get-question/id={id}")
     public Response<String> getSecurityQuestion(@PathVariable(name = "id") UUID clientCredentials) {
         return service.getSecurityQuestion(clientCredentials);
     }
-    
+
+    //DB
     @PostMapping(path = "/admin/register")
     public Response<Boolean> registerAdmin(@RequestBody LoginRegisterRequest request) {
         return service.registerAdmin(request.getClientCredentials(), request.getUsername(), request.getPassword());
     }
-    
+
+    //DB
     @PutMapping(path = "/security/change-password")
     public Response<Boolean> changePassword(@RequestBody ChangePasswordRequest request) {
         return service.changePassword(request.getClientCredentials(), request.getOldPassword(), request.getNewPassword());
     }
-    
+
+    //DB
     @GetMapping(path = "/get-cart/id={id}")
     public Response<List<ServiceShoppingBasket>> getCart(@PathVariable(name = "id") UUID clientCredentials) {
         return service.getCart(clientCredentials);
     }
-    
+
+    //DB
     @PostMapping(path = "/add-to-cart")
     public Response<Boolean> addItemToCart(@RequestBody CartItemRequest request) {
         return service.addItemToCart(request.getClientCredentials(), request.getItemId(), request.getQuantity(),
                 request.getStoreId());
     }
-    
+
+    //DB
     @DeleteMapping(path = "/remove-from-cart")
     public Response<Boolean> removeItemFromCart(@RequestBody CartItemRequest request) {
         return service.removeItemFromCart(request.getClientCredentials(), request.getItemId(), request.getQuantity(),

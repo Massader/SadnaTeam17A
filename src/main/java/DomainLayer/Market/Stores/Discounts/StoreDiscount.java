@@ -4,24 +4,39 @@ import DomainLayer.Market.Stores.PurchaseRule.CompositePurchaseTerm;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.CartItem;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@Entity
+@Table(name = "Discounts_StoreDiscount")
 public class StoreDiscount {
     /**
      * ManageDiscount is a class that manages the discounts of a shop.
      * It stores discount and provides methods for adding and removing them.
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", nullable = false)
+    private UUID id;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private NumericalAssemblyOfDiscount discountsAssembly;
 
     public StoreDiscount(NumericalAssemblyOfDiscount discountsAssembly) {
         this.discountsAssembly = discountsAssembly;
     }
-    public StoreDiscount(Boolean max){
-        if(max){this.discountsAssembly= new MaxDiscounts();}
-            else{this.discountsAssembly= new CombiningDiscounts();}}
+    public StoreDiscount(Boolean max) {
+        if(max) {
+            this.discountsAssembly = new MaxDiscounts();
+        } else {
+            this.discountsAssembly = new CombiningDiscounts();
+        }
+    }
 
+    public StoreDiscount() {
+
+    }
 
     public NumericalAssemblyOfDiscount getDiscountsAssembly() {
         return discountsAssembly;
@@ -76,5 +91,13 @@ public class StoreDiscount {
     
     public double calculateItemDiscount(ShoppingBasket shoppingBasket, Store store, UUID itemId) {
         return this.discountsAssembly.calculateItemDiscount(shoppingBasket, store, itemId);
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 }

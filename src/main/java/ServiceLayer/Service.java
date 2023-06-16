@@ -1,5 +1,6 @@
 package ServiceLayer;
 
+import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.*;
 import DomainLayer.Market.Stores.*;
 import DomainLayer.Market.Stores.Discounts.Discount;
@@ -17,6 +18,7 @@ import ServiceLayer.Loggers.ErrorLogger;
 import ServiceLayer.Loggers.EventLogger;
 import ServiceLayer.ServiceObjects.*;
 
+import java.awt.image.ReplicateScaleFilter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -24,6 +26,7 @@ import java.util.function.BiConsumer;
 import java.util.logging.Level;
 
 @org.springframework.stereotype.Service
+//@Transactional
 public class Service {
     private static ServiceLayer.Service instance = null;
     private static final Object instanceLock = new Object();
@@ -40,8 +43,10 @@ public class Service {
     private PaymentProxy paymentProxy;
     private NotificationController notificationController;
     private SearchController searchController;
+    private RepositoryFactory repositoryFactory;
 
     private boolean initialized;
+
 
     private Service() {
         initialized = false;
@@ -56,22 +61,25 @@ public class Service {
         return instance;
     }
 
-    public boolean init() {
+    public boolean init(RepositoryFactory repositoryFactory) {
         synchronized (this) {
             if (initialized) return true;
             initialized = true;
         }
         eventLogger.log(Level.INFO, "Booting system");
+        this.repositoryFactory = repositoryFactory;
         storeController = StoreController.getInstance();
-        storeController.init();
-        userController = UserController.getInstance();
-        userController.init();  // Creates default admin
-        purchaseController = PurchaseController.getInstance();
-        purchaseController.init();
+        storeController.init(repositoryFactory);
         securityController = SecurityController.getInstance();
+        securityController.init(repositoryFactory);
+        userController = UserController.getInstance();
+        userController.init(repositoryFactory);  // Creates default admin
+        purchaseController = PurchaseController.getInstance(repositoryFactory);
+        purchaseController.init();
+
         //securityController.init();
         messageController = MessageController.getInstance();
-        messageController.init();
+        messageController.init(repositoryFactory);
         supplyController = SupplyController.getInstance();
         supplyController.init();
         paymentController = PaymentController.getInstance();
@@ -79,99 +87,155 @@ public class Service {
 
         //paymentController.init();
         notificationController = NotificationController.getInstance();
-        notificationController.init();
+        notificationController.init(repositoryFactory);
         searchController = SearchController.getInstance();
+        searchController.init(repositoryFactory);
+//        deleteUser(getAdminCredentials().getValue(), getAdminCredentials().getValue());
+//        registerAdmin(UUID.randomUUID(), "Admin", "Admin1");
         //searchController.init();
+        //DAL controllers
+//        StoreController storeController = StoreController.getInstance();
+//        storeController.init(repositoryFactory);
 
         //Add Supply and Payment JSON config file read here
-
-        loadObjects();
+//        loadObjects();
         eventLogger.log(Level.INFO, "System boot successful.");
         return true;
     }
 
     private void loadObjects() {
-        userController.register("Nitzan", "Nitzan1");
-        userController.register("Guy", "Guy1");
-        userController.register("Roei", "Roei1");
-        userController.register("LiorW", "Lior1");
-        userController.register("LiorL", "Lior1");
+        try {
+//            StoreController storeController = StoreController.getInstance();
+//            repositoryFactory.userRepository.deleteAll();
+//            repositoryFactory.passwordRepository.deleteAll();
+//            repositoryFactory.passwordRepository.deleteAll();
+//            repositoryFactory..deleteAll();
+//            repositoryFactory.userRepository.deleteAll();
+            Response<Boolean> response1 = userController.register("Nitzan", "Nitzan1");
+            if (response1.isError())
+                errorLogger.log(Level.SEVERE, response1.getMessage());
+            userController.register("Guy", "Guy1");
+            userController.register("Roei", "Roei1");
+            userController.register("LiorW", "Lior1");
+            userController.register("LiorL", "Lior1");
 
-        Response<UUID> response = userController.createClient();
-        UUID clientCredentials = response.getValue();
-        UUID userCredentials = userController.login(clientCredentials, "Nitzan", "Nitzan1").getValue().getId();
-        Response<Store> storeResponse = storeController.createStore(userCredentials, "Nitzan's Kitchen Store", "");
-        storeController.addItemToStore(userCredentials,"Knife", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Pan", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Pot", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Nitzan's Furniture Store", "");
-        storeController.addItemToStore(userCredentials,"Sofa", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Couch", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Closet", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Nitzan's Food Store", "");
-        storeController.addItemToStore(userCredentials,"Banana", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Chicken", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Tofu", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Nitzan's Sword Store", "");
-        storeController.addItemToStore(userCredentials,"Big Sword", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Small Sword", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Guy's Small Penis Sword", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Nitzan's Gun Store", "");
-        storeController.addItemToStore(userCredentials,"M16", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"M4", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"AK47", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Nitzan's Kill Roei Store", "");
-        storeController.addItemToStore(userCredentials,"Hang", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Shoot", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Stab", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        clientCredentials = userController.logout(userCredentials).getValue();
+            Response<UUID> response = userController.createClient();
+            if (response.isError())
+                errorLogger.log(Level.SEVERE, response.getMessage());
+//        }else{
+//            eventLogger.log(Level.INFO, "Successfully closed client " + clientCredentials);
+//        }
+            UUID clientCredentials = response.getValue();
+            UUID founderId = userController.login(clientCredentials, "Nitzan", "Nitzan1").getValue().getId();
 
-        userCredentials = userController.login(clientCredentials, "Guy", "Guy1").getValue().getId();
-        storeResponse = storeController.createStore(userCredentials, "Guy's Basketball Store", "");
-        storeController.addItemToStore(userCredentials,"Basketball", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Kyrie Irving", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"LeBron James", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Guy's Tall Clothes Store", "");
-        storeController.addItemToStore(userCredentials,"Tall Shirt", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Tall Pants", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Tall Shoes", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Guy's Stupid Clothes Store", "");
-        storeController.addItemToStore(userCredentials,"Stupid Shirt", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Stupid Pants", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Stupid Shoes", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Guy's Weed Store", "");
-        storeController.addItemToStore(userCredentials,"Good Weed", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Bad Weed", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Ugly Weed", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Guy's Ball Store", "");
-        storeController.addItemToStore(userCredentials,"Ping Pong Ball", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Tennis Ball", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Guy's Balls", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        clientCredentials = userController.logout(userCredentials).getValue();
+            Response<User> user2 = userController.login(createClient().getValue(), "Roei", "Roei1");
+            UUID userId = user2.getValue().getId();
+            addSecurityQuestion(clientCredentials, "sup?", "good");
+            Response<User> u = userController.getUser(founderId);
+            Response<Store> storeResponse = storeController.createStore(founderId, "Nitzan's Kitchen Store", "");
+            Response<Item> itemResponse= storeController.addItemToStore(founderId, "Knife", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Pan", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Pot", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            UUID storeId = storeResponse.getValue().getStoreId();
+            clientCredentials = u.getValue().getId();
+            UUID itemId = itemResponse.getValue().getId();
+//            Response<Boolean> closeStoreResponse = storeController.closeStore(founderId, storeResponse.getValue().getStoreId());
+//            Response<Boolean> reopenStoreResponse = storeController.reopenStore(founderId, storeResponse.getValue().getStoreId());
+//            Response<Boolean> shutdownStoreResponse = storeController.shutdownStore(getAdminCredentials().getValue(), storeResponse.getValue().getStoreId());
+//            Response<UUID> postItemReviewResponse = postItemReview(clientCredentials, itemId, "gooood", 4);
+//            Response<UUID> postItemReviewResponse2 = postItemReview(clientCredentials, itemId, "ok", 3);
+//            Response<List<ServiceItemReview>> getItemReviewResponse = getItemReviews(storeId, itemId);
+//            Response<ServiceItem> itemServiceResponse = getItemInformation(storeId, itemId);
+//            Response<Boolean> isReviewableByUserResponse = isReviewableByUser(clientCredentials,  storeId,  itemId);
+            storeResponse = storeController.createStore(founderId, "Nitzan's Furniture Store", "");
+            List<Integer> permissionsByFounder = new ArrayList<>();
+            permissionsByFounder.add(3);
+            Response<Boolean> as = appointStoreManager(founderId, userId, storeId);
+            Response<Boolean> setManagerPermissionsResponse = setManagerPermissions(clientCredentials, userId, storeId, permissionsByFounder);
+            Response<List<ServiceUser>> getStoreStaffResponse = getStoreStaff(founderId, storeId);
 
-        userCredentials = userController.login(clientCredentials, "Roei", "Roei1").getValue().getId();
-        storeResponse = storeController.createStore(userCredentials, "Roei's Color Store", "");
-        storeController.addItemToStore(userCredentials,"Kelev", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Pink", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Black", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Roei's Frontend Store", "");
-        storeController.addItemToStore(userCredentials,"Grid", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Component", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"HTTP Call", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Roei's Football Store", "");
-        storeController.addItemToStore(userCredentials,"Lionel Messi", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Christiano Ronaldo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Son Heung-min", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Roei's Soccer Store", "");
-        storeController.addItemToStore(userCredentials,"American Messi", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"American Ronaldo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"American Son Heung-min", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeResponse = storeController.createStore(userCredentials, "Roei's Tottenham Store", "");
-        storeController.addItemToStore(userCredentials,"Scarf", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Shirt", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        storeController.addItemToStore(userCredentials,"Harry Kane", 10.0, storeResponse.getValue().getStoreId(), 10, "");
-        userController.logout(userCredentials);
-        eventLogger.log(Level.INFO, "Created objects.");
+            Store store = storeController.getStore(storeId);
+            Role role = store.getRoleByUserId(userId);
+            Response<Boolean> removeStoreRoleResponse = removeStoreRole(founderId, userId,  storeId);
+
+            Response<Boolean> setItemQuantityResponse = setItemQuantity(founderId, storeId, itemId, 20);
+            Response<Boolean> setItemNameResponse = setItemName(founderId, storeId, itemId, "item name Changed");
+            Response<Boolean> setItemDescriptionResponse=  setItemDescription(founderId, storeId, itemId, "description changed");
+            Response<Boolean> setItemPriceResponse = setItemPrice(founderId, storeId, itemId, 12321);
+            Response<Boolean> addItemToCartResponse = addItemToCart(clientCredentials, itemId, 3, storeId);
+
+
+
+            storeController.addItemToStore(founderId, "Sofa", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Couch", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Closet", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(founderId, "Nitzan's Food Store", "");
+            storeController.addItemToStore(founderId, "Banana", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Chicken", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Tofu", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(founderId, "Nitzan's Sword Store", "");
+            storeController.addItemToStore(founderId, "Big Sword", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Small Sword", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Guy's Small Penis Sword", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(founderId, "Nitzan's Gun Store", "");
+            storeController.addItemToStore(founderId, "M16", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "M4", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "AK47", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(founderId, "Nitzan's Kill Roei Store", "");
+            storeController.addItemToStore(founderId, "Hang", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Shoot", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Stab", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            clientCredentials = userController.logout(founderId).getValue();
+
+            founderId = userController.login(clientCredentials, "Guy", "Guy1").getValue().getId();
+            storeResponse = storeController.createStore(founderId, "Guy's Basketball Store", "");
+            storeController.addItemToStore(founderId, "Basketball", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Kyrie Irving", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "LeBron James", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(founderId, "Guy's Tall Clothes Store", "");
+            storeController.addItemToStore(founderId, "Tall Shirt", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Tall Pants", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Tall Shoes", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(founderId, "Guy's Stupid Clothes Store", "");
+            storeController.addItemToStore(founderId, "Stupid Shirt", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Stupid Pants", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Stupid Shoes", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(founderId, "Guy's Weed Store", "");
+            storeController.addItemToStore(founderId, "Good Weed", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Bad Weed", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Ugly Weed", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(founderId, "Guy's Ball Store", "");
+            storeController.addItemToStore(founderId, "Ping Pong Ball", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Tennis Ball", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Guy's Balls", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            clientCredentials = userController.logout(founderId).getValue();
+
+//            founderId = userController.login(clientCredentials, "Roei", "Roei1").getValue().getId();
+            storeResponse = storeController.createStore(founderId, "Roei's Color Store", "");
+            storeController.addItemToStore(founderId, "Kelev", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Pink", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Black", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(founderId, "Roei's Frontend Store", "");
+            storeController.addItemToStore(founderId, "Grid", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Component", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "HTTP Call", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(founderId, "Roei's Football Store", "");
+            storeController.addItemToStore(founderId, "Lionel Messi", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Christiano Ronaldo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Son Heung-min", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(founderId, "Roei's Soccer Store", "");
+            storeController.addItemToStore(founderId, "American Messi", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "American Ronaldo", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "American Son Heung-min", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeResponse = storeController.createStore(founderId, "Roei's Tottenham Store", "");
+            storeController.addItemToStore(founderId, "Scarf", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Shirt", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            storeController.addItemToStore(founderId, "Harry Kane", 10.0, storeResponse.getValue().getStoreId(), 10, "");
+            userController.logout(founderId);
+            eventLogger.log(Level.INFO, "Created objects.");
+        }catch (Exception exception){
+            errorLogger.log(Level.SEVERE, exception.getMessage());
+        }
     }
 
     public Response<UUID> createClient(){
@@ -351,7 +415,7 @@ public class Service {
         if(response.isError())
             return Response.getFailResponse(response.getMessage());
         List<ServiceShoppingBasket> cart = new ArrayList<>();
-        for (ShoppingBasket basket : response.getValue().getShoppingBaskets().values()) {
+        for (ShoppingBasket basket : response.getValue().getShoppingBaskets()) {
             cart.add(new ServiceShoppingBasket(basket));
         }
         return Response.getSuccessResponse(cart);
@@ -722,7 +786,7 @@ public class Service {
         paymentController.resetController();
         securityController.resetController();
         supplyController.resetController();
-        init();
+        init(repositoryFactory);
         return null;
     }
 
@@ -796,7 +860,7 @@ public class Service {
         return Response.getSuccessResponse(output);
     }
 
-    public Response<Integer> numOfStores(){
+    public Response<Long> numOfStores(){
         return storeController.numOfStores();
     }
 
@@ -840,8 +904,8 @@ public class Service {
         return response;
     }
 
-    public Response<Integer> numOfItems(UUID storeId) {
-        Response<Integer> response = storeController.numOfItems(storeId);
+    public Response<Long> numOfItems(UUID storeId) {
+        Response<Long> response = storeController.numOfItems(storeId);
         if (response.isError()) {
             errorLogger.log(Level.WARNING, response.getMessage());
             return Response.getFailResponse(response.getMessage());
@@ -960,8 +1024,8 @@ public class Service {
         return Response.getSuccessResponse(serviceUsers);
     }
 
-    public Response<Integer> numOfOpenStores() {
-        Response<Integer> openStoresResponse = storeController.numOfOpenStores();
+    public Response<Long> numOfOpenStores() {
+        Response<Long> openStoresResponse = storeController.numOfOpenStores();
         if (openStoresResponse.isError()) {
             errorLogger.log(Level.WARNING, openStoresResponse.getMessage());
         }
@@ -984,9 +1048,9 @@ public class Service {
         return loggedInUsers;
     }
 
-    public Response<ConcurrentHashMap<String, UUID>> getUserNames() {
-        return Response.getSuccessResponse(userController.getUsernames());
-    }
+//    public Response<ConcurrentHashMap<String, UUID>> getUserNames() {
+//        return Response.getSuccessResponse(userController.getUsernames());
+//    }
     
     public Response<List<ServiceUser>> getStoreManagers(UUID clientCredentials, UUID storeId) {
         Response<List<User>> response = storeController.getStoreManagers(clientCredentials, storeId);
@@ -1091,6 +1155,7 @@ public class Service {
                 + storeId);
         return reviewResponse;
     }
+
     
     public Response<List<ServiceStoreReview>> getStoreReviews(UUID storeId) {
         Response<List<StoreReview>> response = storeController.getStoreReviews(storeId);
@@ -1269,8 +1334,8 @@ public class Service {
         return Response.getSuccessResponse(output);
     }
     
-    public Response<List<OwnerPetition>> getStoreOwnerPetitions(UUID clientCredentials, UUID storeId) {
-        Response<List<OwnerPetition>> response = storeController.getStoreOwnerPetitions(clientCredentials, storeId);
+    public Response<Collection<OwnerPetition>> getStoreOwnerPetitions(UUID clientCredentials, UUID storeId) {
+        Response<Collection<OwnerPetition>> response = storeController.getStoreOwnerPetitions(clientCredentials, storeId);
         if (response.isError())
             errorLogger.log(Level.WARNING, response.getMessage());
         return response;
@@ -1282,6 +1347,7 @@ public class Service {
             errorLogger.log(Level.WARNING, response.getMessage());
         return response;
     }
+
     
     public Response<Boolean> setItemPurchaseType(UUID clientCredentials, UUID storeId, UUID itemId, String purchaseType) {
         Response<Boolean> response = storeController.setItemPurchaseType(clientCredentials, storeId, itemId, purchaseType);
@@ -1309,6 +1375,15 @@ public class Service {
         if (response.isError())
             errorLogger.log(Level.WARNING, response.getMessage());
         return response;
+    }
+
+    public Response<ConcurrentHashMap<String, UUID>> getUserNames() {
+        List<User> users = repositoryFactory.userRepository.findAll();
+        ConcurrentHashMap<String, UUID> userNames = new ConcurrentHashMap<>();
+        for(User user : users){
+            userNames.put(user.getUsername(), user.getId());
+        }
+        return Response.getSuccessResponse(userNames);
     }
 }
 

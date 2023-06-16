@@ -27,7 +27,7 @@ public class ServiceUser {
         this.username = user.getUsername();
         this.roles = new HashMap<>();
         for(Role role : user.getRoles())
-            roles.put(role.getStoreId(), role.getPermissions());
+            roles.put(role.getStore().getStoreId(), role.getPermissions());
         this.isAdmin = user.isAdmin();
     }
     @Autowired

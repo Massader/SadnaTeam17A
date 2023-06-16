@@ -23,6 +23,7 @@ const UsernameFromId = ({ userId }: Props) => {
   useEffect(() => {
     getUserInfo();
   }, [userId]);
+
   return <Text>{username}</Text>;
 };
 

@@ -59,6 +59,7 @@ const Discount = ({ discountTerm, onUpdateDiscountTerm, storeId }: Props) => {
           ? 0
           : eventType === "discountPercentage"
           ? parseInt(event)
+
           : discountPercentage,
     };
 

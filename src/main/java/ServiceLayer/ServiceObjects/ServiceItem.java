@@ -22,7 +22,7 @@ public class ServiceItem {
         this.id = item.getId();
         this.name = item.getName();
         this.price = item.getPrice();
-        this.storeId = item.getStoreId();
+        this.storeId = item.getStore().getStoreId();
         this.rating = item.getRating();
         this.quantity = item.getQuantity();
         this.description = item.getDescription();

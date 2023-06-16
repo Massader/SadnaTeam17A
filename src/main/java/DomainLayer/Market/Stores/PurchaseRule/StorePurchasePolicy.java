@@ -2,16 +2,27 @@ package DomainLayer.Market.Stores.PurchaseRule;
 
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Entity
+@Table(name = "PurchaseRule_StorePurchasePolicy")
 public class StorePurchasePolicy {
     /**
      * managePurchasePolicies is a class that manages the purchase policies of a shop.
      * It stores PurchaseTerm and provides methods for adding and removing them.
      */
-    private ConcurrentLinkedQueue<PurchaseTerm> purchasePolicies;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", nullable = false)
+    private UUID id;
+
+    @Transient
+    private Collection<PurchaseTerm> purchasePolicies;
 
     public StorePurchasePolicy(ConcurrentLinkedQueue<PurchaseTerm> purchasePolicies) {
         this.purchasePolicies = purchasePolicies;
@@ -20,7 +31,7 @@ public class StorePurchasePolicy {
         this.purchasePolicies = new ConcurrentLinkedQueue<>();
     }
 
-    public ConcurrentLinkedQueue<PurchaseTerm> getPurchasePolicies() {
+    public Collection<PurchaseTerm> getPurchasePolicies() {
         return purchasePolicies;
     }
 
@@ -43,8 +54,6 @@ public class StorePurchasePolicy {
         }
         purchasePolicies.add(term);
     }
-
-
 
     public synchronized void removePurchaseTerm(UUID termId) throws Exception {
         if (termId == null) {
@@ -69,6 +78,14 @@ public class StorePurchasePolicy {
             }
         }
         return true;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getId() {
+        return id;
     }
 }
 

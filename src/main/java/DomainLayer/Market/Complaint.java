@@ -1,13 +1,21 @@
 package DomainLayer.Market;
 
+import jakarta.persistence.*;
+
 import java.util.UUID;
 
+@Entity
+@Table(name = "Market_Complaint")
 public class Complaint extends Message {
-
+    @Column
     private boolean open;
+    @Column
     private UUID assignedAdmin;
+    @Column
     private UUID purchaseId;
+    @Column
     private UUID storeId;
+    @Column
     private UUID itemId;
 
     public Complaint(String body, UUID sender, UUID purchaseId, UUID storeId, UUID itemId) {
@@ -17,6 +25,22 @@ public class Complaint extends Message {
         this.purchaseId = purchaseId;
         this.storeId = storeId;
         this.itemId = itemId;
+    }
+
+    public Complaint() {
+
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
+
+    public void setAssignedAdmin(UUID assignedAdmin) {
+        this.assignedAdmin = assignedAdmin;
+    }
+
+    public void setPurchaseId(UUID purchaseId) {
+        this.purchaseId = purchaseId;
     }
 
     public boolean isOpen() {

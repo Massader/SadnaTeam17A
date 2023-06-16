@@ -2,8 +2,11 @@ package DomainLayer.Market.Stores.Discounts;
 
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
-public class ShoppingBasketCalculateDiscount implements CalculateDiscount {
+@Entity
+@Table(name = "Discounts_ShoppingBasketCalculateDiscount")
+public class ShoppingBasketCalculateDiscount extends CalculateDiscount {
 
     public ShoppingBasketCalculateDiscount() {
     }

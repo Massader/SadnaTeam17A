@@ -39,6 +39,7 @@ const Appointment = ({ storeId, onBack, role }: Props) => {
       if (!response.data.error) {
         setErrorMsg(false);
         setMessage(`${username} is now a manager!`);
+
       } else {
         setErrorMsg(true);
         setMessage(response.data.message);

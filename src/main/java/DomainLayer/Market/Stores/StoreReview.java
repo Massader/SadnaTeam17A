@@ -3,24 +3,41 @@ package DomainLayer.Market.Stores;
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
+import jakarta.persistence.*;
+import java.util.*;
 
+@Entity
+@Table(name = "Stores_StoreReview")
 public class StoreReview {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "review_id", nullable = false, unique = true)
     private UUID id;
+
+    @Column(name = "store_id")
     private UUID storeId;
+
+    @Column
     private String text;
+
+    @Column
     private UUID reviewer;
+
+    @Column
     private Date timestamp;
+
+    @Column
     private int rating;
 
     public StoreReview(UUID storeId, String text, UUID reviewer, int rating) {
-        this.id = UUID.randomUUID();
         this.storeId = storeId;
         this.text = text;
         this.reviewer = reviewer;
         this.timestamp = Date.from(Instant.now());
         this.rating = rating;
     }
-
+    public StoreReview(){}
     public UUID getId() {
         return id;
     }
@@ -59,5 +76,13 @@ public class StoreReview {
     
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setStoreId(UUID storeId) {
+        this.storeId = storeId;
     }
 }

@@ -68,9 +68,9 @@ public class CloseStore extends ProjectTest {
     @Test
     //tests whether a store can be closed successfully by its founder.
     public void CloseStoreByFounderSuccess() {
-        Response<Integer> stores0 = bridge.numOfOpenStores();
+        Response<Long> stores0 = bridge.numOfOpenStores();
         Response<Boolean> close = bridge.closeStore(storeFounderId, storeId);
-        Response<Integer> stores1 = bridge.numOfOpenStores();
+        Response<Long> stores1 = bridge.numOfOpenStores();
         Response<ServiceStore> storeInfoByFounder = bridge.getStoreInformation(storeFounderId, storeId);
         Response<ServiceStore> storeInfoByUser = bridge.getStoreInformation(userId, storeId);
 
@@ -89,9 +89,9 @@ public class CloseStore extends ProjectTest {
     @Test
     //tests whether a store can be closed by its owner.
     public void CloseStoreByOwnerFail() {
-        Response<Integer> stores0 = bridge.numOfOpenStores();
+        Response<Long> stores0 = bridge.numOfOpenStores();
         Response<Boolean> close = bridge.closeStore(storeOwnerId, storeId);
-        Response<Integer> stores1 = bridge.numOfOpenStores();
+        Response<Long> stores1 = bridge.numOfOpenStores();
         Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeOwnerId, storeId);
     
         assertFalse(stores0.isError(), String.format("bridge.numOfOpenStores() => %s", stores0.getMessage()));
@@ -106,9 +106,9 @@ public class CloseStore extends ProjectTest {
     @Test
     //tests whether a store can be closed successfully by a manager with permission.
     public void CloseStoreByManagerFail() {
-        Response<Integer> stores0 = bridge.numOfOpenStores();
+        Response<Long> stores0 = bridge.numOfOpenStores();
         Response<Boolean> close = bridge.closeStore(storeManagerId, storeId);
-        Response<Integer> stores1 = bridge.numOfOpenStores();
+        Response<Long> stores1 = bridge.numOfOpenStores();
         Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeManagerId, storeId);
 
         assertFalse(stores0.isError(), String.format("bridge.numOfOpenStores() => %s", stores0.getMessage()));
@@ -123,9 +123,9 @@ public class CloseStore extends ProjectTest {
     @Test
     //Tests whether a store can be closed unsuccessfully by a client who is not the founder of the store.
     public void CloseStoreByUserFail() {
-        Response<Integer> stores0 = bridge.numOfOpenStores();
+        Response<Long> stores0 = bridge.numOfOpenStores();
         Response<Boolean> close = bridge.closeStore(userId, storeId);
-        Response<Integer> stores1 = bridge.numOfOpenStores();
+        Response<Long> stores1 = bridge.numOfOpenStores();
         Response<ServiceStore> storeInfo = bridge.getStoreInformation(userId, storeId);
 
         assertFalse(stores0.isError(), String.format("bridge.numOfOpenStores() => %s", stores0.getMessage()));
@@ -140,11 +140,11 @@ public class CloseStore extends ProjectTest {
     @Test
     //Tests whether a store can be closed unsuccessfully by a logged-out founder of the store.
     public void CloseStoreByLoggedOutFounderFail() {
-        Response<Integer> stores0 = bridge.numOfOpenStores();
+        Response<Long> stores0 = bridge.numOfOpenStores();
         Response<UUID> logout = bridge.logout(storeFounderId);
         Response<Boolean> close = bridge.closeStore(storeFounderId, storeId);
         Response<ServiceUser> login = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
-        Response<Integer> stores1 = bridge.numOfOpenStores();
+        Response<Long> stores1 = bridge.numOfOpenStores();
         Response<ServiceStore> storeInfo = bridge.getStoreInformation(storeFounderId, storeId);
 
         assertFalse(stores0.isError(), String.format("bridge.numOfOpenStores() => %s", stores0.getMessage()));

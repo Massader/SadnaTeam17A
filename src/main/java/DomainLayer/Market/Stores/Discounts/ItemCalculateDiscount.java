@@ -4,20 +4,34 @@ import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.CartItem;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ItemCalculateDiscount implements CalculateDiscount {
+@Entity
+@Table(name = "Discounts_ItemCalculateDiscount")
+public class ItemCalculateDiscount extends CalculateDiscount {
 
+    @Column(name = "itemId", nullable = false, unique = true)
     private UUID itemId;
 
-    public ItemCalculateDiscount( UUID itemId) {
+    public ItemCalculateDiscount(UUID itemId) {
         this.itemId = itemId;
+    }
+
+    public ItemCalculateDiscount() {
+
     }
 
     public UUID getItemId() {
         return itemId;
+    }
+
+    public void setItemId(UUID itemId) {
+        this.itemId = itemId;
     }
     
     @Override
@@ -25,12 +39,12 @@ public class ItemCalculateDiscount implements CalculateDiscount {
         if (discountPercentage > 1 || discountPercentage <= 0)
             return 0.0;
         double discount = 0;
-        ConcurrentHashMap<UUID, CartItem> items = shoppingBasket.getItems();
-        if (items.containsKey(getItemId())) {
-            int quantity = items.get(itemId).getQuantity();
-            discount = items.get(getItemId()).getPrice() * quantity * discountPercentage;
+
+        Collection<CartItem> items = shoppingBasket.getItems();
+        if (items.stream().anyMatch(item -> item.getItemId().equals(itemId))) {
+            int quantity = shoppingBasket.getCartItem(itemId).getQuantity();
+            discount = shoppingBasket.getCartItem(itemId).getPrice() * quantity * discountPercentage;
         }
         return discount;
     }
-
 }

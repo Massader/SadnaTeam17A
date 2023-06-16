@@ -111,12 +111,12 @@ public class AppointStoreOwner extends ProjectTest {
         assertFalse(storeOwner2.isError(), String.format("bridge.getUserInfo(storeOwner2Id) => %s", storeOwner2.getMessage()));
         //assert that the user didn't have a role in the store before appointment
         assertFalse(storeStaff0.getValue().contains(storeOwner2.getValue()), String.format("store staff list contained %s before the appointment", storeOwner2.getValue().getUsername()));
-        assertTrue(userRoles0.getValue().stream().filter(role -> role.getStoreId() == storeId).toList().isEmpty(), String.format("%s had a role in the store before the appointment", storeOwner2.getValue().getUsername()));
+        assertTrue(userRoles0.getValue().stream().filter(role -> role.getStore().getStoreId() == storeId).toList().isEmpty(), String.format("%s had a role in the store before the appointment", storeOwner2.getValue().getUsername()));
         //assert that appointment was successful
         assertTrue(appointStoreOwner.getValue(), "bridge.appointStoreOwner(storeFounderId, storeOwner2Id, storeId) failed");
         //assert that the user has a role in the store after appointment
         assertTrue(storeStaff1.getValue().stream().anyMatch(staff -> staff.getId().equals(storeOwner2.getValue().getId())), String.format("%s has not been added to the store staff", storeOwner2.getValue().getUsername()));
-        assertFalse(userRoles1.getValue().stream().filter(role -> role.getStoreId() == storeId && role instanceof StoreOwner).toList().isEmpty(), String.format("%s has not been given a role in the store", storeOwner2.getValue().getUsername()));
+        assertFalse(userRoles1.getValue().stream().filter(role -> role.getStore().getStoreId() == storeId && role instanceof StoreOwner).toList().isEmpty(), String.format("%s has not been given a role in the store", storeOwner2.getValue().getUsername()));
     }
     @Test
     //  Tests that a store owner can be successfully appointed to a store by a store owner.
@@ -136,12 +136,12 @@ public class AppointStoreOwner extends ProjectTest {
         assertFalse(storeOwner3.isError(), String.format("bridge.getUserInfo(storeOwner3Id) => %s", storeOwner3.getMessage()));
         //assert that the user didn't have a role in the store before appointment
         assertFalse(storeStaff0.getValue().contains(storeOwner3.getValue()), String.format("store staff list contained %s before the appointment", storeOwner3.getValue().getUsername()));
-        assertTrue(userRoles0.getValue().stream().filter(role -> role.getStoreId() == storeId).toList().isEmpty(), String.format("%s had a role in the store before the appointment", storeOwner3.getValue().getUsername()));
+        assertTrue(userRoles0.getValue().stream().filter(role -> role.getStore().getStoreId() == storeId).toList().isEmpty(), String.format("%s had a role in the store before the appointment", storeOwner3.getValue().getUsername()));
         //assert that appointment was successful
         assertTrue(appointStoreOwner.getValue(), "bridge.appointStoreOwner(storeFounderId, storeOwner2Id, storeId) failed");
         //assert that the user has a role in the store after appointment
         assertTrue(storeStaff1.getValue().stream().anyMatch(staff -> staff.getId().equals(storeOwner3.getValue().getId())), String.format("%s has not been added to the store staff", storeOwner3.getValue().getUsername()));
-        assertFalse(userRoles1.getValue().stream().filter(role -> role.getStoreId() == storeId && role instanceof StoreOwner).toList().isEmpty(), String.format("%s has not been given a role in the store", storeOwner3.getValue().getUsername()));
+        assertFalse(userRoles1.getValue().stream().filter(role -> role.getStore().getStoreId() == storeId && role instanceof StoreOwner).toList().isEmpty(), String.format("%s has not been given a role in the store", storeOwner3.getValue().getUsername()));
     }
 
     @Test

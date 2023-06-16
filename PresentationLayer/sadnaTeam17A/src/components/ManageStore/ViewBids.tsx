@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
+
 import { Bid } from "../../types";
 import { Box, Button, Heading, SimpleGrid } from "@chakra-ui/react";
 import { ClientCredentialsContext } from "../../App";
@@ -14,6 +15,7 @@ interface Props {
 const ViewBids = ({ storeId, setPage, pages }: Props) => {
   const { clientCredentials } = useContext(ClientCredentialsContext);
 
+
   const fetchBids = async () => {
     const response = await axios.get(
       `http://localhost:8080/api/v1/stores/get-store-bids/id=${clientCredentials}&storeId=${storeId}`
@@ -21,10 +23,12 @@ const ViewBids = ({ storeId, setPage, pages }: Props) => {
     if (!response.data.error) {
       console.log(response.data.value);
       setBids(response.data.value);
+
     } else {
       console.log(response.data.error);
     }
   };
+
 
   const [bids, setBids] = useState<Bid[]>([]);
 
@@ -46,6 +50,7 @@ const ViewBids = ({ storeId, setPage, pages }: Props) => {
       </Box>
       <Heading padding={5} textAlign="center">
         Bids
+
       </Heading>
       <SimpleGrid
         columns={{ sm: 1, md: 2, lg: 3, xl: 3, "2xl": 4 }}
@@ -59,6 +64,7 @@ const ViewBids = ({ storeId, setPage, pages }: Props) => {
             bid={bid}
             refreshBids={fetchBids}
           />
+
         ))}
       </SimpleGrid>
     </>

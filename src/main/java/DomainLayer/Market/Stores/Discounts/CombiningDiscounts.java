@@ -4,15 +4,21 @@ import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.CartItem;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 import java.util.UUID;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Entity
+@Table(name = "Discounts_CombiningDiscounts")
 public class CombiningDiscounts extends NumericalAssemblyOfDiscount {
 
-    public CombiningDiscounts(ConcurrentLinkedQueue<Discount> discounts) {
+    public CombiningDiscounts(Collection<Discount> discounts) {
         super(discounts);
     }
+
     public CombiningDiscounts() {
         super();
     }
@@ -34,7 +40,7 @@ public class CombiningDiscounts extends NumericalAssemblyOfDiscount {
     @Override
     public double calculateItemDiscount(ShoppingBasket shoppingBasket, Store store, UUID itemId) {
         double itemDiscount = 0;
-        CartItem cartItem = shoppingBasket.getItems().get(itemId);
+        CartItem cartItem = shoppingBasket.getCartItem(itemId);
         Item item = cartItem.getItem();
         for (Discount discount: discounts) {
             if (discount.getPurchaseTerm() == null || discount.getPurchaseTerm().purchaseRuleOccurs(shoppingBasket, store)) {

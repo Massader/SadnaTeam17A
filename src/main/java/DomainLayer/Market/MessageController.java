@@ -1,15 +1,13 @@
 package DomainLayer.Market;
 
+import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.Roles.Role;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import DomainLayer.Market.Users.User;
 import ServiceLayer.Response;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageController {
@@ -21,15 +19,17 @@ public class MessageController {
     private UserController userController;
     private ConcurrentHashMap<UUID, ConcurrentHashMap<UUID, Message>> messages;
     private ConcurrentHashMap<UUID, Complaint> complaints;
+    private RepositoryFactory repositoryFactory;
 
     private MessageController() { }
     
-    public void init() {
+    public void init(RepositoryFactory repositoryFactory) {
         messages = new ConcurrentHashMap<>();
         complaints = new ConcurrentHashMap<>();
         notificationController = NotificationController.getInstance();
         storeController = StoreController.getInstance();
         userController = UserController.getInstance();
+        this.repositoryFactory = repositoryFactory;
     }
     
     public static MessageController getInstance() {
@@ -67,11 +67,13 @@ public class MessageController {
                     if (store.checkPermission(manager, StorePermissions.STORE_COMMUNICATION))
                         rolesToNotify.add(manager);
                 }
+//                repositoryFactory.messageRepository.save(message);
                 for (UUID roleToNotify : rolesToNotify) {
                     notificationController.sendNotification(roleToNotify,
                             "Store " + store.getName() + " has received a new message!");
                 }
             } else notificationController.sendNotification(recipient, "New message received!");
+            repositoryFactory.messageRepository.save(message);
             return Response.getSuccessResponse(message.getId());
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
@@ -88,14 +90,18 @@ public class MessageController {
                         && !store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
                     return Response.getFailResponse("Logged in user does not have the correct permissions to read a message to store " + recipient);
             }
-            if (!messages.containsKey(recipient)) {
-                if (UserController.getInstance().isRegisteredUser(recipient)) {
-                    messages.put(recipient, new ConcurrentHashMap<>());
-                } else return Response.getFailResponse("Messages not found.");
-            }
-            List<Message> output = new ArrayList<>(messages.get(recipient).values());
+//            if (!messages.containsKey(recipient)) {
+//                if (UserController.getInstance().isRegisteredUser(recipient)) {
+//                    messages.put(recipient, new ConcurrentHashMap<>());
+//                } else return Response.getFailResponse("Messages not found.");
+//            }
+//            List<Message> output = new ArrayList<>(messages.get(recipient).values());
+            List<Message> output = repositoryFactory.messageRepository.findByRecipient( recipient);
+            if (output.isEmpty())
+                return Response.getFailResponse("Message not found.");
             output.sort(Comparator.comparing(Message::getTimestamp));
             return Response.getSuccessResponse(output);
+//            return Response.getSuccessResponse(output);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }
@@ -110,8 +116,10 @@ public class MessageController {
                 if (!store.checkPermission(clientCredentials, StorePermissions.STORE_COMMUNICATION))
                     return Response.getFailResponse("Logged in user does not have the correct permissions to read a message to store " + recipient);
             }
-            if (!messages.containsKey(clientCredentials) || !messages.get(clientCredentials).containsKey(messageId))
-                return Response.getFailResponse("Message not found.");
+//            if (!messages.containsKey(clientCredentials) || !messages.get(clientCredentials).containsKey(messageId)) {
+            Optional<Message> message = repositoryFactory.messageRepository.findById(messageId);
+            if (message.isEmpty())
+                    return Response.getFailResponse("Message not found.");
             return Response.getSuccessResponse(messages.get(clientCredentials).get(messageId));
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
@@ -152,6 +160,7 @@ public class MessageController {
             Complaint complaint = new Complaint(body, clientCredentials, purchaseId, storeId, itemId);
             complaints.put(complaint.getId(), complaint);
             List<UUID> adminIds = UserController.getInstance().getAdminIds();
+            repositoryFactory.complaintRepository.save(complaint);
             for (UUID id : adminIds) {
                 notificationController.sendNotification(id, "New complaint received!");
             }
@@ -173,7 +182,9 @@ public class MessageController {
             if (!complaints.containsKey(complaintId)) {
                 return Response.getFailResponse("Complaint not found.");
             }
-            complaints.get(complaintId).assignAdmin(clientCredentials);
+            Complaint complaint = complaints.get(complaintId);
+            complaint.assignAdmin(clientCredentials);
+            repositoryFactory.complaintRepository.save(complaint);
             return Response.getSuccessResponse(true);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
@@ -191,7 +202,7 @@ public class MessageController {
                 return Response.getFailResponse("Client credentials passed do not match existing user.");
             if (!userResponse.getValue().isAdmin())
                 return Response.getFailResponse("Client credentials passed do not match to an admin.");
-            List<Complaint> output = new ArrayList<>(complaints.values()
+            List<Complaint> output = new ArrayList<>(repositoryFactory.complaintRepository.findAll()
                     .stream()
                     .filter(complaint -> complaint.getAssignedAdmin().equals(clientCredentials))
                     .toList());
@@ -208,11 +219,14 @@ public class MessageController {
                 return Response.getFailResponse("Client credentials passed do not match existing user.");
             if (!userController.getUserById(clientCredentials).isAdmin())
                 return Response.getFailResponse("Only admins can manage complaints.");
-            if (complaints.get(complaintId) == null)
+            Optional<Complaint> complaintOptional=repositoryFactory.complaintRepository.findById(complaintId);
+            if (complaintOptional.isEmpty())
                 return Response.getFailResponse("Complaint does not exist.");
-            if (!complaints.get(complaintId).getAssignedAdmin().equals(clientCredentials))
+            Complaint complaint = complaintOptional.get();
+            if (!complaint.getAssignedAdmin().equals(clientCredentials))
                 return Response.getFailResponse("Only the assigned admin can close a complaint.");
-            complaints.get(complaintId).closeComplaint();
+            complaint.closeComplaint();
+            repositoryFactory.complaintRepository.save(complaint);
             return Response.getSuccessResponse(true);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());

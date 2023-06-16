@@ -5,19 +5,34 @@ import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.CartItem;
 import DomainLayer.Market.Users.ShoppingBasket;
+import jakarta.persistence.*;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CategoryCalculateDiscount implements CalculateDiscount {
+@Entity
+@Table(name = "Discounts_CategoryCalculateDiscount")
+public class CategoryCalculateDiscount extends CalculateDiscount {
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Category category;
 
     public CategoryCalculateDiscount(Category category) {
         this.category = category;
     }
 
+    public CategoryCalculateDiscount() {
+
+    }
+
     public Category getCategory() {
         return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     @Override
@@ -26,8 +41,8 @@ public class CategoryCalculateDiscount implements CalculateDiscount {
             return 0.0;
         }
         double categoryDiscount = 0.0;
-        ConcurrentHashMap<UUID, CartItem> items = shoppingBasket.getItems();
-        for (CartItem cartItem : items.values()) {
+        Collection<CartItem> items = shoppingBasket.getItems();
+        for (CartItem cartItem : items) {
             if (cartItem != null && cartItem.getItem() != null && cartItem.getItem().containsCategory(category.getCategoryName())) {
                 int quantity = cartItem.getQuantity();
                 categoryDiscount += cartItem.getPrice() * quantity * discountPercentage;
@@ -35,6 +50,4 @@ public class CategoryCalculateDiscount implements CalculateDiscount {
         }
         return categoryDiscount;
     }
-
-
 }

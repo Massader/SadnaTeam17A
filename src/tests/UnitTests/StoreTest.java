@@ -1,7 +1,7 @@
 package UnitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
-import DomainLayer.Market.Stores.Discounts.Discount;
+//import DomainLayer.Market.Stores.Discounts.Discount;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.CartItem;
@@ -16,15 +16,21 @@ public class StoreTest {
     private Store store;
     private Item item1;
     private Item item2;
+<<<<<<< HEAD
     private Discount discount1;
     private Discount discount2;
     ConcurrentHashMap<UUID, CartItem> items;
+=======
+//    private Discount discount1;
+//    private Discount discount2;
+    ConcurrentHashMap<UUID,Integer> items;
+>>>>>>> masterDAL
 
     @BeforeEach
     public void setUp() {
         store = new Store("Test Store", "A test store for unit testing");
-        item1 = new Item(UUID.randomUUID(), "This is a test item1", 10.0, store.getStoreId(), 2.0, 2, "aaaa");
-        item2 = new Item(UUID.randomUUID(), "This is a test item2", 15.0, store.getStoreId(),  5.0, 3, "bbb");
+        item1 = new Item("This is a test item1", 10.0, store, 2.0, 2, "aaaa");
+        item2 = new Item("This is a test item2", 15.0, store,  5.0, 3, "bbb");
         try {
             store.addItem(item1);
             store.addItem(item2);
