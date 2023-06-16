@@ -31,9 +31,21 @@ interface Props {
   description: string;
   rating: number;
   onShop: () => void;
+  setPage: React.Dispatch<React.SetStateAction<string>>;
+  setStoreManage: React.Dispatch<React.SetStateAction<string>>;
+  pages: string[];
 }
 
-const StoreCard = ({ name, storeId, rating, description, onShop }: Props) => {
+const StoreCard = ({
+  name,
+  storeId,
+  rating,
+  description,
+  onShop,
+  setPage,
+  pages,
+  setStoreManage,
+}: Props) => {
   const { clientCredentials, isAdmin, isLogged } = useContext(
     ClientCredentialsContext
   );
@@ -166,6 +178,17 @@ const StoreCard = ({ name, storeId, rating, description, onShop }: Props) => {
           )}
           {isAdmin && (
             <>
+              <Button
+                onClick={() => {
+                  setStoreManage(storeId);
+                  setPage(pages[10]);
+                }}
+                variant="solid"
+                colorScheme="blue"
+                width="100%"
+              >
+                Sale History
+              </Button>
               <Button
                 onClick={handleShutdown}
                 variant="solid"

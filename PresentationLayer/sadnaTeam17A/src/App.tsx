@@ -283,6 +283,9 @@ function App() {
           )}
           {page === "stores" && (
             <StoresGrid
+              pages={pages}
+              setPage={setPage}
+              setStoreManage={setStoreManage}
               onShop={(storeId: string) => onShop(storeId)}
             ></StoresGrid>
           )}
