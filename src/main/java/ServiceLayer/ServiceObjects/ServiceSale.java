@@ -16,7 +16,7 @@ public class ServiceSale {
     public ServiceSale(Sale sale) {
         this.id = sale.getId();
         this.userId = sale.getUserId();
-        this.storeId = sale.getStoreId();
+        this.storeId = sale.getStore().getStoreId();
         this.itemId = sale.getItemId();
         this.date = sale.getDate();
         this.quantity = sale.getQuantity();

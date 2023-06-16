@@ -31,7 +31,8 @@ public class SecurityController {
 
     public void init(RepositoryFactory repositoryFactory) {
         this.repositoryFactory = repositoryFactory;
-        userDalController = UserDalController.getInstance(repositoryFactory);}
+        this.userDalController = UserDalController.getInstance(repositoryFactory);
+    }
 
     public static synchronized SecurityController getInstance()
     {

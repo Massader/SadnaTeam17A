@@ -78,7 +78,7 @@ public class SearchController {
                 return Response.getFailResponse("Store does not exist");
             if (store.isClosed())
                 return Response.getFailResponse("Store is not open");
-            items = repositoryFactory.itemRepository.findAllByStore(storeId);
+            items = repositoryFactory.itemRepository.findAllByStore(store);
         }
         else {
             for (Store store : storeController.getStores()) {

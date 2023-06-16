@@ -31,7 +31,6 @@ public class StoreReview {
     private int rating;
 
     public StoreReview(UUID storeId, String text, UUID reviewer, int rating) {
-        this.id = UUID.randomUUID();
         this.storeId = storeId;
         this.text = text;
         this.reviewer = reviewer;

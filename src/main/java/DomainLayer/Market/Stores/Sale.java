@@ -18,13 +18,18 @@ public class Sale {
 
     @Column(name = "user_id")
     private UUID userId;
+//
+//    @Column(name = "store_id")
+//    private UUID storeId;
 
-    @Column(name = "store_id")
-    private UUID storeId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "store_id")
+    private Store store;
 
     @Column(name = "item_id")
     private UUID itemId;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column
     private Date date;
 
@@ -32,13 +37,14 @@ public class Sale {
     private int quantity;
 
 
-    public Sale(UUID userId, UUID storeId, UUID itemId, int quantity) {
-        this.id = UUID.randomUUID();
+    public Sale(UUID userId, UUID storeId, UUID itemId, int quantity, Store store) {
+//        this.id = UUID.randomUUID();
         this.date = Date.from(Instant.now());
         this.itemId = itemId;
-        this.storeId = storeId;
+//        this.storeId = storeId;
         this.userId = userId;
         this.quantity = quantity;
+        this.store = store;
     }
     public Sale(){}
 
@@ -62,8 +68,8 @@ public class Sale {
         return quantity;
     }
 
-    public UUID getStoreId() {
-        return storeId;
+    public Store getStore() {
+        return store;
     }
 
     public void setId(UUID id) {
@@ -82,8 +88,8 @@ public class Sale {
         this.quantity = quantity;
     }
 
-    public void setStoreId(UUID storeId) {
-        this.storeId = storeId;
+    public void setStore(Store store) {
+        this.store = store;
     }
 
     public void setUserId(UUID userId) {

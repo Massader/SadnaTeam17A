@@ -2,6 +2,7 @@ package DomainLayer.Market;
 
 import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.Stores.Item;
+import DomainLayer.Market.Stores.Sale;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.*;
 import DomainLayer.Market.Users.Roles.Role;
@@ -14,6 +15,8 @@ import java.util.UUID;
 import DomainLayer.Payment.PaymentProxy;
 import DomainLayer.Supply.SupplyProxy;
 import ServiceLayer.Response;
+import jakarta.transaction.Transactional;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -46,90 +49,121 @@ public class PurchaseController {
         userController = UserController.getInstance();
     }
 
-   public Response<Boolean> purchaseCart(UUID clientCredentials, ShoppingCart shoppingCart, double expectedPrice,
-                                         String address, String city, String country, int zip, String cardNumber, String month, String year, String holder, String cvv, String id) {
-       try {//check
-           if (!userController.isNonRegisteredClient(clientCredentials) && !userController.isRegisteredUser(clientCredentials))
-               return Response.getFailResponse("User does not exist.");
-           Client client = userController.getClientOrUser(clientCredentials);
-           if (shoppingCart.getShoppingBaskets().isEmpty()){
-               return Response.getFailResponse("Shopping Cart is empty");}
-           if(paymentController.handshake().isError())
-               return Response.getFailResponse("The payment service is not available");
-           if(supplyController.handshake().isError())
-               return Response.getFailResponse("The supply service is not available");
-           validateOrder(address, city, country, zip);
-           validatePayment(cardNumber, month, year, holder, cvv, id);
-           ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
-           synchronized (instanceLock) {
-               StringBuilder missingItemList = new StringBuilder();
-               //check items are Available
-               for (ShoppingBasket basket : shoppingCart.getShoppingBaskets()) {
-                   UUID storeId = basket.getStoreId();
-                   Store store = storeController.getStore(storeId);
-                   if(store == null){
-                       return Response.getFailResponse("The store is not exist "+storeId);
-                   }
-                   if(store.isClosed()){
-                       return Response.getFailResponse("The store has been closed and the item is no longer available.");
-                   }
-                   ConcurrentLinkedQueue<Item> storeMissingItems = store.getUnavailableItems(basket);
-                   for (Item item : storeMissingItems) {
-                       missingItemList.append("\nItem Name: ").append(item.getName()).append(" - Store Name: ").append(store.getName());
-                   }
-                   missingItems.addAll(storeMissingItems);
-               }
-               if (!missingItems.isEmpty()) {
-                   return Response.getFailResponse("The following items are no longer available:" + missingItemList);
-               }
-               double nowPrice = 0;
-               try {
-                   nowPrice = storeController.verifyCartPrice(shoppingCart);
-               } catch (Exception e) {
-                   return Response.getFailResponse("verify Cart Price fail now price is "+nowPrice+ ", your expected Price is "+expectedPrice);
-               }
-               if(expectedPrice != nowPrice){
-                   return Response.getFailResponse("Price for shopping cart has changed, it's " + nowPrice);
-               }
-               //purchase all Basket -> cart
-               for (ShoppingBasket basket : shoppingCart.getShoppingBaskets()) {
-                   UUID storeId = basket.getStoreId();
-                   Store store = storeController.getStore(storeId);
-                   try {
-                       store.purchaseBasket(client,basket);
-                   } catch (Exception e) {
-                       return Response.getFailResponse(e.getMessage());
-                   }
-                   for (Role role : store.getRoles()) {
-                       if (role.getPermissions().contains(StorePermissions.STORE_OWNER))
-                           notificationController.sendNotification(role.getUser().getId(), "A purchase from "
-                                   + store.getName() + " has been made.");
-                   }
-               }
-               Response<Integer> transactionResponse = paymentController.pay(nowPrice, cardNumber, month, year, holder, cvv, id);
-               if(transactionResponse.isError() || transactionResponse.getValue() == -1){
-                   unPurchaseCart(client, shoppingCart);
-                   return Response.getFailResponse("There was a problem with your payment");
-               }
-               //get user name
-               String clientName="client";
-               if(userController.isRegisteredUser(clientCredentials)){
-                   clientName = ((User)client).getUsername();
-               }
-               if(supplyController.supply(clientName, address, city, country, zip).isError()){
-                   unPurchaseCart(client,shoppingCart);
-                   if(paymentController.cancelPay(transactionResponse.getValue()).isError()){
-                       return Response.getFailResponse("There was a problem with the payment cancellation");
-                   }
-                   return Response.getFailResponse("Supply request failed");
-               }
-               client.clearCart();
-               return Response.getSuccessResponse(true);
-           }
-       } catch (Exception exception) {
-           return Response.getFailResponse(exception.getMessage());
-       }
-   }
+    @Transactional
+    public Response<Boolean> purchaseCart(UUID clientCredentials, ShoppingCart shoppingCart, double expectedPrice,
+                                          String address, String city, String country, int zip, String cardNumber, String month, String year, String holder, String cvv, String id) {
+        try {//check
+            if (!userController.isNonRegisteredClient(clientCredentials) && !userController.isRegisteredUser(clientCredentials))
+                return Response.getFailResponse("User does not exist.");
+            Client client = userController.getClientOrUser(clientCredentials);
+            if (shoppingCart.getShoppingBaskets().isEmpty()){
+                return Response.getFailResponse("Shopping Cart is empty");}
+            if(paymentController.handshake().isError())
+                return Response.getFailResponse("The payment service is not available");
+            if(supplyController.handshake().isError())
+                return Response.getFailResponse("The supply service is not available");
+            validateOrder(address, city, country, zip);
+            validatePayment(cardNumber, month, year, holder, cvv, id);
+            ConcurrentLinkedQueue<Item> missingItems = new ConcurrentLinkedQueue<>();
+            synchronized (instanceLock) {
+                StringBuilder missingItemList = new StringBuilder();
+                //check items are Available
+                for (ShoppingBasket basket : shoppingCart.getShoppingBaskets()) {
+                    UUID storeId = basket.getStoreId();
+                    Store store = storeController.getStore(storeId);
+                    if(store == null){
+                        return Response.getFailResponse("The store is not exist "+storeId);
+                    }
+                    if(store.isClosed()){
+                        return Response.getFailResponse("The store has been closed and the item is no longer available.");
+                    }
+                    ConcurrentLinkedQueue<Item> storeMissingItems = store.getUnavailableItems(basket);
+                    for (Item item : storeMissingItems) {
+                        missingItemList.append("\nItem Name: ").append(item.getName()).append(" - Store Name: ").append(store.getName());
+                    }
+                    missingItems.addAll(storeMissingItems);
+                }
+                if (!missingItems.isEmpty()) {
+                    return Response.getFailResponse("The following items are no longer available:" + missingItemList);
+                }
+                double nowPrice = 0;
+                try {
+                    nowPrice = storeController.verifyCartPrice(shoppingCart);
+                } catch (Exception e) {
+                    return Response.getFailResponse("verify Cart Price fail now price is "+nowPrice+ ", your expected Price is "+expectedPrice);
+                }
+                if(expectedPrice != nowPrice){
+                    return Response.getFailResponse("Price for shopping cart has changed, it's " + nowPrice);
+                }
+                //purchase all Basket -> cart
+                User user = null;
+                if (client instanceof User) {
+                    user = (User) client;
+                }
+                Purchase purchase = null;
+                Sale sale = null;
+                for (ShoppingBasket basket : shoppingCart.getShoppingBaskets()) {
+                    UUID storeId = basket.getStoreId();
+                    Store store = storeController.getStore(storeId);
+                    Collection<CartItem> CartItems = basket.getItems();
+                    try {
+//                        store.purchaseBasket(client,basket);
+                        for (CartItem cartItem : CartItems) {
+                            int quantityToRemove = cartItem.getQuantity();
+                            int oldQuantity = cartItem.getItem().getQuantity();
+                            if (quantityToRemove <= oldQuantity) {
+                                //update Store, history Sale Store, User purchase
+                                cartItem.getItem().setQuantity(oldQuantity - quantityToRemove);
+                                sale = new Sale(client.getId(), basket.getStoreId(), cartItem.getItemId(), quantityToRemove, store);
+                                store.addSale(sale);
+
+                                if (client instanceof User) {
+                                    purchase = new Purchase(user, cartItem.getItemId(), quantityToRemove, basket.getStoreId());
+                                    user.addPurchase(purchase);
+                                    repositoryFactory.purchaseRepository.save(purchase);
+                                }
+                            }
+                        }
+//                        if (client instanceof User)
+//                            repositoryFactory.userRepository.save(user);
+                        repositoryFactory.storeRepository.save(store);
+                    } catch (Exception e) {
+                        return Response.getFailResponse(e.getMessage());
+                    }
+                    for (Role role : store.getRoles()) {
+                        if (role.getPermissions().contains(StorePermissions.STORE_OWNER))
+                            notificationController.sendNotification(role.getUser().getId(), "A purchase from "
+                                    + store.getName() + " has been made.");
+                    }
+                }
+                Response<Integer> transactionResponse = paymentController.pay(nowPrice, cardNumber, month, year, holder, cvv, id);
+                if(transactionResponse.isError() || transactionResponse.getValue() == -1){
+                    unPurchaseCart(client, shoppingCart);
+                    return Response.getFailResponse("There was a problem with your payment");
+                }
+                //get user name
+                String clientName="client";
+                if(userController.isRegisteredUser(clientCredentials)){
+                    clientName = ((User)client).getUsername();
+                }
+                if(supplyController.supply(clientName, address, city, country, zip).isError()){
+                    unPurchaseCart(client,shoppingCart);
+                    if(paymentController.cancelPay(transactionResponse.getValue()).isError()){
+                        return Response.getFailResponse("There was a problem with the payment cancellation");
+                    }
+                    return Response.getFailResponse("Supply request failed");
+                }
+                client.clearCart();
+                if (client instanceof User) {
+                    repositoryFactory.userRepository.save(user);
+                }
+                return Response.getSuccessResponse(true);
+            }
+        } catch (Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
+
 
     private boolean validatePayment(String cardNumber, String month, String year, String holder, String ccv, String id) throws Exception {
         String[] intProperties = {cardNumber, month, year, ccv, id};

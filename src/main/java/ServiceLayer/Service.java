@@ -70,12 +70,13 @@ public class Service {
         this.repositoryFactory = repositoryFactory;
         storeController = StoreController.getInstance();
         storeController.init(repositoryFactory);
+        securityController = SecurityController.getInstance();
+        securityController.init(repositoryFactory);
         userController = UserController.getInstance();
         userController.init(repositoryFactory);  // Creates default admin
         purchaseController = PurchaseController.getInstance(repositoryFactory);
         purchaseController.init();
-        securityController = SecurityController.getInstance();
-        securityController.init(repositoryFactory);
+
         //securityController.init();
         messageController = MessageController.getInstance();
         messageController.init(repositoryFactory);
@@ -89,8 +90,9 @@ public class Service {
         notificationController.init(repositoryFactory);
         searchController = SearchController.getInstance();
         searchController.init(repositoryFactory);
+//        deleteUser(getAdminCredentials().getValue(), getAdminCredentials().getValue());
+//        registerAdmin(UUID.randomUUID(), "Admin", "Admin1");
         //searchController.init();
-
         //DAL controllers
 //        StoreController storeController = StoreController.getInstance();
 //        storeController.init(repositoryFactory);
