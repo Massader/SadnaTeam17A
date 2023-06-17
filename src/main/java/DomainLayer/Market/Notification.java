@@ -15,18 +15,19 @@ public class Notification {
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
     @Column
+    private UUID recipient;
+    @Column
     private String message;
     @Column
     private Date timestamp;
 
-    public Notification(String message) {
+    public Notification(String message, UUID recipient) {
         this.message = message;
-        this.id = UUID.randomUUID();
+        this.recipient = recipient;
         this.timestamp = Date.from(Instant.now());
     }
 
     public Notification() {
-
     }
 
     public void setId(UUID id) {
@@ -51,5 +52,13 @@ public class Notification {
     
     public Date getTimestamp() {
         return timestamp;
+    }
+
+    public UUID getRecipient() {
+        return recipient;
+    }
+
+    public void setRecipient(UUID recipient) {
+        this.recipient = recipient;
     }
 }

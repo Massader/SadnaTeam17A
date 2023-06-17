@@ -25,7 +25,7 @@ public class Message {
     private Date timestamp;
 
     public Message(String body, UUID sender, UUID recipient){
-        this.id = UUID.randomUUID();
+       // this.id = UUID.randomUUID();
         this.body = body;
         this.sender = sender;
         this.recipient = recipient;
