@@ -21,7 +21,7 @@ public class StorePurchasePolicy {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @Transient
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Collection<PurchaseTerm> purchasePolicies;
 
     public StorePurchasePolicy(ConcurrentLinkedQueue<PurchaseTerm> purchasePolicies) {

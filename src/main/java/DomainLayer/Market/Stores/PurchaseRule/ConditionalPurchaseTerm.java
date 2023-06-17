@@ -2,9 +2,7 @@ package DomainLayer.Market.Stores.PurchaseRule;
 
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.ShoppingBasket;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -12,9 +10,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Table(name = "PurchaseRule_ConditionalPurchaseTerm")
 public class ConditionalPurchaseTerm extends PurchaseTerm {
 
-    @Transient
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private PurchaseTerm purchaseTermThen;
-    @Transient
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private PurchaseTerm purchaseTermIf;
 
     public ConditionalPurchaseTerm(PurchaseRule purchaseRule) {
