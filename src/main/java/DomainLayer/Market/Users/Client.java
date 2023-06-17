@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.web.WebProperties;
 import java.util.UUID;
 
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "Users_Client")
 public class Client {
 
