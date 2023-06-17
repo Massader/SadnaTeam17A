@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "Market_Message")
 public class Message {
 
