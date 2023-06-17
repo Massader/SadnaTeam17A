@@ -11,14 +11,39 @@ import org.springframework.web.client.RestTemplate;
 import DomainLayer.Market.Users.ShoppingCart;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Dictionary;
 import java.util.Hashtable;
-
+import java.util.Properties;
+import java.io.File;
 
 public class SupplyReal implements SupplyBridge {
-    String url = "https://php-server-try.000webhostapp.com/";
+    String url ;
     @Override
-    public void setReal() {}
+    public void setReal() {
+        loadConfig();
+    }
+
+
+
+    public void loadConfig() {
+        Properties properties = new Properties();
+        try {
+            File configFile = new File("src/main/java/DomainLayer/resources/config.properties");
+            FileInputStream fis = new FileInputStream(configFile);
+            properties.load(fis);
+            url = properties.getProperty("url");
+            fis.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Error occurred while loading configuration from config.properties file.", e);
+        }
+    }
+
+
+
+
 
     @Override
     public String handshake() {
