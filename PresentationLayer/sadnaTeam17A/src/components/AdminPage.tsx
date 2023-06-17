@@ -3,15 +3,25 @@ import React, { useState } from "react";
 import DeleteUser from "./Admin/DeleteUser";
 import RegisterAdmin from "./Admin/RegisterAdmin";
 import Complaints from "./Admin/Complaints";
+import SiteInfo from "./Admin/SiteInfo";
 
 const AdminPage = () => {
-  const pages = ["home", "deleteUser", "registerAdmin", "complaints"];
+  const pages = [
+    "home",
+    "deleteUser",
+    "registerAdmin",
+    "complaints",
+    "siteInfo",
+  ];
   const [page, setPage] = useState(pages[0]);
   return (
     <Flex marginTop={4} justifyContent="center">
       {page === "home" && (
         <>
           <Stack padding={6} spacing={4} w="50%" maxW="400px">
+            <Button onClick={() => setPage(pages[4])} colorScheme="blackAlpha">
+              Site Information
+            </Button>
             <Button onClick={() => setPage(pages[1])} colorScheme="blackAlpha">
               Delete user
             </Button>
@@ -29,6 +39,7 @@ const AdminPage = () => {
         <RegisterAdmin pages={pages} setPage={setPage} />
       )}
       {page === "complaints" && <Complaints pages={pages} setPage={setPage} />}
+      {page === "siteInfo" && <SiteInfo pages={pages} setPage={setPage} />}
     </Flex>
   );
 };
