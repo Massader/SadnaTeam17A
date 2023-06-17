@@ -850,8 +850,8 @@ public class Service {
         return response;
     }
 
-    public Response<List<ServiceUser>> getNotLoginUser(UUID clientCredentials){
-        Response<List<User>> response =userController.getNotLoggedInUsers(clientCredentials);
+    public Response<List<ServiceUser>> getLoggedOutUsers(UUID clientCredentials){
+        Response<List<User>> response =userController.getAllLoggedOutUsers(clientCredentials);
         if(response.isError()){
             errorLogger.log(Level.SEVERE, response.getMessage());
             return Response.getFailResponse(response.getMessage());}
@@ -862,7 +862,7 @@ public class Service {
         return Response.getSuccessResponse(serviceUsers);
     }
 
-    public Response<List<ServiceUser>> getLoginUser(UUID clientCredentials){
+    public Response<List<ServiceUser>> getLoggedInUsers(UUID clientCredentials){
         Response<List<User>> response =userController.getAllLoggedInUsers(clientCredentials);
         if(response.isError()){
             errorLogger.log(Level.SEVERE, response.getMessage());
@@ -1306,6 +1306,27 @@ public class Service {
     
     public Response<Double> getItemDiscount(UUID clientCredentials, UUID storeId, UUID itemId) {
         Response<Double> response = userController.getItemDiscount(clientCredentials, storeId, itemId);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
+    }
+    
+    public Response<Integer> getNumberOfRegisteredUsers(UUID clientCredentials) {
+        Response<List<User>> loggedInUsersResponse = userController.getAllLoggedInUsers(clientCredentials);
+        Response<List<User>> loggedOutUsersResponse = userController.getAllLoggedOutUsers(clientCredentials);
+        if (loggedInUsersResponse.isError()) {
+            errorLogger.log(Level.WARNING, loggedInUsersResponse.getMessage());
+            return Response.getFailResponse(loggedInUsersResponse.getMessage());
+        }
+        else if (loggedOutUsersResponse.isError()) {
+            errorLogger.log(Level.WARNING, loggedOutUsersResponse.getMessage());
+            return Response.getFailResponse(loggedOutUsersResponse.getMessage());
+        }
+        return Response.getSuccessResponse(loggedInUsersResponse.getValue().size() + loggedOutUsersResponse.getValue().size());
+    }
+    
+    public Response<Integer> getNumberOfConnectedClients(UUID clientCredentials) {
+        Response<Integer> response = userController.getNumberOfClients(clientCredentials);
         if (response.isError())
             errorLogger.log(Level.WARNING, response.getMessage());
         return response;

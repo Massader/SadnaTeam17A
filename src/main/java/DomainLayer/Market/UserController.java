@@ -518,7 +518,7 @@ public class UserController {
             if (!users.containsKey(clientCredentials))
                 return Response.getFailResponse("User does not exist.");
             if(!users.get(clientCredentials).isAdmin())
-                return Response.getFailResponse("Only admins can delete users.");
+                return Response.getFailResponse("Only admins can view logged in users.");
             return Response.getSuccessResponse(loggedInUsers.values().stream().toList());
         }
         catch(Exception exception) {
@@ -527,12 +527,12 @@ public class UserController {
 
     }
 
-    public Response<List<User>> getNotLoggedInUsers(UUID clientCredentials) {
+    public Response<List<User>> getAllLoggedOutUsers(UUID clientCredentials) {
         try {
             if (!users.containsKey(clientCredentials))
                 return Response.getFailResponse("User does not exist.");
             if(!users.get(clientCredentials).isAdmin())
-                return Response.getFailResponse("Only admins can delete users.");
+                return Response.getFailResponse("Only admins can view logged out users.");
             return Response.getSuccessResponse(users.values().stream()
                     .filter((user) -> !loggedInUsers.containsKey(user.getId())).toList());
         }
@@ -655,6 +655,18 @@ public class UserController {
             return Response.getSuccessResponse(store.calculateItemDiscount(shoppingBasket, itemId) * 100); // 0.X to X as it is presented in the client
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
+        }
+    }
+    
+    public Response<Integer> getNumberOfClients(UUID clientCredentials) {
+        try {
+            if (getClientOrUser(clientCredentials) == null)
+                return Response.getFailResponse("User does not exist");
+            if (!getUserById(clientCredentials).isAdmin())
+                return Response.getFailResponse("Only admins can view number of clients");
+            return Response.getSuccessResponse(clients.size());
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
         }
     }
 }
