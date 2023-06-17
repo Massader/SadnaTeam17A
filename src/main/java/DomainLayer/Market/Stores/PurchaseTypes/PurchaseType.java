@@ -34,4 +34,16 @@ public abstract class PurchaseType {
     public String toString() {
         return type;
     }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

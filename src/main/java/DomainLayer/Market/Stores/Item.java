@@ -73,8 +73,10 @@ public class Item {
         reviews = new ConcurrentLinkedQueue<>();
     }
     
-    public void setPurchaseType(PurchaseType purchaseType) {
+    public PurchaseType setPurchaseType(PurchaseType purchaseType) {
+        PurchaseType prev = this.purchaseType;
         this.purchaseType = purchaseType;
+        return prev;
     }
     
     public Collection<Category> getCategories() {

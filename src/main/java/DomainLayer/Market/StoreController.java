@@ -900,7 +900,9 @@ public class StoreController {
                 default:
                     return Response.getFailResponse("Purchase type name is invalid");
             }
-            item.setPurchaseType(purchaseType);
+            PurchaseType prevType = item.setPurchaseType(purchaseType);
+            storeDalController.saveItem(item);
+            storeDalController.deletePurchaseType(prevType.getId());
             return Response.getSuccessResponse(true);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());

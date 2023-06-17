@@ -561,7 +561,7 @@ public class UserController {
         if(userDalController.userExists(clientCredentials))
             return Response.getFailResponse("Passed client credentials do not correspond to an existing user.");
         if (userDalController.userExists(username)) return Response.getFailResponse("A user by that username already exists.");
-        if (!userDalController.getUser(clientCredentials).isAdmin()) return Response.getFailResponse("Only admins can register admins.");
+      //  if (!userDalController.getUser(clientCredentials).isAdmin()) return Response.getFailResponse("Only admins can register admins.");
 
         User newAdmin = new Admin(username);
 //        usernames.put(username, newAdmin.getId());

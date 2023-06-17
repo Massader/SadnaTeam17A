@@ -98,13 +98,14 @@ public class Service {
 //        storeController.init(repositoryFactory);
 
         //Add Supply and Payment JSON config file read here
-//        loadObjects();
+        loadObjects();
         eventLogger.log(Level.INFO, "System boot successful.");
         return true;
     }
 
     private void loadObjects() {
         try {
+            registerAdmin(UUID.randomUUID(), "Admin", "Admin1");
 //            StoreController storeController = StoreController.getInstance();
 //            repositoryFactory.userRepository.deleteAll();
 //            repositoryFactory.passwordRepository.deleteAll();

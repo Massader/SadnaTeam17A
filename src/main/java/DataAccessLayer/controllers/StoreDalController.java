@@ -1,9 +1,6 @@
 package DataAccessLayer.controllers;
 
-import DataAccessLayer.CategoryRepository;
-import DataAccessLayer.ItemRepository;
-import DataAccessLayer.RepositoryFactory;
-import DataAccessLayer.StoreRepository;
+import DataAccessLayer.*;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.User;
@@ -22,6 +19,7 @@ public class StoreDalController{
     StoreRepository storeRepository;
     ItemRepository itemRepository;
     CategoryRepository categoryRepository;
+    PurchaseTypeRepository purchaseTypeRepository;
     private static StoreDalController singleton = null;
 
 
@@ -30,6 +28,7 @@ public class StoreDalController{
         this.storeRepository = repositoryFactory.storeRepository;
         this.itemRepository = repositoryFactory.itemRepository;
         this.categoryRepository = repositoryFactory.categoryRepository;
+        this.purchaseTypeRepository = repositoryFactory.purchaseTypeRepository;
     }
     public static synchronized StoreDalController getInstance(RepositoryFactory repositoryFactory) {
         if (singleton == null) {
@@ -104,6 +103,9 @@ public long storesCount(){
 //
 //    }
 
+    public void deletePurchaseType(UUID purchaseTypeId) {
+        purchaseTypeRepository.deleteById(purchaseTypeId);
+    }
 
 
 }
