@@ -16,7 +16,8 @@ public abstract class NumericalAssemblyOfDiscount {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "numerical_assembly_of_discount_id")
     protected Collection<Discount> discounts;
 

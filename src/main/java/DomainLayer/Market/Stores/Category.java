@@ -13,7 +13,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     private UUID id;
-    @Column
+    @Column(unique = true)
     private String categoryName;
 
     public Category(String name){

@@ -26,7 +26,7 @@ public class StoreController {
 //    private ConcurrentHashMap<UUID, Store> storeMap;
     private UserController userController;
     private NotificationController notificationController;
-    private ConcurrentHashMap<String, Category> itemCategories;
+//    private ConcurrentHashMap<String, Category> itemCategories;
     private RepositoryFactory repositoryFactory;
     private UserDalController userDalController;
     private StoreDalController storeDalController;
@@ -47,16 +47,20 @@ public class StoreController {
 //        storeMap = new ConcurrentHashMap<>();
         userController = UserController.getInstance();
         notificationController = NotificationController.getInstance();
-        itemCategories = new ConcurrentHashMap<>();
+//        itemCategories = new ConcurrentHashMap<>();
         userDalController = UserDalController.getInstance(repositoryFactory);
         storeDalController = StoreDalController.getInstance(repositoryFactory);
+    }
+
+    private void initCategories() {
+
     }
 
     public void init() {
 //        storeMap = new ConcurrentHashMap<>();
         userController = UserController.getInstance();
         notificationController = NotificationController.getInstance();
-        itemCategories = new ConcurrentHashMap<>();
+//        itemCategories = new ConcurrentHashMap<>();
     }
 
 
@@ -616,8 +620,14 @@ public class StoreController {
             Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
-            itemCategories.putIfAbsent(category, new Category(category));
-            item.addCategory(itemCategories.get(category));
+//            itemCategories.putIfAbsent(category, new Category(category));
+            List<Category> categories =  repositoryFactory.categoryRepository.findByCategoryName(category);
+            Category categoryOdj = null;
+            if(!categories.isEmpty())
+                categoryOdj = categories.get(0);
+            else
+                categoryOdj = new Category(category);
+            item.addCategory(categoryOdj);
             storeDalController.saveItem(item);
             return Response.getSuccessResponse(true);
         } catch (Exception e) {
@@ -695,6 +705,7 @@ public class StoreController {
                     !store.checkPermission(clientCredentials, StorePermissions.STORE_POLICY_MANAGEMENT))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
             store.addPolicyTerm(term);
+            storeDalController.saveStore(store);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -724,7 +735,8 @@ public class StoreController {
                     !store.checkPermission(clientCredentials, StorePermissions.STORE_DISCOUNT_MANAGEMENT))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
             Discount discount = new Discount(serviceDiscount);
-            store.addDiscount(discount);
+            store.addDiscount(discount);;
+            storeDalController.saveStore(store);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -739,7 +751,8 @@ public class StoreController {
             if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER) &&
                     !store.checkPermission(clientCredentials, StorePermissions.STORE_DISCOUNT_MANAGEMENT))
                 return Response.getFailResponse("User does not have STORE OWNER permissions for add policy term.");
-            store.removeDiscount(discountId);
+            store.removeDiscount(discountId);;
+            storeDalController.saveStore(store);
             return Response.getSuccessResponse(true);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -773,10 +786,10 @@ public class StoreController {
 
     public Category getCategory(String categoryName) throws Exception {
         if(categoryName.length()==0){throw new Exception("the category name can not be empty"); }
-        Category category = itemCategories.get(categoryName);
-        if (category == null) {
-            category = new Category(categoryName);
-            itemCategories.put(categoryName, category);
+        List<Category> categories = repositoryFactory.categoryRepository.findByCategoryName(categoryName);
+        Category category = null;
+        if (!categories.isEmpty()) {
+            category = categories.get(0);
         }
         return category;
     }
@@ -906,7 +919,9 @@ public class StoreController {
             Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
-            return Response.getSuccessResponse(item.addBid(clientCredentials, bidPrice, quantity));
+            item.addBid(clientCredentials, bidPrice, quantity);
+            storeDalController.saveItem(item);
+            return Response.getSuccessResponse(true);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }
@@ -921,7 +936,9 @@ public class StoreController {
             Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
-            return Response.getSuccessResponse(item.removeBid(clientCredentials));
+            item.removeBid(clientCredentials);
+            storeDalController.saveItem(item);
+            return Response.getSuccessResponse(true);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }
@@ -941,11 +958,13 @@ public class StoreController {
             if (item.getQuantity() <= 0)
                 return Response.getFailResponse("Can't accept bid on item when item does not have quantity.");
             Bid bid = item.acceptBid(clientCredentials, bidderId, bidPrice);
+            item.removeBid(clientCredentials);
             if (bid.getOwnersAccepted().containsAll(getStore(storeId).getStoreOwners())) {
                 bid.setAccepted(true);
                 notificationController.sendNotification(bid.getBidderId(), "Your bid on " + item.getName() + " from " + store.getName()
                 + " has been accepted. You can now add it to your cart.");
             }
+
             return Response.getSuccessResponse(true);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
@@ -984,6 +1003,7 @@ public class StoreController {
             for (Item item : store.getItems()) {
                 bids.addAll(item.getBids());
             }
+            storeDalController.saveStore(store);
             return Response.getSuccessResponse(bids);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());

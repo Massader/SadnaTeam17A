@@ -1,5 +1,6 @@
 package DataAccessLayer.controllers;
 
+import DataAccessLayer.CategoryRepository;
 import DataAccessLayer.ItemRepository;
 import DataAccessLayer.RepositoryFactory;
 import DataAccessLayer.StoreRepository;
@@ -20,6 +21,7 @@ public class StoreDalController{
     RepositoryFactory repositoryFactory;
     StoreRepository storeRepository;
     ItemRepository itemRepository;
+    CategoryRepository categoryRepository;
     private static StoreDalController singleton = null;
 
 
@@ -27,6 +29,7 @@ public class StoreDalController{
         this.repositoryFactory = repositoryFactory;
         this.storeRepository = repositoryFactory.storeRepository;
         this.itemRepository = repositoryFactory.itemRepository;
+        this.categoryRepository = repositoryFactory.categoryRepository;
     }
     public static synchronized StoreDalController getInstance(RepositoryFactory repositoryFactory) {
         if (singleton == null) {
@@ -100,6 +103,7 @@ public long storesCount(){
 //    public List<Item> getUnavailableItems(){
 //
 //    }
+
 
 
 }

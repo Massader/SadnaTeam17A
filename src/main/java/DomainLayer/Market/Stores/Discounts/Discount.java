@@ -39,7 +39,7 @@ public class Discount {
     }
 
     public Discount(ServiceDiscount serviceDiscount) throws Exception {
-        this.id = serviceDiscount.getId() == null ? UUID.randomUUID() : serviceDiscount.getId();
+//        this.id = serviceDiscount.getId() == null ? UUID.randomUUID() : serviceDiscount.getId();
         if (serviceDiscount.getDiscountPercentage() >= 100 || serviceDiscount.getDiscountPercentage() <= 0)
             throw new Exception("discount Percentage have to be between 0 to 1");
         this.discountPercentage = serviceDiscount.getDiscountPercentage() / 100;

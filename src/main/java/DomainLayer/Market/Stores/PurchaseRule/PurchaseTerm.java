@@ -19,7 +19,7 @@ public abstract class PurchaseTerm {
     @Column(name = "id", nullable = false)
     UUID termId;
 
-    @Transient
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     PurchaseRule purchaseRule;
 
     public PurchaseTerm(PurchaseRule purchaseRule) {
@@ -27,7 +27,7 @@ public abstract class PurchaseTerm {
     }
     
     public PurchaseTerm(ServicePurchaseTerm serviceTerm) {
-        this.termId = serviceTerm.getTermId();
+//        this.termId = serviceTerm.getTermId();
         if (serviceTerm.getRule().getType().equals("ITEM"))
             purchaseRule = new ItemPurchaseRule(UUID.fromString(serviceTerm.getRule().getItemIdOrCategoryOrNull()));
         else if (serviceTerm.getRule().getType().equals("CATEGORY"))
