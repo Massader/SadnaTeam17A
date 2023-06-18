@@ -8,10 +8,31 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.*;
+import java.util.Properties;
+
 public class PaymentReal implements PaymentBridge{
-    String url = "https://php-server-try.000webhostapp.com/";
+    String url;
+
+
     @Override
-    public void setReal() {}
+    public void setReal() {
+        loadConfig();
+    }
+
+    public void loadConfig() {
+        Properties properties = new Properties();
+        try {
+            File configFile = new File("src/main/java/DomainLayer/resources/config.properties");
+            FileInputStream fis = new FileInputStream(configFile);
+            properties.load(fis);
+            url = properties.getProperty("url");
+            fis.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Error occurred while loading configuration from config.properties file.", e);
+        }
+    }
+
 
     @Override
     public synchronized String handshake() {

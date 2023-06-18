@@ -3,7 +3,9 @@ package DomainLayer.Supply;
 public class SupplyProxy implements SupplyBridge{
     SupplyBridge real = null;
     public void setReal() {
-        if(real ==null){real = new SupplyReal();}
+        if(real ==null){
+            real = new SupplyReal();
+            real.setReal();}
     }
 
     @Override
