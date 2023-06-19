@@ -1,7 +1,7 @@
 package UnitTests;
 
 import static org.junit.jupiter.api.Assertions.*;
-//import DomainLayer.Market.Stores.Discounts.Discount;
+import DomainLayer.Market.Stores.Discounts.Discount;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.CartItem;
@@ -16,15 +16,11 @@ public class StoreTest {
     private Store store;
     private Item item1;
     private Item item2;
-<<<<<<< HEAD
+
     private Discount discount1;
     private Discount discount2;
     ConcurrentHashMap<UUID, CartItem> items;
-=======
-//    private Discount discount1;
-//    private Discount discount2;
-    ConcurrentHashMap<UUID,Integer> items;
->>>>>>> masterDAL
+
 
     @BeforeEach
     public void setUp() {
@@ -65,7 +61,7 @@ public class StoreTest {
     public void testCalculatePriceOfBasketSuccess() {
 
         double expectedPrice = (item1.getPrice() * 2) + item2.getPrice();
-        double actualPrice = store.calculatePriceOfBasket(items);
+        double actualPrice = store.calculatePriceOfBasket(items.values());
         assertEquals(expectedPrice, actualPrice, 0.0);
     }
 

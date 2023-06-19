@@ -13,6 +13,7 @@ import ServiceLayer.ServiceObjects.ServiceMessage;
 import ServiceLayer.ServiceObjects.ServicePurchase;
 import ServiceLayer.ServiceObjects.ServiceShoppingBasket;
 import ServiceLayer.ServiceObjects.ServiceUser;
+import ServiceLayer.StateFileRunner.StateFileRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,13 +27,12 @@ public class UserController {
     
     private final AlertController alertController;
     private final Service service;
-    private final RepositoryFactory repositoryFactory;
     
     @Autowired
-    public UserController(Service service, AlertController alertController, RepositoryFactory repositoryFactory) {
-        this.repositoryFactory =repositoryFactory;
+    public UserController(Service service, AlertController alertController, RepositoryFactory repositoryFactory,
+                          StateFileRunner stateFileRunner) {
         this.service = service;
-        service.init(repositoryFactory);
+        service.init(repositoryFactory, stateFileRunner);
         this.alertController = alertController;
     }
     //DB

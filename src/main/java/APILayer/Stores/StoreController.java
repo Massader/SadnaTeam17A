@@ -7,6 +7,7 @@ import DataAccessLayer.RepositoryFactory;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.*;
+import ServiceLayer.StateFileRunner.StateFileRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +22,9 @@ public class StoreController {
     private final Service service;
 
     @Autowired
-    public StoreController(Service service, RepositoryFactory repositoryFactory) {
+    public StoreController(Service service, RepositoryFactory repositoryFactory, StateFileRunner stateFileRunner) {
         this.service = service;
-        service.init(repositoryFactory);
+        service.init(repositoryFactory, stateFileRunner);
     }
 
     //DB

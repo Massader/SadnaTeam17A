@@ -1,0 +1,38 @@
+[
+  {
+    "name": "register",
+    "arguments": ["u1", "Abc123"],
+    "retVal": "$ignore"
+  },
+  {
+    "name": "register",
+    "arguments": ["u2", "Abc123"],
+    "retVal": "$ignore"
+
+  },
+  {
+    "name": "register",
+    "arguments": ["u3", "Abc123"],
+    "retVal": "$ignore"
+  },
+  {
+    "name": "login",
+    "arguments": ["u1", "Abc123"],
+    "retVal": "u1"
+  },
+  {
+    "name": "createStore",
+    "arguments": ["s1", ""],
+    "retVal": "s1"
+  },
+  {
+    "name": "getUserByUsername",
+    "arguments": ["u2"],
+    "retVal": "u2"
+  },
+  {
+    "name": "appointStoreOwner",
+    "arguments": ["u2", "s1"],
+    "retVal": "$ignore"
+  }
+]

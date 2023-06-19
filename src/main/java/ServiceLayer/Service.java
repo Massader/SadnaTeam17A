@@ -17,6 +17,8 @@ import DomainLayer.Supply.SupplyProxy;
 import ServiceLayer.Loggers.ErrorLogger;
 import ServiceLayer.Loggers.EventLogger;
 import ServiceLayer.ServiceObjects.*;
+import ServiceLayer.StateFileRunner.StateFileRunner;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.awt.image.ReplicateScaleFilter;
 import java.util.*;
@@ -24,6 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.BiConsumer;
 import java.util.logging.Level;
+
+import static java.lang.System.exit;
 
 @org.springframework.stereotype.Service
 //@Transactional
@@ -61,46 +65,57 @@ public class Service {
         return instance;
     }
 
-    public boolean init(RepositoryFactory repositoryFactory) {
-        synchronized (this) {
-            if (initialized) return true;
-            initialized = true;
-        }
-        eventLogger.log(Level.INFO, "Booting system");
-        this.repositoryFactory = repositoryFactory;
-        storeController = StoreController.getInstance();
-        storeController.init(repositoryFactory);
-        securityController = SecurityController.getInstance();
-        securityController.init(repositoryFactory);
-        userController = UserController.getInstance();
-        userController.init(repositoryFactory);  // Creates default admin
-        purchaseController = PurchaseController.getInstance(repositoryFactory);
-        purchaseController.init();
-
-        //securityController.init();
-        messageController = MessageController.getInstance();
-        messageController.init(repositoryFactory);
-        supplyController = SupplyController.getInstance();
-        supplyController.init();
-        paymentController = PaymentController.getInstance();
-        paymentController.init();
-
-        //paymentController.init();
-        notificationController = NotificationController.getInstance();
-        notificationController.init(repositoryFactory);
-        searchController = SearchController.getInstance();
-        searchController.init(repositoryFactory);
+    public boolean init(RepositoryFactory repositoryFactory, StateFileRunner stateFileRunner) {
+        try {
+            synchronized (this) {
+                if (initialized) return true;
+                initialized = true;
+            }
+            eventLogger.log(Level.INFO, "Booting system");
+            this.repositoryFactory = repositoryFactory;
+            storeController = StoreController.getInstance();
+            storeController.init(repositoryFactory);
+            securityController = SecurityController.getInstance();
+            securityController.init(repositoryFactory);
+            userController = UserController.getInstance();
+            userController.init(repositoryFactory);  // Creates default admin
+            purchaseController = PurchaseController.getInstance(repositoryFactory);
+            purchaseController.init();
+    
+            //securityController.init();
+            messageController = MessageController.getInstance();
+            messageController.init(repositoryFactory);
+            supplyController = SupplyController.getInstance();
+            supplyController.init();
+            paymentController = PaymentController.getInstance();
+            paymentController.init();
+    
+            //paymentController.init();
+            notificationController = NotificationController.getInstance();
+            notificationController.init(repositoryFactory);
+            searchController = SearchController.getInstance();
+            searchController.init(repositoryFactory);
 //        deleteUser(getAdminCredentials().getValue(), getAdminCredentials().getValue());
 //        registerAdmin(UUID.randomUUID(), "Admin", "Admin1");
-        //searchController.init();
-        //DAL controllers
+            //searchController.init();
+            //DAL controllers
 //        StoreController storeController = StoreController.getInstance();
 //        storeController.init(repositoryFactory);
-
-        //Add Supply and Payment JSON config file read here
-        //        loadObjects();
-        eventLogger.log(Level.INFO, "System boot successful.");
-        return true;
+    
+            //Add Supply and Payment JSON config file read here
+            //        loadObjects();
+    
+            eventLogger.log(Level.INFO, "Reading state file.");
+            stateFileRunner.run();
+            eventLogger.log(Level.INFO, "State loaded.");
+    
+            eventLogger.log(Level.INFO, "System boot successful.");
+            return true;
+        } catch (Exception e) {
+            eventLogger.log(Level.SEVERE, "Failed to load service - " + e.getMessage());
+            exit(-1);
+            return false;
+        }
     }
 
     private void loadObjects() {
@@ -787,7 +802,7 @@ public class Service {
         paymentController.resetController();
         securityController.resetController();
         supplyController.resetController();
-        init(repositoryFactory);
+        init(repositoryFactory, new StateFileRunner(new ObjectMapper(), this));
         return null;
     }
 

@@ -6,6 +6,8 @@ import DomainLayer.Market.UserController;
 import DomainLayer.Market.Users.Roles.Role;
 import ServiceLayer.*;
 import ServiceLayer.ServiceObjects.*;
+import ServiceLayer.StateFileRunner.StateFileRunner;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 
 import java.util.List;
@@ -28,7 +30,7 @@ public class RealBridge implements Bridge {
             initielized = true;
         }
         service = Service.getInstance();
-        service.init(UserController.repositoryFactory);
+        service.init(UserController.repositoryFactory, new StateFileRunner(new ObjectMapper(), service));
     }
 
     public Response<Boolean> systemBoot() {
