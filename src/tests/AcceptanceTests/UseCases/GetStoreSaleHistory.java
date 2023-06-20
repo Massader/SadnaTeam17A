@@ -111,11 +111,13 @@ public class GetStoreSaleHistory extends ProjectTest {
         bridge.logout(storeManagerId);
         bridge.logout(user1Id);
         bridge.logout(user2Id);
+        deleteDB();
     }
 
     @AfterAll
     public void afterClass() {
         bridge.resetService();
+
     }
 
     @Test

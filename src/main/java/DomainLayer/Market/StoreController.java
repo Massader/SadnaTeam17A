@@ -274,13 +274,13 @@ public class StoreController {
             Store store = storeDalController.getStore(storeId);
             if (store == null)
                 return Response.getFailResponse("Store does not exist");
-            if (!getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
-                    && !getStore(storeId).checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
+            if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER)
+                    && !store.checkPermission(clientCredentials, StorePermissions.STORE_ITEM_MANAGEMENT))
                 return Response.getFailResponse("User doesn't have permission.");
 
             Item item = new Item(name, price, store, 0, quantity, description);
 
-            UUID id2 = storeDalController.saveItem(item);
+//            UUID id2 = storeDalController.saveItem(item);
             store.addItem(item);
             UUID id3 = storeDalController.saveStore(store);
             return Response.getSuccessResponse(item);

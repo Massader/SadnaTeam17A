@@ -3,6 +3,7 @@ package AcceptanceTests;
 import DataAccessLayer.ItemRepository;
 import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.UserController;
+import DomainLayer.Market.Users.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;

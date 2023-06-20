@@ -89,6 +89,7 @@ public class PurchaseShoppingCart extends ProjectTest {
         bridge.logout(user1Id);
         bridge.logout(user2Id);
         bridge.logout(user3Id);
+        deleteDB();
     }
 
     @AfterAll

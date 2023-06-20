@@ -220,7 +220,7 @@ public class Store {
                 if (item.getName().equals(existingItem.getName()))
                     throw new Exception("Store already has item of this name.");
             }
-            UUID id = item.getId();
+//            UUID id = item.getId();
             items.add(item);
         }
     }

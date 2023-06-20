@@ -81,10 +81,10 @@ public class SearchController {
             items = repositoryFactory.itemRepository.findAllByStore(store);
         }
         else {
-            for (Store store : storeController.getStores()) {
-                if (!store.isClosed())
-                    items = repositoryFactory.itemRepository.findAll();
-            }
+//            for (Store store : storeController.getStores()) {
+//                if (!store.isClosed())
+                items = repositoryFactory.itemRepository.findAll();
+//            }
         }
         if (keyword != null && !keyword.isEmpty()){
             items = items.stream().filter(item -> item.getName().toLowerCase().contains(keyword.toLowerCase())).toList();

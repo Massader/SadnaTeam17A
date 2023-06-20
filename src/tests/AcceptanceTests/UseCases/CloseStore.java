@@ -57,6 +57,7 @@ public class CloseStore extends ProjectTest {
         bridge.logout(storeOwnerId);
         bridge.logout(storeManagerId);
         bridge.logout(userId);
+        deleteDB();
     }
 
     @AfterAll
