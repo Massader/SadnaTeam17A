@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 
 @Component
-public class StateFileRunner implements CommandLineRunner {
+public class StateFileRunner {
     
     private final ObjectMapper objectMapper;
     private final Service service;
@@ -30,8 +30,8 @@ public class StateFileRunner implements CommandLineRunner {
         functionResults = new HashMap<>();
     }
     
-    @Override
-    public void run(String... args) throws Exception {
+
+    public void run() throws Exception {
         File jsonFile = new File("src/main/resources/state.json"); // Path to your JSON file
         
         // Read JSON file and map it to a list of Function objects

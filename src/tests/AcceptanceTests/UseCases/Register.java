@@ -27,8 +27,8 @@ public class Register extends ProjectTest {
 
     @AfterEach
     public void tearDown() {
-        UserRepository userRepository = UserController.repositoryFactory.userRepository;
-        userRepository.deleteAll();
+//        UserRepository userRepository = UserController.repositoryFactory.userRepository;
+        deleteDB();
     }
 
     @AfterAll

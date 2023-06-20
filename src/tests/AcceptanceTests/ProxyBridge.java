@@ -17,6 +17,8 @@ public class ProxyBridge implements Bridge {
         real = new RealBridge();
     }
 
+    public Void resetProgram(){return real == null ? null : real.resetProgram();}
+
     public Response<Boolean> systemBoot() {
         return real == null ? null : real.systemBoot();
     }

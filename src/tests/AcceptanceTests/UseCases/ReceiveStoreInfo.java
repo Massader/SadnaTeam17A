@@ -41,6 +41,7 @@ public class ReceiveStoreInfo extends ProjectTest {
     @BeforeEach
     public void setUp()  {
         bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
+        deleteDB();
     }
 
     @AfterEach
@@ -51,6 +52,7 @@ public class ReceiveStoreInfo extends ProjectTest {
     @AfterAll
     public void afterClass() {
         bridge.resetService();
+        deleteDB();
     }
 
     @Test

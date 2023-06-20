@@ -109,10 +109,10 @@ public class Store {
     }
 
     public boolean checkPermission(UUID userId, StorePermissions permission) {
-        User user = UserController.getInstance().getUserById(userId);
-        Collection<Role> roles = user.getRoles();
+//        User user = UserController.getInstance().getUserById(userId);
+//        Collection<Role> roles = user.getRoles();
         for(Role role : roles){
-            if  (role.getPermissions().contains(permission) && role.getStore().getStoreId().equals(this.storeId))
+            if  (role.getUser().getId().equals(userId) && role.getPermissions().contains(permission) && role.getStore().getStoreId().equals(this.storeId))
                 return true;
         }
         return false;
@@ -220,7 +220,7 @@ public class Store {
                 if (item.getName().equals(existingItem.getName()))
                     throw new Exception("Store already has item of this name.");
             }
-            UUID id = item.getId();
+//            UUID id = item.getId();
             items.add(item);
         }
     }

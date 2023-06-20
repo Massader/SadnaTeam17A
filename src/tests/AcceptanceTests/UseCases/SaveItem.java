@@ -1,4 +1,5 @@
 package AcceptanceTests.UseCases;
+import APILayer.Main;
 import AcceptanceTests.*;
 import DomainLayer.Market.Users.ShoppingBasket;
 import DomainLayer.Market.Users.ShoppingCart;
@@ -11,6 +12,8 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import org.junit.jupiter.api.*;
+import org.springframework.boot.SpringApplication;
+
 import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SaveItem extends ProjectTest {

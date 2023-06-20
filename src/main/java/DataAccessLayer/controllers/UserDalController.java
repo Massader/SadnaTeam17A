@@ -18,6 +18,7 @@ public class UserDalController {
     SecurityQuestionRepository securityQuestionRepository;
     RoleRepository roleRepository;
     private static UserDalController singleton = null;
+//    private List<User> loadedUsers;
 
     private UserDalController(RepositoryFactory repositoryFactory) {
         this.repositoryFactory = repositoryFactory;
@@ -25,6 +26,7 @@ public class UserDalController {
         this.passwordRepository = repositoryFactory.passwordRepository;
         this.securityQuestionRepository = repositoryFactory.securityQuestionRepository;
         this.roleRepository = repositoryFactory.roleRepository;
+//        loadedUsers = new LinkedList<>();
     }
 
     public static synchronized UserDalController getInstance(RepositoryFactory repositoryFactory) {
@@ -35,17 +37,30 @@ public class UserDalController {
     }
 
     public User getUser(UUID uuid){
+//        for(User user : loadedUsers){
+//            if(user.getId().equals(uuid))
+//                return user;
+//        }
         List<User> usersFromDb = userRepository.findByClientCredentials(uuid);
         if(usersFromDb.isEmpty())
             return null;
-        else return usersFromDb.get(0);
+        User user = usersFromDb.get(0);
+//        loadedUsers.add(user);
+        return user;
     }
 
     public User getUser(String username){
+//        for(User user : loadedUsers){
+//            if(user.getUsername().equals(username))
+//                return user;
+//        }
         List<User> usersFromDb = userRepository.findByUsername(username);
         if(usersFromDb.isEmpty())
             return null;
-        else return usersFromDb.get(0);
+        User user = usersFromDb.get(0);
+//        loadedUsers.add(user);
+        return user;
+
     }
 
     public User getAdmin(){
@@ -67,6 +82,7 @@ public class UserDalController {
     public UUID saveUser(User user){
         try {
             userRepository.save(user);
+//            loadedUsers.add(user);
             return user.getId();
         }
         catch(Exception e){
@@ -77,10 +93,19 @@ public class UserDalController {
 
     public void deleteUser(User user){
         userRepository.delete(user);
+//        for(User user1 : loadedUsers)
+//            if(user1.getId().equals(user)){
+//                loadedUsers.remove(user1);
+//                return;
+//            }
+
     }
     public void deleteAll(int pass){ //so that no one will use it by accident
-        if (pass == 1234)
+        if (pass == 1234) {
             userRepository.deleteAll();
+//            loadedUsers = new LinkedList<>();
+        }
+
     }
 
     public List<User> getAllUsers(){
@@ -89,7 +114,6 @@ public class UserDalController {
     public List<User> serachUser(String keyword){
         return userRepository.findByUsernameContaining(keyword);
     }
-
 
     public Password getPassword(UUID uuid){
         List<Password> passwords = passwordRepository.findAllById(Set.of(uuid));
