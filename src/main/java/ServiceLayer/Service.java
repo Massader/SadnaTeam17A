@@ -81,7 +81,7 @@ public class Service {
             userController.init(repositoryFactory);  // Creates default admin
             purchaseController = PurchaseController.getInstance(repositoryFactory);
             purchaseController.init();
-    
+
             //securityController.init();
             messageController = MessageController.getInstance();
             messageController.init(repositoryFactory);
@@ -89,7 +89,6 @@ public class Service {
             supplyController.init();
             paymentController = PaymentController.getInstance();
             paymentController.init();
-    
             //paymentController.init();
             notificationController = NotificationController.getInstance();
             notificationController.init(repositoryFactory);
@@ -101,19 +100,23 @@ public class Service {
             //DAL controllers
 //        StoreController storeController = StoreController.getInstance();
 //        storeController.init(repositoryFactory);
+
     
             //Add Supply and Payment JSON config file read here
             //        loadObjects();
     
             eventLogger.log(Level.INFO, "Reading state file.");
-            stateFileRunner.run();
-            eventLogger.log(Level.INFO, "State loaded.");
-    
+            try {
+                stateFileRunner.run();
+                eventLogger.log(Level.INFO, "State loaded.");
+            } catch (Exception e) {
+                errorLogger.log(Level.WARNING, "Failed to load state - " + e.getMessage());
+            }
+
             eventLogger.log(Level.INFO, "System boot successful.");
             return true;
         } catch (Exception e) {
             eventLogger.log(Level.SEVERE, "Failed to load service - " + e.getMessage());
-            exit(-1);
             return false;
         }
     }

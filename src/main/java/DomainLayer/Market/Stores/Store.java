@@ -109,10 +109,10 @@ public class Store {
     }
 
     public boolean checkPermission(UUID userId, StorePermissions permission) {
-        User user = UserController.getInstance().getUserById(userId);
-        Collection<Role> roles = user.getRoles();
+//        User user = UserController.getInstance().getUserById(userId);
+//        Collection<Role> roles = user.getRoles();
         for(Role role : roles){
-            if  (role.getPermissions().contains(permission) && role.getStore().getStoreId().equals(this.storeId))
+            if  (role.getUser().getId().equals(userId) && role.getPermissions().contains(permission) && role.getStore().getStoreId().equals(this.storeId))
                 return true;
         }
         return false;

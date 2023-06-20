@@ -3,6 +3,9 @@ package AcceptanceTests;
 import DataAccessLayer.ItemRepository;
 import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.UserController;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 public abstract class ProjectTest {
@@ -28,5 +31,6 @@ public abstract class ProjectTest {
             System.out.println(e.getMessage());
         }
     }
+
 
 }

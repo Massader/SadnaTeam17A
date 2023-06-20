@@ -41,6 +41,7 @@ public class GetStoreSaleHistory extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
+//        bridge.resetProgram();
         bridge.register("founder", "Aa1234");
         bridge.register("owner", "Aa1234");
         bridge.register("manager", "Aa1234");
@@ -59,6 +60,7 @@ public class GetStoreSaleHistory extends ProjectTest {
         bridge.appointStoreOwner(storeFounderId, storeOwnerId, storeId);
         bridge.appointStoreManager(storeFounderId, storeManagerId, storeId);
 
+//        Response<ServiceItem> item1IdRes = bridge.addItemToStore(storeFounderId, "item1", 10, storeId, 100, "test").getValue();
         item1Id = bridge.addItemToStore(storeFounderId, "item1", 10, storeId, 100, "test").getValue().getId();
         item2Id = bridge.addItemToStore(storeFounderId, "item2", 20, storeId, 100, "test").getValue().getId();
         item3Id = bridge.addItemToStore(storeFounderId, "item3", 30, storeId, 100, "test").getValue().getId();
@@ -94,6 +96,7 @@ public class GetStoreSaleHistory extends ProjectTest {
 
     @BeforeEach
     public void setUp()  {
+//        bridge.resetProgram();
         bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "owner", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "manager", "Aa1234");

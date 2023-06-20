@@ -31,6 +31,13 @@ public class RealBridge implements Bridge {
         }
         service = Service.getInstance();
         service.init(UserController.repositoryFactory, new StateFileRunner(new ObjectMapper(), service));
+
+    }
+    public Void resetProgram(){
+//        SpringApplication.run(Main.class);
+//        service = Service.getInstance();
+//        service.init(UserController.repositoryFactory, new StateFileRunner(new ObjectMapper(), service));
+        return null;
     }
 
     public Response<Boolean> systemBoot() {

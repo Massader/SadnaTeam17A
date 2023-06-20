@@ -11,6 +11,7 @@ public class LoginRegisterRequest extends Request{
         this.username = username;
         this.password = password;
     }
+    public LoginRegisterRequest(){}
 
     public String getUsername() {
         return username;
