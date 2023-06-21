@@ -97,7 +97,9 @@ const AndOrPurchaseRules = ({ storeId, purchaseType, onSubmit }: Props) => {
           colorScheme="blue"
           onClick={() =>
             onSubmit({
-              purchaseTerms: purchaseTerms,
+              purchaseTerms: purchaseTerms.map((purchaseTerm)=> {
+                return {rule: purchaseTerm.rule, atLeast:purchaseTerm.atLeast, quantity:purchaseTerm.quantity}
+              }),
               type: purchaseType.toUpperCase(),
             })
           }
