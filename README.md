@@ -58,17 +58,27 @@ The `config.properties` file contains the relevant parameters for the initializa
 The `config.properties` file include the following configuration parameter:
 
 - `url`: https://php-server-try.000webhostapp.com/
+  
+The `application.properties` file include the following configuration parameter:
+
+Database Connection Settings
+spring.datasource.url=jdbc:postgresql://localhost:5432/db17a
+spring.datasource.username=postgres
+spring.datasource.password=okokokok
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# JPA Properties
+#spring.jpa.hibernate.ddl-auto=update
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 
 ## Initial State File
 
 The initial state file defines the initial state of the system. It should be in ??????  format and located at ??????. This file will be used to populate the system with the initial data or settings.
 
 To create the initial state file, follow these steps:
-
-1. 
-2. 
-3. 
-
+we create the json file state.json
 
 ## Starting the System
 
