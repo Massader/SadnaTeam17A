@@ -23,8 +23,6 @@ import jakarta.transaction.Transactional;
 public class UserController {
 
     private static UserController singleton = null;
-//    private ConcurrentHashMap<UUID, User> users;// for registered clients only!
-//    private ConcurrentHashMap<String, UUID> usernames;    // for registered clients only!
     private ConcurrentHashMap<UUID, User> loggedInUsers; // for logged-in users only!
     private SecurityController securityController;
     private ConcurrentHashMap<UUID, Client> clients;  // for non-registered clients only!
@@ -46,9 +44,7 @@ public class UserController {
     }
 
     public void init(RepositoryFactory repositoryFactory) {
-//        users = new ConcurrentHashMap<>();
-//        usernames = new ConcurrentHashMap<>();
-        this.repositoryFactory = repositoryFactory;
+        UserController.repositoryFactory = repositoryFactory;
         userDalController = UserDalController.getInstance(repositoryFactory);
         loggedInUsers = new ConcurrentHashMap<>();
         securityController = SecurityController.getInstance();
@@ -57,7 +53,7 @@ public class UserController {
         notificationController = NotificationController.getInstance();
         storeDalController = StoreDalController.getInstance(repositoryFactory);
         purchaseDalController = PurchaseDalController.getInstance(repositoryFactory);
-//        registerDefaultAdmin();
+        registerDefaultAdmin();
     }
 
     public Response<Boolean> setAsFounder(User user, UUID storeId, Role role){
@@ -486,7 +482,9 @@ public class UserController {
     }
 
     public UUID getId(String userName) {
-        return userDalController.getUser(userName).getId();
+        User user = userDalController.getUser(userName);
+        if (user == null) return null;
+        return user.getId();
     }
 
     // i made these methods to avoid confusion between clients and users.
@@ -498,7 +496,7 @@ public class UserController {
             User user = userDalController.getUser(clientCredentials);
             if(user == null)
                 return Response.getFailResponse("User does not exist.");
-            if (!loggedInUsers.containsKey(user.getId())) return Response.getFailResponse("User is logged-out.");
+            if (!loggedInUsers.containsKey(user.getId())) return Response.getSuccessResponse(false);
             return Response.getSuccessResponse(true);
         }
         catch (Exception exception) {
@@ -569,7 +567,7 @@ public class UserController {
     }
 
     public void resetController() {
-        singleton = new UserController();
+        init(UserController.repositoryFactory);
         userDalController.resetCache();
     }
 

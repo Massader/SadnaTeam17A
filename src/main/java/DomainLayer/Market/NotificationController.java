@@ -85,7 +85,7 @@ public class NotificationController {
     }
 
     public void resetController() {
-        instance = new NotificationController();
+        init(repositoryFactory);
     }
 
     public void addNotifier(UUID clientCredentials, BiConsumer<UUID, Notification> notificationSender) {

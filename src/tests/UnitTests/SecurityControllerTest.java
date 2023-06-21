@@ -4,14 +4,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.UUID;
 
+import APILayer.Main;
+import DataAccessLayer.RepositoryFactory;
+import DomainLayer.Market.UserController;
 import DomainLayer.Security.SecurityController;
+import ServiceLayer.Service;
+import ServiceLayer.StateFileRunner.StateFileRunner;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import ServiceLayer.Response;
+import org.springframework.boot.SpringApplication;
 
 class SecurityControllerTest {
 
+    static Service service;
     SecurityController securityController;
     UUID id;
     String legalPassword;
@@ -20,10 +30,18 @@ class SecurityControllerTest {
     String question2;
     String answer2;
     Response<Boolean> response;
-
+    
+    @BeforeAll
+    static void beforeAll() {
+        SpringApplication.run(Main.class);
+        service = Service.getInstance();
+        service.init(UserController.repositoryFactory, new StateFileRunner(new ObjectMapper(), service));
+    }
+    
     @BeforeEach
     void setUp() throws Exception {
         securityController = SecurityController.getInstance();
+        securityController.init(UserController.repositoryFactory);
         id = UUID.randomUUID();
         legalPassword = "Pa$$w0rd";
         securityController.addPassword(id, legalPassword);
@@ -34,7 +52,23 @@ class SecurityControllerTest {
         response = securityController.addSecurityQuestion(id, question, answer);
 
     }
-
+    
+    @AfterEach
+    void tearDown() {
+        try {
+            RepositoryFactory repositoryFactory = UserController.repositoryFactory;
+            repositoryFactory.roleRepository.deleteAll();
+            repositoryFactory.itemRepository.deleteAll();
+            repositoryFactory.passwordRepository.deleteAll();
+            repositoryFactory.securityQuestionRepository.deleteAll();
+            repositoryFactory.userRepository.deleteAll();
+            repositoryFactory.storeRepository.deleteAll();
+            service.resetService();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
     @Test
     void testValidatePasswordSuccess() {
         Response<Boolean> response = securityController.validatePassword(id, legalPassword);

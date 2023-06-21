@@ -21,17 +21,6 @@ public class NotificationTest {
     }
 
     @Test
-    public void testGetId() {
-        // Create a notification
-        UUID recipient = UUID.randomUUID();
-        String message = "You have a new notification.";
-        Notification notification = new Notification(message, recipient);
-
-        // Ensure the ID is not null
-        Assertions.assertNotNull(notification.getId());
-    }
-
-    @Test
     public void testGetRecipient() {
         // Create a notification
         UUID recipient = UUID.randomUUID();

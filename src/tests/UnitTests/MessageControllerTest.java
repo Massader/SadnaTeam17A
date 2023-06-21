@@ -1,50 +1,69 @@
 package UnitTests;
 
+import APILayer.Main;
+import DataAccessLayer.RepositoryFactory;
+import DomainLayer.Market.Message;
 import DomainLayer.Market.MessageController;
 import DomainLayer.Market.Notification;
 import DomainLayer.Market.UserController;
 import ServiceLayer.Response;
 import ServiceLayer.Service;
 import ServiceLayer.ServiceObjects.ServiceUser;
-//import org.junit.*;
+import ServiceLayer.StateFileRunner.StateFileRunner;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.*;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
-//import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MessageControllerTest {
-/*
+
     private static Service service;
     private static MessageController messageController;
     private UUID client;
     private String body = "Hello, World!";
     BiConsumer<UUID, Notification> consumer = new BiConsumer<UUID, Notification>() {public void accept(UUID uuid, Notification notification) {} }; //Used for alerts
     
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
+        SpringApplication.run(Main.class);
         service = Service.getInstance();
-        service.init();
-        messageController = MessageController.getInstance();
+        service.init(UserController.repositoryFactory, new StateFileRunner(new ObjectMapper(), service));
 
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
+        messageController = MessageController.getInstance();
         client = service.createClient().getValue();
         service.register("sender", "Sender1");
         service.register("recipient", "Recipient1");
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         UUID sender = UserController.getInstance().getId("sender");
         UUID recipient = UserController.getInstance().getId("recipient");
-        service.deleteUser(UserController.getInstance().getId("admin"), sender);
-        service.deleteUser(UserController.getInstance().getId("admin"), recipient);
+        try {
+            RepositoryFactory repositoryFactory = UserController.repositoryFactory;
+            repositoryFactory.roleRepository.deleteAll();
+            repositoryFactory.itemRepository.deleteAll();
+            repositoryFactory.passwordRepository.deleteAll();
+            repositoryFactory.securityQuestionRepository.deleteAll();
+            repositoryFactory.userRepository.deleteAll();
+            repositoryFactory.storeRepository.deleteAll();
+            service.resetService();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
+    
     @Test
     public void testSendMessage() {
         ServiceUser sender = service.login(client, "sender", "Sender1", consumer).getValue();
@@ -120,5 +139,5 @@ public class MessageControllerTest {
         client = service.logout(recipient.getId()).getValue();
     }
 
- */
+
 }

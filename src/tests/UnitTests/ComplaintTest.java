@@ -1,17 +1,36 @@
+package UnitTests;
+
+import APILayer.Main;
+import DataAccessLayer.RepositoryFactory;
 import DomainLayer.Market.Complaint;
+import DomainLayer.Market.UserController;
+import ServiceLayer.Service;
+import ServiceLayer.StateFileRunner.StateFileRunner;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.SpringApplication;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ComplaintTest {
+    static Service service;
     private Complaint complaint;
     private UUID purchaseId;
     private UUID storeId;
     private UUID itemId;
-
+    
+    @BeforeAll
+    static void beforeAll() {
+        SpringApplication.run(Main.class);
+        service = Service.getInstance();
+        service.init(UserController.repositoryFactory, new StateFileRunner(new ObjectMapper(), service));
+    }
+    
     @BeforeEach
     void setUp() {
         purchaseId = UUID.randomUUID();
@@ -19,7 +38,24 @@ class ComplaintTest {
         itemId = UUID.randomUUID();
         complaint = new Complaint("Test complaint", UUID.randomUUID(), purchaseId, storeId, itemId);
     }
-
+    
+    
+    @AfterAll
+    static void afterAll() {
+        try {
+            RepositoryFactory repositoryFactory = UserController.repositoryFactory;
+            repositoryFactory.roleRepository.deleteAll();
+            repositoryFactory.itemRepository.deleteAll();
+            repositoryFactory.passwordRepository.deleteAll();
+            repositoryFactory.securityQuestionRepository.deleteAll();
+            repositoryFactory.userRepository.deleteAll();
+            repositoryFactory.storeRepository.deleteAll();
+            service.resetService();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
     @Test
     void testOpenComplaint() {
         assertTrue(complaint.isOpen());

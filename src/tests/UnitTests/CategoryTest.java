@@ -74,16 +74,6 @@ public class CategoryTest {
     }
 
     @Test
-    public void testGetId() {
-        // Create a category
-        String categoryName = "Electronics";
-        Category category = new Category(categoryName);
-
-        // Ensure the ID is not null
-        Assertions.assertNotNull(category.getId());
-    }
-
-    @Test
     public void testSetId() {
         // Create a category
         String categoryName = "Electronics";

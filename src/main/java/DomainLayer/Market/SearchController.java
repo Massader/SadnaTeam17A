@@ -66,7 +66,7 @@ public class SearchController {
     }
 
     public void resetController() {
-        instance = new SearchController();
+        init(repositoryFactory);
     }
 
     public Response<List<Item>> searchItem(String keyword, String category, Double minPrice, Double maxPrice,

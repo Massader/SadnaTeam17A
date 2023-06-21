@@ -16,6 +16,7 @@ import DomainLayer.Market.Users.Roles.StoreFounder;
 import DomainLayer.Market.Users.Roles.StorePermissions;
 import ServiceLayer.Response;
 import ServiceLayer.ServiceObjects.ServiceDiscount;
+import jakarta.transaction.Transactional;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,12 +24,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class StoreController {
     private static StoreController instance = null;
     private static final Object instanceLock = new Object();
-//    private ConcurrentHashMap<UUID, Store> storeMap;
     private UserController userController;
     private NotificationController notificationController;
-//    private ConcurrentHashMap<String, Category> itemCategories;
     private RepositoryFactory repositoryFactory;
-    private UserDalController userDalController;
     private StoreDalController storeDalController;
 
     private StoreController() {
@@ -48,7 +46,6 @@ public class StoreController {
         userController = UserController.getInstance();
         notificationController = NotificationController.getInstance();
 //        itemCategories = new ConcurrentHashMap<>();
-        userDalController = UserDalController.getInstance(repositoryFactory);
         storeDalController = StoreDalController.getInstance(repositoryFactory);
     }
 
@@ -268,7 +265,7 @@ public class StoreController {
             return Response.getFailResponse(e.getMessage());
         }
     }
-
+    @Transactional
     public Response<Item> addItemToStore(UUID clientCredentials, String name, double price, UUID storeId, int quantity, String description) {
         try {
             Store store = storeDalController.getStore(storeId);
@@ -279,10 +276,10 @@ public class StoreController {
                 return Response.getFailResponse("User doesn't have permission.");
 
             Item item = new Item(name, price, store, 0, quantity, description);
-
-//            UUID id2 = storeDalController.saveItem(item);
             store.addItem(item);
-            UUID id3 = storeDalController.saveStore(store);
+            storeDalController.saveItem(item);
+//            UUID id3 = storeDalController.saveStore(store);
+            UUID id2 = item.getId();
             return Response.getSuccessResponse(item);
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
@@ -474,8 +471,7 @@ public class StoreController {
         }
     }
 
-
-    //why do we need clientCredentials here? we call the setAsFounder function from Service.
+    @Transactional
     public Response<Store> createStore(UUID clientCredentials, String storeName, String storeDescription) {
         try {
             if (storeName == null || storeName.length() == 0)
@@ -606,7 +602,7 @@ public class StoreController {
     }
 
     public void resetController() {
-        instance = new StoreController();
+        init(repositoryFactory);
     }
 
     public Response<Boolean> addItemCategory(UUID clientCredentials, UUID storeId, UUID itemId, String category) {
@@ -620,7 +616,6 @@ public class StoreController {
             Item item = storeDalController.getItem(itemId);
             if (item == null)
                 return Response.getFailResponse("Item does not exist.");
-//            itemCategories.putIfAbsent(category, new Category(category));
             List<Category> categories =  repositoryFactory.categoryRepository.findByCategoryName(category);
             Category categoryOdj = null;
             if(!categories.isEmpty())

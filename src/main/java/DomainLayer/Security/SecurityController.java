@@ -161,7 +161,7 @@ public class SecurityController {
     }
 
     public void resetController() {
-        singleton = new SecurityController();
+        init(repositoryFactory);
     }
 
 }

@@ -26,7 +26,9 @@ public class StoreTest {
     public void setUp() {
         store = new Store("Test Store", "A test store for unit testing");
         item1 = new Item("This is a test item1", 10.0, store, 2.0, 2, "aaaa");
+        item1.setId(UUID.randomUUID());
         item2 = new Item("This is a test item2", 15.0, store,  5.0, 3, "bbb");
+        item2.setId(UUID.randomUUID());
         try {
             store.addItem(item1);
             store.addItem(item2);

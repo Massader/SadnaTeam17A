@@ -193,7 +193,7 @@ public class MessageController {
     }
 
     public void resetController() {
-        instance = new MessageController();
+        init(repositoryFactory);
     }
     
     public Response<List<Complaint>> getAssignedComplaints(UUID clientCredentials) {

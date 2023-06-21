@@ -92,7 +92,6 @@ public class Service {
             notificationController.init(repositoryFactory);
             searchController = SearchController.getInstance();
             searchController.init(repositoryFactory);
-            registerAdmin(UUID.randomUUID(), "Admin", "Admin1");
 
     
             eventLogger.log(Level.INFO, "Reading state file.");

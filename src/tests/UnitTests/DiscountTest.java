@@ -7,6 +7,7 @@ import DomainLayer.Market.Stores.Discounts.ShoppingBasketCalculateDiscount;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.PurchaseRule.AtLeastPurchaseTerm;
 import DomainLayer.Market.Stores.PurchaseRule.AtMostPurchaseTerm;
+import DomainLayer.Market.Stores.PurchaseRule.ItemPurchaseRule;
 import DomainLayer.Market.Stores.PurchaseRule.PurchaseTerm;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.CartItem;
@@ -45,7 +46,7 @@ public class DiscountTest {
         // Create a discount with purchase term
         CalculateDiscount calculateDiscount = new ShoppingBasketCalculateDiscount();
         double discountPercentage = 0.1;
-        PurchaseTerm purchaseTerm = new AtLeastPurchaseTerm( ); // At least 3 items in the basket
+        PurchaseTerm purchaseTerm = new AtLeastPurchaseTerm(new ItemPurchaseRule(), 3); // At least 3 items in the basket
         Discount discount = null;
         try {
             discount = new Discount(calculateDiscount, discountPercentage, purchaseTerm);

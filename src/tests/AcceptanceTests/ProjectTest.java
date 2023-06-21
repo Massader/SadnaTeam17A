@@ -10,7 +10,7 @@ import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 public abstract class ProjectTest {
-    ;
+    
     public RepositoryFactory repositoryFactory;
     protected Bridge bridge;
 

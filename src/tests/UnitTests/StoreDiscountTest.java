@@ -17,6 +17,8 @@ import DomainLayer.Market.Users.ShoppingBasket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class StoreDiscountTest {
@@ -31,7 +33,9 @@ public class StoreDiscountTest {
     public void setUp() {
         store = new Store("Test Store", "A test store for unit testing");
         tomato = new Item("tomato", 5.0, store, 2.0, 30, "red vegetable");
+        tomato.setId(UUID.randomUUID());
         cucumber = new Item("cucumber", 5.0, store,  5.0, 30, "green vegetable");
+        cucumber.setId(UUID.randomUUID());
         vegetable =new Category("vegetable");
         tomato.addCategory(vegetable);
         try {
@@ -197,17 +201,17 @@ public class StoreDiscountTest {
             store.addDiscount(discount2);
         }
         catch (Exception exception){
-            assertEquals("the discount is already exist, please put valid discount",exception.getMessage());
+            assertEquals("the discount already exists",exception.getMessage());
         }
     }
 
     @Test
-    void UnValidDiscount() throws Exception {
+    void invalidDiscount() throws Exception {
         try {
             Discount discount = new Discount(null, 0.5, null);
             store.addDiscount(discount);
         } catch (Exception exception) {
-            assertEquals("the discount is null, please put valid discount",exception.getMessage());
+            assertEquals("the discount is null, please put valid discount", exception.getMessage());
         }
         ItemCalculateDiscount itemDiscount = new ItemCalculateDiscount(tomato.getId());
         ShoppingBasketPurchaseRule shopingBasketPurchaseRule = new ShoppingBasketPurchaseRule();
@@ -216,7 +220,7 @@ public class StoreDiscountTest {
         store.addDiscount(discount);
         try{store.addDiscount(discount);}
         catch (Exception exception){
-            assertEquals("the discount is already exist, please put valid discount",exception.getMessage());
+            assertEquals("the discount already exists",exception.getMessage());
         }
     }
 }

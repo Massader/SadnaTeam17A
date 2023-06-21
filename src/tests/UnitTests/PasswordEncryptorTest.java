@@ -3,6 +3,7 @@ package UnitTests;
 import DomainLayer.Security.PasswordEncryptor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.Assert;
 
 public class PasswordEncryptorTest {
 
@@ -53,14 +54,11 @@ public class PasswordEncryptorTest {
 
         try {
             PasswordEncryptor encryptor = new PasswordEncryptor();
-
             // Attempt to decrypt the invalid password
-            String decryptedPassword = encryptor.decrypt(encryptedPassword);
-
-            // Ensure the decrypted password is empty
-            Assertions.assertEquals("", decryptedPassword);
+            Assertions.assertThrows(Exception.class, () -> encryptor.decrypt(encryptedPassword));
+            
         } catch (Exception e) {
-            Assertions.fail("Exception occurred: " + e.getMessage());
+        
         }
     }
 }

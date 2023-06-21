@@ -1,6 +1,7 @@
 package DataAccessLayer.controllers;
 
 import DataAccessLayer.*;
+import DomainLayer.Market.Stores.Category;
 import DomainLayer.Market.Stores.Item;
 import DomainLayer.Market.Stores.Store;
 import DomainLayer.Market.Users.User;
@@ -106,6 +107,10 @@ public long storesCount(){
     public void deletePurchaseType(UUID purchaseTypeId) {
         purchaseTypeRepository.deleteById(purchaseTypeId);
     }
-
-
+    
+    
+    public UUID saveCategory(Category categoryOdj) {
+        Category category = categoryRepository.save(categoryOdj);
+        return category.getId();
+    }
 }

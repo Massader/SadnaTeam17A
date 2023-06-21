@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +30,9 @@ public class StorePurchasePolicyTest {
     public void setUp() {
         store = new Store("Test Store", "A test store for unit testing");
         tomato = new Item("tomato", 5.0, store, 2.0, 30, "red vegetable");
+        tomato.setId(UUID.randomUUID());
         cucumber = new Item("cucumber", 5.0, store,  5.0, 30, "green vegetable");
+        cucumber.setId(UUID.randomUUID());
         vegetable =new Category("vegetable");
         tomato.addCategory(vegetable);
         try {
