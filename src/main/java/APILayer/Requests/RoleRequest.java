@@ -12,6 +12,7 @@ public class RoleRequest extends Request {
         this.storeId = storeId;
         this.appointee = manager;
     }
+    public RoleRequest(){}
 
     public UUID getStoreId() {
         return storeId;

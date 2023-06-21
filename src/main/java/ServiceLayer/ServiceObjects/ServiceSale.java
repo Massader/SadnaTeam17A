@@ -20,7 +20,7 @@ public class ServiceSale {
         this.itemId = sale.getItemId();
         this.date = sale.getDate();
         this.quantity = sale.getQuantity();
-    }
+    }public ServiceSale(){}
 
     public UUID getId() {
         return id;

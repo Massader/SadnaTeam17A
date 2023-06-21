@@ -1066,7 +1066,9 @@ public class StoreController {
             Store store = getStore(storeId);
             if (!store.checkPermission(clientCredentials, StorePermissions.STORE_OWNER))
                 return Response.getFailResponse("User does not have permission to view owner petitions");
-            return Response.getSuccessResponse(store.removeOwnerPetitionApproval(appointee, clientCredentials));
+            boolean success = store.removeOwnerPetitionApproval(appointee, clientCredentials);
+            storeDalController.saveStore(store);
+            return Response.getSuccessResponse(success);
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());
         }

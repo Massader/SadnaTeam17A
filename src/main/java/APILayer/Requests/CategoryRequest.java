@@ -13,6 +13,7 @@ public class CategoryRequest extends Request{
         this.itemId = itemId;
         this.category = category;
     }
+    public CategoryRequest(){}
 
     public UUID getStoreId() {
         return storeId;

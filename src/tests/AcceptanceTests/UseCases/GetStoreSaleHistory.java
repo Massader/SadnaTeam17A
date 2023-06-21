@@ -41,7 +41,13 @@ public class GetStoreSaleHistory extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
+
+    }
+
+    @BeforeEach
+    public void setUp()  {
 //        bridge.resetProgram();
+        //        bridge.resetProgram();
         bridge.register("founder", "Aa1234");
         bridge.register("owner", "Aa1234");
         bridge.register("manager", "Aa1234");
@@ -92,11 +98,6 @@ public class GetStoreSaleHistory extends ProjectTest {
         bridge.logout(storeManagerId);
         bridge.logout(user1Id);
         bridge.logout(user2Id);
-    }
-
-    @BeforeEach
-    public void setUp()  {
-//        bridge.resetProgram();
         bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "owner", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "manager", "Aa1234");
@@ -112,6 +113,7 @@ public class GetStoreSaleHistory extends ProjectTest {
         bridge.logout(user1Id);
         bridge.logout(user2Id);
         deleteDB();
+        bridge.resetService();
     }
 
     @AfterAll

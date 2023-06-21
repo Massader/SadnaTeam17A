@@ -4,7 +4,6 @@ package DomainLayer.Market;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import DataAccessLayer.PurchaseRepository;
 import DataAccessLayer.RepositoryFactory;
 import DataAccessLayer.controllers.PurchaseDalController;
 import DataAccessLayer.controllers.StoreDalController;
@@ -18,7 +17,6 @@ import DomainLayer.Market.Users.*;
 import DomainLayer.Security.SecurityController;
 import ServiceLayer.Response;
 import DomainLayer.Market.Users.Roles.*;
-import jakarta.transaction.Transaction;
 import jakarta.transaction.Transactional;
 
 
@@ -318,7 +316,7 @@ public class UserController {
                 store.getOwner(clientCredentials).addAppointee(appointee);
                 notificationController.sendNotification(appointee,
                         "Your appointment as a store owner for " + store.getName() + " has been approved by all owners.");
-                store.getOwnerPetitions().remove(petition);
+                store.removeOwnerPetition(petition);
                 storeDalController.saveStore(store);
             }
             return Response.getSuccessResponse(true);
@@ -572,6 +570,7 @@ public class UserController {
 
     public void resetController() {
         singleton = new UserController();
+        userDalController.resetCache();
     }
 
     // On remove item from store, goes over all the users with the item in their carts and removes it

@@ -29,6 +29,7 @@ public class Register extends ProjectTest {
     public void tearDown() {
 //        UserRepository userRepository = UserController.repositoryFactory.userRepository;
         deleteDB();
+        bridge.resetService();
     }
 
     @AfterAll

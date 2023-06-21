@@ -14,6 +14,7 @@ public class ReviewRequest extends Request {
         this.body = body;
         this.rating = rating;
     }
+    public ReviewRequest(){}
 
     public UUID getTargetId() {
         return targetId;

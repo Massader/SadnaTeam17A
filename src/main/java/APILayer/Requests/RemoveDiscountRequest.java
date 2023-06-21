@@ -11,6 +11,7 @@ public class RemoveDiscountRequest extends Request {
         this.storeId = storeId;
         this.discountId = discountId;
     }
+    public RemoveDiscountRequest(){}
     
     public UUID getStoreId() {
         return storeId;

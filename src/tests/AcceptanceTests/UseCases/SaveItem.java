@@ -33,6 +33,11 @@ public class SaveItem extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
+
+    }
+
+    @BeforeEach
+    public void setUp()  {
         bridge.register("founder", "Aa1234");
         bridge.register("user1", "Aa1234");
         bridge.register("user2", "Aa1234");
@@ -57,10 +62,6 @@ public class SaveItem extends ProjectTest {
 
         bridge.logout(storeFounderId);
         bridge.logout(user1Id);
-    }
-
-    @BeforeEach
-    public void setUp()  {
         bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "user1", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "user2", "Aa1234");
@@ -73,6 +74,8 @@ public class SaveItem extends ProjectTest {
         bridge.logout(user1Id);
         bridge.logout(user2Id);
         bridge.logout(user3Id);
+        deleteDB();
+        bridge.resetService();
     }
 
     @AfterAll

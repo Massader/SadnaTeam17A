@@ -15,6 +15,7 @@ public class ComplaintRequest extends Request {
         this.purchaseId = purchaseId;
         this.body = body;
     }
+    public ComplaintRequest(){}
     
     public UUID getStoreId() {
         return storeId;

@@ -805,7 +805,7 @@ public class Service {
         paymentController.resetController();
         securityController.resetController();
         supplyController.resetController();
-        init(repositoryFactory, new StateFileRunner(new ObjectMapper(), this));
+        //init(repositoryFactory, new StateFileRunner(new ObjectMapper(), this));
         return null;
     }
 

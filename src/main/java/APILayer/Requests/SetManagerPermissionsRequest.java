@@ -17,6 +17,7 @@ public class SetManagerPermissionsRequest extends Request {
         this.storeId = storeId;
         this.permissions = permissions;
     }
+    public SetManagerPermissionsRequest(){}
 
     public UUID getManagerId() {
         return managerId;

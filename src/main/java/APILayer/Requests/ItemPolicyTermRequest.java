@@ -9,7 +9,8 @@ public class ItemPolicyTermRequest extends PolicyTermRequest {
         super(clientCredentials, storeId, atLeast, quantity);
         this.itemId = itemId;
     }
-    
+
+    public ItemPolicyTermRequest(){}
     public UUID getItemId() {
         return itemId;
     }

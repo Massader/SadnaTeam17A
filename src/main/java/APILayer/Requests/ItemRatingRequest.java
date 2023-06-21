@@ -13,6 +13,7 @@ public class ItemRatingRequest extends Request {
         this.itemId = itemId;
         this.storeId = storeId;
     }
+    public ItemRatingRequest(){}
 
     public int getRating() {
         return rating;

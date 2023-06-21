@@ -16,19 +16,21 @@ public class Login extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
+
+    }
+
+    @BeforeEach
+    public void setUp() {
         bridge.register("user", "Aa1234");
         userId = bridge.login(bridge.createClient().getValue(), "user","Aa1234").getValue().getId();
         bridge.logout(userId);
     }
 
-    @BeforeEach
-    public void setUp() {
-
-    }
-
     @AfterEach
     public void tearDown() {
         bridge.logout(userId);
+        deleteDB();
+        bridge.resetService();
     }
 
     @AfterAll

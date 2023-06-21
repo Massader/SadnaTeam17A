@@ -26,6 +26,11 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
+
+    }
+
+    @BeforeEach
+    public void setUp()  {
         bridge.register("founder", "Aa1234");
         bridge.register("user1", "Aa1234");
         bridge.register("user2", "Aa1234");
@@ -49,18 +54,15 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
 
         bridge.addItemToCart(user2Id, item3Id, 9, storeId);
         bridge.addItemToCart(user2Id, item4Id, 12, storeId);
-      //  bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue(), "address", "Aa12340000Aa12340000");
+        //  bridge.purchaseCart(user2Id, bridge.getCartTotal(user2Id).getValue(), "address", "Aa12340000Aa12340000");
 
         bridge.logout(storeFounderId);
         bridge.logout(user1Id);
         bridge.logout(user2Id);
-    }
-
-    @BeforeEach
-    public void setUp()  {
         bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "user1", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "user2", "Aa1234");
+
     }
 
     @AfterEach
@@ -68,6 +70,8 @@ public class GetStoreSaleHistorySystemAdmin extends ProjectTest {
         bridge.logout(storeFounderId);
         bridge.logout(user1Id);
         bridge.logout(user2Id);
+        deleteDB();
+        bridge.resetService();
     }
 
     @AfterAll

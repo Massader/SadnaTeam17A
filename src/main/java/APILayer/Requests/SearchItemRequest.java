@@ -19,6 +19,7 @@ public class SearchItemRequest extends Request {
         this.itemRating = itemRating;
         this.storeRating = storeRating;
     }
+    public SearchItemRequest(){}
 
     public String getKeyword() {
         return keyword;

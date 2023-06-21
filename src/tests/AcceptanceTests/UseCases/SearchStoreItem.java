@@ -115,8 +115,8 @@ public class SearchStoreItem extends ProjectTest {
 
     */
 
-    @BeforeAll
-    public void beforeClass() {
+    @BeforeEach
+    public void setUp()  {
         bridge.register("founder", "Aa1234");
 
         storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234").getValue().getId();
@@ -180,10 +180,6 @@ public class SearchStoreItem extends ProjectTest {
         bridge.addItemRating(bridge.createClient().getValue(), cheeseId, supermarketId, 2);
 
         bridge.logout(storeFounderId);
-    }
-
-    @BeforeEach
-    public void setUp()  {
         bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         bridge.reopenStore(storeFounderId, fruitStoreId);
         bridge.reopenStore(storeFounderId, carStoreId);
@@ -194,12 +190,10 @@ public class SearchStoreItem extends ProjectTest {
         bridge.closeStore(storeFounderId, fruitStoreId);
         bridge.closeStore(storeFounderId, carStoreId);
         bridge.logout(storeFounderId);
-    }
-
-    @AfterAll
-    public void afterClass() {
+        deleteDB();
         bridge.resetService();
     }
+
 
     @Test
     public void searchEmptySuccess() {

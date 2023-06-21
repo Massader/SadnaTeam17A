@@ -13,7 +13,7 @@ public class RemovePolicyTermRequest extends Request {
         this.storeId = storeId;
         this.termId = termId;
         this.categoryName = categoryName;
-    }
+    }public RemovePolicyTermRequest(){}
     
     public UUID getStoreId() {
         return storeId;

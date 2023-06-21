@@ -23,6 +23,11 @@ public class ReceiveStoreInfo extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
+
+    }
+
+    @BeforeEach
+    public void setUp()  {
         bridge.register("founder", "Aa1234");
 
         storeFounderId = bridge.login(bridge.createClient().getValue(), "founder", "Aa1234").getValue().getId();
@@ -36,17 +41,15 @@ public class ReceiveStoreInfo extends ProjectTest {
         item4Id = bridge.addItemToStore(storeFounderId, "item4", 40, storeId, 100, "test").getValue().getId();
 
         bridge.logout(storeFounderId);
-    }
-
-    @BeforeEach
-    public void setUp()  {
         bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
-        deleteDB();
     }
 
     @AfterEach
     public void tearDown() {
         bridge.logout(storeFounderId);
+        deleteDB();
+        bridge.resetService();
+
     }
 
     @AfterAll

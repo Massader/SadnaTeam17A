@@ -19,21 +19,24 @@ public class LogoutRegisterUser extends ProjectTest {
 
     @BeforeAll
     public void beforeClass()  {
-        UserController.repositoryFactory.userRepository.deleteAll();
-        bridge.register("user", "Aa1234");
-        userId = bridge.login(bridge.createClient().getValue(), "user", "Aa1234").getValue().getId();
-        bridge.logout(userId);
+
 
     }
 
     @BeforeEach
-    public void setUp() {
+    public void setUp()
+    {
+        bridge.register("user", "Aa1234");
+        userId = bridge.login(bridge.createClient().getValue(), "user", "Aa1234").getValue().getId();
+        bridge.logout(userId);
         bridge.login(bridge.createClient().getValue(), "user", "Aa1234");
     }
 
     @AfterEach
     public void tearDown() {
         bridge.logout(userId);
+        deleteDB();
+        bridge.resetService();
     }
 
     @AfterAll

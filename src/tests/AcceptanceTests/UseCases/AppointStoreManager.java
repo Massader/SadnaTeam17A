@@ -25,6 +25,11 @@ public class AppointStoreManager extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
+
+    }
+
+    @BeforeEach
+    public void setUp()  {
         bridge.register("founder", "Aa1234");
         bridge.register("owner", "Aa1234");
         bridge.register("manager1", "Aa1234");
@@ -54,10 +59,6 @@ public class AppointStoreManager extends ProjectTest {
         bridge.logout(storeManager2Id);
         bridge.logout(user1Id);
         bridge.logout(user2Id);
-    }
-
-    @BeforeEach
-    public void setUp()  {
         bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "owner", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "manager1", "Aa1234");
@@ -77,6 +78,8 @@ public class AppointStoreManager extends ProjectTest {
         bridge.logout(storeManager3Id);
         bridge.logout(user1Id);
         bridge.logout(user2Id);
+        deleteDB();
+        bridge.resetService();
     }
 
     @AfterAll

@@ -14,6 +14,9 @@ public class CartItemRequest extends Request {
         this.storeId = storeId;
         this.quantity = quantity;
     }
+    public CartItemRequest(){
+//        super();
+    }
 
     public UUID getItemId() {
         return itemId;

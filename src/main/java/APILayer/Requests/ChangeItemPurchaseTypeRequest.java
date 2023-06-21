@@ -13,6 +13,7 @@ public class ChangeItemPurchaseTypeRequest extends Request {
         this.itemId = itemId;
         this.purchaseType = purchaseType;
     }
+    public ChangeItemPurchaseTypeRequest(){}
     
     public UUID getStoreId() {
         return storeId;

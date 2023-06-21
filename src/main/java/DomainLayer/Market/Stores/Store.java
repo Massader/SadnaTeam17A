@@ -534,4 +534,8 @@ public class Store {
     public void addSale(Sale sale) {
         sales.add(sale);
     }
+
+    public void removeOwnerPetition(OwnerPetition petition) {
+        ownerPetitions.remove(petition);
+    }
 }

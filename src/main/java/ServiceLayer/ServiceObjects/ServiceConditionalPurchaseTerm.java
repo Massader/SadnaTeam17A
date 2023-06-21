@@ -16,6 +16,7 @@ public class ServiceConditionalPurchaseTerm {
         this.ifPurchaseTerm = ifPurchaseTerm;
         this.thenPurchaseTerm = thenPurchaseTerm;
     }
+    public ServiceConditionalPurchaseTerm(){}
     
     public ServiceConditionalPurchaseTerm(ConditionalPurchaseTerm term) {
         this.termId = term.getTermId();

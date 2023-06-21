@@ -19,7 +19,7 @@ public class ServiceMessage {
         this.recipient = message.getRecipient();
         this.timestamp = message.getTimestamp();
     }
-
+    public ServiceMessage(){}
     public UUID getId() {
         return id;
     }

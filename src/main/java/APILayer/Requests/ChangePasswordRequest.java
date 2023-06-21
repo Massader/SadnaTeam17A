@@ -12,6 +12,7 @@ public class ChangePasswordRequest extends Request {
         this.newPassword = newPassword;
         this.oldPassword = oldPassword;
     }
+    public ChangePasswordRequest(){}
 
     public String getOldPassword() {
         return oldPassword;

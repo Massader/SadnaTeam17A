@@ -19,6 +19,7 @@ public class ServiceCartItem {
         this.quantity = cartItem.getQuantity();
         this.price = cartItem.getPrice();
     }
+    public ServiceCartItem(){}
     
     public ServiceItem getItem() {
         return item;

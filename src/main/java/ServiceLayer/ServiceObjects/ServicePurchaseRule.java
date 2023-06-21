@@ -12,7 +12,7 @@ public class ServicePurchaseRule {
         this.type = type;
         this.itemIdOrCategoryOrNull = itemIdOrCategoryOrNull;
     }
-    
+    public ServicePurchaseRule(){}
     public ServicePurchaseRule(PurchaseRule rule) {
         if (rule instanceof ItemPurchaseRule) {
             type = "ITEM";

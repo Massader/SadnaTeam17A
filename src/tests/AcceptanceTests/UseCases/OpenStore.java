@@ -14,21 +14,24 @@ public class OpenStore extends ProjectTest {
     UUID storeFounderId;
     @BeforeAll
     public void beforeClass() {
+
+    }
+
+    @BeforeEach
+    public void setUp()  {
         bridge.resetService();
         bridge.register("founder", "Aa1234");
 
         storeFounderId = bridge.login(bridge.createClient().getValue(),"founder", "Aa1234").getValue().getId();
         bridge.logout(storeFounderId);
-    }
-
-    @BeforeEach
-    public void setUp()  {
         bridge.login(bridge.createClient().getValue(),"founder", "Aa1234");
     }
 
     @AfterEach
     public void tearDown() {
         bridge.logout(storeFounderId);
+        deleteDB();
+        bridge.resetService();
     }
 
     @AfterAll

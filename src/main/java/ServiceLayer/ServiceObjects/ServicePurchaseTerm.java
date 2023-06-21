@@ -20,6 +20,7 @@ public class ServicePurchaseTerm {
         this.atLeast = atLeast;
         this.quantity = quantity;
     }
+    public ServicePurchaseTerm(){}
     
     public ServicePurchaseTerm(PurchaseTerm term) {
         this.termId = term.getTermId();

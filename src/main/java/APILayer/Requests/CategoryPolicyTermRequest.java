@@ -9,6 +9,7 @@ public class CategoryPolicyTermRequest extends PolicyTermRequest {
         super(clientCredentials, storeId, atLeast, quantity);
         this.category = category;
     }
+    public CategoryPolicyTermRequest(){}
     
     public String getCategory() {
         return category;

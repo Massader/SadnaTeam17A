@@ -12,6 +12,7 @@ public class SecurityQuestionRequest extends Request{
         this.question = question;
         this.answer = answer;
     }
+    public SecurityQuestionRequest(){}
 
     public String getQuestion() {
         return question;
