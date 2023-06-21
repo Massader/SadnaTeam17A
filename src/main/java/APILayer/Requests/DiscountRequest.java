@@ -13,6 +13,7 @@ public class DiscountRequest extends Request {
         this.discount = discount;
         this.storeId = storeId;
     }
+    public DiscountRequest(){}
     
     public ServiceDiscount getDiscount() {
         return discount;

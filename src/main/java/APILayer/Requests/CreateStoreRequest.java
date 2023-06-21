@@ -12,6 +12,7 @@ public class CreateStoreRequest extends Request {
         this.name = name;
         this.description = description;
     }
+    public CreateStoreRequest(){}
 
     public String getName() {
         return name;

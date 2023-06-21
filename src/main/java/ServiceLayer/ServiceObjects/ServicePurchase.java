@@ -23,7 +23,7 @@ public class ServicePurchase {
         this.rated = purchase.isRated();
         this.storeId = purchase.getStoreId();
     }
-
+    public ServicePurchase(){}
     public UUID getId() {
         return id;
     }

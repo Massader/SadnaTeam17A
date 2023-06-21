@@ -15,6 +15,7 @@ public class AddBidRequest extends Request {
         this.quantity = quantity;
         this.bidPrice = bidPrice;
     }
+    public AddBidRequest(){}
     
     public UUID getStoreId() {
         return storeId;

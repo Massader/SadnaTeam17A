@@ -24,6 +24,7 @@ public class ServiceComplaint {
         this.storeId = complaint.getStoreId();
         this.itemId = complaint.getItemId();
     }
+    public ServiceComplaint(){}
 
     public UUID getId() {
         return id;

@@ -21,6 +21,12 @@ public class StoreManagerActions extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
+
+    }
+
+    @BeforeEach
+    public void setUp()  {
+        client = bridge.createClient().getValue();
         bridge.register("founder", "Pass1");
         client = bridge.createClient().getValue();
         founder = bridge.login(client, "founder", "Pass1").getValue().getId();
@@ -32,14 +38,11 @@ public class StoreManagerActions extends ProjectTest {
         Boolean AppointStoreManager = bridge.appointStoreManager(founder,storeManager,storeId).getValue();
     }
 
-    @BeforeEach
-    public void setUp()  {
-        client = bridge.createClient().getValue();
-    }
-
     @AfterEach
     public void tearDown() {
         bridge.closeClient(client);
+        deleteDB();
+        bridge.resetService();
     }
 
     @AfterAll

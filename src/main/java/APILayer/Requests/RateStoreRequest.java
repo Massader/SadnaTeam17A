@@ -11,6 +11,7 @@ public class RateStoreRequest extends Request {
         this.storeId = storeId;
         this.rating = rating;
     }
+    public RateStoreRequest(){}
     
     public UUID getStoreId() {
         return storeId;

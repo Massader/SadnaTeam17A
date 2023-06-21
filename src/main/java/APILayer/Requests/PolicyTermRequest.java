@@ -13,6 +13,7 @@ public class PolicyTermRequest extends Request {
         this.atLeast = atLeast;
         this.quantity = quantity;
     }
+    public PolicyTermRequest(){}
     
     public UUID getStoreId() {
         return storeId;

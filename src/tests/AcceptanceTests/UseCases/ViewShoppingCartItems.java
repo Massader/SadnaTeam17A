@@ -16,18 +16,21 @@ public class ViewShoppingCartItems extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
-        bridge.register("founder", "Pass1");
-        client = bridge.createClient().getValue();
+
     }
 
     @BeforeEach
     public void setUp()  {
+        bridge.register("founder", "Pass1");
+        client = bridge.createClient().getValue();
         client = bridge.createClient().getValue();
     }
 
     @AfterEach
     public void tearDown() {
         bridge.closeClient(client);
+        deleteDB();
+        bridge.resetService();
     }
 
     @AfterAll

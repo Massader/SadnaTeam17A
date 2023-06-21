@@ -30,6 +30,7 @@ public class SimplePolicyRequest extends Request{
         this.atLeast = atLeast;
         this.storeId =storeId;
     }
+    public SimplePolicyRequest(){}
 
 //category
     public SimplePolicyRequest(UUID clientCredentials, SimplePolicyRequest.policyType policyType, Category category, int quantity, Boolean atLeast, UUID storeId) {

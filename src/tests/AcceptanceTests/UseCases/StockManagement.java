@@ -69,6 +69,11 @@ public class StockManagement extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
+
+    }
+
+    @BeforeEach
+    public void setUp()  {
         bridge.register("founder", "Aa1234");
         bridge.register("owner", "Aa1234");
         bridge.register("manager", "Aa1234");
@@ -107,10 +112,6 @@ public class StockManagement extends ProjectTest {
         bridge.logout(storeOwnerId);
         bridge.logout(managerId);
         bridge.logout(userId);
-    }
-
-    @BeforeEach
-    public void setUp()  {
         bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "owner", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "manager", "Aa1234");
@@ -123,6 +124,8 @@ public class StockManagement extends ProjectTest {
         bridge.logout(storeOwnerId);
         bridge.logout(managerId);
         bridge.logout(userId);
+        deleteDB();
+        bridge.resetService();
     }
 
     @AfterAll

@@ -58,7 +58,9 @@ public class MessageController {
                 if (!userController.isUserLoggedIn(sender))
                     return Response.getFailResponse("Only logged in users can send messages.");
             }
-            if (!messages.containsKey(recipient)) messages.put(recipient, new ConcurrentHashMap<>());
+            repositoryFactory.messageRepository.save(message);
+            if (!messages.containsKey(recipient))
+                messages.put(recipient, new ConcurrentHashMap<>());
             messages.get(recipient).put(message.getId(), message);
             if (storeController.storeExist(recipient)) {
                 Store store = storeController.getStore(recipient);
@@ -73,7 +75,6 @@ public class MessageController {
                             "Store " + store.getName() + " has received a new message!");
                 }
             } else notificationController.sendNotification(recipient, "New message received!");
-            repositoryFactory.messageRepository.save(message);
             return Response.getSuccessResponse(message.getId());
         } catch (Exception e) {
             return Response.getFailResponse(e.getMessage());

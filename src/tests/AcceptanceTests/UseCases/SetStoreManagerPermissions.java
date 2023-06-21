@@ -44,6 +44,11 @@ public class SetStoreManagerPermissions extends ProjectTest {
 
     @BeforeAll
     public void beforeClass() {
+
+    }
+
+    @BeforeEach
+    public void setUp()  {
         UserController.repositoryFactory.userRepository.deleteAll();
         bridge.register("founder", "Aa1234");
         bridge.register("owner", "Aa1234");
@@ -74,10 +79,6 @@ public class SetStoreManagerPermissions extends ProjectTest {
         bridge.logout(storeManager1Id);
         bridge.logout(storeManager2Id);
         bridge.logout(userId);
-    }
-
-    @BeforeEach
-    public void setUp()  {
         bridge.login(bridge.createClient().getValue(), "founder", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "owner", "Aa1234");
         bridge.login(bridge.createClient().getValue(), "manager1", "Aa1234");
@@ -92,6 +93,8 @@ public class SetStoreManagerPermissions extends ProjectTest {
         bridge.logout(storeManager1Id);
         bridge.logout(storeManager2Id);
         bridge.logout(userId);
+        deleteDB();
+        bridge.resetService();
     }
 
     @AfterAll

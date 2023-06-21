@@ -15,6 +15,7 @@ public class AcceptBidRequest extends Request {
         this.itemId = itemId;
         this.bidPrice = bidPrice;
     }
+    public AcceptBidRequest(){}
     
     public UUID getBidderId() {
         return bidderId;

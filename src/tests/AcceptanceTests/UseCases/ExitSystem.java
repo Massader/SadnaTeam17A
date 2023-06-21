@@ -22,7 +22,8 @@ public class ExitSystem extends ProjectTest {
 
     @AfterEach
     public void tearDown() {
-
+        deleteDB();
+        bridge.resetService();
     }
 
     @AfterAll

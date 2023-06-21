@@ -18,6 +18,7 @@ public class ServiceCompositePurchaseTerm {
         this.purchaseTerms = purchaseTerms;
         this.type = type;
     }
+    public ServiceCompositePurchaseTerm(){}
     
     public ServiceCompositePurchaseTerm(CompositePurchaseTerm term) {
         this.termId = term.getTermId();

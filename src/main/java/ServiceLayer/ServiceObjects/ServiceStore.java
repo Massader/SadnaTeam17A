@@ -23,6 +23,7 @@ public class ServiceStore {
         this.isClosed = store.isClosed();
         this.isShutdown = store.isShutdown();
     }
+    public ServiceStore(){}
 
     @Autowired
     public ServiceStore(String name, String description) {

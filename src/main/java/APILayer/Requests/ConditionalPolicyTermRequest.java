@@ -15,6 +15,7 @@ public class ConditionalPolicyTermRequest extends Request{
         this.storeId = storeId;
         this.term = term;
     }
+    public ConditionalPolicyTermRequest(){}
     
     public ServiceConditionalPurchaseTerm getTerm() {
         return term;

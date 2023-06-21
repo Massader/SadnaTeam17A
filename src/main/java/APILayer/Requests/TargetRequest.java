@@ -9,6 +9,7 @@ public class TargetRequest extends Request {
         super(clientCredentials);
         this.targetId = targetUser;
     }
+    public TargetRequest(){}
 
     public UUID getTargetId() {
         return targetId;

@@ -19,6 +19,7 @@ public class AddPolicyRequest extends Request{
         this.itemId = itemId;
         this.category = category;
     }
+    public AddPolicyRequest(){}
 
     public UUID getStoreId() {
         return storeId;

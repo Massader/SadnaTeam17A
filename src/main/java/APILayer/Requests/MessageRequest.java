@@ -13,6 +13,7 @@ public class MessageRequest extends Request{
         this.recipient = recipient;
         this.body = body;
     }
+    public MessageRequest(){}
 
     public UUID getSender() {
         return sender;

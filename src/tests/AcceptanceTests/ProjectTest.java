@@ -28,6 +28,7 @@ public abstract class ProjectTest {
             repositoryFactory.securityQuestionRepository.deleteAll();
             repositoryFactory.userRepository.deleteAll();
             repositoryFactory.storeRepository.deleteAll();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

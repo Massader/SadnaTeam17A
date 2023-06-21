@@ -12,6 +12,7 @@ public class TargetItemRequest extends Request {
         this.storeId = storeId;
         this.itemId = itemId;
     }
+    public TargetItemRequest(){}
 
     public UUID getStoreId() {
         return storeId;

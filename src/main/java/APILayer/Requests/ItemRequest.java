@@ -24,7 +24,7 @@ public class ItemRequest extends Request {
         this.quantity = quantity;
         this.description = description;
     }
-
+    public ItemRequest(){}
     public UUID getId() {
         return id;
     }

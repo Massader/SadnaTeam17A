@@ -32,7 +32,7 @@ public class ServiceItem {
         }
         this.purchaseType = item.getPurchaseType().toString();
     }
-
+    public ServiceItem(){}
     public String getName() {
         return name;
     }

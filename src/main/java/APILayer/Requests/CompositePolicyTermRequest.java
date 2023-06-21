@@ -14,6 +14,7 @@ public class CompositePolicyTermRequest extends Request{
         this.term = term;
         this.storeId = storeId;
     }
+    public CompositePolicyTermRequest(){}
     
     public ServiceCompositePurchaseTerm getTerm() {
         return term;

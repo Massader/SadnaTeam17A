@@ -21,7 +21,7 @@ public class ServiceItemReview {
         this.timestamp = itemReview.getTimestamp();
         this.rating = itemReview.getRating();
     }
-    
+    public ServiceItemReview(){}
     public UUID getId() {
         return id;
     }

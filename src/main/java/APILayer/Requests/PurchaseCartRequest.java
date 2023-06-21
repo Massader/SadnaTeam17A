@@ -30,7 +30,7 @@ public class PurchaseCartRequest extends Request {
         this.cvv = cvv;
         this.idCard = idCard;
     }
-
+    public PurchaseCartRequest(){}
     public double getExpectedPrice() {
         return expectedPrice;
     }
