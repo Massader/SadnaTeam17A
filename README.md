@@ -75,9 +75,9 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 
 ## Initial State File
 
-The initial state file defines the initial state of the system. It should be in ??????  format and located at ??????. This file will be used to populate the system with the initial data or settings.
+The initial state file defines the initial state of the system. It in resources in json format . This file will be used to populate the system with the initial data.
 
-To create the initial state file, follow these steps:
+To create the initial state file,
 we create the json file state.json
 
 ## Starting the System
