@@ -64,11 +64,11 @@ public class PaymentController {
 
     public  Response<Boolean> handshake(){
         try {
-        String message =paymentProxy.handshake();
-        if(message.equals("OK")){
-            return Response.getSuccessResponse(true);}
+            String message =paymentProxy.handshake();
+            if(message.equals("OK")){
+                return Response.getSuccessResponse(true);}
         } catch (Exception e) {
-        return Response.getFailResponse("handshake has failed.");
+            return Response.getFailResponse("handshake has failed.");
 
-    }   return Response.getFailResponse("handshake has failed.");}
+        }   return Response.getFailResponse("handshake has failed.");}
 }

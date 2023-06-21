@@ -4,7 +4,8 @@ public class PaymentProxy implements PaymentBridge{
     PaymentBridge real = null;
     public void setReal() {
         if(real==null){
-            real = new PaymentReal();}
+            real = new PaymentReal();
+            real.setReal();}
     }
 
     @Override
