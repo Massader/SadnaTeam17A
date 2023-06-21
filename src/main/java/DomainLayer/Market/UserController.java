@@ -616,6 +616,20 @@ public class UserController {
         }
 
     }
+    
+    public Response<List<User>> getAllLoggedOutUsers(UUID clientCredentials) {
+        try {
+            if (!userDalController.userExists(clientCredentials))
+                return Response.getFailResponse("User does not exist.");
+            if(!userDalController.getUser(clientCredentials).isAdmin())
+                return Response.getFailResponse("Only admins can view logged out users.");
+            return Response.getSuccessResponse(userDalController.getAllUsers().stream()
+                    .filter((user) -> !loggedInUsers.containsKey(user.getId())).toList());
+        }
+        catch(Exception exception) {
+            return Response.getFailResponse(exception.getMessage());
+        }
+    }
 
     public Response<List<User>> getNotLoggedInUsers(UUID clientCredentials) {
         try {
@@ -747,6 +761,18 @@ public class UserController {
             return Response.getSuccessResponse(store.calculateItemDiscount(shoppingBasket, itemId) * 100); // 0.X to X as it is presented in the client
         } catch (Exception exception) {
             return Response.getFailResponse(exception.getMessage());
+        }
+    }
+    
+    public Response<Integer> getNumberOfClients(UUID clientCredentials) {
+        try {
+            if (getClientOrUser(clientCredentials) == null)
+                return Response.getFailResponse("User does not exist");
+            if (!getUserById(clientCredentials).isAdmin())
+                return Response.getFailResponse("Only admins can view number of clients");
+            return Response.getSuccessResponse(clients.size());
+        } catch (Exception e) {
+            return Response.getFailResponse(e.getMessage());
         }
     }
 }

@@ -799,7 +799,7 @@ public class Service {
         return Response.getSuccessResponse(serviceUsers);
     }
 
-    public Response<List<ServiceUser>> getLoginUser(UUID clientCredentials){
+    public Response<List<ServiceUser>> getLoggedInUsers(UUID clientCredentials){
         Response<List<User>> response =userController.getAllLoggedInUsers(clientCredentials);
         if(response.isError()){
             errorLogger.log(Level.SEVERE, response.getMessage());
@@ -1257,6 +1257,27 @@ public class Service {
             userNames.put(user.getUsername(), user.getId());
         }
         return Response.getSuccessResponse(userNames);
+    }
+    
+    public Response<Integer> getNumberOfRegisteredUsers(UUID clientCredentials) {
+        Response<List<User>> loggedInUsersResponse = userController.getAllLoggedInUsers(clientCredentials);
+        Response<List<User>> loggedOutUsersResponse = userController.getAllLoggedOutUsers(clientCredentials);
+        if (loggedInUsersResponse.isError()) {
+            errorLogger.log(Level.WARNING, loggedInUsersResponse.getMessage());
+            return Response.getFailResponse(loggedInUsersResponse.getMessage());
+        }
+        else if (loggedOutUsersResponse.isError()) {
+            errorLogger.log(Level.WARNING, loggedOutUsersResponse.getMessage());
+            return Response.getFailResponse(loggedOutUsersResponse.getMessage());
+        }
+        return Response.getSuccessResponse(loggedInUsersResponse.getValue().size() + loggedOutUsersResponse.getValue().size());
+    }
+    
+    public Response<Integer> getNumberOfConnectedClients(UUID clientCredentials) {
+        Response<Integer> response = userController.getNumberOfClients(clientCredentials);
+        if (response.isError())
+            errorLogger.log(Level.WARNING, response.getMessage());
+        return response;
     }
 }
 

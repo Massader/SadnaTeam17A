@@ -186,4 +186,19 @@ public class UserController {
     public Response<List<Bid>> getUserBids(@PathVariable(name = "id") UUID clientCredentials) {
         return service.getUserBids(clientCredentials);
     }
+    
+    @GetMapping(path = "/admin/get-logged-in-users/id={id}")
+    public Response<List<ServiceUser>> getLoggedInUsers(@PathVariable(name = "id") UUID clientCredentials) {
+        return service.getLoggedInUsers(clientCredentials);
+    }
+    
+    @GetMapping(path = "/admin/get-number-of-registered-users/id={id}")
+    public Response<Integer> getNumberOfRegisteredUsers(@PathVariable(name = "id") UUID clientCredentials) {
+        return service.getNumberOfRegisteredUsers(clientCredentials);
+    }
+    
+    @GetMapping(path = "/admin/get-number-of-connected-clients/id={id}")
+    public Response<Integer> getNumberOfConnectedClients(@PathVariable(name = "id") UUID clientCredentials) {
+        return service.getNumberOfConnectedClients(clientCredentials);
+    }
 }
